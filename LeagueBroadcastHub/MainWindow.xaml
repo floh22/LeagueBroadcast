@@ -107,10 +107,6 @@
                 <ui:NavigationViewItem Content="Broadcast Triggers" Tag="{x:Type controlpages:ControlsPage}" Icon="PreviewLink"/>
                 <ui:NavigationViewItem Content="Manual Broadcast Info" Tag="{x:Type controlpages:ManualEventsPage}" Icon="AllApps"/>
                 <ui:NavigationViewItemSeparator/>
-                <ui:NavigationViewItemHeader Content="Preview"/>
-                <ui:NavigationViewItem Content="Champ Select" Tag="{x:Type controlpages:ChampSelectPage}" Icon="Video"/>
-                <ui:NavigationViewItem Content="Ingame" Tag="{x:Type controlpages:IngamePage}" Icon="Video"/>
-                <ui:NavigationViewItemSeparator/>
                 <ui:NavigationViewItemHeader Content="Components"/>
                 <ui:NavigationViewItem Content="Component Control" Tag="{x:Type controlpages:ComponentControlPage}" Icon="ViewAll"/>
             </ui:NavigationView.MenuItems>

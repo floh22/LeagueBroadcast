@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using WPF.JoshSmith.ServiceProviders.UI;
@@ -17,12 +18,14 @@ namespace LeagueBroadcastHub.Pages.ControlPages
     {
 
         public static GameInfoPage Instance;
+        private SynchronizationContext syncContext;
 
         public GameInfoPage()
         {
             InitializeComponent();
 
             Instance = this;
+            syncContext = SynchronizationContext.Current;
 
             BluePlayerList.ItemsSource = PlayerViewModel.BluePlayers;
             RedPlayerList.ItemsSource = PlayerViewModel.RedPlayers;
@@ -50,9 +53,15 @@ namespace LeagueBroadcastHub.Pages.ControlPages
             });
 
             if (t.id == 0)
+            {
                 PlayerViewModel.BluePlayers = new ObservableCollection<PlayerViewModel>(players);
+                Instance.syncContext.Post(state => { Instance.BluePlayerList.ItemsSource = PlayerViewModel.BluePlayers; }, null);
+            }
             else
+            {
                 PlayerViewModel.RedPlayers = new ObservableCollection<PlayerViewModel>(players);
+                Instance.syncContext.Post(state => { Instance.RedPlayerList.ItemsSource = PlayerViewModel.RedPlayers; }, null);
+            }
         }
     }
 

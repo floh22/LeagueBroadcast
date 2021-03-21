@@ -240,7 +240,7 @@ namespace LeagueBroadcastHub.State
             GetBothTeams().ForEach(t =>
             {
                 //Only incase OCR is being used. Make sure OCR is actually returning data
-                if (ActiveSettings._useOCR && teamData != null)
+                if (ActiveSettings._useOCR && teamData != null && teamData.Count != 0)
                 {
                     //Update Gold Data
                     var ocrData = teamData.Single((t2) => t2.Id == t.id);
