@@ -77,7 +77,6 @@ To get a local copy up and running follow these steps.
   - Currently settings are otherwise not functional, but proposed future features.
 
 - Change Player Layout in the Game Information Tab. This will show once a game has started 
-  - swap between this page and another incase it does not update
 
 - Enable components you wish to use in Broadcast Triggers Tab.
   - Automatic Events will be shown automatically when selected.
