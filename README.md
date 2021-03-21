@@ -17,10 +17,10 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <h3 align="center">LeagueOCR</h3>
+  <h3 align="center">League Broadcast Hub</h3>
 
   <p align="center">
-    OCR Analysis on League of Legends spectator games to augment the official Riot Games API
+    A Collection of League of Legends Spectate Overlay tools to enhance streams and tournament productions
     <br />
     <a href="https://github.com/floh22/LeagueBroadcastHub"><strong>Explore the docs »</strong></a>
     <br />
