@@ -1,0 +1,80 @@
+﻿<Page x:Class="LeagueBroadcastHub.Pages.ControlPages.GameInfoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LeagueBroadcastHub.Pages.ControlPages"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="GameInfoPage">
+
+    <Page.DataContext>
+        <local:PlayerViewModel/>
+    </Page.DataContext>
+
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <ScrollViewer x:Name="scrollViewer"
+                              Padding="0,0,16,0">
+                <StackPanel x:Name="ButtonStack" Margin="50,0,0,0">
+                    <TextBlock Style="{StaticResource TitleTextBlockStyle}" FontWeight="Normal" Text="Blue Team" Margin="10,10,0,30"/>
+                    <ListView x:Name="BluePlayerList"
+                        Width="250" HorizontalAlignment="Left">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ui:ListViewItem Background="{DynamicResource SystemControlChromeMediumLowAcrylicElementMediumBrush}" FontSize="12" FontWeight="Bold">
+                                    <ui:SimpleStackPanel Background="LightGray" Width="250" Margin="-25,0,-25,0">
+                                        <ui:SimpleStackPanel Background="CornflowerBlue" Margin="8" Height="30" Width="235" HorizontalAlignment="Left" Opacity=".8">
+                                            <TextBlock Text="{Binding ChampionName}" FontSize="25" TextAlignment="Center" Margin="0,-15,0,0"
+                                            Padding="12"  Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"/>
+                                        </ui:SimpleStackPanel>
+                                        <TextBlock
+                                        Text="{Binding PlayerName}"
+                                        FontSize="20"
+                                        HorizontalAlignment="Stretch"
+                                        TextAlignment="Center"
+                                        Margin="15,0,10,0"
+                                        TextWrapping="NoWrap"      
+                                        Style="{StaticResource TitleTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding HasBaronText}" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,15,5" TextAlignment="Center"/>
+                                    </ui:SimpleStackPanel>
+                                </ui:ListViewItem>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </ScrollViewer>
+            <ScrollViewer x:Name="scrollViewerRed" Padding="0,0,16,0">
+                <StackPanel x:Name="ButtonStackRed" Margin="50,0,0,0">
+                    <TextBlock Style="{StaticResource TitleTextBlockStyle}" FontWeight="Normal" Text="Red Team" Margin="10,10,0,30"/>
+                    <ListView x:Name="RedPlayerList"
+                        Width="250" HorizontalAlignment="Left">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ui:ListViewItem Background="{DynamicResource SystemControlChromeMediumLowAcrylicElementMediumBrush}" FontSize="12" FontWeight="Bold">
+                                    <ui:SimpleStackPanel Background="LightGray" Width="250" Margin="-25,0,-25,0">
+                                        <ui:SimpleStackPanel Background="MediumVioletRed" Margin="8" Height="30" Width="235" HorizontalAlignment="Left" Opacity=".8">
+                                            <TextBlock Text="{Binding ChampionName}" FontSize="25" TextAlignment="Center" Margin="0,-15,0,0"
+                                            Padding="12"  Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"/>
+                                        </ui:SimpleStackPanel>
+                                        <TextBlock
+                                        Text="{Binding PlayerName}"
+                                        FontSize="20"
+                                        HorizontalAlignment="Stretch"
+                                        TextAlignment="Center"
+                                        Margin="15,0,10,0"
+                                        TextWrapping="NoWrap"      
+                                        Style="{StaticResource TitleTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding HasBaronText}" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,15,5" TextAlignment="Center"/>
+                                        
+                                    </ui:SimpleStackPanel>
+                                </ui:ListViewItem>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+    </Grid>
+</Page>

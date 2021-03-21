@@ -1,0 +1,71 @@
+﻿<Page x:Class="LeagueBroadcastHub.Pages.ControlPages.ControlsPage"
+      x:Name="ControlWindow"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LeagueBroadcastHub.Pages.ControlPages"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+      mc:Ignorable="d" 
+      Loaded="OnLoad"
+      Title="Event Controls"
+      fw:AcrylicWindow.Enabled="True">
+
+    <Page.DataContext>
+        <local:ControlViewModel />
+    </Page.DataContext>
+
+    <Page.Resources>
+
+        <ui:StackLayout x:Key="HorizontalStackLayout"
+                        Orientation="Horizontal"/>
+        <ui:StackLayout x:Key="VerticalStackLayout"
+                        Orientation="Vertical"
+                        Spacing="0" />
+        <Style TargetType="{x:Type ToggleButton}" x:Key="ToggleButtonStyle">
+            <Setter Property="Background" Value="#4D5C5C5C"/>
+            <Setter Property="Width" Value="275"/>
+            <Setter Property="Height" Value="125"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+
+        <DataTemplate x:Key="ControlButton">
+            <ToggleButton Grid.Row="1" Style="{DynamicResource ToggleButtonStyle}" HorizontalAlignment="Left" Margin="10" Content="{Binding Title, Mode=OneWay}" Tag="{Binding Type, Mode=OneWay}" Background="{Binding ButtonColor, Mode=OneWay}" Checked="ButtonChecked" Unchecked="ButtonUnchecked"/>
+        </DataTemplate>
+
+    </Page.Resources>
+
+    <Grid>
+        <ScrollViewer x:Name="scrollViewer"
+                              Padding="0,0,16,0">
+            <StackPanel x:Name="ButtonStack" Margin="50,0,0,0">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" FontWeight="Normal" Text="Active Automatic Events" />
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Determine which events will be shown on the Overlay" Margin="0,0,0,30"/>
+                <ui:ItemsRepeater x:Name="AutoEvents1" 
+                                       Margin="0,0,12,0"
+                                       HorizontalAlignment="Stretch"
+                                       Layout="{StaticResource HorizontalStackLayout}"
+                                       ItemTemplate="{StaticResource ControlButton}" />
+                <ui:ItemsRepeater x:Name="AutoEvents2" 
+                                       Margin="0,0,12,0"
+                                       HorizontalAlignment="Stretch"
+                                       Layout="{StaticResource HorizontalStackLayout}"
+                                       ItemTemplate="{StaticResource ControlButton}" />
+                <ui:ItemsRepeater x:Name="AutoEvents3" 
+                                       Margin="0,0,12,0"
+                                       HorizontalAlignment="Stretch"
+                                       Layout="{StaticResource HorizontalStackLayout}"
+                                       ItemTemplate="{StaticResource ControlButton}" />
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" FontWeight="Normal" Text="Event Controls" />
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Activate to show the given information on the Overlay" Margin="0,0,0,30"/>
+                <ui:ItemsRepeater x:Name="EventsRow1" 
+                                       Margin="0,0,12,0"
+                                       HorizontalAlignment="Stretch"
+                                       Layout="{StaticResource HorizontalStackLayout}"
+                                       ItemTemplate="{StaticResource ControlButton}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -1,0 +1,119 @@
+﻿<Window
+    x:Name="AppWindow"
+    x:Class="LeagueBroadcastHub.MainWindow"
+    xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:LeagueBroadcastHub"
+    xmlns:controlpages="clr-namespace:LeagueBroadcastHub.Pages.ControlPages" 
+    xmlns:sc="clr-namespace:LeagueBroadcastHub.Pages.Converters" 
+    mc:Ignorable="d"
+    Title="League Broadcast Hub" Width="1225" Height="750"
+    fw:AcrylicWindow.Enabled="True"
+    fw:AcrylicWindow.ExtendViewIntoTitleBar="True"
+    WindowStartupLocation="CenterScreen"
+    ui:ThemeManager.IsThemeAware="True"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    WindowStyle="None"
+    Closed="OnClose"
+    Background="#70FFFFFF"
+    ResizeMode="CanMinimize">
+    <Window.Resources>
+        <sc:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        
+        <DataTemplate x:Key="NavigationViewHeaderTemplate">
+            <TextBlock Text="{Binding}" Margin="12,32,0,0" />
+        </DataTemplate>
+        <local:LoadingProgress x:Key="LoadingDataContext" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid
+            x:Name="AppTitleBar"
+            VerticalAlignment="Top"
+            Height="{Binding ElementName=NavView, Path=CompactPaneLength}"
+            Canvas.ZIndex="1"
+            Visibility="{Binding ElementName=AppWindow, Path=(ui:TitleBar.ExtendViewIntoTitleBar), Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" MinWidth="{Binding ElementName=AppWindow, Path=(ui:TitleBar.SystemOverlayRightInset)}" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                x:Name="AppTitle"
+                Text="{Binding ElementName=AppWindow, Path=Title}"
+                VerticalAlignment="Center"
+                Style="{StaticResource CaptionTextBlockStyle}" />
+        </Grid>
+
+        <fw:AcrylicPopup  IsOpen="{Binding IsVisible, Mode=OneWay}" Placement="Center" PopupAnimation="Fade" AllowsTransparency="True" DataContext="{Binding Source={x:Static local:LoadingProgress.LoadingPopUp}}">
+            <Canvas x:Name="PopUpCanvas" Width = "400" Height = "200" Background = "{StaticResource SystemControlBaseAcrylicBrush}">
+                <Canvas.RenderTransform>
+                    <RotateTransform x:Name = "PopUpTransform" />
+                </Canvas.RenderTransform>
+                <TextBlock TextWrapping = "Wrap" Text="{Binding Description}"/>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        x:Name="LoadingHeader"
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        FontSize="24"
+                        Width="360"
+                        Margin="20,60,0,0"
+                        TextAlignment="Center" Text="Downloading DataDragon cache"/>
+                    <ui:ProgressBar
+                        x:Name="ProgressBar"
+                        Width="360"
+                        Value="{Binding CompletionPercentage, Mode=OneWay}" 
+                        Margin="20,20,0,0"/>
+                    <TextBlock
+                        x:Name="ProgressText"
+                        Style="{StaticResource SubheaderTextBlockStyle}"
+                        FontSize="24"
+                        Width="360"
+                        Margin="20,10,0,0"
+                        TextAlignment="Center" Text="{Binding ProgressText, Mode=OneWay}"/>
+                    
+                </StackPanel>
+            </Canvas>
+        </fw:AcrylicPopup>
+
+        <ui:NavigationView 
+            x:Name="NavView"
+            AlwaysShowHeader="True"
+            Header="{Binding SelectedItem.Content, RelativeSource={RelativeSource Self}, FallbackValue=' '}"
+            HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
+            IsBackButtonVisible="Visible"
+            IsTitleBarAutoPaddingEnabled="False"
+            IsPaneOpen="True"
+            OpenPaneLength="240"
+            IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack}"
+            BackRequested="NavView_BackRequested"
+            ItemInvoked="NavView_ItemInvoked"
+            PaneOpening="NavView_PaneOpening"
+            PaneClosing="NavView_PaneClosing"
+            DisplayModeChanged="NavView_DisplayModeChanged">
+            
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItemHeader Content="Main"/>
+                <ui:NavigationViewItem Name="GameInfo" Tag="{x:Type controlpages:GameInfoPage}" Content="Game Information">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:BitmapIcon UriSource="Assets/Icons/LeagueNew.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="Broadcast Triggers" Tag="{x:Type controlpages:ControlsPage}" Icon="PreviewLink"/>
+                <ui:NavigationViewItem Content="Manual Broadcast Info" Tag="{x:Type controlpages:ManualEventsPage}" Icon="AllApps"/>
+                <ui:NavigationViewItemSeparator/>
+                <ui:NavigationViewItemHeader Content="Preview"/>
+                <ui:NavigationViewItem Content="Champ Select" Tag="{x:Type controlpages:ChampSelectPage}" Icon="Video"/>
+                <ui:NavigationViewItem Content="Ingame" Tag="{x:Type controlpages:IngamePage}" Icon="Video"/>
+                <ui:NavigationViewItemSeparator/>
+                <ui:NavigationViewItemHeader Content="Components"/>
+                <ui:NavigationViewItem Content="Component Control" Tag="{x:Type controlpages:ComponentControlPage}" Icon="ViewAll"/>
+            </ui:NavigationView.MenuItems>
+            <ui:Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+        </ui:NavigationView>
+    </Grid>
+</Window>

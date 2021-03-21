@@ -1,0 +1,52 @@
+﻿<Page x:Class="LeagueBroadcastHub.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LeagueBroadcastHub"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d"
+      Title="Settings">
+
+    <Grid>
+        <ScrollViewer
+            x:Name="contentSV"
+            Grid.Row="1"
+            Padding="20,0,0,0"
+            IsTabStop="False"
+            VerticalScrollBarVisibility="Auto"
+            CanContentScroll="True">
+            <ui:SimpleStackPanel HorizontalAlignment="Left" DataContext="{Binding Source={x:Static local:ActiveSettings.current}}">
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="General League Broadcast Hub Settings" Margin="0,0,0,30"/>
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,4,0,0"
+                    FontWeight="Normal"
+                    Text="Broadcast Hub Mode  (In development!)" />
+                <StackPanel x:Name="AppMode" Margin="30,10,0,0">
+                    <RadioButton x:Name="modeLocal" Checked="RadioButton_Checked" Content="Local" />
+                    <RadioButton x:Name="modeWeb" Checked="RadioButton_Checked" Content="Web control" />
+                    <RadioButton x:Name="modeLocalAndWeb" Checked="RadioButton_Checked" Content="Local and Web control" />
+                </StackPanel>
+
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,40,0,0"
+                    FontWeight="Normal"
+                    Text="Computer Vision Addon" />
+                <StackPanel Margin="30,10,0,0">
+                    <ui:ToggleSwitch x:Name="ocrToggle" Header="Use OCR Addon? Make sure to not disable OCR while running Broadcast Hub!" IsOn="{Binding UseOCR, Mode=TwoWay}" OffContent="LeagueOCR Disabled" OnContent="LeagueOCR Enabled" Margin="0,0,0,4"/>
+                </StackPanel>
+
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,40,0,0"
+                    FontWeight="Normal"
+                    Text="Web Control (In development!)" />
+                <StackPanel Margin="30,10,0,0">
+                    <TextBox ui:ControlHelper.Header="Target Address:" ui:ControlHelper.PlaceholderText="127.0.0.1" TextChanged="TextBox_TextChanged"/>
+                </StackPanel>
+            </ui:SimpleStackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -1,0 +1,40 @@
+{
+	"name": "lbh_ingame",
+	"version": "1.0.0",
+	"description": "Ingame Overlay for League Broadcast Hub",
+	"scripts": {
+		"start": "parcel src/index.html -p 10001",
+		"build": "parcel build src/index.html --out-dir dist",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
+	},
+	"author": "supertommy",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ourcade/phaser3-parcel-template.git"
+	},
+	"homepage": "https://github.com/ourcade/phaser3-parcel-template",
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^2.29.0",
+		"@typescript-eslint/parser": "^2.29.0",
+		"eslint": "^6.8.0",
+		"minimist": ">=1.2.2",
+		"parcel-bundler": "^1.12.3",
+		"parcel-plugin-clean-easy": "^1.0.2",
+		"parcel-plugin-static-files-copy": "^2.4.3",
+		"phaser3-webfont-loader": "^1.0.0",
+		"typescript": "^3.8.3"
+	},
+	"dependencies": {
+		"phaser": "^3.50.1",
+		"phaser3-rex-plugins": "^1.1.41"
+	},
+	"parcelCleanPaths": [
+		"dist"
+	],
+	"staticFiles": {
+		"staticPath": "public",
+		"watcherGlob": "**"
+	}
+}
