@@ -66,6 +66,7 @@
                     <ui:ProgressBar
                         x:Name="ProgressBar"
                         Width="360"
+                        Maximum="100"
                         Value="{Binding CompletionPercentage, Mode=OneWay}" 
                         Margin="20,20,0,0"/>
                     <TextBlock
