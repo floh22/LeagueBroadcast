@@ -65,7 +65,7 @@ To get a local copy up and running follow these steps.
 2. Unzip release to desired install folder
 3. Incase you do not have NodeJS installed on your system, run installNode.bat or install NodeJS manually
 4. Run setup.bat or follow frontend install instructions [here](https://github.com/floh22/LeagueBroadcastHub/blob/master/Overlays/ingame/)
-
+5. Add http://localhost:10001 as a browser source in OBS in your ingame scene
 
 
 <!-- USAGE EXAMPLES -->
