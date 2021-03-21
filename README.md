@@ -22,14 +22,14 @@
   <p align="center">
     OCR Analysis on League of Legends spectator games to augment the official Riot Games API
     <br />
-    <a href="https://github.com/floh22/LeagueOCR"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/floh22/LeagueBroadcastHub"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/floh22/LeagueOCR">View Demo</a>
+    <a href="https://github.com/floh22/LeagueBroadcastHub">View Demo</a>
     ·
-    <a href="https://github.com/floh22/LeagueOCR/issues">Issues</a>
+    <a href="https://github.com/floh22/LeagueBroadcastHub/issues">Issues</a>
     ·
-    <a href="https://github.com/floh22/LeagueOCR/issues">Request Feature</a>
+    <a href="https://github.com/floh22/LeagueBroadcastHub/issues">Request Feature</a>
   </p>
 </p>
 
