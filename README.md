@@ -138,6 +138,6 @@ Project Link: [https://github.com/floh22/LeagueBroadcastHub](https://github.com/
 [issues-shield]: https://img.shields.io/github/issues/floh22/LeagueBroadcastHub.svg?style=for-the-badge
 [issues-url]: https://github.com/floh22/LeagueBroadcastHub/issues
 [license-shield]: https://img.shields.io/github/license/floh22/LeagueBroadcastHub.svg?style=for-the-badge
-[license-url]: https://github.com/floh22/LeagueBroadcastHub/blob/master/LICENSE.txt
+[license-url]: https://github.com/floh22/LeagueBroadcastHub/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/floh22
