@@ -43,6 +43,8 @@ npm install -g parcel-bundler
 Make sure both this repo and League Broadcast Hub are installed on your local machine.
 This project should be included in your install of League Broadcast Hub.
 
+
+
 Incase you did not use installNode.bat Go into your new project folder and install dependencies:
 
 ```bash
@@ -57,6 +59,18 @@ npm run start
 ```
 
 Copy dist to your web server incase you wish to host this project elsewhere. LBH uses parcel by default to serve files.
+
+## Dev Server Port
+
+You can change the dev server's port number by modifying the `start` script in `package.json`. We use Parcel's `-p` option to specify the port number.
+
+The script looks like this:
+
+```
+parcel src/index.html -p 10001
+```
+
+Change 10001 to whatever you want.
 
 ## License
 

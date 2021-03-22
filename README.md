@@ -65,7 +65,7 @@ To get a local copy up and running follow these steps.
 2. Unzip release to desired install folder
 3. Incase you do not have NodeJS installed on your system, run installNode.bat or install NodeJS manually
 4. Run setup.bat or follow frontend install instructions [here](https://github.com/floh22/LeagueBroadcastHub/blob/master/Overlays/ingame/)
-
+5. Add http://localhost:10001 as a browser source in OBS in your ingame scene
 
 
 <!-- USAGE EXAMPLES -->
@@ -130,14 +130,14 @@ Project Link: [https://github.com/floh22/LeagueBroadcastHub](https://github.com/
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/floh22/LeagueBroadcastHub.svg?style=for-the-badge
-[contributors-url]: https://github.com/floh22/LeagueOCR/graphs/contributors
+[contributors-url]: https://github.com/floh22/LeagueBroadcastHub/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/floh22/LeagueBroadcastHub.svg?style=for-the-badge
-[forks-url]: https://github.com/floh22/LeagueOCR/network/members
+[forks-url]: https://github.com/floh22/LeagueBroadcastHub/network/members
 [stars-shield]: https://img.shields.io/github/stars/floh22/LeagueBroadcastHub.svg?style=for-the-badge
-[stars-url]: https://github.com/floh22/LeagueOCR/stargazers
+[stars-url]: https://github.com/floh22/LeagueBroadcastHub/stargazers
 [issues-shield]: https://img.shields.io/github/issues/floh22/LeagueBroadcastHub.svg?style=for-the-badge
-[issues-url]: https://github.com/floh22/LeagueOCR/issues
+[issues-url]: https://github.com/floh22/LeagueBroadcastHub/issues
 [license-shield]: https://img.shields.io/github/license/floh22/LeagueBroadcastHub.svg?style=for-the-badge
-[license-url]: https://github.com/floh22/LeagueOCR/blob/master/LICENSE.txt
+[license-url]: https://github.com/floh22/LeagueBroadcastHub/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/floh22
