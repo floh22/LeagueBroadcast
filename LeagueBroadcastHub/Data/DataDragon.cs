@@ -1,4 +1,5 @@
 ﻿using LeagueBroadcastHub.Data.Containers;
+using LeagueBroadcastHub.Log;
 using LeagueIngameServer;
 using Newtonsoft.Json;
 using System;
@@ -63,13 +64,13 @@ namespace LeagueBroadcastHub.Data
 
             if(version.Version == "latest")
             {
-                System.Diagnostics.Debug.WriteLine("Getting latest versions from dataDragon");
+                Logging.Info("Getting latest versions from dataDragon");
                 new Task(() => { 
                     InitLatest(); 
                 }).Start();
             } else
             {
-                System.Diagnostics.Debug.WriteLine($"Using version from configuration: {version.Version}");
+                Logging.Info($"Using version from configuration: {version.Version}");
                 version.Champion = version.Version;
                 version.Item = version.Version;
                 version.Summoner = version.Version;
@@ -93,13 +94,13 @@ namespace LeagueBroadcastHub.Data
             System.Diagnostics.Debug.WriteLine($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}");
 
             Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
-            System.Diagnostics.Debug.WriteLine($"Loaded {Champions.Count} champions");
+            Logging.Info($"Loaded {Champions.Count} champions");
 
             SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
-            System.Diagnostics.Debug.WriteLine($"Loaded {SummonerSpells.Count} summoner spells");
+            Logging.Info($"Loaded {SummonerSpells.Count} summoner spells");
 
             List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/item.json")).data.ToObject<Dictionary<int, ItemData>>());
-            System.Diagnostics.Debug.WriteLine($"Loaded {rawItemData.Count} items");
+            Logging.Info($"Loaded {rawItemData.Count} items");
 
             rawItemData.ForEach(kvPair => {
                 ItemData itemData = kvPair.Value;
@@ -111,7 +112,7 @@ namespace LeagueBroadcastHub.Data
                 }
             });
 
-            System.Diagnostics.Debug.WriteLine($"Registered {Items.Count} full items");
+            Logging.Info($"Registered {Items.Count} full items");
 
             //Download all needed champion, item, and summoner spell data
             await CheckLocalCache();
@@ -166,20 +167,20 @@ namespace LeagueBroadcastHub.Data
             if (!Directory.Exists(patchFolder))
             {
                 //Delete old patch folders
-                System.Diagnostics.Debug.WriteLine("Current Patch cache not detected, removing old Patch data");
+                Logging.Info("Current Patch cache not detected, removing old Patch data");
 
                 List<string> dirs = new List<string>(Directory.EnumerateDirectories(cache));
 
                 dirs.ForEach(dir => {
                     new DirectoryInfo(dir).Empty();
                     Directory.Delete(dir);
-                    System.Diagnostics.Debug.WriteLine($"Removed Patch Cache {dir}");
+                    Logging.Info($"Removed Patch Cache {dir}");
                 });
 
                 Directory.CreateDirectory(patchFolder);
             } else
             {
-                System.Diagnostics.Debug.WriteLine($"Cache {patchFolder} exists already");
+                Logging.Info($"Cache {patchFolder} exists already");
                 return true;
             }
 
@@ -190,9 +191,9 @@ namespace LeagueBroadcastHub.Data
                 Directory.CreateDirectory(item);
 
             if (!Directory.Exists(spell))
-                Directory.CreateDirectory(spell);            
+                Directory.CreateDirectory(spell);
 
-            System.Diagnostics.Debug.WriteLine("Starting download process. This could take a while");
+            Logging.Info("Starting download process. This could take a while");
 
             Items.ForEach(findItem =>
             {
@@ -213,11 +214,10 @@ namespace LeagueBroadcastHub.Data
                 dlTasks.Add(new Task(() => DataDragonUtils.DownloadFile(findSummoner.icon, $"{spell}/{findSummoner.id}.png")));
             });
 
-            //LoadingProgress.LoadingPopUp = new LoadingProgress("Downloading assets from Datadragon", 0, dlTasks.Count, true);
             LoadingProgress.LoadingPopUp.IsVisible = true;
             LoadingProgress.LoadingPopUp.UpdateProgress(0, dlTasks.Count);
 
-            System.Diagnostics.Debug.WriteLine($"Downloading {dlTasks.Count} assets from datadragon!");
+            Logging.Info($"Downloading {dlTasks.Count} assets from datadragon!");
             dlTasks.ForEach(t => t.Start());
             var totalTasks = dlTasks.Count;
 
@@ -231,7 +231,7 @@ namespace LeagueBroadcastHub.Data
                 LoadingProgress.LoadingPopUp.UpdateProgress(total, totalTasks);
             }
 
-            System.Diagnostics.Debug.WriteLine("Download finished");
+            Logging.Info("Download finished");
             LoadingProgress.LoadingPopUp.IsVisible = false;
 
             return true;
@@ -256,7 +256,6 @@ namespace LeagueBroadcastHub.Data
             string final = "";
             paths.ToList().ForEach(part => final += $"/{part}");
             return final;
-            //return paths.Aggregate(Path.Combine);
         }
 
         public static void DownloadFile(string uri, string path)
@@ -313,7 +312,6 @@ namespace LeagueBroadcastHub.Data
         public static void ExtendItemLocal(ItemData item, GameVersion version)
         {
             item.sprite = CombinePaths("cache", version.Item, "item", item.itemID + ".png");
-            //item.sprite = $"{ itemsPath}/{item.itemID}.png";
         }
     }
 

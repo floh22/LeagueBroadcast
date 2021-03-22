@@ -1,4 +1,5 @@
 ﻿using LeagueBroadcastHub.Data;
+using LeagueBroadcastHub.Log;
 using LeagueBroadcastHub.Pages;
 using LeagueBroadcastHub.Session;
 using LeagueIngameServer;
@@ -26,9 +27,11 @@ namespace LeagueBroadcastHub
 
         public MainWindow()
         {
+            new Logging((Logging.LogLevel)Enum.Parse(typeof(Logging.LogLevel), Properties.Settings.Default.LogLevel));
+            
             InitializeComponent();
 
-            System.Diagnostics.Debug.WriteLine("Starting League Broadcast Hub");
+            Logging.Info("Starting League Broadcast Hub");
 
             this.DataContext = this;
 
@@ -190,6 +193,7 @@ namespace LeagueBroadcastHub
             Properties.Settings.Default.doElderKill = GameController.DoElderKill;
 
             Properties.Settings.Default.Save();
+            Logging.Info("League Broadcast Hub closed");
         }
     }
 

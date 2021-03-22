@@ -3,6 +3,7 @@ using LeagueBroadcastHub.Data.Containers;
 using LeagueBroadcastHub.Events;
 using LeagueBroadcastHub.Events.FrontendEvents;
 using LeagueBroadcastHub.Events.RiotEvents;
+using LeagueBroadcastHub.Log;
 using LeagueBroadcastHub.Pages.ControlPages;
 using LeagueBroadcastHub.Server;
 using LeagueBroadcastHub.State;
@@ -66,7 +67,7 @@ namespace LeagueBroadcastHub.Session
                 LeagueIngameController.currentlyIngame = false;
                 LeagueIngameController.gameStop.Invoke(this, EventArgs.Empty);
                 EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
-                System.Diagnostics.Debug.WriteLine("Game ended ");
+                Logging.Info("Game ended ");
                 return;
             }
 
@@ -79,7 +80,7 @@ namespace LeagueBroadcastHub.Session
                 {
                     gameState.stateData.gamePaused = true;
                     LeagueIngameController.paused = true;
-                    //IngameServer.Instance.SendEventToAll(new GamePause(gameData.gameTime));
+                    Logging.Info("Game Paused");
                     EmbedIOServer.socketServer.SendEventToAllAsync(new GamePause(gameData.gameTime));
                 }
                 
@@ -89,15 +90,16 @@ namespace LeagueBroadcastHub.Session
             {
                 gameState.stateData.gamePaused = false;
                 LeagueIngameController.paused = false;
-                //IngameServer.Instance.SendEventToAll(new GameUnpause(gameData.gameTime));
+                Logging.Info("Game Unpaused");
                 EmbedIOServer.socketServer.SendEventToAllAsync(new GameUnpause(gameData.gameTime));
             }
 
             //If time was scrolled back, remove old events
             var backDrake = gameState.backEndData.dragon;
             var backBaron = gameState.backEndData.baron;
-            if (newGameData.gameTime < gameData.gameTime)
+            if (newGameData.gameTime < gameData.gameTime && gameState.pastIngameEvents.Count != 0)
             {
+                Logging.Info("Scrolled back in timeline, reverting state");
                 gameState.pastIngameEvents = gameState.pastIngameEvents.Where((e) => e.EventTime < newGameData.gameTime).ToList();
                 if(backDrake.DurationRemaining - timeDiff > 150)
                 {
@@ -122,11 +124,13 @@ namespace LeagueBroadcastHub.Session
             if (backDrake.DurationRemaining > 0)
             {
                 gameState.SetObjectiveData(backDrake, gameState.stateData.dragon, backDrake.DurationRemaining - timeDiff);
+                Logging.Verbose($"Elder Time left: {backDrake.DurationRemaining}");
                 if (backDrake.DurationRemaining <= 0)
                 {
                     var tID = gameState.blueTeam.hasElder ? 0 : 1;
                     OnElderDespawn();
                     gameState.blueTeam.hasElder = gameState.redTeam.hasElder = false;
+                    gameState.GetAllPlayers().ForEach(p => p.diedDuringElder = false);
                 }
             }
 
@@ -134,6 +138,7 @@ namespace LeagueBroadcastHub.Session
             if (backBaron.DurationRemaining > 0)
             {
                 gameState.SetObjectiveData(backBaron, gameState.stateData.baron, backBaron.DurationRemaining - timeDiff);
+                Logging.Verbose($"Baron Time left: {backBaron.DurationRemaining}");
                 if (backBaron.DurationRemaining <= 0)
                 {
                     backBaron.DurationRemaining = 0;
@@ -159,6 +164,9 @@ namespace LeagueBroadcastHub.Session
                     //Update frontend
                     EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
                     return;
+                } else
+                {
+                    Logging.Verbose("OCR active but no response");
                 }
             }
             try
@@ -167,17 +175,16 @@ namespace LeagueBroadcastHub.Session
                 gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, new List<Data.Containers.OCRTeam>());
             } catch(Exception canceled)
             {
-                System.Diagnostics.Debug.WriteLine(canceled.Message);
+                Logging.Warn(canceled.Message);
             }
             
-
-
             //Update frontend
             EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
         }
 
         private void LoadSettings()
         {
+            Logging.Verbose("Settings loaded");
             DoPlayerLevelUp = Properties.Settings.Default.doLevelUp;
             DoItemCompleted = Properties.Settings.Default.doItemsCompleted;
             DoBaronKill = Properties.Settings.Default.doBaronKill;
@@ -188,8 +195,7 @@ namespace LeagueBroadcastHub.Session
         {
             if (!DoPlayerLevelUp)
                 return;
-            System.Diagnostics.Debug.WriteLine("Player " + e.playerId + " lvl up");
-            //IngameServer.Instance.SendEventToAll(new PlayerLevelUp(e.playerId, e.level));
+            Logging.Info("Player " + e.playerId + " lvl up");
             EmbedIOServer.socketServer.SendEventToAllAsync(new PlayerLevelUp(e.playerId, e.level));
         }
 
@@ -197,8 +203,7 @@ namespace LeagueBroadcastHub.Session
         {
             if (!DoPlayerLevelUp)
                 return;
-            System.Diagnostics.Debug.WriteLine("Player " + e.playerId + " finished Item " + e.itemData.itemID);
-            //IngameServer.Instance.SendEventToAll(new ItemCompleted(e.playerId, e.itemData));
+            Logging.Info("Player " + e.playerId + " finished Item " + e.itemData.itemID);
             EmbedIOServer.socketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
         }
 
@@ -214,7 +219,7 @@ namespace LeagueBroadcastHub.Session
             if (!DoElderKill)
                 return;
 
-            System.Diagnostics.Debug.WriteLine("Elder despawned");
+            Logging.Info("Elder despawned");
             EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("elder", -1));
         }
 
@@ -230,7 +235,7 @@ namespace LeagueBroadcastHub.Session
         {
             if (!DoBaronKill)
                 return;
-            System.Diagnostics.Debug.WriteLine("Baron despawned");
+            Logging.Info("Baron despawned");
             EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("baron", -1));
         }
 
@@ -240,6 +245,7 @@ namespace LeagueBroadcastHub.Session
 
             OnBaronDespawn();
             OnElderDespawn();
+            Logging.Info("Game ended");
         }
     }
 

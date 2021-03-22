@@ -46,6 +46,17 @@
                 <StackPanel Margin="30,10,0,0">
                     <TextBox ui:ControlHelper.Header="Target Address:" ui:ControlHelper.PlaceholderText="127.0.0.1" TextChanged="TextBox_TextChanged"/>
                 </StackPanel>
+
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,40,0,0"
+                    FontWeight="Normal"
+                    Text="Logging Mode" />
+                <ComboBox Margin="10" SelectionChanged="LoggingLevelChanged" Name="LoggingSelection">
+                    <ComboBoxItem Tag="None">None</ComboBoxItem>
+                    <ComboBoxItem Tag="Warn">Warn</ComboBoxItem>
+                    <ComboBoxItem Tag="Info">Info</ComboBoxItem>
+                    <ComboBoxItem Tag="Verbose">Verbose</ComboBoxItem>
+                </ComboBox>
             </ui:SimpleStackPanel>
         </ScrollViewer>
     </Grid>

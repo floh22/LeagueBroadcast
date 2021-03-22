@@ -6,6 +6,7 @@ using LeagueBroadcastHub.Data;
 using LeagueBroadcastHub.Server;
 using System.IO;
 using System.Diagnostics;
+using LeagueBroadcastHub.Log;
 
 namespace LeagueIngameServer
 {
@@ -43,7 +44,7 @@ namespace LeagueIngameServer
             Instance = this;
 
             gameController = new GameController();
-            System.Diagnostics.Debug.WriteLine("Pre Init complete");
+            Logging.Info("Pre Init complete");
         }
 
         private void Init()
@@ -51,9 +52,8 @@ namespace LeagueIngameServer
             //Start Data Dragon
             dataDragon = new DataDragon();
             dataDragon.FinishedLoading += (sender, args) => {
-                System.Diagnostics.Debug.WriteLine("Data Dragon init finished");
-                //Start both Websocket and HTTP servers
-                //WebsocketServer = new IngameServer(9001, false);
+                Logging.Info("Data Dragon init finished");
+                //Start Frontend Webserver (HTTP/WS)
                 var WebServer = new EmbedIOServer("localhost", 9001);
 
                 tickTimer = new Timer { Interval = 1000 / tickRate };
@@ -61,7 +61,7 @@ namespace LeagueIngameServer
 
                 tickTimer.Start();
 
-                System.Diagnostics.Debug.WriteLine("Init complete");
+                Logging.Info("Init complete");
                 PostInit();
 
             };
@@ -77,7 +77,7 @@ namespace LeagueIngameServer
                 frontEnd = CommandUtils.RunNPM("start", frontEndLoc);
             }
 
-            System.Diagnostics.Debug.WriteLine("Post init Complete \nLeagueBroadcastHub loaded");
+            Logging.Info("Post init Complete \nLeagueBroadcastHub loaded");
         }
 
         private void DoTick(object sender, EventArgs e)
@@ -103,7 +103,7 @@ namespace LeagueIngameServer
             if (gameData == null)
                 return;
 
-            System.Diagnostics.Debug.WriteLine("League Game found");
+            Logging.Info("League Game found");
             gameController.SetGameData(gameData);
             gameController.InitGameState();
             currentlyIngame = true;
@@ -122,7 +122,6 @@ namespace LeagueIngameServer
 
         public void OnAppExit()
         {
-            //FileServer.Stop();
             frontEnd.Kill();
         }
     }

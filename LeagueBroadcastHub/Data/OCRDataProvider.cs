@@ -1,5 +1,6 @@
 ﻿using LeagueBroadcastHub.Data.Containers;
 using LeagueBroadcastHub.Data.Containers.Objectives;
+using LeagueBroadcastHub.Log;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,13 +24,13 @@ namespace LeagueBroadcastHub.Data
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"{(int)response.StatusCode} ({response.ReasonPhrase})");
+                    Logging.Warn($"{(int)response.StatusCode} ({response.ReasonPhrase})");
                     return null;
                 }
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                Logging.Warn(e.Message);
                 return null;
             }
         }
@@ -46,13 +47,13 @@ namespace LeagueBroadcastHub.Data
                 }
                 else
                 {
-                    //System.Diagnostics.Debug.WriteLine($"{(int)response.StatusCode} ({response.ReasonPhrase})");
+                    Logging.Warn($"{(int)response.StatusCode} ({response.ReasonPhrase})");
                     return null;
                 }
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                Logging.Warn(e.Message);
                 return null;
             }
         }

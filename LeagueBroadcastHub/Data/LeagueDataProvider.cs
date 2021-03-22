@@ -1,5 +1,6 @@
 ﻿using LeagueBroadcastHub.Events;
 using LeagueBroadcastHub.Events.RiotEvents;
+using LeagueBroadcastHub.Log;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace LeagueBroadcastHub.Data
                 }
                 else
                 {
-                    //System.Diagnostics.Debug.WriteLine($"{(int)response.StatusCode} ({response.ReasonPhrase})");
+                    Logging.Warn($"{(int)response.StatusCode} ({response.ReasonPhrase})");
                     return null;
                 }
             }
@@ -78,64 +79,6 @@ namespace LeagueBroadcastHub.Data
 
             var events = JsonConvert.DeserializeObject<DirtyEventList>(result).Events;
             return events;
-
-            /*
-             * 
-             * Move to directly using the event instead of trying to manually clean it
-            System.Diagnostics.Debug.WriteLine("Found " + riotEvents.Count + " Game Events");
-
-            List<RiotEvent> riotEventsCleaned = new List<RiotEvent>();
-
-            riotEvents.ForEach((e) =>
-            {
-                string name = e.EventName;
-                switch (name)
-                {
-                    case "GameStart":
-                        riotEventsCleaned.Add(new GameStart(e));
-                        break;
-                    case "GameEnd":
-                        riotEventsCleaned.Add(new GameEnd(e));
-                        break;
-                    case "MinionsSpawning":
-                        riotEventsCleaned.Add(new MinionsSpawning(e));
-                        break;
-                    case "FirstBrick":
-                        riotEventsCleaned.Add(new FirstBrick(e));
-                        break;
-                    case "FirstBlood":
-                        riotEventsCleaned.Add(new FirstBlood(e));
-                        break;
-                    case "TurretKilled":
-                        riotEventsCleaned.Add(new TurretKilledEvent(e));
-                        break;
-                    case "InhibKilled":
-                        riotEventsCleaned.Add(new InhibKilled(e));
-                        break;
-                    case "InhibRespawned":
-                        riotEventsCleaned.Add(new InhibRespawnedEvent(e));
-                        break;
-                    case "InhibRespawningSoon":
-                        riotEventsCleaned.Add(new InhibRespawningSoonEvent(e));
-                        break;
-                    case "ChampionKill":
-                        riotEventsCleaned.Add(new ChampionKill(e));
-                        break;
-                    case "Multikill":
-                        riotEventsCleaned.Add(new Multikill(e));
-                        break;
-                    case "Ace":
-                        riotEventsCleaned.Add(new Ace(e));
-                        break;
-                    default:
-                        Console.WriteLine("Something went wrong determining Riot Event Type " + e.EventName);
-                        Console.WriteLine("Event received: " + JsonConvert.SerializeObject(e));
-                        break;
-                }
-            });
-
-            return riotEventsCleaned;
-            */
         }
     }
 }

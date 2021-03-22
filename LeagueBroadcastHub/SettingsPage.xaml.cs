@@ -1,4 +1,5 @@
-﻿using LeagueBroadcastHub.Pages;
+﻿using LeagueBroadcastHub.Log;
+using LeagueBroadcastHub.Pages;
 using LeagueIngameServer;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,8 @@ namespace LeagueBroadcastHub
                     modeLocal.IsChecked = true;
                     break;
             }
+
+            LoggingSelection.SelectedIndex = (int)((Logging.LogLevel)Enum.Parse(typeof(Logging.LogLevel), Properties.Settings.Default.LogLevel));
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -61,6 +64,17 @@ namespace LeagueBroadcastHub
         {
 
         }
-     
+
+        private void LoggingLevelChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Logging.LogLevel level = (Logging.LogLevel)Enum.Parse(typeof(Logging.LogLevel), ((ComboBoxItem)LoggingSelection.SelectedItem).Tag.ToString());
+            Logging.SetLogLevel(level);
+            if(level != (Logging.LogLevel)Enum.Parse(typeof(Logging.LogLevel), Properties.Settings.Default.LogLevel))
+            {
+                Logging.Write($"Log Level set to {level.ToString()}");
+                Properties.Settings.Default.LogLevel = level.ToString();
+            }
+        }
+
     }
 }

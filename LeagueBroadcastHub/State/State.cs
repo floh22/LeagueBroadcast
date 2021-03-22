@@ -2,6 +2,7 @@
 using LeagueBroadcastHub.Data.Containers;
 using LeagueBroadcastHub.Data.Containers.Objectives;
 using LeagueBroadcastHub.Events.RiotEvents;
+using LeagueBroadcastHub.Log;
 using LeagueBroadcastHub.Pages.ControlPages;
 using LeagueBroadcastHub.Session;
 using System;
@@ -57,7 +58,7 @@ namespace LeagueBroadcastHub.State
 
 
                 //If OCR has found the Team for an objective, update the objective and send events
-                if (drake.FoundTeam && !(blueTeam.hasElder || redTeam.hasElder))
+                if (drake.FoundTeam && !(blueTeam.hasElder || redTeam.hasElder) && drake.Type == "elder")
                 {    
                     Team t = null;
                     switch (drake.LastTakenBy)
@@ -80,13 +81,13 @@ namespace LeagueBroadcastHub.State
                     {
                         t.hasElder = true;
                         t.dragonsTaken.Add("elder");
-                        System.Diagnostics.Debug.WriteLine($"Found Elder Team: {t.teamName}");
+                        Logging.Info($"Found Elder Team: {t.teamName}");
                         backEndData.dragon.DurationRemaining -= drake.TimeSinceTaken;
                         controller.OnElderKilled();
                     }
                 }
 
-                if (baron.FoundTeam && !blueTeam.hasBaron && !redTeam.hasBaron)
+                if (baron.FoundTeam && !(blueTeam.hasBaron || redTeam.hasBaron))
                 {
                     Team t = null;
                     switch (baron.LastTakenBy)
@@ -107,7 +108,7 @@ namespace LeagueBroadcastHub.State
 
                     if (t != null)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Found Team: {t.teamName}");
+                        Logging.Info($"Found Baron Team: {t.teamName}");
                         backEndData.baron.DurationRemaining -= baron.TimeSinceTaken;
                         controller.OnBaronKilled();
                         t.hasBaron = true;
@@ -121,6 +122,7 @@ namespace LeagueBroadcastHub.State
                     //Move this before the team check since sometimes the team cannot be determined
                     if (isElder)
                     {
+                        Logging.Verbose("Elder killed. Waiting for Team Information");
                         backEndData.dragon.BlueStartGold = stateData.blueGold;
                         backEndData.dragon.RedStartGold = stateData.redGold;
                         SetObjectiveData(backEndData.dragon, stateData.dragon, 148);
@@ -154,7 +156,7 @@ namespace LeagueBroadcastHub.State
                 //Update baron incase it was killed
                 if (stateData.baron.Objective.IsAlive && !baron.IsAlive)
                 {
-                    System.Diagnostics.Debug.WriteLine("Baron Killed. Waiting for Team information");
+                    Logging.Verbose("Baron Killed. Waiting for Team information");
                     backEndData.baron.BlueStartGold = stateData.blueGold;
                     backEndData.baron.RedStartGold = stateData.redGold;
                     SetObjectiveData(backEndData.baron, stateData.baron, 178);
@@ -196,7 +198,7 @@ namespace LeagueBroadcastHub.State
 
             if (firstRun)
             {
-                System.Diagnostics.Debug.WriteLine("Init Team data");
+                Logging.Info("Init Team data");
                 blueTeam.UpdateIDs();
                 redTeam.UpdateIDs();
 
@@ -260,6 +262,7 @@ namespace LeagueBroadcastHub.State
                         t.hasBaron = false;
                         SetObjectiveData(backEndData.baron, stateData.baron, 0);
                         controller.OnBaronDespawn();
+                        Logging.Verbose("All Players died during baron");
                     }
 
                     //Determine if the team still has elder
@@ -267,7 +270,8 @@ namespace LeagueBroadcastHub.State
                     {
                         t.hasElder = false;
                         SetObjectiveData(backEndData.dragon, stateData.dragon, 0);
-                        controller.OnBaronDespawn();
+                        controller.OnElderDespawn();
+                        Logging.Verbose("All Players died during elder");
                     }
                 }
             });
@@ -285,6 +289,7 @@ namespace LeagueBroadcastHub.State
 
         public Dictionary<double, int> GetGoldGraph()
         {
+            Logging.Info("Generating Gold Graph");
             var outList = new Dictionary<double, int>();
 
             //If the two teams have different gold info, return now since the info is 100% wrong
@@ -324,6 +329,7 @@ namespace LeagueBroadcastHub.State
             this.stateData = new StateData();
             this.backEndData = new BackEndData();
             this.pastIngameEvents = new List<DirtyEvent>();
+            Logging.Info("Game State reset");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using EmbedIO.WebSockets;
 using LeagueBroadcastHub.Events;
+using LeagueBroadcastHub.Log;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace LeagueBroadcastHub.Server
         protected override Task OnMessageReceivedAsync(IWebSocketContext context,byte[] rxBuffer,IWebSocketReceiveResult rxResult)
         {
             //return SendToOthersAsync(context, Encoding.GetString(rxBuffer));
-            System.Diagnostics.Debug.WriteLine($"Message received: {Encoding.GetString(rxBuffer)}");
+            Logging.Info($"Message received: {Encoding.GetString(rxBuffer)}");
             return Task.CompletedTask;
         }
 
@@ -31,7 +32,7 @@ namespace LeagueBroadcastHub.Server
                            SendAsync(context, "Welcome to the chat room!"),
                            SendToOthersAsync(context, "Someone joined the chat room."));
             */
-            System.Diagnostics.Debug.WriteLine($"New Client {context.Id} connected from {context.Origin}");
+            Logging.Info($"New Client {context.Id} connected from {context.Origin}");
             return Task.CompletedTask;
         }
 
