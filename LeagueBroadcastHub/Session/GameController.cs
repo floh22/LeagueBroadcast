@@ -30,10 +30,6 @@ namespace LeagueBroadcastHub.Session
 
         public static bool DoBaronKill;
 
-        public int[] FullItems;
-
-        private int ticksThisSecond = 0;
-
         public GameController()
         {
             this.LoLDataProvider = new LeagueDataProvider();
@@ -56,21 +52,21 @@ namespace LeagueBroadcastHub.Session
 
         public void InitGameState()
         {
-            this.gameState.stateData = new StateData();
-            this.gameState.backEndData = new BackEndData();
+            this.gameState.ResetState();
+            EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
         }
 
         public void DoTick()
         {
-
             //Check if ingame and get game meta data
             var newGameData = LoLDataProvider.GetGameData().Result;
-            if (newGameData == null)
+            if (newGameData == null || LeagueIngameController.currentlyIngame == false)
             {
+                
                 LeagueIngameController.currentlyIngame = false;
-                //IngameServer.Instance.SendEventToAll(new GameEnd());
+                LeagueIngameController.gameStop.Invoke(this, EventArgs.Empty);
                 EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
-                System.Diagnostics.Debug.WriteLine("Game ended");
+                System.Diagnostics.Debug.WriteLine("Game ended ");
                 return;
             }
 
@@ -165,9 +161,15 @@ namespace LeagueBroadcastHub.Session
                     return;
                 }
             }
-
-            gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, new List<Data.Containers.Objectives.Objective>());
-            gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, new List<Data.Containers.OCRTeam>());
+            try
+            {
+                gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, new List<Data.Containers.Objectives.Objective>());
+                gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, new List<Data.Containers.OCRTeam>());
+            } catch(Exception canceled)
+            {
+                System.Diagnostics.Debug.WriteLine(canceled.Message);
+            }
+            
 
 
             //Update frontend
@@ -234,8 +236,7 @@ namespace LeagueBroadcastHub.Session
 
         private void OnGameStop(object sender, EventArgs e)
         {
-            PlayerViewModel.bluePlayers.Clear();
-            PlayerViewModel.redPlayers.Clear();
+            GameInfoPage.ClearPlayers();
 
             OnBaronDespawn();
             OnElderDespawn();

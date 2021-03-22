@@ -115,16 +115,20 @@ export default class IngameScene extends Phaser.Scene
                             hideObjective(data.objective);
                             break;
                         case 'ItemCompleted':
-                            
                             new ItemIndicator(data.itemData, data.playerId, this);
                             break;
                         case 'GameEnd':
+                            console.log('Game Ended');
                             this.state = null;
+                            this.baronIndicator.hideContent();
+                            this.elderIndicator.hideContent();
+                            break;
+                        case 'GameStart':
+                            console.log('Game Start');
                             break;
                         case 'GamePause':
                             break;
                         case 'GameUnpause':
-                            break;
                             break;
                         default:
                             console.log('[LBH] Unknown event type: ' + JSON.stringify(data));

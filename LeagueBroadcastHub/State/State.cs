@@ -196,6 +196,7 @@ namespace LeagueBroadcastHub.State
 
             if (firstRun)
             {
+                System.Diagnostics.Debug.WriteLine("Init Team data");
                 blueTeam.UpdateIDs();
                 redTeam.UpdateIDs();
 
@@ -314,6 +315,15 @@ namespace LeagueBroadcastHub.State
 
             //Difference between the gold gained inverted based on if Blue or Red team has the objective
             front.GoldDifference = (currentDiff - originalDiff) * (blueHasObjective ? 1 : -1);
+        }
+
+        public void ResetState()
+        {
+            this.blueTeam = null;
+            this.redTeam = null;
+            this.stateData = new StateData();
+            this.backEndData = new BackEndData();
+            this.pastIngameEvents = new List<DirtyEvent>();
         }
     }
 }

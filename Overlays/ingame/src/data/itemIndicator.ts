@@ -7,25 +7,28 @@ export default class ItemIndicator {
     itemID: number;
     playerID: number;
     animationPhase: number;
+    id: string;
 
     scene: Phaser.Scene;
 
     constructor(itemData: any, playerID: number, scene: IngameScene ) {
         var spriteLoc = PlaceholderConversion.ConvertItem(itemData).sprite;
-        console.log(`Player ${playerID} finish an item`);
+        
         this.playerID = playerID;
         this.animationPhase = 0;
         this.scene = scene;
         this.itemID = itemData.itemID;
+        this.id = itemData.itemID + '_' + playerID;
+        console.log(`Loading Item ${this.id}`);
 
-        scene.load.on(`filecomplete-image-${itemData.itemID}${playerID}`, () => {
+        scene.load.on(`filecomplete-image-${this.id}`, () => {
           var team = playerID > 4;
           var x = team ? 1881 : 39;
           var y = team ? 189 + ((playerID - 5) * 103) : 189 + (playerID * 103);
 
 
           console.log('Loading Item at ' + x + ', ' + y);
-          this.icon = scene.add.image(x, y, itemData.itemID + playerID);
+          this.icon = scene.add.image(x, y, this.id);
           this.icon.displayHeight = 74;
           this.icon.displayWidth = 78;
           this.icon.setMask(scene.players[playerID]);
@@ -35,7 +38,7 @@ export default class ItemIndicator {
           this.showItem();
         });
 
-        scene.load.image(itemData.itemID + playerID, spriteLoc);
+        scene.load.image(this.id, spriteLoc);
         scene.load.start();
         
     }
@@ -56,8 +59,8 @@ export default class ItemIndicator {
 
     private hideItem(){
         var scene = this.scene;
-        var texID = this.itemID+  this.playerID;
         var icon = this.icon;
+        var ctx = this;
         this.scene.tweens.add({
             targets: icon,
             props: {
@@ -68,7 +71,7 @@ export default class ItemIndicator {
             paused: false,
             yoyo: false,
             delay: 2800,
-            onComplete: function() { icon.destroy(); scene.textures.remove(texID + '');}
+            onComplete: function() { icon.destroy(); scene.textures.remove(ctx.id + '');}
           });
     }
 }
