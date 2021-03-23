@@ -9,7 +9,7 @@
     <ApplicationIcon>Assets\Icons\BlueEssence.ico</ApplicationIcon>
     <StartupObject>LeagueBroadcastHub.App</StartupObject>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
-    <Version>0.1.8</Version>
+    <Version>0.1.9</Version>
     <Authors>Lars Eble</Authors>
     <Company>LeagueBroadcastHub</Company>
     <Description>Centralized Broadcast and Overlay solution for League of Legends spectating</Description>
@@ -17,6 +17,8 @@
     <PackageProjectUrl>https://github.com/floh22/LeagueBroadcastHub</PackageProjectUrl>
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
+    <AssemblyVersion>0.1.9.0</AssemblyVersion>
+    <FileVersion>0.1.9.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
