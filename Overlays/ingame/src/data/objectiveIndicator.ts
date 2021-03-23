@@ -11,6 +11,7 @@ export default class ObjectiveIndicator {
   swipeRight: boolean;
   dirMult: number;
   isActive: boolean = false;
+  id: string;
 
   scene: IngameScene;
 
@@ -19,8 +20,9 @@ export default class ObjectiveIndicator {
   x: number;
   y: number;
 
-  constructor(x: number, y: number, scene: IngameScene, icon: string, backgroundBox: string, time: string, gold: number, swipeRight: boolean) {
+  constructor(id: string, x: number, y: number, scene: IngameScene, icon: string, backgroundBox: string, time: string, gold: number, swipeRight: boolean) {
     this.scene = scene;
+    this.id = id;
 
     this.x = x;
     this.y = y;
@@ -85,6 +87,7 @@ export default class ObjectiveIndicator {
   }
 
   updateContent = (gold: number, time: string) => {
+    console.log(`Updating ${this.id} content time: ${time}, gold: ${gold}`);
     this.gold.text = gold + '';
     this.time.text = time;
   }

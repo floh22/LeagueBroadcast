@@ -35,8 +35,6 @@ export default class IngameScene extends Phaser.Scene
 
         this.load.image('champCoverLeft', 'images/ChampCoverLeft.png');
         this.load.image('champCoverRight', 'images/ChampCoverRight.png');
-        //this.load.glsl('bundle', 'images/plasma-bundle.glsl.js');
-        //this.load.glsl('stars', 'images/starfields.glsl.js');
 
         this.load.image('blue', 'images/BlueBG.png');
         this.load.image('red', 'images/RedBG.png');
@@ -55,13 +53,6 @@ export default class IngameScene extends Phaser.Scene
     create ()
     {
         var div = document.getElementById('gameContainer');
-        
-
-        //this.add.shader('RGB Shift Field', 0, 0, 1920, 1080).setOrigin(0);
-
-        //this.add.shader('Plasma', 0, 412, 800, 172).setOrigin(0);
-
-        //this.add.image(400, 300, 'libs');
 
         const blue_1 = this.make.sprite({x: 39 , y: 152 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
         const blue_2 = this.make.sprite({x: 39 , y: 255 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
@@ -77,8 +68,8 @@ export default class IngameScene extends Phaser.Scene
 
         this.players = [blue_1, blue_2, blue_3, blue_4, blue_5, red_1, red_2, red_3, red_4, red_5];
 
-        this.baronIndicator = new ObjectiveIndicator(1800, 55, this, 'baronIcon', 'objectiveBg', '00:00', 0, true );
-        this.elderIndicator = new ObjectiveIndicator(120, 55, this, 'dragonIcon', 'objectiveBgLeft', '00:00', 0, false);
+        this.baronIndicator = new ObjectiveIndicator('baron', 1800, 55, this, 'baronIcon', 'objectiveBg', '00:00', 0, true );
+        this.elderIndicator = new ObjectiveIndicator('elder', 120, 55, this, 'dragonIcon', 'objectiveBgLeft', '00:00', 0, false);
 
         const connect = () => {
             this.ws = new WebSocket(`${variables.useSSL? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
@@ -144,12 +135,10 @@ export default class IngameScene extends Phaser.Scene
             console.log(`${objective} taken`);
             switch (objective) {
                 case 'baron':
-                    //this.baronIndicator = new ObjectiveIndicator(1600, 70, this, 'baronIcon', 'objectiveBg', this.state?.baron.DurationRemaining + '' , this.state?.baron.GoldDifference! + 0, true );
                     this.baronIndicator.updateContent(this.state?.baron.GoldDifference!, this.state?.baron.DurationRemaining!);
                     this.baronIndicator.showContent();
                     break;
                 case 'elder':
-                    //this.elderIndicator = new ObjectiveIndicator(70, 70, this, 'dragonIcon', 'objectiveBgLeft', this.state?.dragon.DurationRemaining + '', -8888, false);
                     this.elderIndicator.updateContent(this.state?.dragon.GoldDifference!, this.state?.dragon.DurationRemaining!);
                     this.elderIndicator.showContent();
                     break;
@@ -249,12 +238,13 @@ export default class IngameScene extends Phaser.Scene
         const OnNewState = (data: any): void => {
             var newState = new StateData(data);
 
+            console.log(`new State: ${JSON.stringify(newState)}`)
             if(this.baronIndicator.isActive) {
                 this.baronIndicator.updateContent(newState.baron.GoldDifference, newState.baron.DurationRemaining);
             }
 
             if(this.elderIndicator.isActive) {
-                this.baronIndicator.updateContent(newState.dragon.GoldDifference, newState.dragon.DurationRemaining);
+                this.elderIndicator.updateContent(newState.dragon.GoldDifference, newState.dragon.DurationRemaining);
             }
 
             this.state = newState;
