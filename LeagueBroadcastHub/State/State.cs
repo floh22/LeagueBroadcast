@@ -307,7 +307,7 @@ namespace LeagueBroadcastHub.State
         public void SetObjectiveData(BackEndObjective back, FrontEndObjective front, double time)
         {
             //Generate text version of time for frontend
-            backEndData.baron.DurationRemaining = time;
+            back.DurationRemaining = time;
             TimeSpan t = TimeSpan.FromSeconds(time);
             front.DurationRemaining = t.ToString(@"mm\:ss");
 

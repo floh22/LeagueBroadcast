@@ -27,10 +27,10 @@
       <Value Profile="(Default)">2000</Value>
     </Setting>
     <Setting Name="doBaronKill" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="doElderKill" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="LogLevel" Type="System.String" Scope="User">
       <Value Profile="(Default)">Verbose</Value>

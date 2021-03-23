@@ -121,7 +121,7 @@ namespace LeagueBroadcastHub.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool doBaronKill {
             get {
                 return ((bool)(this["doBaronKill"]));
@@ -133,7 +133,7 @@ namespace LeagueBroadcastHub.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool doElderKill {
             get {
                 return ((bool)(this["doElderKill"]));

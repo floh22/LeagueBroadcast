@@ -19,7 +19,7 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     WindowStyle="None"
     Closed="OnClose"
-    Background="#70FFFFFF"
+    Background="#BBFFFFFF"
     ResizeMode="CanMinimize">
     <Window.Resources>
         <sc:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
