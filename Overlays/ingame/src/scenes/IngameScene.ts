@@ -152,7 +152,7 @@ export default class IngameScene extends Phaser.Scene
                 case 'baron':
                     this.baronIndicator.hideContent();
                     break;
-                case 'dragon':
+                case 'elder':
                     this.elderIndicator.hideContent();
                     break;
                 default:
@@ -238,7 +238,7 @@ export default class IngameScene extends Phaser.Scene
         const OnNewState = (data: any): void => {
             var newState = new StateData(data);
 
-            console.log(`new State: ${JSON.stringify(newState)}`)
+            //console.log(`new State: ${JSON.stringify(newState)}`)
             if(this.baronIndicator.isActive) {
                 this.baronIndicator.updateContent(newState.baron.GoldDifference, newState.baron.DurationRemaining);
             }
