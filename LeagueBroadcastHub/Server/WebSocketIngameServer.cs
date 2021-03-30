@@ -1,9 +1,9 @@
 ﻿using EmbedIO.WebSockets;
 using LeagueBroadcastHub.Events;
+using LeagueBroadcastHub.Events.Client;
+using LeagueBroadcastHub.Events.Game;
 using LeagueBroadcastHub.Log;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,12 +33,17 @@ namespace LeagueBroadcastHub.Server
                            SendToOthersAsync(context, "Someone joined the chat room."));
             */
             Logging.Info($"New Client {context.Id} connected from {context.Origin}");
+            if(ActiveSettings.current.UsePickBan)
+            {
+                SendEventAsync(context, new NewStateEvent(State.Client.State.data));
+            }
             return Task.CompletedTask;
         }
 
         protected override Task OnClientDisconnectedAsync(IWebSocketContext context)
         {
             //return SendToOthersAsync(context, "Someone left the chat room.");
+            Logging.Info($"Client {context.Id} disconnected");
             return Task.CompletedTask;
         }
 
@@ -54,6 +59,11 @@ namespace LeagueBroadcastHub.Server
 
         public void SendEventToAllAsync(LeagueEvent leagueEvent) {
             BroadcastAsync(JsonConvert.SerializeObject(leagueEvent));
+        }
+
+        public void SendEventAsync(IWebSocketContext context, LeagueEvent leagueEvent)
+        {
+            SendAsync(context, JsonConvert.SerializeObject(leagueEvent));
         }
     }
 }

@@ -1,4 +1,5 @@
 import FrontEndObjective from "./frontEndObjective";
+import GoldEntry from "./goldEntry";
 import Objective from "./objective";
 
 export default class StateData {
@@ -15,6 +16,8 @@ export default class StateData {
     blueGold: number;
     redGold: number;
 
+    goldGraph: GoldEntry[];
+
     constructor(message: any){
         this.dragon = message.dragon;
         this.baron = message.baron;
@@ -24,5 +27,11 @@ export default class StateData {
         this.gamePaused = message.gamePaused;
         this.blueGold = message.blueGold;
         this.redGold = message.redGold;
+        this.goldGraph = [];
+        if(message.goldGraph != undefined && message.goldGraph != null) {
+            for(const [key,value] of Object.entries(message.goldGraph)) {
+                this.goldGraph.push(new GoldEntry(+key, value as number ))
+            }
+        }
     }
 }

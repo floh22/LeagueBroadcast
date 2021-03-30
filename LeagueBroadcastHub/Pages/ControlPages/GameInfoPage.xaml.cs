@@ -1,11 +1,9 @@
-﻿using LeagueBroadcastHub.Data;
+﻿using LeagueBroadcastHub.Data.Game.Containers;
+using LeagueBroadcastHub.Session;
 using LeagueIngameServer;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
 using WPF.JoshSmith.ServiceProviders.UI;
 
@@ -30,9 +28,9 @@ namespace LeagueBroadcastHub.Pages.ControlPages
             BluePlayerList.ItemsSource = PlayerViewModel.BluePlayers;
             RedPlayerList.ItemsSource = PlayerViewModel.RedPlayers;
 
-            if (LeagueIngameController.currentlyIngame && !LeagueIngameController.paused && PlayerViewModel.BluePlayers.Count == 0)
+            if (BroadcastHubController.CurrentLeagueState.Equals("InProgress") && !GameController.IsPaused && PlayerViewModel.BluePlayers.Count == 0)
             {
-                var gameState = LeagueIngameController.Instance.gameController.gameState;
+                var gameState = BroadcastHubController.Instance.gameController.gameState;
                 InitPlayers(gameState.blueTeam);
                 InitPlayers(gameState.redTeam);
             }

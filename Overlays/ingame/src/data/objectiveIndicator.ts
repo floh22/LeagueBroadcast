@@ -1,5 +1,6 @@
 import 'phaser';
 import IngameScene from '~/scenes/IngameScene';
+import FrontEndObjective from './frontEndObjective';
 
 export default class ObjectiveIndicator {
   backgroundBox: Phaser.GameObjects.Image;
@@ -86,10 +87,19 @@ export default class ObjectiveIndicator {
 
   }
 
-  updateContent = (gold: number, time: string) => {
-    console.log(`Updating ${this.id} content time: ${time}, gold: ${gold}`);
-    this.gold.text = gold + '';
-    this.time.text = time;
+  updateContent = (objective: FrontEndObjective) => {
+    if(objective === undefined || objective === null ) {
+      if(this.isActive) {
+        this.hideContent();
+      }
+      return;
+    }
+    if(!this.isActive) {
+      this.showContent();
+    }
+    console.log(`Updating ${this.id} content time: ${objective.DurationRemaining}, gold: ${objective.GoldDifference}`);
+    this.gold.text = objective.GoldDifference + '';
+    this.time.text = objective.DurationRemaining;
   }
 
 
@@ -99,22 +109,21 @@ export default class ObjectiveIndicator {
     }
     console.log("Showing objective content");
     this.isActive = true;
+    var ctx = this;
     this.scene.tweens.add({
       targets: this.icon,
       alpha: 1,
       paused: false,
       yoyo: false,
-      duration: 250
-    });
-
-    this.scene.tweens.add({
-      targets: [this.backgroundBox, this.gold, this.time, this.goldIcon, this.cdrIcon],
-      props: {
-        x: { value: '+=' + 200 * this.dirMult, duration: 1000, ease: 'Cubic.easeOut' }
-      },
-      paused: false,
-      yoyo: false,
-      delay: 250
+      duration: 250,
+      onComplete: function() {ctx.scene.tweens.add({
+        targets: [ctx.backgroundBox, ctx.gold, ctx.time, ctx.goldIcon, ctx.cdrIcon],
+        props: {
+          x: { value: '+=' + 200 * ctx.dirMult, duration: 1000, ease: 'Cubic.easeOut' }
+        },
+        paused: false,
+        yoyo: false,
+      });}
     });
 
   }

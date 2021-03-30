@@ -85,30 +85,6 @@ namespace LeagueBroadcastHub.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://ddragon.leagueoflegends.com/cdn")]
-        public string CDN {
-            get {
-                return ((string)(this["CDN"]));
-            }
-            set {
-                this["CDN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("latest")]
-        public string Version {
-            get {
-                return ((string)(this["Version"]));
-            }
-            set {
-                this["Version"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2000")]
         public int ItemGoldCutoff {
             get {
@@ -152,6 +128,54 @@ namespace LeagueBroadcastHub.Properties {
             }
             set {
                 this["LogLevel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UsePickBan {
+            get {
+                return ((bool)(this["UsePickBan"]));
+            }
+            set {
+                this["UsePickBan"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DelayPickBan {
+            get {
+                return ((bool)(this["DelayPickBan"]));
+            }
+            set {
+                this["DelayPickBan"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public double DelayPBValue {
+            get {
+                return ((double)(this["DelayPBValue"]));
+            }
+            set {
+                this["DelayPBValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseIngame {
+            get {
+                return ((bool)(this["UseIngame"]));
+            }
+            set {
+                this["UseIngame"] = value;
             }
         }
     }

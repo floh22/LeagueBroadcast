@@ -1,4 +1,5 @@
 ﻿using LeagueBroadcastHub.Data;
+using LeagueBroadcastHub.Data.Game.RiotContainers;
 using LeagueBroadcastHub.Log;
 using LeagueBroadcastHub.Pages;
 using LeagueBroadcastHub.Session;
@@ -23,7 +24,7 @@ namespace LeagueBroadcastHub
     public partial class MainWindow : Window
     {
 
-        private LeagueIngameController ingameController;
+        private BroadcastHubController ingameController;
 
         public MainWindow()
         {
@@ -39,7 +40,7 @@ namespace LeagueBroadcastHub
 
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
             Navigate(NavView.SelectedItem);
-            ingameController = new LeagueIngameController();
+            ingameController = new BroadcastHubController();
             ingameController.Start();
 
             Loaded += delegate
@@ -174,23 +175,31 @@ namespace LeagueBroadcastHub
         {
             ActiveSettings.current.UseOCR = Properties.Settings.Default.useOCR;
             ActiveSettings.current.AppMode = Properties.Settings.Default.appMode;
+            ActiveSettings.current.UsePickBan = Properties.Settings.Default.UsePickBan;
+            ActiveSettings.current.UseIngame = Properties.Settings.Default.UseIngame;
+            ActiveSettings.current.DelayPickBan = Properties.Settings.Default.DelayPickBan;
+            ActiveSettings.current.DelayPickBanValue = Properties.Settings.Default.DelayPBValue;
         }
 
         private void OnClose(object sender, EventArgs e)
         {
             //Stop Frontend
-            LeagueIngameController.Instance.OnAppExit();
+            BroadcastHubController.Instance.OnAppExit();
 
+            Logging.Info("Saving Settings");
             //LBH Settings
             Properties.Settings.Default.useOCR = ActiveSettings._useOCR;
-            Properties.Settings.Default.resetPlayerPositions = ActiveSettings._resetPlayerPositions;
             Properties.Settings.Default.appMode = ActiveSettings._appMode;
+            Properties.Settings.Default.UsePickBan = ActiveSettings._usePickBan;
+            Properties.Settings.Default.UseIngame = ActiveSettings._useIngame;
+            Properties.Settings.Default.DelayPickBan = ActiveSettings._delayPickBan;
+            Properties.Settings.Default.DelayPBValue = ActiveSettings._delayPickBanValue;
 
             //Event Settings
-            Properties.Settings.Default.doLevelUp = GameController.DoPlayerLevelUp;
-            Properties.Settings.Default.doItemsCompleted = GameController.DoItemCompleted;
-            Properties.Settings.Default.doBaronKill = GameController.DoBaronKill;
-            Properties.Settings.Default.doElderKill = GameController.DoElderKill;
+            Properties.Settings.Default.doLevelUp = GameController.CurrentSettings.LevelUp;
+            Properties.Settings.Default.doItemsCompleted = GameController.CurrentSettings.Items;
+            Properties.Settings.Default.doBaronKill = GameController.CurrentSettings.Baron;
+            Properties.Settings.Default.doElderKill = GameController.CurrentSettings.Elder;
 
             Properties.Settings.Default.Save();
             Logging.Info("League Broadcast Hub closed");
@@ -223,7 +232,7 @@ namespace LeagueBroadcastHub
             currentCount = current;
             totalCount = total;
             if (total != 0)
-                CompletionPercentage = (double)current / (double)total;
+                CompletionPercentage = ((double)current / (double)total) * 100;
             else
                 CompletionPercentage = 0;
             OnPropertyChanged("CompletionPercentage");
@@ -249,13 +258,20 @@ namespace LeagueBroadcastHub
         public static bool _useOCR;
         public static bool _resetPlayerPositions;
         public static byte _appMode;
+        public static bool _useIngame;
+        public static bool _usePickBan;
+        public static bool _delayPickBan;
+        public static double _delayPickBanValue;
 
         public static ActiveSettings current = new ActiveSettings();
 
         public bool UseOCR { get { return _useOCR; } set { _useOCR = value; Properties.Settings.Default.useOCR = value; OnPropertyChanged("UseOCR"); System.Diagnostics.Debug.WriteLine("OCR Toggled"); } }
         public bool ResetPlayerPositions { get { return _resetPlayerPositions; } set { _resetPlayerPositions = value; OnPropertyChanged("ResetPlayerPositions"); } }
-
         public byte AppMode { get { return _appMode; } set { _appMode = value; Properties.Settings.Default.appMode = value; OnPropertyChanged("AppMode"); } }
+        public bool UseIngame { get { return _useIngame; } set { _useIngame = value; OnPropertyChanged("UseIngame"); } }
+        public bool UsePickBan { get { return _usePickBan; }  set { _usePickBan = value; OnPropertyChanged("UsePickBan"); } }
+        public bool DelayPickBan { get { return _delayPickBan; } set { _delayPickBan = value; OnPropertyChanged("DelayPickBan"); } }
+        public double DelayPickBanValue { get { return _delayPickBanValue; } set { _delayPickBanValue = value; OnPropertyChanged("DelayPickBanValue"); } }
     }
 
     public class PlayerViewModel : ViewModelBase, INotifyPropertyChanged
@@ -276,7 +292,7 @@ namespace LeagueBroadcastHub
         public bool HasBaron
         {
             get => HasBaronText == "Baron Active";
-            set => HasBaronText = value ? "Baron Active" : "No Baron";
+            set { HasBaronText = value ? "Baron Active" : ""; OnPropertyChanged("HasBaronText"); }
         }
 
         public int TeamID { get; set; }
@@ -314,7 +330,7 @@ namespace LeagueBroadcastHub
             int higherIdx = Math.Max(e.OldIndex, e.NewIndex);
             int lowerIdx = Math.Min(e.OldIndex, e.NewIndex);
 
-            var team = e.DataItem.TeamID == 0 ? LeagueIngameController.Instance.gameController.gameState.blueTeam : LeagueIngameController.Instance.gameController.gameState.redTeam;
+            var team = e.DataItem.TeamID == 0 ? BroadcastHubController.Instance.gameController.gameState.blueTeam : BroadcastHubController.Instance.gameController.gameState.redTeam;
 
             Swap<Player>(team.players, e.OldIndex, e.NewIndex);
 

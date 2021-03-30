@@ -59,29 +59,30 @@ namespace LeagueBroadcastHub.Pages.ControlPages
             switch (s.Tag)
             {
                 case ("levelUp"):
-                    GameController.DoPlayerLevelUp = true;
+                    GameController.CurrentSettings.LevelUp = true;
                     break;
                 case ("itemFinish"):
-                    GameController.DoItemCompleted = true;
+                    GameController.CurrentSettings.Items = true;
                     break;
                 case ("baronPlay"):
                     if (!ActiveSettings._useOCR)
                         return;
-                    GameController.DoBaronKill = true;
+                    GameController.CurrentSettings.Baron = true;
                     break;
                 case ("elderPlay"):
                     if (!ActiveSettings._useOCR)
                         return;
-                    GameController.DoElderKill = true;
+                    GameController.CurrentSettings.Elder = true;
                     break;
                 case ("teamInfo"):
-                    LeagueIngameController.Instance.gameController.OnBaronKilled();
+                    BroadcastHubController.Instance.gameController.OnBaronKilled();
                     break;
                 case ("teamWR"):
                     break;
                 case ("fullRelativeGoldGraph"):
                     if (!ActiveSettings._useOCR)
                         return;
+                    GameController.CurrentSettings.GoldGraph = true;
                     break;
                 case ("inhibs"):
                     break;
@@ -102,23 +103,24 @@ namespace LeagueBroadcastHub.Pages.ControlPages
             switch (s.Tag)
             {
                 case ("levelUp"):
-                    GameController.DoPlayerLevelUp = false;
+                    GameController.CurrentSettings.LevelUp = false;
                     break;
                 case ("itemFinish"):
-                    GameController.DoItemCompleted = false;
+                    GameController.CurrentSettings.Items = false;
                     break;
                 case ("baronPlay"):
-                    GameController.DoBaronKill = false;
+                    GameController.CurrentSettings.Baron = false;
                     break;
                 case ("elderPlay"):
-                    GameController.DoElderKill = false;
+                    GameController.CurrentSettings.Elder = false;
                     break;
                 case ("teamInfo"):
-                    LeagueIngameController.Instance.gameController.OnBaronDespawn();
+                    BroadcastHubController.Instance.gameController.OnBaronDespawn();
                     break;
                 case ("teamWR"):
                     break;
                 case ("fullRelativeGoldGraph"):
+                    GameController.CurrentSettings.GoldGraph = false;
                     break;
                 case ("inhibs"):
                     break;
@@ -153,22 +155,23 @@ namespace LeagueBroadcastHub.Pages.ControlPages
                 switch (b.Tag)
                 {
                     case ("levelUp"):
-                        b.IsChecked = GameController.DoPlayerLevelUp;
+                        b.IsChecked = GameController.CurrentSettings.LevelUp;
                         break;
                     case ("itemFinish"):
-                        b.IsChecked = GameController.DoItemCompleted;
+                        b.IsChecked = GameController.CurrentSettings.Items;
                         break;
                     case ("baronPlay"):
-                        b.IsChecked = GameController.DoBaronKill;
+                        b.IsChecked = GameController.CurrentSettings.Baron;
                         break;
                     case ("elderPlay"):
-                        b.IsChecked = GameController.DoElderKill;
+                        b.IsChecked = GameController.CurrentSettings.Elder;
                         break;
                     case ("teamInfo"):
                         break;
                     case ("teamWR"):
                         break;
                     case ("fullRelativeGoldGraph"):
+                        b.IsChecked = GameController.CurrentSettings.GoldGraph;
                         break;
                     case ("inhibs"):
                         break;

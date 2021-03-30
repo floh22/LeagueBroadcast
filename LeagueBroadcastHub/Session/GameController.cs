@@ -1,8 +1,10 @@
 ﻿using LeagueBroadcastHub.Data;
-using LeagueBroadcastHub.Data.Containers;
-using LeagueBroadcastHub.Events;
-using LeagueBroadcastHub.Events.FrontendEvents;
-using LeagueBroadcastHub.Events.RiotEvents;
+using LeagueBroadcastHub.Data.Game.Containers;
+using LeagueBroadcastHub.Data.Game.Containers.Objectives;
+using LeagueBroadcastHub.Data.Game.RiotContainers;
+using LeagueBroadcastHub.Data.Provider;
+using LeagueBroadcastHub.Events.Game.FrontendEvents;
+using LeagueBroadcastHub.Events.Game.RiotEvents;
 using LeagueBroadcastHub.Log;
 using LeagueBroadcastHub.Pages.ControlPages;
 using LeagueBroadcastHub.Server;
@@ -14,22 +16,20 @@ using System.Linq;
 
 namespace LeagueBroadcastHub.Session
 {
-    class GameController
+    class GameController : ITickable
     {
         public LeagueDataProvider LoLDataProvider;
         public OCRDataProvider OCRDataProvider;
 
-        public State.State gameState;
+        public State.Game.State gameState;
         public GameMetaData gameData;
 
+        private bool GameFound = false;
+
         //Events
-        public static bool DoPlayerLevelUp;
+        public static CurrentSettings CurrentSettings = new CurrentSettings();
 
-        public static bool DoItemCompleted;
-
-        public static bool DoElderKill;
-
-        public static bool DoBaronKill;
+        public static bool IsPaused;
 
         public GameController()
         {
@@ -38,36 +38,45 @@ namespace LeagueBroadcastHub.Session
 
             LoLDataProvider.Init();
 
-            this.gameState = new State.State(this);
+            this.gameState = new State.Game.State(this);
             this.gameData = new GameMetaData();
 
-            LeagueIngameController.gameStop += OnGameStop;
+            StateController.GameStop += OnGameStop;
 
             LoadSettings();
-        }
-
-        public void SetGameData(GameMetaData gameData)
-        {
-            this.gameData = gameData;
         }
 
         public void InitGameState()
         {
             this.gameState.ResetState();
-            EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
+            this.GameFound = false;
         }
 
-        public void DoTick()
+        public async void DoTick()
         {
             //Check if ingame and get game meta data
-            var newGameData = LoLDataProvider.GetGameData().Result;
-            if (newGameData == null || LeagueIngameController.currentlyIngame == false)
+            var newGameData = await LoLDataProvider.GetGameData();
+
+            //Discard late rejected responses by API
+            if (BroadcastHubController.CurrentLeagueState != "InProgress")
+                return;
+
+            //Wait until the game has been found
+            if (!GameFound)
             {
+                if(newGameData == null)
+                    return;
+                GameFound = true;
+                gameData = newGameData;
+                gameData.gameTime = 0;
+                EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
+            }
+            
+            if (newGameData == null )
+            {
+                Logging.Verbose("Game exited early");
                 
-                LeagueIngameController.currentlyIngame = false;
-                LeagueIngameController.gameStop.Invoke(this, EventArgs.Empty);
-                EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
-                Logging.Info("Game ended ");
+                StateController.GameStop.Invoke(this, EventArgs.Empty);
                 return;
             }
 
@@ -79,7 +88,7 @@ namespace LeagueBroadcastHub.Session
                 if(!gameState.stateData.gamePaused)
                 {
                     gameState.stateData.gamePaused = true;
-                    LeagueIngameController.paused = true;
+                    IsPaused = true;
                     Logging.Info("Game Paused");
                     EmbedIOServer.socketServer.SendEventToAllAsync(new GamePause(gameData.gameTime));
                 }
@@ -89,7 +98,7 @@ namespace LeagueBroadcastHub.Session
             if(gameState.stateData.gamePaused)
             {
                 gameState.stateData.gamePaused = false;
-                LeagueIngameController.paused = false;
+                IsPaused = false;
                 Logging.Info("Game Unpaused");
                 EmbedIOServer.socketServer.SendEventToAllAsync(new GameUnpause(gameData.gameTime));
             }
@@ -101,7 +110,9 @@ namespace LeagueBroadcastHub.Session
             {
                 Logging.Info("Scrolled back in timeline, reverting state");
                 gameState.pastIngameEvents = gameState.pastIngameEvents.Where((e) => e.EventTime < newGameData.gameTime).ToList();
-                if(backDrake.DurationRemaining - timeDiff > 150)
+                gameState.blueTeam.goldHistory = gameState.blueTeam.goldHistory.Where((e) => e.Key < newGameData.gameTime).ToDictionary(v => v.Key, v => v.Value);
+                gameState.redTeam.goldHistory = gameState.redTeam.goldHistory.Where((e) => e.Key < newGameData.gameTime).ToDictionary(v => v.Key, v => v.Value);
+                if (backDrake.DurationRemaining - timeDiff > 150)
                 {
                     backDrake.DurationRemaining = 0;
                     gameState.blueTeam.hasElder = false;
@@ -171,8 +182,8 @@ namespace LeagueBroadcastHub.Session
             }
             try
             {
-                gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, new List<Data.Containers.Objectives.Objective>());
-                gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, new List<Data.Containers.OCRTeam>());
+                gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, new List<Objective>());
+                gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, new List<OCRTeam>());
             } catch(Exception canceled)
             {
                 Logging.Warn(canceled.Message);
@@ -184,16 +195,17 @@ namespace LeagueBroadcastHub.Session
 
         private void LoadSettings()
         {
-            Logging.Verbose("Settings loaded");
-            DoPlayerLevelUp = Properties.Settings.Default.doLevelUp;
-            DoItemCompleted = Properties.Settings.Default.doItemsCompleted;
-            DoBaronKill = Properties.Settings.Default.doBaronKill;
-            DoElderKill = Properties.Settings.Default.doElderKill;
+            Logging.Verbose("Loading Ingame Settings");
+            CurrentSettings.LevelUp = Properties.Settings.Default.doLevelUp;
+            CurrentSettings.Items = Properties.Settings.Default.doItemsCompleted;
+            CurrentSettings.Baron = Properties.Settings.Default.doBaronKill;
+            CurrentSettings.Elder = Properties.Settings.Default.doElderKill;
+            Logging.Verbose("Ingame Settings loaded");
         }
 
         public virtual void OnLevelUp(LevelUpEventArgs e)
         {
-            if (!DoPlayerLevelUp)
+            if (!CurrentSettings.LevelUp)
                 return;
             Logging.Info("Player " + e.playerId + " lvl up");
             EmbedIOServer.socketServer.SendEventToAllAsync(new PlayerLevelUp(e.playerId, e.level));
@@ -201,7 +213,7 @@ namespace LeagueBroadcastHub.Session
 
         public virtual void OnItemCompleted(ItemCompletedEventArgs e)
         {
-            if (!DoPlayerLevelUp)
+            if (!CurrentSettings.LevelUp)
                 return;
             Logging.Info("Player " + e.playerId + " finished Item " + e.itemData.itemID);
             EmbedIOServer.socketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
@@ -209,42 +221,49 @@ namespace LeagueBroadcastHub.Session
 
         public virtual void OnElderKilled()
         {
-            if (!DoElderKill)
+            if (!CurrentSettings.Elder)
                 return;
-            EmbedIOServer.socketServer.SendEventToAllAsync(new ObjectiveKilled("elder", -1));
+            //EmbedIOServer.socketServer.SendEventToAllAsync(new ObjectiveKilled("elder", -1));
+            CurrentSettings.SendElder = true;
         }
 
         public virtual void OnElderDespawn()
         {
-            if (!DoElderKill)
+            if (!CurrentSettings.Elder)
                 return;
 
             Logging.Info("Elder despawned");
-            EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("elder", -1));
+            //EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("elder", -1));
+            CurrentSettings.SendElder = false;
         }
 
         public virtual void OnBaronKilled()
         {
-            if (!DoBaronKill)
+            if (!CurrentSettings.Baron)
                 return;
-            
-            EmbedIOServer.socketServer.SendEventToAllAsync(new ObjectiveKilled("baron", 1));
+
+            //EmbedIOServer.socketServer.SendEventToAllAsync(new ObjectiveKilled("baron", 1));
+            CurrentSettings.SendBaron = true;
         }
 
         public virtual void OnBaronDespawn()
         {
-            if (!DoBaronKill)
+            if (!CurrentSettings.Baron)
                 return;
             Logging.Info("Baron despawned");
-            EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("baron", -1));
+            //EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("baron", -1));
+            CurrentSettings.SendBaron = false;
         }
 
         private void OnGameStop(object sender, EventArgs e)
         {
+            BroadcastHubController.CurrentLeagueState = "None";
             GameInfoPage.ClearPlayers();
-
+            BroadcastHubController.ToTick.Remove(this);
             OnBaronDespawn();
             OnElderDespawn();
+            EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+            EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
             Logging.Info("Game ended");
         }
     }
@@ -271,6 +290,21 @@ namespace LeagueBroadcastHub.Session
             this.playerId = playerId;
             this.itemData = itemData;
         }
+    }
+
+    public class CurrentSettings
+    {
+        public bool Baron;
+        public bool SendBaron;
+        public bool Elder;
+        public bool SendElder;
+        public bool Items;
+        public bool LevelUp;
+        public bool GoldGraph;
+        public bool TeamNames;
+        public bool TeamStats;
+        public bool Inhibs;
+        public bool CS;
     }
 
 }

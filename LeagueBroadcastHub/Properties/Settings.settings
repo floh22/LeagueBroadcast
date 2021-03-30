@@ -17,12 +17,6 @@
     <Setting Name="doItemsCompleted" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="CDN" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://ddragon.leagueoflegends.com/cdn</Value>
-    </Setting>
-    <Setting Name="Version" Type="System.String" Scope="User">
-      <Value Profile="(Default)">latest</Value>
-    </Setting>
     <Setting Name="ItemGoldCutoff" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2000</Value>
     </Setting>
@@ -34,6 +28,18 @@
     </Setting>
     <Setting Name="LogLevel" Type="System.String" Scope="User">
       <Value Profile="(Default)">Verbose</Value>
+    </Setting>
+    <Setting Name="UsePickBan" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DelayPickBan" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DelayPBValue" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
+    <Setting Name="UseIngame" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

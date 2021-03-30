@@ -1,6 +1,9 @@
-﻿using LeagueBroadcastHub.Log;
+﻿using LeagueBroadcastHub.Data.Provider;
+using LeagueBroadcastHub.Log;
 using LeagueBroadcastHub.Pages;
+using LeagueBroadcastHub.Session;
 using LeagueIngameServer;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +24,7 @@ namespace LeagueBroadcastHub
     /// <summary>
     /// Interaction logic for SettingsPage.xaml
     /// </summary>
-    public partial class SettingsPage : Page
+    public partial class SettingsPage : System.Windows.Controls.Page
     {
 
         public SettingsPage()
@@ -48,6 +51,17 @@ namespace LeagueBroadcastHub
             }
 
             LoggingSelection.SelectedIndex = (int)((Logging.LogLevel)Enum.Parse(typeof(Logging.LogLevel), Properties.Settings.Default.LogLevel));
+            delayValue.Value = ActiveSettings._delayPickBanValue;
+        }
+
+        private void window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBox textBox = Keyboard.FocusedElement as TextBox;
+            NumberBox numberBox = Keyboard.FocusedElement as NumberBox;
+            if (textBox != null || numberBox != null)
+            {
+                Keyboard.ClearFocus();
+            }
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -76,5 +90,41 @@ namespace LeagueBroadcastHub
             }
         }
 
+        private void PickBanToggled(object sender, RoutedEventArgs e)
+        {
+            if (ActiveSettings._usePickBan == StateController.CurrentSettings.PickBan)
+                return;
+            if (ActiveSettings._usePickBan)
+                StateController.EnableChampSelect();
+            else 
+                StateController.DisableChampSelect();
+        }
+
+        private void IngameToggled(object sender, RoutedEventArgs e)
+        {
+            if (ActiveSettings._useIngame == StateController.CurrentSettings.Ingame)
+                return;
+            if (ActiveSettings._useIngame)
+                StateController.EnableIngame();
+            else
+                StateController.DisableIngame();
+        }
+        private void DelayToggled(object sender, RoutedEventArgs e)
+        {
+            if (ActiveSettings._delayPickBan)
+                BroadcastHubController.Instance.champSelectConnector.UseDelayPickBan();
+            else
+                BroadcastHubController.Instance.champSelectConnector.UseDirectPickBan();
+        }
+
+        private void delayValue_ValueChanged(ModernWpf.Controls.NumberBox sender, ModernWpf.Controls.NumberBoxValueChangedEventArgs args)
+        {
+            if(args.NewValue != ActiveSettings._delayPickBanValue)
+            {
+                Logging.Verbose($"Champ select delay changed to {args.NewValue}");
+                ActiveSettings._delayPickBanValue = args.NewValue;
+                Properties.Settings.Default.DelayPBValue = args.NewValue;
+            }
+        }
     }
 }

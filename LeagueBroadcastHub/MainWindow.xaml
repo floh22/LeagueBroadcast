@@ -101,9 +101,15 @@
                 <ui:NavigationViewItemHeader Content="Main"/>
                 <ui:NavigationViewItem Name="GameInfo" Tag="{x:Type controlpages:GameInfoPage}" Content="Game Information">
                     <ui:NavigationViewItem.Icon>
-                        <ui:BitmapIcon UriSource="Assets/Icons/LeagueNew.ico" />
+                        <ui:BitmapIcon UriSource="Assets/Icons/JglIcon.ico" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Name="ClientInfo" Tag="{x:Type controlpages:ChampSelectPage}" Content="PickBan Information">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:BitmapIcon UriSource="Assets/Icons/MidIcon.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItemSeparator/>
                 <ui:NavigationViewItem Content="Broadcast Triggers" Tag="{x:Type controlpages:ControlsPage}" Icon="PreviewLink"/>
                 <ui:NavigationViewItem Content="Manual Broadcast Info" Tag="{x:Type controlpages:ManualEventsPage}" Icon="AllApps"/>
                 <ui:NavigationViewItemSeparator/>

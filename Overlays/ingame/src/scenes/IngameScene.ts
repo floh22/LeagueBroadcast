@@ -5,6 +5,9 @@ import ObjectiveIndicator from '~/data/objectiveIndicator';
 import StateData from '~/data/stateData';
 import PlaceholderConversion from '~/PlaceholderConversion';
 import ItemIndicator from '~/data/itemIndicator';
+import GraphPopUp from '~/data/graphPopUp';
+import Phaser from 'phaser';
+import GoldEntry from '~/data/goldEntry';
 
 export default class IngameScene extends Phaser.Scene
 {
@@ -12,8 +15,11 @@ export default class IngameScene extends Phaser.Scene
     players: Phaser.Display.Masks.BitmapMask[];
     baronIndicator!: ObjectiveIndicator;
     elderIndicator!: ObjectiveIndicator;
+    goldGraph!: GraphPopUp;
 
     state!: StateData | null;
+
+    graphics!: Phaser.GameObjects.Graphics;
     
 
     constructor ()
@@ -30,24 +36,28 @@ export default class IngameScene extends Phaser.Scene
             }
         };
 
+        //@ts-ignore
+        this.graphics = this.add.graphics();
+
         // @ts-ignore
         this.load.rexWebFont(config);
+        this.load.script('chartjs', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js');
+        //this.load.script('chartjs', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.0-rc/chart.min.js');
 
-        this.load.image('champCoverLeft', 'images/ChampCoverLeft.png');
-        this.load.image('champCoverRight', 'images/ChampCoverRight.png');
+        this.load.image('champCoverLeft', 'frontend/images/ChampCoverLeft.png');
+        this.load.image('champCoverRight', 'frontend/images/ChampCoverRight.png');
 
-        this.load.image('blue', 'images/BlueBG.png');
-        this.load.image('red', 'images/RedBG.png');
+        this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
+        this.load.image('objectiveBg', 'frontend/backgrounds/ObjectiveBG.png');
+        this.load.image('objectiveMask', 'frontend/backgrounds/ObjectiveMask.png');
 
-        this.load.image('baronIcon', 'backgrounds/BaronIcon.png');
-        this.load.image('objectiveBg', 'backgrounds/ObjectiveBG.png');
-        this.load.image('objectiveMask', 'backgrounds/ObjectiveMask.png');
+        this.load.image('dragonIcon', 'frontend/backgrounds/DragonIcon.png');
+        this.load.image('objectiveBgLeft', 'frontend/backgrounds/ObjectiveBGLeft.png');
 
-        this.load.image('dragonIcon', 'backgrounds/DragonIcon.png');
-        this.load.image('objectiveBgLeft', 'backgrounds/ObjectiveBGLeft.png');
+        this.load.image('goldIcon', 'frontend/images/goldicon.png');
+        this.load.image('cdr', 'frontend/images/cdr.png');
 
-        this.load.image('goldIcon', 'images/goldicon.png');
-        this.load.image('cdr', 'images/cdr.png');
+        this.load.image('centerCover', 'frontend/backgrounds/CenterCover.png');
     }
 
     create ()
@@ -70,6 +80,8 @@ export default class IngameScene extends Phaser.Scene
 
         this.baronIndicator = new ObjectiveIndicator('baron', 1800, 55, this, 'baronIcon', 'objectiveBg', '00:00', 0, true );
         this.elderIndicator = new ObjectiveIndicator('elder', 120, 55, this, 'dragonIcon', 'objectiveBgLeft', '00:00', 0, false);
+        //Color calc breaks with no data so init with dummy data
+        this.goldGraph = new GraphPopUp(this, [new GoldEntry(0,100), new GoldEntry(1,-100)]);
 
         const connect = () => {
             this.ws = new WebSocket(`${variables.useSSL? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
@@ -91,7 +103,7 @@ export default class IngameScene extends Phaser.Scene
 
                 if (data.eventType) {
                     switch (data.eventType) {
-                        case 'Heartbeat':
+                        case 'GameHeartbeat':
                             OnNewState(data.stateData);
                             break;
                         case 'PlayerLevelUp':
@@ -99,10 +111,11 @@ export default class IngameScene extends Phaser.Scene
                             console.log('Level Up Event with ID: ' + data.playerId + ', lvl: ' + data.level);
                             break;
                         case 'ObjectiveKilled':
-                            console.log(JSON.stringify(data));
+                            console.log('Legacy objective kill: ' + JSON.stringify(data));
                             showObjective(data.objective);
                             break;
                         case 'BuffDespawn':
+                            console.log('Legacy objective despawn: ' + JSON.stringify(data)); 
                             hideObjective(data.objective);
                             break;
                         case 'ItemCompleted':
@@ -113,6 +126,7 @@ export default class IngameScene extends Phaser.Scene
                             this.state = null;
                             this.baronIndicator.hideContent();
                             this.elderIndicator.hideContent();
+                            this.goldGraph.Disable();
                             break;
                         case 'GameStart':
                             console.log('Game Start');
@@ -120,6 +134,13 @@ export default class IngameScene extends Phaser.Scene
                         case 'GamePause':
                             break;
                         case 'GameUnpause':
+                            break;
+                        case 'newState':
+                        case 'newAction':
+                        case 'heartbeat':
+                        case 'champSelectStart':
+                        case 'champSelectEnd':
+                            //pick/ban event, ignore
                             break;
                         default:
                             console.log('[LBH] Unknown event type: ' + JSON.stringify(data));
@@ -135,11 +156,11 @@ export default class IngameScene extends Phaser.Scene
             console.log(`${objective} taken`);
             switch (objective) {
                 case 'baron':
-                    this.baronIndicator.updateContent(this.state?.baron.GoldDifference!, this.state?.baron.DurationRemaining!);
+                    this.baronIndicator.updateContent(this.state?.baron!);
                     this.baronIndicator.showContent();
                     break;
                 case 'elder':
-                    this.elderIndicator.updateContent(this.state?.dragon.GoldDifference!, this.state?.dragon.DurationRemaining!);
+                    this.elderIndicator.updateContent(this.state?.dragon!);
                     this.elderIndicator.showContent();
                     break;
                 default:
@@ -166,7 +187,8 @@ export default class IngameScene extends Phaser.Scene
             var y = team ? 289 + ((playerId - 5) * 103) : 289 + (playerId * 103);
             console.log(x + ', ' + y);
             var finalY = y - 100;
-            var colorRect = this.add.image(x, y, team ? 'red' : 'blue');
+            //var colorRect = this.add.image(x, y, team ? 'red' : 'blue');
+            var colorRect = this.add.rectangle(x,y,100,100, team? variables.redColor : variables.blueColor);
 
             var textX;
             switch (level) {
@@ -232,20 +254,17 @@ export default class IngameScene extends Phaser.Scene
                 delay: 3750,
                 onComplete: function() {levelText.destroy();}
             });
-            
+
         };
 
         const OnNewState = (data: any): void => {
             var newState = new StateData(data);
 
-            //console.log(`new State: ${JSON.stringify(newState)}`)
-            if(this.baronIndicator.isActive) {
-                this.baronIndicator.updateContent(newState.baron.GoldDifference, newState.baron.DurationRemaining);
-            }
+            //console.log(newState)
+            this.baronIndicator.updateContent(newState.baron);
 
-            if(this.elderIndicator.isActive) {
-                this.elderIndicator.updateContent(newState.dragon.GoldDifference, newState.dragon.DurationRemaining);
-            }
+            this.elderIndicator.updateContent(newState.dragon);
+            this.goldGraph.Update(newState.goldGraph);
 
             this.state = newState;
         }

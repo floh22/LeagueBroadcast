@@ -44,16 +44,18 @@ namespace LeagueBroadcastHub.Server
             var server = new WebServer(o => o
                     .WithUrlPrefix(url)
                     .WithMode(HttpListenerMode.EmbedIO))
-                // First, we will configure our web server by adding Modules.
+                // Add modules
                 .WithLocalSessionManager()
                 .WithCors()
                 .WithModule(socketServer = new WebSocketIngameServer("/api"))
                 .WithModule(new FileModule("/cache", 
                     new FileSystemProvider(webRoot, false)) { 
                         DirectoryLister = DirectoryLister.Html })
-                //.WithStaticFolder("/", $"{Directory.GetCurrentDirectory()}cache", true, m => m
-                //    .WithContentCaching(true)) // Add static files after other modules to avoid conflicts
-                //.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { Message = "Error" })))
+                // Static files last to avoid conflicts
+                .WithStaticFolder("/frontend", $"{Directory.GetCurrentDirectory()}\\frontend\\ingame", true, m => m
+                    .WithContentCaching(true))
+                .WithStaticFolder("/", $"{Directory.GetCurrentDirectory()}\\frontend\\pickban", true, m => m
+                    .WithContentCaching(true))
                 ;
 
             // Listen for state changes.

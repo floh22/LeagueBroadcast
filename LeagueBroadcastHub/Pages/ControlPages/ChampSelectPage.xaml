@@ -1,0 +1,61 @@
+﻿<Page x:Class="LeagueBroadcastHub.Pages.ControlPages.ChampSelectPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LeagueBroadcastHub.Pages.ControlPages"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ChampSelectPage"
+      MouseDown="window_MouseDown">
+
+    <Page.Resources>
+
+        <ui:StackLayout x:Key="HorizontalStackLayout"
+                        Orientation="Horizontal"/>
+        <ui:StackLayout x:Key="VerticalStackLayout"
+                        Orientation="Vertical"
+                        Spacing="0" />
+
+    </Page.Resources>
+
+    <Grid>
+        <ScrollViewer
+            x:Name="contentSV"
+            Grid.Row="1"
+            Padding="20,0,0,0"
+            IsTabStop="False"
+            VerticalScrollBarVisibility="Auto"
+            CanContentScroll="True">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SimpleStackPanel x:Name="BlueTeamConfig" HorizontalAlignment="Left" DataContext="{Binding Source={x:Static local:ChampSelectTeamViewModel.BlueTeam}}" Margin="20,0,50,0">
+                        <TextBox ui:ControlHelper.Header="Blue Team Name" Tag="Blue" ui:ControlHelper.PlaceholderText="Blue Team" TextChanged="TeamNameChanged" Text="{Binding Name}"/>
+                        <ui:NumberBox x:Name="BlueScore" Header="Score" Tag="Blue" Margin="0,0,0,4" PlaceholderText="0" ValueChanged="ScoreChanged" Value="{Binding Score}"/>
+                        <TextBox ui:ControlHelper.Header="Blue Coach" Tag="Blue" ui:ControlHelper.PlaceholderText="G2 Grabbz" TextChanged="CoachChanged" Text="{Binding Coach}"/>
+                        <TextBox ui:ControlHelper.Header="Blue Team Name (Be careful, this can break! Make sure format is correct)" Tag="Blue" ui:ControlHelper.PlaceholderText="rgb(80,140,230)" TextChanged="ColorChanged" Text="{Binding Color}"/>
+                    </ui:SimpleStackPanel>
+                    <ui:SimpleStackPanel x:Name="RedTeamConfig" HorizontalAlignment="Right" DataContext="{Binding Source={x:Static local:ChampSelectTeamViewModel.RedTeam}}">
+                        <TextBox ui:ControlHelper.Header="Red Team Name" ui:ControlHelper.PlaceholderText="Red Team" TextChanged="TeamNameChanged" Text="{Binding Name}"/>
+                        <ui:NumberBox x:Name="RedScore" Header="Score" Margin="0,0,0,4" PlaceholderText="0" ValueChanged="ScoreChanged" Value="{Binding Score}"/>
+                        <TextBox ui:ControlHelper.Header="Red Coach" ui:ControlHelper.PlaceholderText="G2 Grabbz" TextChanged="CoachChanged" Text="{Binding Coach}"/>
+                        <TextBox ui:ControlHelper.Header="Red Team Name (Be careful, this can break! Make sure format is correct)" ui:ControlHelper.PlaceholderText="rgb(239,66,67)" TextChanged="ColorChanged" Text="{Binding Color}"/>
+                    </ui:SimpleStackPanel>
+                </StackPanel>
+                <ui:SimpleStackPanel x:Name="ChampSelectSettings" DataContext="{Binding Source={x:Static local:ChampSelectSettingsViewModel.ChampSelectSettings}}" Margin="20,0,0,0">
+                    <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,40,0,0"
+                    FontWeight="Normal"
+                    Text="Settings" />
+                    <TextBox ui:ControlHelper.Header="Patch" ui:ControlHelper.PlaceholderText="11.7.1" TextChanged="PatchChanged" Text="{Binding Patch}" Width="100" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+                    <ui:ToggleSwitch x:Name="ScoreToggle" Header="Show Score?" IsOn="{Binding Score}" OffContent="Scores Disabled" OnContent="Scores Enabled" Margin="0,0,0,4"/>
+                    <ui:ToggleSwitch x:Name="CoachToggle" Header="Show Coaches?" IsOn="{Binding Coaches}" OffContent="Coaches Disabled" OnContent="Coaches Enabled" Margin="0,0,0,4"/>
+                    <ui:ToggleSwitch x:Name="SpellsToggle" Header="Show Summoner Spells?" IsOn="{Binding Spells}" OffContent="Summoner Spells Disabled" OnContent="Summoner Spells Enabled" Margin="0,0,0,4"/>
+
+                </ui:SimpleStackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

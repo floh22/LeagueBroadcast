@@ -1,12 +1,16 @@
-﻿<Page x:Class="LeagueBroadcastHub.SettingsPage"
+﻿<Page
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LeagueBroadcastHub"
       xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:pages="clr-namespace:LeagueBroadcastHub.Pages"
+      x:Class="LeagueBroadcastHub.SettingsPage"
       mc:Ignorable="d"
-      Title="Settings">
+      Title="Settings"
+      MouseDown="window_MouseDown">
 
     <Grid>
         <ScrollViewer
@@ -33,9 +37,21 @@
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,40,0,0"
                     FontWeight="Normal"
-                    Text="Computer Vision Addon" />
+                    Text="Ingame" />
                 <StackPanel Margin="30,10,0,0">
+                    <ui:ToggleSwitch x:Name="ingameToggle" Header="Use Ingame Component?" IsOn="{Binding UseIngame, Mode=TwoWay}" OffContent="Ingame Disabled" OnContent="Ingame Enabled" Margin="0,0,0,4"/>
                     <ui:ToggleSwitch x:Name="ocrToggle" Header="Use OCR Addon? Make sure to not disable OCR while running Broadcast Hub!" IsOn="{Binding UseOCR, Mode=TwoWay}" OffContent="LeagueOCR Disabled" OnContent="LeagueOCR Enabled" Margin="0,0,0,4"/>
+                </StackPanel>
+
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,40,0,0"
+                    FontWeight="Normal"
+                    Text="Champ Select" />
+                <StackPanel Margin="30,10,0,0">
+                    <ui:ToggleSwitch x:Name="champSelectToggle" Header="Activate Champ Select?" IsOn="{Binding UsePickBan, Mode=TwoWay}" OffContent="PickBan Disabled" OnContent="PickBan Enabled" Margin="0,0,0,4" Toggled="PickBanToggled"/>
+                    <ui:ToggleSwitch x:Name="delayToggle" Header="Delay Champ Select?" IsOn="{Binding DelayPickBan, Mode=TwoWay}" OffContent="Instant" OnContent="Delay " Margin="0,0,0,4" IsEnabled="{Binding UsePickBan, Mode=OneWay}" Toggled="DelayToggled"/>
+                    <ui:NumberBox x:Name="delayValue" Header="Delay Time in Seconds" Margin="0,0,0,4" PlaceholderText="300" IsEnabled="{Binding UsePickBan, Mode=OneWay}" mah:ValidationHelper.CloseOnMouseLeftButtonDown="True" ValueChanged="delayValue_ValueChanged"/>
                 </StackPanel>
 
                 <TextBlock
@@ -51,11 +67,11 @@
                     Margin="0,40,0,0"
                     FontWeight="Normal"
                     Text="Logging Mode" />
-                <ComboBox Margin="10" SelectionChanged="LoggingLevelChanged" Name="LoggingSelection">
-                    <ComboBoxItem Tag="None">None</ComboBoxItem>
-                    <ComboBoxItem Tag="Warn">Warn</ComboBoxItem>
-                    <ComboBoxItem Tag="Info">Info</ComboBoxItem>
-                    <ComboBoxItem Tag="Verbose">Verbose</ComboBoxItem>
+                <ComboBox Margin="10" SelectionChanged="LoggingLevelChanged" x:Name="LoggingSelection">
+                    <ComboBoxItem Tag="None" Content="None"/>
+                    <ComboBoxItem Tag="Warn" Content="Warn"/>
+                    <ComboBoxItem Tag="Info" Content="Info"/>
+                    <ComboBoxItem Tag="Verbose" Content="Verbose"/>
                 </ComboBox>
             </ui:SimpleStackPanel>
         </ScrollViewer>

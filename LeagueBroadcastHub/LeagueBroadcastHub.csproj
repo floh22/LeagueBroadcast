@@ -28,7 +28,9 @@
 
   <ItemGroup>
     <None Remove="Assets\Icons\BlueEssence.ico" />
+    <None Remove="Assets\Icons\JglIcon.ico" />
     <None Remove="Assets\Icons\LeagueNew.ico" />
+    <None Remove="Assets\Icons\MidIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,7 +48,13 @@
     <Content Include="Assets\Icons\BlueEssence.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Icons\JglIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Icons\LeagueNew.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Icons\MidIcon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -85,6 +93,10 @@
 
   <ItemGroup>
     <Folder Include="Pages\DragDrop\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LCUSharp\LCUSharp.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

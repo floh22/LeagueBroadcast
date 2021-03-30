@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-        "target": "es6",
+		"target": "es2017",
+		"module": "es6",
 		"strict": true,
 		"noImplicitAny": false,
 		"noEmit": true,
@@ -26,6 +26,7 @@
 		]
 	},
 	"include": [
-		"src/**/*"
+		"src/**/*",
+		"node_modules/phaser3-rex-plugins-types"
 	]
 }
