@@ -47,6 +47,9 @@ Features currently include:
 2. Item Purchase Indicators
 3. Baron Power Play
 4. Elder Power Play
+5. Dynamic Gold Graph
+
+Includes a C# port of RCVolus ChampSelect tool!
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -63,15 +66,17 @@ To get a local copy up and running follow these steps.
 
 1. Download latest release
 2. Unzip release to desired install folder
-3. Incase you do not have NodeJS installed on your system, run installNode.bat or install NodeJS manually
-4. Run setup.bat or follow frontend install instructions [here](https://github.com/floh22/LeagueBroadcastHub/blob/master/Overlays/ingame/)
-5. Add http://localhost:10001 as a browser source in OBS in your ingame scene
+3. Add http://localhost:9001/frontend as a browser source in OBS in your ingame scene
+4. Add http://localhost:9001/ as a browser source in OBS in your PickBan scene
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+- Components of LBH can be en-/disabled separately. Enable Pick/Ban or Ingame as you need.
+
 - On first run League Broadcast Hub will download the latest DataDragon cache. 
-  - It is currently far more than needed, but this project will at some point hopefully also be able to support [RCVolus Pick/Ban](https://github.com/RCVolus/lol-pick-ban-ui) frontend as well.
+  -  Champ Select data included to support a port of [RCVolus Pick/Ban](https://github.com/RCVolus/lol-pick-ban-ui) 
+  -  Champ Select delay support added! No more waiting between champ select and ingame. Champ select is delayed by a configurable amount to reduce the way
 
 - If you wish to use OCR Data to augment the League of Legends API data, enable OCR in settings and start [LeagueOCR](https://github.com/floh22/LeagueOCR) before spectating.
   - Currently settings are otherwise not functional, but proposed future features.
@@ -82,6 +87,22 @@ To get a local copy up and running follow these steps.
   - Automatic Events will be shown automatically when selected.
   - Event Control Events will only show when activated.
 
+### Switching from RCVolus PickBan Tools
+
+If you have previously used RCVolus PickBan tool and wish to use the version included in LBH, build your frontend scene. Where one would usually run
+```bash
+npm run start
+```
+to start PickBan, now run 
+```bash
+npm run build
+```
+in the same location and move the files in **build/** to **LeagueBroadcastHub/frontend/pickban/**
+
+Enable Champ Select in Settings
+
+LeagueBroadcastHub will now host PickBan automatically when started
+
 <!-- ROADMAP -->
 ## Roadmap
 
@@ -89,10 +110,10 @@ Planned Features:
 1. Team Information (Name/Logo)
 2. Team Standings
 3. Inhibitor Indicators
-4. Gold Graphs
+4. ~~Gold Graphs~~  _finished_
 5. CS/min Graphs
 6. Tournament/Game Series support
-7. Pick/Ban support
+7. ~~Pick/Ban support~~ _finished_
 8. Spectate API support
 9. Web Control
 10. Manual Overrides
@@ -113,6 +134,10 @@ I am particularly having issues with publishing this project to a single executa
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
+__This is a standalone project from Lars Eble. Riot Games does not endorse or sponsor this project.__  
+_The project has not been certified as ToS-compliant yet though it has been submitted. _ 
+
+This project's port of [lol-pick-ban-ui](https://github.com/RCVolus/lol-pick-ban-ui) and its author are in no way affiliated or partnered with Riot Community Volunteers.
 
 
 <!-- CONTACT -->
