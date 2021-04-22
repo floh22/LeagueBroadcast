@@ -67,7 +67,7 @@ To get a local copy up and running follow these steps.
 1. Download latest release
 2. Unzip release to desired install folder
 3. Add http://localhost:9001/frontend as a browser source in OBS in your ingame scene
-4. Add http://localhost:9001/ as a browser source in OBS in your PickBan scene
+4. Add http://localhost:9001/?backend=ws://localhost:9001/api as a browser source in OBS in your PickBan scene
 
 
 <!-- USAGE EXAMPLES -->
