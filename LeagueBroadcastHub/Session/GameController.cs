@@ -6,37 +6,41 @@ using LeagueBroadcastHub.Data.Provider;
 using LeagueBroadcastHub.Events.Game.FrontendEvents;
 using LeagueBroadcastHub.Events.Game.RiotEvents;
 using LeagueBroadcastHub.Log;
+using LeagueBroadcastHub.OperatingSystem;
 using LeagueBroadcastHub.Pages.ControlPages;
 using LeagueBroadcastHub.Server;
 using LeagueBroadcastHub.State;
 using LeagueIngameServer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace LeagueBroadcastHub.Session
 {
     class GameController : ITickable
     {
+        private const string TargetProcessName = "League of Legends";
+
+        public static CurrentSettings CurrentSettings = new CurrentSettings();
+        public static Process? LeagueProcess;
+        public static bool IsPaused;
+
         public LeagueDataProvider LoLDataProvider;
         public OCRDataProvider OCRDataProvider;
 
         public State.Game.State gameState;
         public GameMetaData gameData;
 
+        private ProcessEventWatcher ProcessEventWatcher { get; } = new ProcessEventWatcher();
         private bool GameFound = false;
-
-        //Events
-        public static CurrentSettings CurrentSettings = new CurrentSettings();
-
-        public static bool IsPaused;
 
         public GameController()
         {
             this.LoLDataProvider = new LeagueDataProvider();
             this.OCRDataProvider = new OCRDataProvider();
+            _ = new ReplayDataProvider();
 
-            LoLDataProvider.Init();
 
             this.gameState = new State.Game.State(this);
             this.gameData = new GameMetaData();
@@ -44,6 +48,7 @@ namespace LeagueBroadcastHub.Session
             StateController.GameStop += OnGameStop;
 
             LoadSettings();
+            StartWaitingForTargetProcess();
         }
 
         public void InitGameState()
@@ -58,26 +63,19 @@ namespace LeagueBroadcastHub.Session
             var newGameData = await LoLDataProvider.GetGameData();
 
             //Discard late rejected responses by API
-            if (BroadcastHubController.CurrentLeagueState != "InProgress")
+            if (BroadcastHubController.CurrentLeagueState != "InProgress" || newGameData == null)
                 return;
 
             //Wait until the game has been found
             if (!GameFound)
             {
-                if(newGameData == null)
-                    return;
                 GameFound = true;
                 gameData = newGameData;
                 gameData.gameTime = 0;
+                Logging.Verbose("Game Loaded");
                 EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
-            }
-            
-            if (newGameData == null )
-            {
-                Logging.Verbose("Game exited early");
-                
-                StateController.GameStop.Invoke(this, EventArgs.Empty);
-                return;
+                StateController.GameLoad?.Invoke(this, EventArgs.Empty);
+
             }
 
             double timeDiff = newGameData.gameTime - gameData.gameTime;
@@ -164,7 +162,7 @@ namespace LeagueBroadcastHub.Session
             gameState.stateData.gameTime = gameData.gameTime;
 
             //Make distinction if we are using OCR or not since that has an impact on what kind of information is available
-            if (ActiveSettings._useOCR)
+            if (ActiveSettings.current.UseOCR)
             {
                 var res = OCRDataProvider.GetObjectiveData().Result;
                 if (res != null)
@@ -223,7 +221,6 @@ namespace LeagueBroadcastHub.Session
         {
             if (!CurrentSettings.Elder)
                 return;
-            //EmbedIOServer.socketServer.SendEventToAllAsync(new ObjectiveKilled("elder", -1));
             CurrentSettings.SendElder = true;
         }
 
@@ -233,7 +230,6 @@ namespace LeagueBroadcastHub.Session
                 return;
 
             Logging.Info("Elder despawned");
-            //EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("elder", -1));
             CurrentSettings.SendElder = false;
         }
 
@@ -242,7 +238,6 @@ namespace LeagueBroadcastHub.Session
             if (!CurrentSettings.Baron)
                 return;
 
-            //EmbedIOServer.socketServer.SendEventToAllAsync(new ObjectiveKilled("baron", 1));
             CurrentSettings.SendBaron = true;
         }
 
@@ -251,7 +246,6 @@ namespace LeagueBroadcastHub.Session
             if (!CurrentSettings.Baron)
                 return;
             Logging.Info("Baron despawned");
-            //EmbedIOServer.socketServer.SendEventToAllAsync(new BuffDespawn("baron", -1));
             CurrentSettings.SendBaron = false;
         }
 
@@ -265,6 +259,71 @@ namespace LeagueBroadcastHub.Session
             EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
             EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
             Logging.Info("Game ended");
+        }
+
+        //Following adapted from https://github.com/Johannes-Schneider/GoldDiff/blob/master/GoldDiff/App.xaml.cs
+        private void StartWaitingForTargetProcess()
+        {
+            ProcessEventWatcher.ProcessStarted += ProcessEventWatcher_OnProcessStarted;
+            ProcessEventWatcher.ProcessStopped += ProcessEventWatcher_OnProcessStopped;
+
+            var processes = Process.GetProcessesByName(TargetProcessName);
+            if (processes.Length > 0)
+            {
+                LeagueProcess = processes[0];
+                TargetProcessStarted();
+            }
+        }
+
+        private void ProcessEventWatcher_OnProcessStarted(object sender, ProcessEventEventArguments e)
+        {
+            if (LeagueProcess != null)
+            {
+                return;
+            }
+
+            try
+            {
+                var newProcess = Process.GetProcessById(e.ProcessId);
+                if (!newProcess.ProcessName.Equals(TargetProcessName))
+                {
+                    return;
+                }
+
+                LeagueProcess = newProcess;
+                TargetProcessStarted();
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private void ProcessEventWatcher_OnProcessStopped(object sender, ProcessEventEventArguments e)
+        {
+            if (LeagueProcess == null || LeagueProcess.Id != e.ProcessId)
+            {
+                return;
+            }
+
+            LeagueProcess = null;
+            TargetProcessStopped();
+        }
+
+        private void TargetProcessStarted()
+        {
+            Logging.Info($"Target process ({TargetProcessName}) detected.");
+            StateController.GameStart?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void TargetProcessStopped()
+        {
+            StateController.GameStop?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnExit()
+        {
+            ProcessEventWatcher.Dispose();
         }
     }
 

@@ -179,6 +179,8 @@ namespace LeagueBroadcastHub
             ActiveSettings.current.UseIngame = Properties.Settings.Default.UseIngame;
             ActiveSettings.current.DelayPickBan = Properties.Settings.Default.DelayPickBan;
             ActiveSettings.current.DelayPickBanValue = Properties.Settings.Default.DelayPBValue;
+            ActiveSettings.current.UseReplayAPI = Properties.Settings.Default.UseReplayAPI;
+            ActiveSettings.current.InitLeagueUI = Properties.Settings.Default.InitLeagueUI;
         }
 
         private void OnClose(object sender, EventArgs e)
@@ -188,12 +190,14 @@ namespace LeagueBroadcastHub
 
             Logging.Info("Saving Settings");
             //LBH Settings
-            Properties.Settings.Default.useOCR = ActiveSettings._useOCR;
-            Properties.Settings.Default.appMode = ActiveSettings._appMode;
-            Properties.Settings.Default.UsePickBan = ActiveSettings._usePickBan;
-            Properties.Settings.Default.UseIngame = ActiveSettings._useIngame;
-            Properties.Settings.Default.DelayPickBan = ActiveSettings._delayPickBan;
-            Properties.Settings.Default.DelayPBValue = ActiveSettings._delayPickBanValue;
+            Properties.Settings.Default.useOCR = ActiveSettings.current.UseOCR;
+            Properties.Settings.Default.appMode = ActiveSettings.current.AppMode;
+            Properties.Settings.Default.UsePickBan = ActiveSettings.current.UsePickBan;
+            Properties.Settings.Default.UseIngame = ActiveSettings.current.UseIngame;
+            Properties.Settings.Default.DelayPickBan = ActiveSettings.current.DelayPickBan;
+            Properties.Settings.Default.DelayPBValue = ActiveSettings.current.DelayPickBanValue;
+            Properties.Settings.Default.UseReplayAPI = ActiveSettings.current.UseReplayAPI;
+            Properties.Settings.Default.InitLeagueUI = ActiveSettings.current.InitLeagueUI;
 
             //Event Settings
             Properties.Settings.Default.doLevelUp = GameController.CurrentSettings.LevelUp;
@@ -255,13 +259,15 @@ namespace LeagueBroadcastHub
 
     public class ActiveSettings : ViewModelBase
     {
-        public static bool _useOCR;
-        public static bool _resetPlayerPositions;
-        public static byte _appMode;
-        public static bool _useIngame;
-        public static bool _usePickBan;
-        public static bool _delayPickBan;
-        public static double _delayPickBanValue;
+        private static bool _useOCR;
+        private static bool _resetPlayerPositions;
+        private static byte _appMode;
+        private static bool _useIngame;
+        private static bool _usePickBan;
+        private static bool _delayPickBan;
+        private static double _delayPickBanValue;
+        private static bool _useReplayAPI;
+        private static bool _initLeagueUI;
 
         public static ActiveSettings current = new ActiveSettings();
 
@@ -272,6 +278,8 @@ namespace LeagueBroadcastHub
         public bool UsePickBan { get { return _usePickBan; }  set { _usePickBan = value; OnPropertyChanged("UsePickBan"); } }
         public bool DelayPickBan { get { return _delayPickBan; } set { _delayPickBan = value; OnPropertyChanged("DelayPickBan"); } }
         public double DelayPickBanValue { get { return _delayPickBanValue; } set { _delayPickBanValue = value; OnPropertyChanged("DelayPickBanValue"); } }
+        public bool UseReplayAPI { get { return _useReplayAPI; } set { _useReplayAPI = value; OnPropertyChanged("UseReplayAPI"); } }
+        public bool InitLeagueUI { get { return _initLeagueUI; } set { _initLeagueUI = value; OnPropertyChanged("InitLeagueUI"); } }
     }
 
     public class PlayerViewModel : ViewModelBase, INotifyPropertyChanged

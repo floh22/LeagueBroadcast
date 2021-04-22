@@ -2,6 +2,7 @@
 using LeagueBroadcastHub.Data.Client.DTO;
 using LeagueBroadcastHub.Data.Provider;
 using LeagueBroadcastHub.Log;
+using LeagueIngameServer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,7 @@ namespace LeagueBroadcastHub.State.Client
 #pragma warning restore IDE1006 // Naming Styles
         public long timer = 0;
         public string state = "PICK 1";
-        private Config _config = new Config();
-        public Config config { get { return _config; } }
+        public Config config { get { return BroadcastHubController.ClientConfig; } }
 
         public StateData()
         {

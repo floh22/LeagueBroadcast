@@ -40,7 +40,9 @@
                     Text="Ingame" />
                 <StackPanel Margin="30,10,0,0">
                     <ui:ToggleSwitch x:Name="ingameToggle" Header="Use Ingame Component?" IsOn="{Binding UseIngame, Mode=TwoWay}" OffContent="Ingame Disabled" OnContent="Ingame Enabled" Margin="0,0,0,4"/>
-                    <ui:ToggleSwitch x:Name="ocrToggle" Header="Use OCR Addon? Make sure to not disable OCR while running Broadcast Hub!" IsOn="{Binding UseOCR, Mode=TwoWay}" OffContent="LeagueOCR Disabled" OnContent="LeagueOCR Enabled" Margin="0,0,0,4"/>
+                    <ui:ToggleSwitch x:Name="ocrToggle" Header="Use OCR Addon? Make sure to not disable OCR while running Broadcast Hub!" IsOn="{Binding UseOCR, Mode=TwoWay}" OffContent="LeagueOCR Disabled" OnContent="LeagueOCR Enabled" Margin="0,0,0,4" IsEnabled="{Binding UseIngame, Mode=OneWay}"/>
+                    <ui:ToggleSwitch x:Name="replayAPIToggle" Header="League UI Connection" IsOn="{Binding UseReplayAPI, Mode=TwoWay}" OffContent="UI Connection Disabled" OnContent="UI Connection Enabled" Margin="0,0,0,4" IsEnabled="{Binding UseIngame, Mode=OneWay}"/>
+                    <ui:ToggleSwitch x:Name="initLeagueUIToggle" Header="Set UI on start" IsOn="{Binding InitLeagueUI, Mode=TwoWay}" OffContent="UI on start Disabled" OnContent="UI on start Enabled" Margin="0,0,0,4" IsEnabled="{Binding UseIngame, Mode=OneWay}"/>
                 </StackPanel>
 
                 <TextBlock

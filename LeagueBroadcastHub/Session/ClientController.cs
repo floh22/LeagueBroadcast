@@ -24,7 +24,20 @@ namespace LeagueBroadcastHub.Session
 
         public ClientController()
         {
+            if(ActiveSettings.current.UsePickBan)
+            {
+                Enable();
+            }
+        }
+
+        public void Enable()
+        {
             StartHeartbeat();
+        }
+
+        public void Disable()
+        {
+            StopHeartbeat();
         }
 
         public async void DoTick()

@@ -21,6 +21,7 @@ namespace LeagueIngameServer
         public GameController gameController;
         public ClientController clientController;
         public StateController stateController;
+        public ReplayController replayController;
 
         public ChampSelectConnector champSelectConnector;
 
@@ -77,12 +78,16 @@ namespace LeagueIngameServer
                 Logging.Verbose("Init state controller");
                 stateController = new StateController(this);
 
+                Logging.Verbose("Init replay controller");
+                replayController = new ReplayController();
+
                 //Start Frontend Webserver (HTTP/WS)
                 var WebServer = new EmbedIOServer("localhost", 9001);
 
                 tickTimer = new Timer { Interval = 1000 / tickRate };
                 tickTimer.Elapsed += DoTick;
 
+                Logging.Verbose($"Starting LBH with tickrate of {tickRate}tps");
                 tickTimer.Start();
 
                 Logging.Info("Init complete");
@@ -98,6 +103,9 @@ namespace LeagueIngameServer
             //Start ticking state controller to detect league state
             ToTick.Add(stateController);
 
+            Logging.Verbose("Checking for running Game");
+            stateController.CheckLeagueRunning();
+
             Logging.Info("Post init Complete \nLeagueBroadcastHub loaded");
         }
 
@@ -110,6 +118,7 @@ namespace LeagueIngameServer
 
         public void OnAppExit()
         {
+            gameController.OnExit();
         }
 
         public void EnterChampSelect(object sender, EventArgs e)
@@ -152,6 +161,7 @@ namespace LeagueIngameServer
             if(ClientConfig.fileVersion == null)
             {
                 //Convert config not created by this port
+                Logging.Warn("Detected outdated file Format. Attempting to correct");
                 ClientConfig.fileVersion = Config.FileVersion;
                 WriteConfig("config.json", ClientConfig);
             } else if(ClientConfig.fileVersion != Config.FileVersion)

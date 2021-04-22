@@ -51,7 +51,7 @@ namespace LeagueBroadcastHub
             }
 
             LoggingSelection.SelectedIndex = (int)((Logging.LogLevel)Enum.Parse(typeof(Logging.LogLevel), Properties.Settings.Default.LogLevel));
-            delayValue.Value = ActiveSettings._delayPickBanValue;
+            delayValue.Value = ActiveSettings.current.DelayPickBanValue;
         }
 
         private void window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -92,9 +92,9 @@ namespace LeagueBroadcastHub
 
         private void PickBanToggled(object sender, RoutedEventArgs e)
         {
-            if (ActiveSettings._usePickBan == StateController.CurrentSettings.PickBan)
+            if (ActiveSettings.current.UsePickBan == StateController.CurrentSettings.PickBan)
                 return;
-            if (ActiveSettings._usePickBan)
+            if (ActiveSettings.current.UsePickBan)
                 StateController.EnableChampSelect();
             else 
                 StateController.DisableChampSelect();
@@ -102,16 +102,16 @@ namespace LeagueBroadcastHub
 
         private void IngameToggled(object sender, RoutedEventArgs e)
         {
-            if (ActiveSettings._useIngame == StateController.CurrentSettings.Ingame)
+            if (ActiveSettings.current.UseIngame == StateController.CurrentSettings.Ingame)
                 return;
-            if (ActiveSettings._useIngame)
+            if (ActiveSettings.current.UseIngame)
                 StateController.EnableIngame();
             else
                 StateController.DisableIngame();
         }
         private void DelayToggled(object sender, RoutedEventArgs e)
         {
-            if (ActiveSettings._delayPickBan)
+            if (ActiveSettings.current.DelayPickBan)
                 BroadcastHubController.Instance.champSelectConnector.UseDelayPickBan();
             else
                 BroadcastHubController.Instance.champSelectConnector.UseDirectPickBan();
@@ -119,10 +119,10 @@ namespace LeagueBroadcastHub
 
         private void delayValue_ValueChanged(ModernWpf.Controls.NumberBox sender, ModernWpf.Controls.NumberBoxValueChangedEventArgs args)
         {
-            if(args.NewValue != ActiveSettings._delayPickBanValue)
+            if(args.NewValue != ActiveSettings.current.DelayPickBanValue)
             {
                 Logging.Verbose($"Champ select delay changed to {args.NewValue}");
-                ActiveSettings._delayPickBanValue = args.NewValue;
+                ActiveSettings.current.DelayPickBanValue = args.NewValue;
                 Properties.Settings.Default.DelayPBValue = args.NewValue;
             }
         }

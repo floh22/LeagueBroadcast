@@ -13,7 +13,12 @@ namespace LeagueBroadcastHub.Data.Provider
     class LeagueDataProvider
     {
         public static HttpClient webClient;
-        public void Init()
+
+        public LeagueDataProvider()
+        {
+            Init();
+        }
+        private void Init()
         {
             var handler = new HttpClientHandler
             {
@@ -28,7 +33,7 @@ namespace LeagueBroadcastHub.Data.Provider
             webClient = new HttpClient(handler);
             webClient.DefaultRequestHeaders.ExpectContinue = true;
             webClient.DefaultRequestHeaders.Add("User-Agent", "LeagueBroadcastHub");
-            webClient.Timeout = TimeSpan.FromSeconds(0.5);
+            webClient.Timeout = TimeSpan.FromSeconds(0.25);
         }
 
         public async Task<GameMetaData> GetGameData()

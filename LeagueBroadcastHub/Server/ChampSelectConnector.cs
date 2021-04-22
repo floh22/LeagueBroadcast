@@ -67,7 +67,7 @@ namespace LeagueBroadcastHub.Server
 
             BroadcastHubController.ToTick.Add(this);
             connectionMode = ClientConnectorMode.DELAYED;
-            Logging.Info("Enabled Delayed PickBan");
+            Logging.Info("Using delayed PickBan");
         }
 
         public void UseDirectPickBan()
@@ -96,7 +96,7 @@ namespace LeagueBroadcastHub.Server
 
             BroadcastHubController.ToTick.Remove(this);
             connectionMode = ClientConnectorMode.DIRECT;
-            Logging.Info("Disabled Delayed PickBan");
+            Logging.Info("Using direct PickBan");
         }
 
         private void AddToQueue(object sender, State.Client.StateData e)

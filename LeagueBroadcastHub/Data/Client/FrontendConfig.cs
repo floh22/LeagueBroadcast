@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LeagueBroadcastHub.Data
+namespace LeagueBroadcastHub.Data.Client
 {
     public class FrontendConfig
     {

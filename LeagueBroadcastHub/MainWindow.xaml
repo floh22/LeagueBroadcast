@@ -1,7 +1,6 @@
 ﻿<Window
     x:Name="AppWindow"
     x:Class="LeagueBroadcastHub.MainWindow"
-    xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,14 +11,11 @@
     xmlns:sc="clr-namespace:LeagueBroadcastHub.Pages.Converters" 
     mc:Ignorable="d"
     Title="League Broadcast Hub" Width="1225" Height="750"
-    fw:AcrylicWindow.Enabled="True"
-    fw:AcrylicWindow.ExtendViewIntoTitleBar="True"
     WindowStartupLocation="CenterScreen"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     WindowStyle="None"
     Closed="OnClose"
-    Background="#BBFFFFFF"
     ResizeMode="CanMinimize">
     <Window.Resources>
         <sc:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
@@ -49,8 +45,8 @@
                 Style="{StaticResource CaptionTextBlockStyle}" />
         </Grid>
 
-        <fw:AcrylicPopup  IsOpen="{Binding IsVisible, Mode=OneWay}" Placement="Center" PopupAnimation="Fade" AllowsTransparency="True" DataContext="{Binding Source={x:Static local:LoadingProgress.LoadingPopUp}}">
-            <Canvas x:Name="PopUpCanvas" Width = "400" Height = "200" Background = "{StaticResource SystemControlBaseAcrylicBrush}">
+        <ui:MenuPopup  IsOpen="{Binding IsVisible, Mode=OneWay}" Placement="Center" PopupAnimation="Fade" AllowsTransparency="True" DataContext="{Binding Source={x:Static local:LoadingProgress.LoadingPopUp}}">
+            <Canvas x:Name="PopUpCanvas" Width = "400" Height = "200" Background = "{StaticResource AcrylicBackgroundFillColorBaseBrush}">
                 <Canvas.RenderTransform>
                     <RotateTransform x:Name = "PopUpTransform" />
                 </Canvas.RenderTransform>
@@ -79,7 +75,7 @@
                     
                 </StackPanel>
             </Canvas>
-        </fw:AcrylicPopup>
+        </ui:MenuPopup>
 
         <ui:NavigationView 
             x:Name="NavView"
@@ -98,23 +94,25 @@
             DisplayModeChanged="NavView_DisplayModeChanged">
             
             <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItemHeader Content="Main"/>
-                <ui:NavigationViewItem Name="GameInfo" Tag="{x:Type controlpages:GameInfoPage}" Content="Game Information">
+                <ui:NavigationViewItemHeader Content="Information"/>
+                <ui:NavigationViewItem Name="GameInfo" Tag="{x:Type controlpages:GameInfoPage}" Content="Game">
                     <ui:NavigationViewItem.Icon>
                         <ui:BitmapIcon UriSource="Assets/Icons/JglIcon.ico" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Name="ClientInfo" Tag="{x:Type controlpages:ChampSelectPage}" Content="PickBan Information">
+                <ui:NavigationViewItem Name="ClientInfo" Tag="{x:Type controlpages:ChampSelectPage}" Content="PickBan">
                     <ui:NavigationViewItem.Icon>
                         <ui:BitmapIcon UriSource="Assets/Icons/MidIcon.ico" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItemSeparator/>
-                <ui:NavigationViewItem Content="Broadcast Triggers" Tag="{x:Type controlpages:ControlsPage}" Icon="PreviewLink"/>
-                <ui:NavigationViewItem Content="Manual Broadcast Info" Tag="{x:Type controlpages:ManualEventsPage}" Icon="AllApps"/>
+                <ui:NavigationViewItemHeader Content="Controls"/>
+                <ui:NavigationViewItem Content="Active Events" Tag="{x:Type controlpages:ControlsPage}" Icon="PreviewLink"/>
+                <ui:NavigationViewItem Content="Manual Input" Tag="{x:Type controlpages:ManualEventsPage}" Icon="AllApps"/>
+                <ui:NavigationViewItem Content="Replay" Tag="{x:Type controlpages:ReplayPage}" Icon="AllApps"/>
                 <ui:NavigationViewItemSeparator/>
                 <ui:NavigationViewItemHeader Content="Components"/>
-                <ui:NavigationViewItem Content="Component Control" Tag="{x:Type controlpages:ComponentControlPage}" Icon="ViewAll"/>
+                <ui:NavigationViewItem Content="Component Control" Tag="{x:Type controlpages:ComponentControlPage}" Icon="ViewAll" IsEnabled="false"/>
             </ui:NavigationView.MenuItems>
             <ui:Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
         </ui:NavigationView>

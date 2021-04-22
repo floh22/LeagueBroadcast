@@ -65,12 +65,12 @@ namespace LeagueBroadcastHub.Pages.ControlPages
                     GameController.CurrentSettings.Items = true;
                     break;
                 case ("baronPlay"):
-                    if (!ActiveSettings._useOCR)
+                    if (!ActiveSettings.current.UseOCR)
                         return;
                     GameController.CurrentSettings.Baron = true;
                     break;
                 case ("elderPlay"):
-                    if (!ActiveSettings._useOCR)
+                    if (!ActiveSettings.current.UseOCR)
                         return;
                     GameController.CurrentSettings.Elder = true;
                     break;
@@ -80,7 +80,7 @@ namespace LeagueBroadcastHub.Pages.ControlPages
                 case ("teamWR"):
                     break;
                 case ("fullRelativeGoldGraph"):
-                    if (!ActiveSettings._useOCR)
+                    if (!ActiveSettings.current.UseOCR)
                         return;
                     GameController.CurrentSettings.GoldGraph = true;
                     break;
@@ -184,13 +184,28 @@ namespace LeagueBroadcastHub.Pages.ControlPages
                 }
             });
         }
-
     }
 
     public class ControlViewModel : ViewModelBase
     {
         public string Title { get; set; }
 
+        public ButtonState State { get { return _state; } set {
+                _state = value;
+                switch (value)
+                {
+                    case ButtonState.Disabled:
+                        ButtonColor = InactiveBrush;
+                        break;
+                    case ButtonState.Off:
+                        ButtonColor = OffBrush;
+                        break;
+                    case ButtonState.On:
+                        ButtonColor = OnBrush;
+                        break;
+                }
+            }
+        }
         public string Type { get; set; }
 
         public Action OnActivate { get; set; }
@@ -200,6 +215,7 @@ namespace LeagueBroadcastHub.Pages.ControlPages
 
 
         private SolidColorBrush _brush;
+        private ButtonState _state;
 
         public static SolidColorBrush OffBrush = new SolidColorBrush(Color.FromArgb(0x4D, 0x5C, 0x5C, 0x5C));
         public static SolidColorBrush OnBrush = new SolidColorBrush(Color.FromArgb(0x4D, 0x49, 0xE4, 0xE4));
@@ -221,6 +237,7 @@ namespace LeagueBroadcastHub.Pages.ControlPages
             this.Title = title;
             this.Type = type;
             this.Description = desc;
+            this.State = ButtonState.Off;
         }
 
         public static List<ControlViewModel> GetAutomaticEvents()
@@ -245,6 +262,13 @@ namespace LeagueBroadcastHub.Pages.ControlPages
                 new ControlViewModel("Inhib Indicators", "inhibs", "Show inhib timers and their current status"),
                 new ControlViewModel("Player CS/M", "cs/m", "Displays a graph of the CS per Minute for all players")
             };
+        }
+
+        public enum ButtonState
+        {
+            Disabled,
+            Off,
+            On
         }
     }
 }

@@ -18,7 +18,7 @@ namespace LeagueBroadcastHub.Session
     class StateController : ITickable
     {
 
-        public static EventHandler GameStart, GameStop, ChampSelectStart, ChampSelectStop;
+        public static EventHandler GameStart, GameLoad, GameStop, ChampSelectStart, ChampSelectStop;
 
         private BroadcastHubController BroadcastHub;
 
@@ -32,14 +32,14 @@ namespace LeagueBroadcastHub.Session
         {
             InitConnection();
             BroadcastHub = main;
-            if(ActiveSettings._useIngame)
+            if(ActiveSettings.current.UseIngame)
             {
                 EnableIngame();
                 CurrentSettings.Ingame = true;
             }
             
 
-            if(ActiveSettings._usePickBan)
+            if(ActiveSettings.current.UsePickBan)
             {
                 EnableChampSelect();
                 CurrentSettings.PickBan = true;
@@ -50,6 +50,8 @@ namespace LeagueBroadcastHub.Session
         {
             ChampSelectStart += BroadcastHubController.Instance.EnterChampSelect;
             ChampSelectStop += ClientController.OnChampSelectExit;
+
+            BroadcastHubController.Instance.clientController.Enable();
             Logging.Info("PickBan Enabled");
         }
 
@@ -57,11 +59,12 @@ namespace LeagueBroadcastHub.Session
         {
             if(BroadcastHubController.CurrentLeagueState == "InProgress")
             {
-                ActiveSettings._usePickBan = true;
+                ActiveSettings.current.UsePickBan = true;
                 Logging.Warn("Tried disabling Champ Select while active");
             }
             ChampSelectStart -= BroadcastHubController.Instance.EnterChampSelect;
             ChampSelectStop -= ClientController.OnChampSelectExit;
+            BroadcastHubController.Instance.clientController.Disable();
             Logging.Info("PickBan Disabled");
         }
 
@@ -75,7 +78,7 @@ namespace LeagueBroadcastHub.Session
         {
             if(BroadcastHubController.CurrentLeagueState == "InProgress")
             {
-                ActiveSettings._useIngame = true;
+                ActiveSettings.current.UseIngame = true;
                 Logging.Warn("Tried disabling Ingame while active");
             }
             GameStart -= BroadcastHubController.Instance.EnterIngame;
@@ -195,13 +198,15 @@ namespace LeagueBroadcastHub.Session
 
         public void DoTick()
         {
+            /* Replaced by ProcessListener
             if(BroadcastHubController.CurrentLeagueState != "InProgress")
             {
                 CheckLeagueRunning();
             }
+            */
         }
 
-        private async void CheckLeagueRunning()
+        public async void CheckLeagueRunning()
         {
             var gameData = await BroadcastHub.gameController.LoLDataProvider.GetGameData();
             if (gameData == null)

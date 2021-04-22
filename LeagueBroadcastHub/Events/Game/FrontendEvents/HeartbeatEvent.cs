@@ -1,4 +1,5 @@
 ﻿using LeagueBroadcastHub.Data;
+using LeagueBroadcastHub.Data.Client;
 using LeagueBroadcastHub.State;
 using LeagueBroadcastHub.State.Game;
 using LeagueIngameServer;

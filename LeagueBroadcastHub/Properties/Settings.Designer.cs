@@ -178,5 +178,29 @@ namespace LeagueBroadcastHub.Properties {
                 this["UseIngame"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseReplayAPI {
+            get {
+                return ((bool)(this["UseReplayAPI"]));
+            }
+            set {
+                this["UseReplayAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool InitLeagueUI {
+            get {
+                return ((bool)(this["InitLeagueUI"]));
+            }
+            set {
+                this["InitLeagueUI"] = value;
+            }
+        }
     }
 }

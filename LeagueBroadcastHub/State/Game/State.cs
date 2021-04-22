@@ -259,7 +259,7 @@ namespace LeagueBroadcastHub.State.Game
             }
 
             //Only incase OCR is being used. Make sure OCR is actually returning data
-            if (ActiveSettings._useOCR && teamData != null && teamData.Count != 0)
+            if (ActiveSettings.current.UseOCR && teamData != null && teamData.Count != 0)
             {
                 //Do not add redundant or incorrect gold values
                 var goldDiff = Math.Abs( teamData.ElementAt(0).Gold - teamData.ElementAt(1).Gold);
