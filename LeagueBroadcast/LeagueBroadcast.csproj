@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\BE_icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\BE_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EmbedIO" Version="3.4.3" />
+    <PackageReference Include="floh22.Trinket" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ChampSelect\Data\" />
+    <Folder Include="ChampSelect\Events\" />
+    <Folder Include="ChampSelect\State\" />
+    <Folder Include="Common\Data\" />
+    <Folder Include="Common\Events\" />
+    <Folder Include="Common\Controllers\" />
+    <Folder Include="Ingame\Data\" />
+    <Folder Include="Ingame\Events\" />
+    <Folder Include="Ingame\State\" />
+    <Folder Include="MVVM\Converters\" />
+    <Folder Include="Http\" />
+    <Folder Include="OperatingSystem\" />
+  </ItemGroup>
+
+</Project>

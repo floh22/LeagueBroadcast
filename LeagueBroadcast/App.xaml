@@ -1,0 +1,26 @@
+﻿<Application x:Class="LeagueBroadcast.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeagueBroadcast"
+             xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
+             xmlns:view="clr-namespace:LeagueBroadcast.MVVM.View"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="MVVM/Theme/MenuButtonTheme.xaml" />
+                <ResourceDictionary Source="MVVM/Theme/ConnectionStatusTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/THeme/CloseButtonTheme.xaml" />
+                <ResourceDictionary Source="MVVM/THeme/MinimizeButtonTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
+                <view:HomeView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:SettingsViewModel}">
+                <view:SettingsView/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
