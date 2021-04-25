@@ -5,14 +5,46 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\Icons\BlueEssence.ico</ApplicationIcon>
+    <StartupObject>LeagueBroadcast.App</StartupObject>
+    <Copyright>MIT</Copyright>
+    <Authors>Lars Eble</Authors>
+    <Company />
+    <Description>League Broadcast Tools used for streaming LoL Spectator</Description>
+    <PackageProjectUrl>https://github.com/floh22/LeagueBroadcastHub</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageIcon>BE_icon.png</PackageIcon>
+    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <FileVersion>1.0.8.21115</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\BE_icon.png" />
+    <None Remove="Assets\Icons\BlueEssence.ico" />
+    <None Remove="Assets\Icons\JglIcon.ico" />
+    <None Remove="Assets\Icons\LeagueNew.ico" />
+    <None Remove="Assets\Icons\MidIcon.ico" />
+    <None Include="Assets\Images\BE_icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\BE_icon.png">
+    <Content Include="Assets\Icons\BlueEssence.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Icons\JglIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Icons\LeagueNew.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Icons\MidIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\BE_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -23,18 +55,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ChampSelect\Data\" />
-    <Folder Include="ChampSelect\Events\" />
-    <Folder Include="ChampSelect\State\" />
-    <Folder Include="Common\Data\" />
-    <Folder Include="Common\Events\" />
-    <Folder Include="Common\Controllers\" />
-    <Folder Include="Ingame\Data\" />
-    <Folder Include="Ingame\Events\" />
-    <Folder Include="Ingame\State\" />
     <Folder Include="MVVM\Converters\" />
-    <Folder Include="Http\" />
-    <Folder Include="OperatingSystem\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LCUSharp\LCUSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

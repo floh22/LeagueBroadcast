@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LeagueBroadcast.Common.Controllers;
+using LeagueBroadcast.Common.Data.Provider;
+using LeagueBroadcast.MVVM.View;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +16,13 @@ namespace LeagueBroadcast
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            BroadcastController bController = BroadcastController.Instance;
+        }
     }
+
+    
 }
