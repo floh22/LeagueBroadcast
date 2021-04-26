@@ -2,10 +2,8 @@
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.OperatingSystem;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
 using static LeagueBroadcast.ChampSelect.State.StateData;
 
 namespace LeagueBroadcast.ChampSelect.State
@@ -22,7 +20,7 @@ namespace LeagueBroadcast.ChampSelect.State
         public State()
         {
             Log.Verbose("StateData config set");
-            Log.Verbose(JsonSerializer.Serialize(data));
+            Log.Verbose(JsonConvert.SerializeObject(data));
         }
 
         public static void NewState(Converter.StateConversionOutput state)

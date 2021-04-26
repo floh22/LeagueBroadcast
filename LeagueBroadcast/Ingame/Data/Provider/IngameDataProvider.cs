@@ -1,10 +1,10 @@
 ﻿using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Ingame.Events;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Ingame.Data.Provider
@@ -43,7 +43,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<GameMetaData>(result);
+                    return JsonConvert.DeserializeObject<GameMetaData>(result);
                 }
                 else
                 {
@@ -66,7 +66,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 return null;
             }
             var result = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<IEnumerable<Player>>(result).ToList();
+            return JsonConvert.DeserializeObject<IEnumerable<Player>>(result).ToList();
         }
 
         public async Task<List<RiotEvent>> GetEventData()
@@ -80,7 +80,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             var result = await response.Content.ReadAsStringAsync();
 
-            var events = JsonSerializer.Deserialize<RiotEventList>(result).Events;
+            var events = JsonConvert.DeserializeObject<RiotEventList>(result).Events;
             return events;
         }
     }

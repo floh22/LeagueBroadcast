@@ -1,20 +1,23 @@
 ﻿using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.Http;
 using LeagueBroadcast.MVVM.View;
+using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using static LeagueBroadcast.OperatingSystem.Log;
 
 namespace LeagueBroadcast.Common.Controllers
 {
     class BroadcastController
     {
-        public static string AppVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static string AppVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         public static int TickRate = 2;
         public static string CurrentLeagueState = "None";
         public static BroadcastController Instance => GetInstance();
@@ -37,22 +40,14 @@ namespace LeagueBroadcast.Common.Controllers
 
 
         private Timer tickTimer;
+        private StartupViewModel _startupContext;
+
+        private DateTime loadStart, initFinish;
         private BroadcastController()
         {
-            DateTime loadStart = DateTime.Now;
-            DateTime initFinish = DateTime.Now;
-            EarlyInitComplete += (s, e) => {
-                Log.Info($"Early Init Complete in {(DateTime.Now - loadStart).TotalMilliseconds}ms");
-                initFinish = DateTime.Now;
-            };
-            InitComplete += (s, e) => { 
-                Log.Info($"Init Complete in {(DateTime.Now - initFinish).ToString(@"s\.fff")}s");
-                initFinish = DateTime.Now;
-            };
-            PostInitComplete += (s, e) => { 
-                Log.Info($"Post Init Complete in {(DateTime.Now - initFinish).TotalMilliseconds}ms");
-                Log.Info($"Total Startup time: {(DateTime.Now - loadStart).ToString(@"s\.fff")}s");
-            };
+            loadStart = DateTime.Now;
+            initFinish = DateTime.Now;
+
             EarlyInit();
         }
 
@@ -66,24 +61,33 @@ namespace LeagueBroadcast.Common.Controllers
         private void StatusUpdate(string Status)
         {
             Log.Info(Status);
-            Startup.GETDataContext().Status = Status;
+            _startupContext.Status = Status;
         }
 
-        private void EarlyInit()
+        private async void EarlyInit()
         {
             DataDragon.FinishLoading += (s, e) => Init();
             InitComplete += (s, e) => PostInit();
 
-            Startup = new();
+            Startup = new StartupWindow();
             Startup.Show();
+            _startupContext = (StartupViewModel)Startup.DataContext;
+            _startupContext.Status = "Early Init";
 
             ToTick = new();
-
+            
             _ = new Log(LogLevel.Verbose);
             CfgController = ConfigController.Instance;
-            DDragon = DataDragon.Instance;
 
-            EarlyInitComplete?.Invoke(this, EventArgs.Empty);
+            EarlyInitComplete?.Invoke(null, EventArgs.Empty);
+            Log.Info($"Early Init Complete in {(DateTime.Now - loadStart).TotalMilliseconds}ms");
+            initFinish = DateTime.Now;
+
+            _startupContext.UpdateLoadProgress(LoadStatus.PreInit);
+
+            await Task.Delay(50);
+
+            DDragon = DataDragon.Instance;
         }
 
         private void Init()
@@ -91,43 +95,65 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info("DDragon loaded");
             StatusUpdate("Loading PickBan Controller");
             PBController = new();
+            _startupContext.UpdateLoadProgress(LoadStatus.Init, 15);
 
             StatusUpdate("Loading Ingame Controller");
             IGController = new();
+            _startupContext.UpdateLoadProgress(LoadStatus.Init, 30);
 
             StatusUpdate("Loading Replay Controller");
             ReplayController = new();
+            _startupContext.UpdateLoadProgress(LoadStatus.Init, 50);
 
             StatusUpdate("Loading State Controller");
             AppStController = new();
+            _startupContext.UpdateLoadProgress(LoadStatus.Init, 65);
 
             StatusUpdate("Loading Frontend Webserver (HTTP/WS)");
             var WebServer = new EmbedIOServer("localhost", 9001);
+            _startupContext.UpdateLoadProgress(LoadStatus.Init, 85);
 
             StatusUpdate("Whats that ticking noise?");
             tickTimer = new Timer { Interval = 1000 / TickRate };
             tickTimer.Elapsed += DoTick;
+            _startupContext.UpdateLoadProgress(LoadStatus.Init, 95);
 
             Log.Verbose($"Starting LBH with tickrate of {TickRate}tps");
             tickTimer.Start();
             StatusUpdate("Sorting Spaghetti by length");
+            _startupContext.UpdateLoadProgress(LoadStatus.Init);
 
-            InitComplete?.Invoke(this, EventArgs.Empty);
+            Log.Info($"Init Complete in {(DateTime.Now - initFinish).ToString(@"s\.fff")}s");
+            initFinish = DateTime.Now;
+            InitComplete?.Invoke(null, EventArgs.Empty);
             
+
         }
 
         private void PostInit()
         {
-            Main = new();
-            Main.Show();
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                Main = new();
+                Main.Show();
+            });
+            
+            _startupContext.UpdateLoadProgress(LoadStatus.PostInit, 33);
 
             PBConnector = new PickBanConnector();
             ToTick.Add(AppStController);
+            _startupContext.UpdateLoadProgress(LoadStatus.PostInit, 66);
 
             Log.Verbose("Checking for running Game");
             AppStController.CheckLeagueRunning();
+            _startupContext.UpdateLoadProgress(LoadStatus.PostInit);
 
-            PostInitComplete?.Invoke(this, EventArgs.Empty);
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                Startup.Close();
+            });
+
+            PostInitComplete?.Invoke(null, EventArgs.Empty);
+            Log.Info($"Post Init Complete in {(DateTime.Now - initFinish).TotalMilliseconds}ms");
+            Log.Info($"Total Startup time: {(DateTime.Now - loadStart).ToString(@"s\.fff")}s");
         }
 
         public void OnAppExit()

@@ -7,11 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using static LeagueBroadcast.Common.Data.Provider.DataDragon;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.MVVM.Core;
+using LeagueBroadcast.MVVM.ViewModel;
+using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Common.Data.Provider
 {
@@ -32,7 +32,10 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public static EventHandler FinishLoading, StartLoading;
 
-        private string Status { set { BroadcastController.Instance.Startup.GETDataContext().Status = value; } }
+
+        private StartupViewModel _startupContext = (StartupViewModel) BroadcastController.Instance.Startup.DataContext;
+        private int maxTasks = 0;
+        private int progress = 0;
 
         public struct GameVersion
         {
@@ -52,14 +55,15 @@ namespace LeagueBroadcast.Common.Data.Provider
         private static DataDragon GetInstance()
         {
             if (_instance == null)
-                _instance = new();
+                _instance = new DataDragon();
             return _instance;
         }
 
         private DataDragon()
         {
-            Status = "DataDragon Provider Init";
+            
             Log.Info("DataDragon Provider Init");
+            _startupContext.Status = "DataDragon Init";
             version = new GameVersion
             {
                 Version = ConfigController.PickBan.contentPatch,
@@ -92,9 +96,9 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private async void InitLatest()
         {
-            Status = "Retrieving latest patch info";
+            _startupContext.Status = "Retrieving latest patch info";
             Log.Info("Retrieving latest patch info");
-            dynamic riotVersion = JsonSerializer.Deserialize<dynamic>(await DataDragonUtils.GetAsync($"https://ddragon.leagueoflegends.com/realms/{Realm}.json"));
+            dynamic riotVersion = JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"https://ddragon.leagueoflegends.com/realms/{Realm}.json"));
             version.CDN = riotVersion.cdn;
             version.Champion = riotVersion.n.champion;
             version.Item = riotVersion.n.item;
@@ -115,14 +119,14 @@ namespace LeagueBroadcast.Common.Data.Provider
         {
             Log.Info($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}");
 
-            Champions = new List<Champion>(JsonSerializer.Deserialize<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
+            Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
             Log.Info($"Loaded {Champions.Count} champions");
 
-            SummonerSpells = new List<SummonerSpell>(JsonSerializer.Deserialize<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
+            SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
             Log.Info($"Loaded {SummonerSpells.Count} summoner spells");
 
-            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonSerializer.Deserialize<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/item.json")).data.ToObject<Dictionary<int, ItemData>>());
-            Log.Info($"Loaded {rawItemData.Count} items");
+            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/item.json")).data.ToObject<Dictionary<int, ItemData>>());
+            Log.Info($"Detected {rawItemData.Count} items");
 
             rawItemData.ForEach(kvPair => {
                 ItemData itemData = kvPair.Value;
@@ -134,7 +138,7 @@ namespace LeagueBroadcast.Common.Data.Provider
                 }
             });
 
-            Log.Info($"Registered {Items.Count} full items");
+            Log.Info($"Loaded {Items.Count} full items");
 
             //Download all needed champion, item, and summoner spell data
             await CheckLocalCache();
@@ -169,7 +173,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public async Task<bool> CheckLocalCache()
         {
-            Status = "Checking Cache";
+            _startupContext.Status = "Checking Cache";
             Log.Verbose("Checking Local Cache");
 
             var patch = version.Champion;
@@ -182,6 +186,8 @@ namespace LeagueBroadcast.Common.Data.Provider
             string item = patchFolder + "/item";
             string spell = patchFolder + "/spell";
 
+            maxTasks = Champions.Count * 4 + Items.Count + SummonerSpells.Count;
+
             if (!Directory.Exists(cache))
                 Directory.CreateDirectory(cache);
 
@@ -189,7 +195,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             {
                 //Delete old patch folders
                 Log.Info("Current Patch cache not detected, removing old Patch data");
-                Status = "Yeeting old patch onto Dominion map";
+                _startupContext.Status = "Yeeting old patch onto Dominion map";
 
                 List<string> dirs = new List<string>(Directory.EnumerateDirectories(cache));
 
@@ -230,30 +236,29 @@ namespace LeagueBroadcast.Common.Data.Provider
 
             Log.Info("Starting download process. This could take a while");
 
-            DownloadFullItemCache(dlTasks, champ);
-            DownloadFullChampionCache(dlTasks, item);
+            DownloadFullItemCache(dlTasks, item);
+            DownloadFullChampionCache(dlTasks, champ);
             DownloadFullSummonerSpellCache(dlTasks, spell);
 
-            //LoadingProgress.LoadingPopUp.IsVisible = true;
-            //LoadingProgress.LoadingPopUp.UpdateProgress(0, dlTasks.Count);
+            _startupContext.UpdateDDragonProgress(0, dlTasks.Count);
 
             Log.Info($"Downloading {dlTasks.Count} assets from datadragon!");
             dlTasks.ForEach(t => t.Start());
             var totalTasks = dlTasks.Count;
 
-            Status = $"Downloaded 0/{totalTasks} Images";
+            _startupContext.Status = $"Downloaded 0/{totalTasks} Images";
             int total = 0;
             while (dlTasks.Any())
             {
                 Task finishTask = await Task.WhenAny(dlTasks);
                 dlTasks.Remove(finishTask);
                 total++;
-                //LoadingProgress.LoadingPopUp.UpdateProgress(total, totalTasks);
-                Status = $"Downloaded {total}/{totalTasks} Images";
+                _startupContext.UpdateDDragonProgress(0, dlTasks.Count);
+                _startupContext.Status = $"Downloaded {total}/{totalTasks} Images";
             }
 
             Log.Info("DataDragon download finished");
-            Status = "DataDragon cache downloaded";
+            _startupContext.Status = "DataDragon cache downloaded";
             return true;
 
         }
@@ -269,16 +274,24 @@ namespace LeagueBroadcast.Common.Data.Provider
         private void DownloadMissingChampionCache(List<Task> dlTasks, string destUri)
         {
             Champions.ForEach(champ => {
-                Status = $"Checking {champ} cache";
+                _startupContext.Status = $"Checking {champ} cache";
                 DataDragonUtils.ExtendChampion(champ, version);
                 if (!File.Exists($"{destUri}/{champ.id}_loading.png"))
                     dlTasks.Add(new Task(() => DataDragonUtils.DownloadFile(champ.loadingImg, $"{destUri}/{champ.id}_loading.png")));
+                else
+                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
                 if(!File.Exists($"{destUri}/{champ.id}_splash.png"))
                     dlTasks.Add(new Task(() => DataDragonUtils.DownloadFile(champ.splashImg, $"{destUri}/{champ.id}_splash.png")));
-                if(!File.Exists($"{destUri}/{champ.id}_centered_splash.png"))
+                else
+                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
+                if (!File.Exists($"{destUri}/{champ.id}_centered_splash.png"))
                     dlTasks.Add(new Task(() => DataDragonUtils.DownloadFile(champ.splashCenteredImg, $"{destUri}/{champ.id}_centered_splash.png")));
-                if(!File.Exists($"{destUri}/{champ.id}_square.png"))
+                else
+                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
+                if (!File.Exists($"{destUri}/{champ.id}_square.png"))
                     dlTasks.Add(new Task(() => DataDragonUtils.DownloadFile(champ.squareImg, $"{destUri}/{champ.id}_square.png")));
+                else
+                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
             });
         }
 
@@ -303,9 +316,11 @@ namespace LeagueBroadcast.Common.Data.Provider
         private void DownloadMissingItemCache(List<Task> dlTasks, string destUri)
         {
             Items.ForEach(item => {
-                Status = $"Checking {item} cache";
+                _startupContext.Status = $"Checking {item} cache";
                 if (!File.Exists($"{destUri}/{item.itemID}.png"))
                     DownloadItemToCache(dlTasks, destUri, item);
+                else
+                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
             });
         }
 
@@ -327,9 +342,11 @@ namespace LeagueBroadcast.Common.Data.Provider
         {
             SummonerSpells.ForEach(spell =>
             {
-                Status = $"Checking {spell} cache";
+                _startupContext.Status = $"Checking {spell} cache";
                 if (!File.Exists($"{destUri}/{spell.id}.png"))
                     DownloadSummonerSpellToCache(dlTasks, destUri, spell);
+                else
+                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
             });
         }
 

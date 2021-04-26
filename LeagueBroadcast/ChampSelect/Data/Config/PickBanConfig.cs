@@ -1,9 +1,6 @@
-﻿using LeagueBroadcast.Common.Data.Config;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿
+using LeagueBroadcast.Common.Data.Config;
+using Newtonsoft.Json;
 
 namespace LeagueBroadcast.ChampSelect.Data.Config
 {
@@ -25,16 +22,27 @@ namespace LeagueBroadcast.ChampSelect.Data.Config
             return SerializeIndented(this);
         }
 
-        public override void UpdateValues(dynamic readValues)
+        public override void UpdateValues(string readValues)
         {
-            frontend = readValues.frontend;
-            contentPatch = readValues.contentPatch;
-            contentCdn = readValues.contentCdn;
+            var Cfg = JsonConvert.DeserializeObject<PickBanConfig>(readValues);
+            frontend = Cfg.frontend;
+            contentPatch = Cfg.contentPatch;
+            contentCdn = Cfg.contentCdn;
+            FileVersion = Cfg.FileVersion;
         }
 
-        public override string GETDefault()
+        public override string GETDefaultString()
         {
-            return SerializeIndented(CreateDefault());
+            return JsonConvert.SerializeObject(CreateDefault(), Formatting.Indented);
+        }
+
+        public override void RevertToDefault()
+        {
+            var def = CreateDefault();
+            this.contentCdn = def.contentCdn;
+            this.contentPatch = def.contentPatch;
+            this.frontend = def.frontend;
+            this.FileVersion = CurrentVersion;
         }
 
         private PickBanConfig CreateDefault()

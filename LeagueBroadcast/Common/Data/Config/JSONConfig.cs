@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Common.Data.Config
 {
@@ -18,9 +14,11 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public abstract string GETJson();
 
-        public abstract void UpdateValues(dynamic readValues);
+        public abstract void UpdateValues(string readValues);
 
-        public abstract string GETDefault();
+        public abstract string GETDefaultString();
+
+        public abstract void RevertToDefault();
 
         public abstract string GETCurrentVersion();
 
@@ -28,7 +26,7 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public string SerializeIndented(object o)
         {
-            return JsonSerializer.Serialize(o, new JsonSerializerOptions() { WriteIndented = true });
+            return JsonConvert.SerializeObject(o, Formatting.Indented);
         }
     }
 }

@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
-    <FileVersion>1.0.8.21115</FileVersion>
+    <AssemblyVersion>1.0.47.0</AssemblyVersion>
+    <FileVersion>1.0.47.21116</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +52,7 @@
   <ItemGroup>
     <PackageReference Include="EmbedIO" Version="3.4.3" />
     <PackageReference Include="floh22.Trinket" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>

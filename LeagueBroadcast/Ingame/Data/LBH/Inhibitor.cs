@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace LeagueBroadcast.Ingame.Data.LBH
 {

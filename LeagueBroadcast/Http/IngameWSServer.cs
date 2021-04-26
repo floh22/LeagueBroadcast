@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using EmbedIO.WebSockets;
 using LeagueBroadcast.ChampSelect.Events;
@@ -7,6 +6,7 @@ using LeagueBroadcast.ChampSelect.State;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Events;
 using LeagueBroadcast.OperatingSystem;
+using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Http
 {
@@ -54,12 +54,12 @@ namespace LeagueBroadcast.Http
 
         public void SendEventToAllAsync(LeagueEvent leagueEvent)
         {
-            BroadcastAsync(JsonSerializer.Serialize(leagueEvent));
+            BroadcastAsync(JsonConvert.SerializeObject(leagueEvent));
         }
 
         public void SendEventAsync(IWebSocketContext context, LeagueEvent leagueEvent)
         {
-            SendAsync(context, JsonSerializer.Serialize(leagueEvent));
+            SendAsync(context, JsonConvert.SerializeObject(leagueEvent));
         }
     }
 }

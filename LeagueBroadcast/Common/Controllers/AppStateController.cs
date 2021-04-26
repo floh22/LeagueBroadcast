@@ -1,12 +1,7 @@
 ﻿using LeagueBroadcast.ChampSelect.Data.LCU;
-using LeagueBroadcast.Common.Events;
-using LeagueBroadcast.OperatingSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Common.Controllers
 {
@@ -28,7 +23,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public async void CheckLeagueRunning()
         {
-            var gameData = await BroadcastController.Instance.IGController.LoLDataProvider.GetGameData();
+            var gameData = await IngameController.LoLDataProvider.GetGameData();
             if (gameData == null)
                 return;
 

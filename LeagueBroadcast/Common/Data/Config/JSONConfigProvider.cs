@@ -1,9 +1,8 @@
 ﻿using LeagueBroadcast.OperatingSystem;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.Json;
 
 namespace LeagueBroadcast.Common.Data.Config
 {
@@ -13,11 +12,18 @@ namespace LeagueBroadcast.Common.Data.Config
         public static JSONConfigProvider Instance => GETInstance();
 
         private string _configPath;
-        public JSONConfigProvider()
+        private JSONConfigProvider()
         {
             _configPath = Path.Combine(Directory.GetCurrentDirectory(), "Config");
+            
             Log.Info("Config Provider started");
             Log.Verbose($"Looking for config files at {_configPath}");
+
+            if (!Directory.Exists(_configPath))
+            {
+                Log.Info("Init Config Folder");
+                Directory.CreateDirectory(_configPath);
+            }
         }
         public void ReadConfig(JSONConfig config)
         {
@@ -25,16 +31,23 @@ namespace LeagueBroadcast.Common.Data.Config
             if(!File.Exists(fileLocation))
             {
                 Log.Info($"Config {config.Name} not found. Restoring default config");
-                config.GETDefault();
+                config.RevertToDefault();
+                WriteConfig(config);
+                return;
             }
 
-            dynamic readConfig = JsonSerializer.Deserialize<dynamic>(File.ReadAllText(fileLocation));
+            var configString = File.ReadAllText(fileLocation);
+            dynamic readConfig = JsonConvert.DeserializeObject<dynamic>(configString);
             if (readConfig.FileVersion != config.GETCurrentVersion())
             {
+                Log.Info($"Config {config.Name} outdated. Updating file version");
                 config.UpdateConfigVersion(readConfig.FileVersion, readConfig);
             }
-
-            config.UpdateValues(readConfig);
+            Log.Info($"Found {config.Name}.json. Reading values");
+            config.UpdateValues(configString);
+            if(Log.Instance.Level == Log.LogLevel.Verbose)
+                Log.Verbose(config.GETJson());
+            Log.Info($"Config {config.Name} loaded");
         }
 
         public void WriteConfig(JSONConfig config)

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System;
 using static LeagueBroadcast.OperatingSystem.Log;
 
 namespace LeagueBroadcast.Common.Data.Config
@@ -33,9 +30,20 @@ namespace LeagueBroadcast.Common.Data.Config
             return CurrentVersion;
         }
 
-        public override string GETDefault()
+        public override string GETDefaultString()
         {
             return SerializeIndented(CreateDefault());
+        }
+
+        public override void RevertToDefault()
+        {
+            var def = CreateDefault();
+            this.DataDragon = def.DataDragon;
+            this.PickBan = def.PickBan;
+            this.Ingame = def.Ingame;
+            this.Replay = def.Replay;
+            this.App = def.App;
+            this.FileVersion = CurrentVersion;
         }
 
         private ComponentConfig CreateDefault()
@@ -69,10 +77,17 @@ namespace LeagueBroadcast.Common.Data.Config
             return;
         }
 
-        public override void UpdateValues(dynamic readValues)
+        public override void UpdateValues(string readValues)
         {
-            throw new NotImplementedException();
+            var Cfg = JsonConvert.DeserializeObject<ComponentConfig>(readValues);
+            this.DataDragon = Cfg.DataDragon;
+            this.PickBan = Cfg.PickBan;
+            this.Ingame = Cfg.Ingame;
+            this.Replay = Cfg.Replay;
+            this.App = Cfg.App;
+            this.FileVersion = Cfg.FileVersion;
         }
+
     }
 
     public class DataDragonConfig
