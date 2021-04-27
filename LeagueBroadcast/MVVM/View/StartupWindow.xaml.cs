@@ -27,5 +27,18 @@ namespace LeagueBroadcast.MVVM.View
         {
             return (StartupViewModel) DataContext;
         }
+
+        private void UpdateNow_Click(object sender, RoutedEventArgs e)
+        {
+            var ctx = (StartupViewModel) this.DataContext;
+            ctx.Update?.Invoke(null, EventArgs.Empty);
+
+        }
+
+        private void UpdateSkip_Click(object sender, RoutedEventArgs e)
+        {
+            var ctx = (StartupViewModel)this.DataContext;
+            ctx.SkipUpdate?.Invoke(null, EventArgs.Empty);
+        }
     }
 }

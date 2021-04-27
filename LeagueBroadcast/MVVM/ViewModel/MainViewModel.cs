@@ -38,7 +38,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
             HomeVM = new ();
             SettingsVM = new ();
             CurrentView = HomeVM;
-            ConnectionStatus = ConnectionStatusViewModel.CONNECTING;
+            ConnectionStatus = ConnectionStatusViewModel.DISCONNECTED;
 
             HomeViewCommand = new(o => { CurrentView = HomeVM; });
             SettingsViewCommand = new(o => { CurrentView = SettingsVM; });

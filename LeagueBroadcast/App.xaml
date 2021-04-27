@@ -7,10 +7,11 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="MVVM/Theme/MenuButtonTheme.xaml" />
+                <ResourceDictionary Source="MVVM/Theme/MenuButtonTheme.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/ConnectionStatusTheme.xaml"/>
-                <ResourceDictionary Source="MVVM/THeme/CloseButtonTheme.xaml" />
-                <ResourceDictionary Source="MVVM/THeme/MinimizeButtonTheme.xaml" />
+                <ResourceDictionary Source="MVVM/Theme/CloseButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/MinimizeButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/StartupButtonTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">

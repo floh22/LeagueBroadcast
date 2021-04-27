@@ -7,11 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using static LeagueBroadcast.OperatingSystem.Log;
+using static LeagueBroadcast.Common.Log;
 
 namespace LeagueBroadcast.Common.Controllers
 {
@@ -19,7 +18,7 @@ namespace LeagueBroadcast.Common.Controllers
     {
         public static string AppVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         public static int TickRate = 2;
-        public static string CurrentLeagueState = "None";
+        public static LeagueState CurrentLeagueState = LeagueState.Disconnected;
         public static BroadcastController Instance => GetInstance();
         public static EventHandler EarlyInitComplete, InitComplete, PostInitComplete;
 
@@ -41,6 +40,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         private Timer tickTimer;
         private StartupViewModel _startupContext;
+        private MainViewModel _mainContext;
 
         private DateTime loadStart, initFinish;
         private BroadcastController()
@@ -78,6 +78,10 @@ namespace LeagueBroadcast.Common.Controllers
             
             _ = new Log(LogLevel.Verbose);
             CfgController = ConfigController.Instance;
+            if (await AppUpdateController.Update(_startupContext)) {
+                Startup.Close();
+                App.Instance.Shutdown();
+            }
 
             EarlyInitComplete?.Invoke(null, EventArgs.Empty);
             Log.Info($"Early Init Complete in {(DateTime.Now - loadStart).TotalMilliseconds}ms");
@@ -136,7 +140,9 @@ namespace LeagueBroadcast.Common.Controllers
                 Main = new();
                 Main.Show();
             });
-            
+
+            _mainContext = (MainViewModel)Main.DataContext;
+
             _startupContext.UpdateLoadProgress(LoadStatus.PostInit, 33);
 
             PBConnector = new PickBanConnector();
@@ -167,5 +173,13 @@ namespace LeagueBroadcast.Common.Controllers
             List<ITickable> tickNow = ToTick.GetRange(0, ToTick.Count);
             tickNow.ForEach(tickable => tickable.DoTick());
         }
+    }
+
+    public enum LeagueState
+    {
+        Disconnected,
+        None,
+        InChampSelect,
+        InGame
     }
 }

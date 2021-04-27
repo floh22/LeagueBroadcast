@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using EmbedIO.WebSockets;
 using LeagueBroadcast.ChampSelect.Events;
 using LeagueBroadcast.ChampSelect.State;
+using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Events;
 using LeagueBroadcast.OperatingSystem;

@@ -14,6 +14,10 @@
     <Window.DataContext>
         <viewModel:StartupViewModel/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </Window.Resources>
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -28,7 +32,28 @@
                         <GradientStop Color="#1a2b42" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
-                <TextBlock Text="{Binding Status}" VerticalAlignment="Bottom" Foreground="White" Margin="10,0,0,5"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="UpdateText" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"  Text="{Binding UpdateText}" Foreground="White" FontSize="17" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button x:Name="UpdateNow" Grid.Row="3" Grid.Column="1" Style="{StaticResource StartupButtonTheme}" Content="Update Now" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}" Click="UpdateNow_Click"/>
+                    <Button x:Name="UpdateSkip" Grid.Row="3" Grid.Column="3" Style="{StaticResource StartupButtonTheme}" Content="Remind Me Later" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}" Click="UpdateSkip_Click"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Status}" VerticalAlignment="Bottom" Foreground="White" Margin="0,0,0,5"/>
+                </Grid>
+                
             </Border>
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>

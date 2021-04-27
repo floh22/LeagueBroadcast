@@ -28,10 +28,27 @@ namespace LeagueBroadcast.MVVM.ViewModel
             set { _loadingBarWidth = value; OnPropertyChanged(); }
         }
 
+        private bool _showUpdateDialog;
+
+        public bool ShowUpdateDialog
+        {
+            get { return _showUpdateDialog; }
+            set { _showUpdateDialog = value; OnPropertyChanged(); }
+        }
+
+        private string _updateText = "An Update Is Available";
+
+        public string UpdateText
+        {
+            get { return _updateText; }
+            set { _updateText = value; OnPropertyChanged(); }
+        }
+
+        public EventHandler Update, SkipUpdate;
 
         public StartupViewModel()
         {
-
+            
         }
 
         public void UpdateLoadProgress(LoadStatus loadStatus, int progress = 100)

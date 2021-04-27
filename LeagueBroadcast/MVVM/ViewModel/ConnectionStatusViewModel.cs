@@ -62,7 +62,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
         }
 
         public static ConnectionStatusViewModel DISCONNECTED = new(Colors.White, "DISCONNECTED", Color.FromRgb(251, 105, 98), 3, Color.FromRgb(208, 126, 126));
-        public static ConnectionStatusViewModel CONNECTING = new(Colors.White, "CONNECTING", Color.FromRgb(168, 228, 239), 3, Color.FromRgb(126, 172, 180));
+        public static ConnectionStatusViewModel LCU = new(Colors.White, "LCU CONNECTED", Color.FromRgb(168, 228, 239), 3, Color.FromRgb(126, 172, 180));
         public static ConnectionStatusViewModel CONNECTED = new(Colors.White, "CONNECTED", Color.FromRgb(121, 222, 121), 3, Color.FromRgb(12, 192, 120));
     }
 }

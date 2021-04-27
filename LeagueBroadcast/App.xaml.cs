@@ -13,8 +13,10 @@ namespace LeagueBroadcast
     /// </summary>
     public partial class App : Application
     {
+        public static App Instance;
         protected override void OnStartup(StartupEventArgs e)
         {
+            Instance = this;
             base.OnStartup(e);
 
             BroadcastController bController = BroadcastController.Instance;

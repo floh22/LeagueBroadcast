@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.0.47.0</AssemblyVersion>
-    <FileVersion>1.0.47.21116</FileVersion>
+    <AssemblyVersion>1.0.54.0</AssemblyVersion>
+    <FileVersion>1.0.54.21116</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,15 +56,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MVVM\Converters\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\LCUSharp\LCUSharp.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Common\LeagueBroadcast.Common.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Update\LeagueBroadcast.Update.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ChampSelect\Data\Provider\" />
+    <Folder Include="MVVM\Converters\" />
   </ItemGroup>
 
 </Project>

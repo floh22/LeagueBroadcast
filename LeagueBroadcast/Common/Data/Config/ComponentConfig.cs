@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using LeagueBroadcast.Common.Utils;
+using Newtonsoft.Json;
 using System;
-using static LeagueBroadcast.OperatingSystem.Log;
+using System.Diagnostics;
+using static LeagueBroadcast.Common.Log;
 
 namespace LeagueBroadcast.Common.Data.Config
 {
@@ -62,7 +64,7 @@ namespace LeagueBroadcast.Common.Data.Config
                     }
                 },
                 Replay = new ReplayConfig() { IsActive = true, UseAutoInitUI = true },
-                App = new AppConfig() { LogLevel = LogLevel.Verbose }
+                App = new AppConfig() { LogLevel = LogLevel.Verbose, CheckForUpdates = true, UpdateRepositoryName = @"floh22/LeagueBroadcastHub", UpdateRepositoryUrl= "https://github.com/floh22/LeagueBroadcastHub" }
             };
         }
 
@@ -126,5 +128,10 @@ namespace LeagueBroadcast.Common.Data.Config
     public class AppConfig
     {
         public LogLevel LogLevel;
+        public bool CheckForUpdates;
+        public string UpdateRepositoryUrl;
+        public string UpdateRepositoryName;
+        [JsonIgnore]
+        public StringVersion Version = StringVersion.TryParse(FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe").FileVersion, out StringVersion version) ? version! : StringVersion.Zero;
     }
 }
