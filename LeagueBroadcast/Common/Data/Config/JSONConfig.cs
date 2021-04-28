@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LeagueBroadcast.Common.Controllers;
+using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Common.Data.Config
 {
@@ -27,6 +28,11 @@ namespace LeagueBroadcast.Common.Data.Config
         public string SerializeIndented(object o)
         {
             return JsonConvert.SerializeObject(o, Formatting.Indented);
+        }
+
+        public void UpdateFile()
+        {
+            ConfigController.UpdateConfigFile(this);
         }
     }
 }

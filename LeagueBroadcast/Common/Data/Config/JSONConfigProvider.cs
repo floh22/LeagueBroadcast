@@ -55,7 +55,6 @@ namespace LeagueBroadcast.Common.Data.Config
             Log.Verbose($"Writing {config.Name} config to file");
             using var stream = File.CreateText(Path.Combine(_configPath, $"{config.Name}.json"));
             var json = config.GETJson();
-            Log.Verbose(json);
             stream.Write(json);
             stream.Close();
             Log.Info($"Updated {config.Name} config file");

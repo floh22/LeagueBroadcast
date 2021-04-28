@@ -12,6 +12,8 @@
                 <ResourceDictionary Source="MVVM/Theme/CloseButtonTheme.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/MinimizeButtonTheme.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/StartupButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/TextBoxTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/ColorSelectButtonTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
@@ -21,6 +23,11 @@
             <DataTemplate DataType="{x:Type viewModel:SettingsViewModel}">
                 <view:SettingsView/>
             </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type viewModel:PickBanViewModel}">
+                <view:PickBanView/>
+            </DataTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

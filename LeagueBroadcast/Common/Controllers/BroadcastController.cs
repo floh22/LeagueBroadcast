@@ -18,7 +18,7 @@ namespace LeagueBroadcast.Common.Controllers
     {
         public static string AppVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         public static int TickRate = 2;
-        public static LeagueState CurrentLeagueState = LeagueState.Disconnected;
+        public static string CurrentLeagueState = "None";
         public static BroadcastController Instance => GetInstance();
         public static EventHandler EarlyInitComplete, InitComplete, PostInitComplete;
 
@@ -109,10 +109,6 @@ namespace LeagueBroadcast.Common.Controllers
             ReplayController = new();
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 50);
 
-            StatusUpdate("Loading State Controller");
-            AppStController = new();
-            _startupContext.UpdateLoadProgress(LoadStatus.Init, 65);
-
             StatusUpdate("Loading Frontend Webserver (HTTP/WS)");
             var WebServer = new EmbedIOServer("localhost", 9001);
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 85);
@@ -120,11 +116,6 @@ namespace LeagueBroadcast.Common.Controllers
             StatusUpdate("Whats that ticking noise?");
             tickTimer = new Timer { Interval = 1000 / TickRate };
             tickTimer.Elapsed += DoTick;
-            _startupContext.UpdateLoadProgress(LoadStatus.Init, 95);
-
-            Log.Verbose($"Starting LBH with tickrate of {TickRate}tps");
-            tickTimer.Start();
-            StatusUpdate("Sorting Spaghetti by length");
             _startupContext.UpdateLoadProgress(LoadStatus.Init);
 
             Log.Info($"Init Complete in {(DateTime.Now - initFinish).ToString(@"s\.fff")}s");
@@ -136,12 +127,16 @@ namespace LeagueBroadcast.Common.Controllers
 
         private void PostInit()
         {
+            Log.Verbose("Opening main window");
             Application.Current.Dispatcher.Invoke((Action)delegate {
                 Main = new();
                 Main.Show();
-            });
 
-            _mainContext = (MainViewModel)Main.DataContext;
+                _mainContext = (MainViewModel)Main.DataContext;
+
+                StatusUpdate("Loading State Controller");
+                AppStController = AppStateController.Instance;
+            });
 
             _startupContext.UpdateLoadProgress(LoadStatus.PostInit, 33);
 
@@ -156,6 +151,9 @@ namespace LeagueBroadcast.Common.Controllers
             Application.Current.Dispatcher.Invoke((Action)delegate {
                 Startup.Close();
             });
+
+            Log.Verbose($"Starting Essence with tickrate of {TickRate}tps");
+            tickTimer.Start();
 
             PostInitComplete?.Invoke(null, EventArgs.Empty);
             Log.Info($"Post Init Complete in {(DateTime.Now - initFinish).TotalMilliseconds}ms");

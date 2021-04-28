@@ -5,6 +5,7 @@ using LeagueBroadcast.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Common.Controllers
 {
@@ -45,6 +46,67 @@ namespace LeagueBroadcast.Common.Controllers
             }
 
             UpdatedThisTick = false;
+        }
+        public void ApplyNewState(LCUSharp.Websocket.LeagueEvent e)
+        {
+            Session tempSession = e.Data.ToObject<Session>();
+            var newState = new CurrentState(true, tempSession);
+            if (!State.data.champSelectActive)
+            {
+                Log.Info("ChampSelect started!");
+                State.OnChampSelectStarted();
+                // Also cache information about summoners
+                //Logging.Verbose(e.Data.ToString());
+                var t = (Task)AppStateController.CacheSummoners(newState.session);
+                t.Wait();
+            }
+
+            lastTime = State.data.timer;
+
+            var cleanedData = Converter.ConvertState(newState);
+
+            var currentActionBefore = State.data.GetCurrentAction();
+
+            State.NewState(cleanedData);
+
+            var currentActionAfter = State.data.GetCurrentAction();
+
+            if (!currentActionBefore.Equals(currentActionAfter))
+            {
+                var action = State.data.RefreshAction(currentActionBefore);
+
+                State.OnNewAction(action);
+            }
+        }
+
+        public void OnEnterPickBan(object sender, EventArgs e)
+        {
+            var Instance = BroadcastController.Instance;
+            if (Instance.ToTick.Contains(this))
+            {
+                return;
+            }
+
+            Log.Info("Starting PickBan Controller");
+            Instance.ToTick.Insert(0, this);
+
+            if (BroadcastController.CurrentLeagueState == "InProgress")
+            {
+                Instance.ToTick.Remove(Instance.IGController);
+            }
+            BroadcastController.CurrentLeagueState = "ChampSelect";
+        }
+
+        public void OnPickBanExit(object sender, EventArgs e)
+        {
+            if(State.data.champSelectActive)
+            {
+                bool finished = State.data.timer == 0 && lastTime == 0;
+                var finishedText = finished ? "finished" : "ended early";
+                Log.Info($"ChampSelect {finishedText}!");
+                State.OnChampSelectEnded(finished);
+                BroadcastController.Instance.ToTick.Remove(this);
+            }
         }
 
         public void StartHeartbeat()

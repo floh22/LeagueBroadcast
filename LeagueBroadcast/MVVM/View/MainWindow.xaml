@@ -91,6 +91,12 @@
                              IsChecked="true"
                              Command="{Binding HomeViewCommand}"
                              />
+                <RadioButton Content="Pick Ban"
+                             Height="50"
+                             Foreground="White"
+                             FontSize="25"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding PickBanViewCommand}"/>
                 <RadioButton Content="Settings"
                              Height="50"
                              Foreground="White"
@@ -106,7 +112,7 @@
                     <Setter Property="NavigationUIVisibility" Value="Hidden"/>
                 </Style>
             </StackPanel.Resources>
-            <ContentControl Margin="10,0,0,0" Content="{Binding CurrentView}" Width="1070"/>
+            <ContentControl Margin="0,0,0,0" Content="{Binding CurrentView}" Width="1080"/>
         </StackPanel>
     </Grid>
 </Window>

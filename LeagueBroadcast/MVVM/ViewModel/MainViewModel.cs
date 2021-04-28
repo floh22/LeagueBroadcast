@@ -8,8 +8,12 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public RelayCommand SettingsViewCommand { get; set; }
 
+        public RelayCommand PickBanViewCommand { get; set; }
+
         public HomeViewModel HomeVM { get; set; }
         public SettingsViewModel SettingsVM { get; set; }
+
+        public PickBanViewModel PickBanVM { get; set; }
 
 
         private ConnectionStatusViewModel _connectionStatus;
@@ -35,13 +39,15 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public MainViewModel()
         {
-            HomeVM = new ();
-            SettingsVM = new ();
+            HomeVM = new();
+            SettingsVM = new();
+            PickBanVM = new();
             CurrentView = HomeVM;
             ConnectionStatus = ConnectionStatusViewModel.DISCONNECTED;
 
             HomeViewCommand = new(o => { CurrentView = HomeVM; });
             SettingsViewCommand = new(o => { CurrentView = SettingsVM; });
+            PickBanViewCommand = new(o => { CurrentView = PickBanVM; });
         }
     }
 }

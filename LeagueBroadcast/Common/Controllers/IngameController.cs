@@ -1,5 +1,7 @@
-﻿using LeagueBroadcast.Ingame.Data.Provider;
+﻿using LeagueBroadcast.Http;
+using LeagueBroadcast.Ingame.Data.Provider;
 using LeagueBroadcast.Ingame.Data.RIOT;
+using LeagueBroadcast.Ingame.Events;
 using LeagueBroadcast.Ingame.State;
 using LeagueBroadcast.OperatingSystem;
 using System;
@@ -16,8 +18,8 @@ namespace LeagueBroadcast.Common.Controllers
         public static Process? LeagueProcess;
         public static bool IsPaused;
 
-        public static State gameState;
-        public static GameMetaData gameData;
+        public State gameState;
+        public GameMetaData gameData;
 
         private static string TargetProcessName = "League of Legends";
         private static ProcessEventWatcher ProcessEventWatcher { get; } = new ProcessEventWatcher();
@@ -31,6 +33,47 @@ namespace LeagueBroadcast.Common.Controllers
         public IngameController()
         {
             LoLDataProvider = new();
+
+            this.gameState = new State(this);
+            this.gameData = new GameMetaData();
+
+            AppStateController.GameStop += OnGameStop;
+
+            StartWaitingForTargetProcess();
+        }
+
+        public void EnterIngame(object sender, EventArgs e)
+        {
+            var Instance = BroadcastController.Instance;
+            if(Instance.ToTick.Contains(this))
+            {
+                return;
+            }
+            Instance.ToTick.Add(this);
+            if(BroadcastController.CurrentLeagueState == "ChampSelect")
+            {
+                Instance.ToTick.Remove(Instance.PBController);
+            }
+            BroadcastController.CurrentLeagueState = "InProgress";
+            InitGameState();
+        }
+
+        private void OnGameStop(object sender, EventArgs e)
+        {
+            BroadcastController.CurrentLeagueState = "None";
+            //GameInfoPage.ClearPlayers();
+            BroadcastController.Instance.ToTick.Remove(this);
+            //OnBaronDespawn();
+            //OnElderDespawn();
+            //EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+            //EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
+            Log.Info("Game ended");
+        }
+
+        public void InitGameState()
+        {
+            //this.gameState.ResetState();
+            GameFound = false;
         }
 
         //Following adapted from https://github.com/Johannes-Schneider/GoldDiff/blob/master/GoldDiff/App.xaml.cs

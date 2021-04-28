@@ -25,6 +25,8 @@ namespace LeagueBroadcast.Common.Controllers
                 Log.Warn("Config load failed");
                 throw new Exception("Config load failed");
             }
+
+            App.Instance.Exit += OnClose;
         }
 
         private static ConfigController GetInstance()
@@ -37,6 +39,16 @@ namespace LeagueBroadcast.Common.Controllers
         public static void UpdateConfigFile(JSONConfig config)
         {
             JSONConfigProvider.Instance.WriteConfig(config);
+        }
+
+        private void OnClose(object sender, EventArgs e)
+        {
+            Log.Info("Saving all configs to file");
+            var controller = JSONConfigProvider.Instance;
+
+            controller.WriteConfig(PickBan);
+            controller.WriteConfig(Component);
+            Log.Info("Configs saved");
         }
     }
 }

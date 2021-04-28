@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.0.54.0</AssemblyVersion>
-    <FileVersion>1.0.54.21116</FileVersion>
+    <AssemblyVersion>1.0.90.0</AssemblyVersion>
+    <FileVersion>1.0.90.21118</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -68,6 +68,7 @@
   <ItemGroup>
     <Folder Include="ChampSelect\Data\Provider\" />
     <Folder Include="MVVM\Converters\" />
+    <Folder Include="MVVM\DragDrop\" />
   </ItemGroup>
 
 </Project>
