@@ -26,6 +26,7 @@
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
+		"is-svg": "^4.2.2",
 		"phaser": "^3.50.1",
 		"phaser3-rex-plugins": "^1.1.44",
 		"phaser3-rex-plugins-types": "^0.1.1"
