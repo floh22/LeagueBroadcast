@@ -64,9 +64,11 @@ To get a local copy up and running follow these steps.
   -  Champ Select data included to support a port of [RCVolus Pick/Ban](https://github.com/RCVolus/lol-pick-ban-ui) 
   -  Champ Select delay support added! No more waiting between champ select and ingame. Champ select is delayed by a configurable amount to reduce the wait
   
-- Because League Broadcast (Essence) uses Memory Reading to gather information, it will not properly work without the proper
+- If League is not installed at the default location, add the folder which contains the "Riot Games" Folder to **Config/Component.json -> LeagueInstall**. This is a comma separated list which determines where LB will look for League. This is needed for the LiveEvents API.
+
+- Because League Broadcast (Essence) uses Memory Reading to gather information, it will not properly work without the correct
 memory offsets for each patch. Offsets will be updated in this repo, please feel free to reach out here if they have not.
-You should not have to do anything after a patch as offsets will be updated automatically when available. You may also set your own offset repo location in configuration
+You should not have to do anything after a patch as offsets will be updated automatically when available, __it can however take around 24 hours or longer!__. You may also set your own offset repo location in configuration
 if/when this repo stops including updated offsets.
 
 
@@ -82,9 +84,9 @@ npm run build
 ```
 in the same location and move the files in **build/** to **LeagueBroadcastHub/frontend/pickban/**
 
-Enable Champ Select in Settings
+Make sure Champ Select is enabled
 
-LeagueBroadcastHub will now host PickBan automatically when started
+League Broadcast will now host PickBan automatically when started
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -109,7 +111,7 @@ See the [open issues](https://github.com/floh22/LeagueBroadcastHub/issues) for a
 Distributed under the MIT License. See `LICENSE` for more information.
 
 __This is a standalone project from Lars Eble. Riot Games does not endorse or sponsor this project.__  
-_The project has certified as ToS-compliant in a previous state. The current version using memory reading has not yet been certified. _ 
+_The project was certified as ToS-compliant in a previous state. The current version using memory reading has not yet been certified._ 
 
 This project's port of [lol-pick-ban-ui](https://github.com/RCVolus/lol-pick-ban-ui) and its author are in no way affiliated or partnered with Riot Community Volunteers.
 
