@@ -1,17 +1,16 @@
 ﻿namespace LeagueBroadcast.Ingame.Data.LBH.Objectives
 {
-    class BackEndObjective
+    public class BackEndObjective
     {
-        public int BlueStartGold;
-        public int RedStartGold;
+        public float BlueStartGold = 0;
+        public float RedStartGold = 0;
 
-        public double DurationRemaining;
+        public double DurationRemaining = -1;
+        public double TakeGameTime = 0;
 
-        public BackEndObjective()
+        public BackEndObjective(int gameTime)
         {
-            this.BlueStartGold = 0;
-            this.RedStartGold = 0;
-            this.DurationRemaining = -1;
+            TakeGameTime = gameTime;
         }
     }
 }

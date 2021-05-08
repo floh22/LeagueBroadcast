@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LeagueBroadcast.Ingame.Data.RIOT
+﻿namespace LeagueBroadcast.Ingame.Data.RIOT
 {
     public class Score
     {
@@ -11,5 +7,15 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
         public int deaths;
         public int kills;
         public float wardScore;
+
+        public void Update(Score s, bool updateCS)
+        {
+            this.assists = s.assists;
+            this.deaths = s.deaths;
+            this.kills = s.kills;
+            this.wardScore = s.wardScore;
+            if (updateCS)
+                this.creepScore = s.creepScore;
+        }
     }
 }

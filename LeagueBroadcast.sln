@@ -7,15 +7,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueBroadcast", "LeagueBr
 	ProjectSection(ProjectDependencies) = postProject
 		{EC9CFED9-D64C-44E1-92CB-9D366648BA2C} = {EC9CFED9-D64C-44E1-92CB-9D366648BA2C}
 		{A4E015EA-D217-43CE-BC74-484F0B37CFD5} = {A4E015EA-D217-43CE-BC74-484F0B37CFD5}
+		{8DCEA1F5-445A-4839-BF2F-20B0077C7C85} = {8DCEA1F5-445A-4839-BF2F-20B0077C7C85}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LCUSharp", "LCUSharp\LCUSharp.csproj", "{DCB7C442-8F1F-47A6-AE33-4C5C601E6BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueBroadcast.Update", "LeagueBroadcast.Update\LeagueBroadcast.Update.csproj", "{EC9CFED9-D64C-44E1-92CB-9D366648BA2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueBroadcast.Update", "LeagueBroadcast.Update\LeagueBroadcast.Update.csproj", "{EC9CFED9-D64C-44E1-92CB-9D366648BA2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueBroadcast.Common", "LeagueBroadcast.Common\LeagueBroadcast.Common.csproj", "{A4E015EA-D217-43CE-BC74-484F0B37CFD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueBroadcast.Common", "LeagueBroadcast.Common\LeagueBroadcast.Common.csproj", "{A4E015EA-D217-43CE-BC74-484F0B37CFD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueBroadcast.Farsight", "LeagueBroadcast.Farsight\LeagueBroadcast.Farsight.csproj", "{8DCEA1F5-445A-4839-BF2F-20B0077C7C85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueBroadcast.Farsight", "LeagueBroadcast.Farsight\LeagueBroadcast.Farsight.csproj", "{8DCEA1F5-445A-4839-BF2F-20B0077C7C85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueBroadcast.Trinket", "LeagueBroadcast.Trinket\LeagueBroadcast.Trinket.csproj", "{AB14AD42-6984-4360-8147-C661D0C70162}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +46,10 @@ Global
 		{8DCEA1F5-445A-4839-BF2F-20B0077C7C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DCEA1F5-445A-4839-BF2F-20B0077C7C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DCEA1F5-445A-4839-BF2F-20B0077C7C85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB14AD42-6984-4360-8147-C661D0C70162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB14AD42-6984-4360-8147-C661D0C70162}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB14AD42-6984-4360-8147-C661D0C70162}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB14AD42-6984-4360-8147-C661D0C70162}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

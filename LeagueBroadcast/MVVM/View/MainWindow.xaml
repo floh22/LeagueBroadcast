@@ -7,24 +7,10 @@
         xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
         xmlns:local="clr-namespace:LeagueBroadcast"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280"
+        Title="Essence" Height="720" Width="1280"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
-
-    <Window.Resources>
-        <core:Double x:Key="ContentSlideOffsetEnd" >200</core:Double>
-        <core:Double x:Key="ContentSlideOffsetStart">-1080</core:Double>
-        
-        <Storyboard x:Key="SlideContent">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                             From="{StaticResource ContentSlideOffsetStart}"
-                             To="{StaticResource ContentSlideOffsetEnd}"
-                             Duration="0:0:0.3"/>
-        </Storyboard>
-
-
-    </Window.Resources>
 
     <Window.DataContext>
         <viewModel:MainViewModel />
@@ -70,7 +56,7 @@
                     Click="ExitApp_Click"/>
         </Grid>
 
-        <StackPanel Background="#2f2f36" Grid.ColumnSpan="1" Grid.Row="1" Grid.Column="0">
+        <StackPanel Background="#2f2f36" Grid.ColumnSpan="1" Grid.Row="1" Grid.Column="0" Panel.ZIndex="1">
             <StackPanel Orientation="Horizontal">
                 <Image Height="50" Width="50" Margin="10"
                        Source="../../Assets/Images/BE_icon.png"/>
@@ -84,6 +70,7 @@
             </StackPanel>
             <StackPanel x:Name="Navigation">
                 <RadioButton Content="Home"
+                             x:Name="HomeButton"
                              Height="50"
                              Foreground="White"
                              FontSize="25"
@@ -92,27 +79,47 @@
                              Command="{Binding HomeViewCommand}"
                              />
                 <RadioButton Content="Pick Ban"
+                             x:Name="PBButton"
                              Height="50"
                              Foreground="White"
                              FontSize="25"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding PickBanViewCommand}"/>
-                <RadioButton Content="Settings"
+                <RadioButton Content="Ingame"
+                             x:Name="IGButton"
                              Height="50"
                              Foreground="White"
                              FontSize="25"
                              Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding IngameViewCommand}"/>
+                <RadioButton Content="Post Game"
+                             x:Name="PGButton"
+                             Height="50"
+                             Foreground="White"
+                             FontSize="25"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding PostGameViewCommand}"/>
+                <RadioButton Content="Settings"
+                             Height="50"
+                             Foreground="White"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             VerticalAlignment="Bottom"
+                             Margin="0,0,0,5"
+                             FontSize="25"
+                             Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding SettingsViewCommand}"/>
+
             </StackPanel>
         </StackPanel>
 
-        <StackPanel x:Name="ContentStack" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-            <StackPanel.Resources>
+        <Grid x:Name="ContentGrid"  Grid.Column="1" Grid.Row="1" Panel.ZIndex="0">
+            <Grid.Resources>
                 <Style TargetType="Frame">
                     <Setter Property="NavigationUIVisibility" Value="Hidden"/>
                 </Style>
-            </StackPanel.Resources>
+            </Grid.Resources>
             <ContentControl Margin="0,0,0,0" Content="{Binding CurrentView}" Width="1080"/>
-        </StackPanel>
+        </Grid>
     </Grid>
 </Window>

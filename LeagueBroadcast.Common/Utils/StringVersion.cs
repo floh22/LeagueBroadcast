@@ -13,7 +13,7 @@ namespace LeagueBroadcast.Common.Utils
         private int[] Components { get; }
 
         public static StringVersion Zero => new StringVersion(0);
-
+#nullable enable
         public static bool TryParse(string? input, out StringVersion? version)
         {
             try
@@ -221,4 +221,5 @@ namespace LeagueBroadcast.Common.Utils
 
         #endregion
     }
+#nullable disable
 }

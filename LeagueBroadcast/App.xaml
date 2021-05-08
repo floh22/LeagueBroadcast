@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LeagueBroadcast"
              xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
+             xmlns:collapsed="clr-namespace:LeagueBroadcast.MVVM.View.Collapsed"
+             xmlns:converters="clr-namespace:LeagueBroadcast.MVVM.Converters"
              xmlns:view="clr-namespace:LeagueBroadcast.MVVM.View">
     <Application.Resources>
         <ResourceDictionary>
@@ -14,7 +16,12 @@
                 <ResourceDictionary Source="MVVM/Theme/StartupButtonTheme.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/TextBoxTheme.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/ColorSelectButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Resources/ColorStyles.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/GenericToggle.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/CollapsableStackPanelTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:InvertableBooleanToVisibilityConverter x:Key="BoolToVis"/>
 
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
                 <view:HomeView/>
@@ -25,9 +32,31 @@
             </DataTemplate>
             
             <DataTemplate DataType="{x:Type viewModel:PickBanViewModel}">
-                <view:PickBanView/>
+                <Grid>
+                    <view:PickBanView />
+                    <collapsed:PickBanCollapsedView />
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:IngameViewModel}">
+                <Grid>
+                    <view:IngameView />
+                    <collapsed:IngameCollapsedView />
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:PostGameViewModel}">
+                <Grid>
+                    <view:PostGameView/>
+                    <collapsed:PostGameCollapsedView/>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:IngameTeamsViewModel}">
+                <view:IngameTeamsView/>
             </DataTemplate>
 
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

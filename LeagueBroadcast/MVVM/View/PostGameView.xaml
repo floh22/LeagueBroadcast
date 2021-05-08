@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="LeagueBroadcast.MVVM.View.PostGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LeagueBroadcast.MVVM.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="695" d:DesignWidth="1080">
+    <Border Width="1080" Height="695" x:Name="OpenContent">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsOpen}" Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Width)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="1080"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="1"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Width)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="360"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="0"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <TextBlock Text="POST GAME TODO " Foreground="White" FontSize="50"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+        </Grid>
+    </Border>
+</UserControl>

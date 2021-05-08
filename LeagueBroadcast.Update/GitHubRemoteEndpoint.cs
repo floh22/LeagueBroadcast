@@ -24,10 +24,11 @@ namespace LeagueBroadcast.Update
         {
             Requester = new RestRequester(RequestTimeout);
         }
-
+#nullable enable
         public async Task<GitHubReleaseInfo?> GetLatestReleaseAsync(string repositoryName)
         {
             return await Requester.GetAsync<GitHubReleaseInfo?>(string.Format(ReleaseUrl, repositoryName));
         }
+#nullable disable
     }
 }

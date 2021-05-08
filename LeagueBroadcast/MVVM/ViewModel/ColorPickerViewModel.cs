@@ -9,30 +9,29 @@ namespace LeagueBroadcast.MVVM.ViewModel
     class ColorPickerViewModel : ObservableObject
     {
 
-        private byte _r;
+        private string _r;
 
-        public byte R
+        public string R
         {
             get { return _r; }
             set { _r = value; OnPropertyChanged(); UpdateColor(); }
         }
 
-        private byte _g;
+        private string _g;
 
-        public byte G
+        public string G
         {
             get { return _g; }
             set { _g = value; OnPropertyChanged(); UpdateColor(); }
         }
 
-        private byte _b;
+        private string _b;
 
-        public byte B
+        public string B
         {
             get { return _b; }
             set { _b = value; OnPropertyChanged(); UpdateColor(); }
         }
-
 
         private Color _selectedColor;
 
@@ -47,27 +46,55 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public SolidColorBrush ColorBrush
         {
             get { return _colorBrush; }
-            set { _colorBrush = value; }
+            set { _colorBrush = value; OnPropertyChanged(); }
         }
-
 
         public ColorPickerViewModel()
         {
 
         }
 
-        private void UpdateColor()
+        public void UpdateColor()
         {
-            _selectedColor = Color.FromRgb(R, G, B);
+            byte r, g, b;
+            if (R.Length == 0)
+            {
+                r = 0;
+            }
+            else
+            {
+                r = byte.Parse(R);
+            }
+
+            if (G.Length == 0)
+            {
+                g = 0;
+            }
+            else
+            {
+                g = byte.Parse(G);
+            }
+
+            if (B.Length == 0)
+            {
+                b = 0;
+            }
+            else
+            {
+                b = byte.Parse(B);
+            }
+
+            _selectedColor = Color.FromRgb(r, g, b);
             ColorBrush = new SolidColorBrush(SelectedColor);
             OnPropertyChanged("SelectedColor");
         }
 
-        private void UpdateColorValues()
+        public void UpdateColorValues()
         {
-            _r = SelectedColor.R;
-            _g = SelectedColor.G;
-            _b = SelectedColor.B;
+            _r = SelectedColor.R.ToString();
+            _g = SelectedColor.G.ToString();
+            _b = SelectedColor.B.ToString();
+            ColorBrush = new SolidColorBrush(SelectedColor);
             OnPropertyChanged("R");
             OnPropertyChanged("G");
             OnPropertyChanged("B");

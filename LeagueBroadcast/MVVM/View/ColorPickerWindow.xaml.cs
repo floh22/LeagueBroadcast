@@ -4,6 +4,7 @@ using LeagueBroadcast.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,16 +23,13 @@ namespace LeagueBroadcast.MVVM.View
     {
         private TeamConfigViewModel _teamConfigVM;
         private ColorPickerViewModel VM;
-        public ColorPickerWindow()
+
+        public ColorPickerWindow(TeamConfigViewModel configVM)
         {
             InitializeComponent();
-
-        }
-
-        public ColorPickerWindow(TeamConfigViewModel configVM) : this()
-        {
             VM = (ColorPickerViewModel)DataContext;
             VM.SelectedColor = configVM.Color;
+            VM.UpdateColorValues();
             _teamConfigVM = configVM;
         }
 
@@ -58,51 +56,24 @@ namespace LeagueBroadcast.MVVM.View
             Close();
         }
 
-        private void RInput_TextChanged(object sender, TextChangedEventArgs e)
+        private bool IsTextAccepted(TextBox sender, String text)
         {
-            TextBox textBox = sender as TextBox;
-            var parseRes = Byte.TryParse(textBox.Text, out var rValue);
-            if(!parseRes)
-            {
-                textBox.Text = VM.R + "";
-                return;
-            }
-
-            if(VM == null)
-                VM = (ColorPickerViewModel)DataContext;
-            VM.R = rValue;
+            return (int.TryParse(sender.Text + text, out int res) && res > 0 && res < 256) || (text == "0" && sender.Text.Length == 0);
         }
 
-        private void BInput_TextChanged(object sender, TextChangedEventArgs e)
+        private void PreviewTextInputHandler(Object sender, TextCompositionEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            var parseRes = Byte.TryParse(textBox.Text, out var bValue);
-            if (!parseRes)
-            {
-                textBox.Text = VM.B + "";
-                return;
-            }
-
-            if (VM == null)
-                VM = (ColorPickerViewModel)DataContext;
-
-            VM.B = bValue;
+            e.Handled = !IsTextAccepted((TextBox)sender, e.Text);
         }
-
-        private void GInput_TextChanged(object sender, TextChangedEventArgs e)
+ 
+        private void PastingHandler(object sender, DataObjectPastingEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            var parseRes = Byte.TryParse(textBox.Text, out var gValue);
-            if (!parseRes)
+            if (e.DataObject.GetDataPresent(typeof(String)))
             {
-                textBox.Text = VM.G + "";
-                return;
+                String text = (String)e.DataObject.GetData(typeof(String));
+                if (!IsTextAccepted((TextBox)sender, text)) e.CancelCommand();
             }
-
-            if (VM == null)
-                VM = (ColorPickerViewModel)DataContext;
-
-            VM.G = gValue;
+            else e.CancelCommand();
         }
     }
 }

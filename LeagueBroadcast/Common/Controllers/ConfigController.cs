@@ -1,5 +1,5 @@
 ﻿using LeagueBroadcast.Common.Data.Config;
-using LeagueBroadcast.OperatingSystem;
+using LeagueBroadcast.Ingame.Data.Config;
 using System;
 
 namespace LeagueBroadcast.Common.Controllers
@@ -12,6 +12,8 @@ namespace LeagueBroadcast.Common.Controllers
         public static ChampSelect.Data.Config.PickBanConfig PickBan = new();
 
         public static ComponentConfig Component = new();
+
+        public static FarsightConfig Farsight = new();
         public ConfigController()
         {
             Log.Info("Starting Config Controller");
@@ -19,6 +21,7 @@ namespace LeagueBroadcast.Common.Controllers
 
             controller.ReadConfig(PickBan);
             controller.ReadConfig(Component);
+            
 
             if(PickBan.FileVersion == null || Component.FileVersion == null)
             {
@@ -27,6 +30,16 @@ namespace LeagueBroadcast.Common.Controllers
             }
 
             App.Instance.Exit += OnClose;
+        }
+
+        public static void LoadOffsetConfig()
+        {
+            JSONConfigProvider.Instance.ReadConfig(Farsight);
+            if(Farsight.FileVersion == null)
+            {
+                Log.Warn("Could not load Offsets");
+                throw new Exception("Offset config load failed");
+            }
         }
 
         private static ConfigController GetInstance()
@@ -48,6 +61,7 @@ namespace LeagueBroadcast.Common.Controllers
 
             controller.WriteConfig(PickBan);
             controller.WriteConfig(Component);
+            controller.WriteConfig(Farsight);
             Log.Info("Configs saved");
         }
     }

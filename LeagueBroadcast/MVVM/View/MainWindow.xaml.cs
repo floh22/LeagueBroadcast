@@ -24,6 +24,7 @@ namespace LeagueBroadcast.MVVM.View
         public MainWindow()
         {
             InitializeComponent();
+            LocationChanged += new EventHandler(Window_LocationChanged);
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -40,6 +41,35 @@ namespace LeagueBroadcast.MVVM.View
         private void MinimizeApp_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            foreach (Window win in this.OwnedWindows)
+            {
+                win.Top = (this.Top + this.Height / 2) - win.Height / 2;
+                win.Left = (this.Left + this.Width / 2) - win.Width / 2;
+            }
+        }
+
+        public void SetHomeSelected()
+        {
+            HomeButton.IsChecked = true;
+        }
+
+        public void SetPickBanSelected()
+        {
+            PBButton.IsChecked = true;
+        }
+
+        public void SetIngameSelected()
+        {
+            IGButton.IsChecked = true;
+        }
+
+        public void SetPostGameSelected()
+        {
+            PGButton.IsChecked = true;
         }
     }
 }

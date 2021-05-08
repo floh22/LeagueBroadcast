@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
         xmlns:local="clr-namespace:LeagueBroadcast.MVVM.View"
+        xmlns:core="clr-namespace:LeagueBroadcast.MVVM.Core"
         mc:Ignorable="d"
         Title="Color Selector" Height="200" Width="400"
         AllowsTransparency="True" Background="Transparent"
@@ -27,7 +28,7 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.ColumnSpan="5" Grid.RowSpan="2" Background="#212126">
+        <Border Grid.ColumnSpan="5" Grid.RowSpan="2" Background="#16161a">
 
         </Border>
         <Grid Grid.Row="0" Grid.Column="1">
@@ -36,7 +37,12 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="R" Foreground="White" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            <TextBox Name="RInput" Text="{Binding R}" Style="{StaticResource ModernTextBox}" Grid.ColumnSpan="2" Grid.Row="0" Margin="17,0,8,0" TextChanged="RInput_TextChanged"/>
+            <TextBox Name="RInput" Text="{core:InstantBinding R}" 
+                     Template="{StaticResource InstantUpdateTextBox}" 
+                     Grid.ColumnSpan="2" Grid.Row="0" 
+                     Margin="17,0,8,0"  
+                     PreviewTextInput="PreviewTextInputHandler" 
+                     DataObject.Pasting="PastingHandler"/>
         </Grid>
         <Grid Grid.Row="0" Grid.Column="2">
             <Grid.ColumnDefinitions>
@@ -44,7 +50,12 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="G" Foreground="White" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="-1,0,0,0"/>
-            <TextBox Name="GInput" Text="{Binding G}" Style="{StaticResource ModernTextBox}" Grid.ColumnSpan="2" Grid.Row="0" Margin="19,0,6,0" TextChanged="GInput_TextChanged"/>
+            <TextBox Name="GInput" Text="{core:InstantBinding G}" 
+                     Template="{StaticResource InstantUpdateTextBox}"
+                     Grid.ColumnSpan="2" Grid.Row="0" 
+                     Margin="19,0,6,0" 
+                     PreviewTextInput="PreviewTextInputHandler" 
+                     DataObject.Pasting="PastingHandler"/>
         </Grid>
         <Grid Grid.Row="0" Grid.Column="3">
             <Grid.ColumnDefinitions>
@@ -52,7 +63,13 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="B" Foreground="White" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBox Name="BInput" Text="{Binding B}" Style="{StaticResource ModernTextBox}" Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="0" TextChanged="BInput_TextChanged"/>
+            <TextBox Name="BInput" Text="{core:InstantBinding B}"
+                     Template="{StaticResource InstantUpdateTextBox}"
+                     Grid.Column="1" Grid.ColumnSpan="1" 
+                     Grid.Row="0" 
+                     PreviewTextInput="PreviewTextInputHandler" 
+                     DataObject.Pasting="PastingHandler">
+            </TextBox>
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">

@@ -1,4 +1,6 @@
-﻿namespace LeagueBroadcast.ChampSelect.Data.DTO
+﻿using LeagueBroadcast.Common.Data.DTO;
+
+namespace LeagueBroadcast.ChampSelect.Data.DTO
 {
     public class PickBan
     {

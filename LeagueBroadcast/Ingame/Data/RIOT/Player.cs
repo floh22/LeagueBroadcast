@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LeagueBroadcast.Common.Controllers;
+using LeagueBroadcast.Farsight.Object;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +8,7 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
 {
     public class Player
     {
+        public int id;
         public string summonerName;
         public string championName;
         public bool isDead;
@@ -18,9 +21,21 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
         public SummonerList summonerSpells;
         public string team;
 
-        public int id;
+#nullable enable
+        public GameObject? farsightObject;
+        public Dictionary<double, int> csHistory = new();
+        public Dictionary<double, float> goldHistory = new();
+#nullable disable
+
+        
         public bool diedDuringBaron = false;
         public bool diedDuringElder = false;
+
+        public Player()
+        {
+            csHistory[0] = 0;
+            goldHistory[0] = 500;
+        }
 
         public float GetCSPerMinute(float gameTime)
         {
@@ -33,7 +48,7 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
             this.items = p.items;
             this.level = p.level;
             this.respawnTimer = p.respawnTimer;
-            this.scores = p.scores;
+            this.scores.Update(p.scores, !ConfigController.Component.Ingame.UseLiveEvents);
         }
 
         [ObsoleteAttribute("Does not work in custom games", true)]

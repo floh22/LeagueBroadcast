@@ -1,12 +1,15 @@
-﻿using LeagueBroadcast.Http;
+﻿using LeagueBroadcast.Common.Data.RIOT;
+using LeagueBroadcast.Http;
 using LeagueBroadcast.Ingame.Data.Provider;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Ingame.Events;
 using LeagueBroadcast.Ingame.State;
+using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace LeagueBroadcast.Common.Controllers
@@ -14,8 +17,11 @@ namespace LeagueBroadcast.Common.Controllers
     class IngameController : ITickable
     {
         public static IngameDataProvider LoLDataProvider = new();
+        public static LiveEventsDataProvider LiveEventsProvider;
         public static CurrentSettings CurrentSettings = new();
+#nullable enable
         public static Process? LeagueProcess;
+#nullable disable
         public static bool IsPaused;
 
         public State gameState;
@@ -25,24 +31,182 @@ namespace LeagueBroadcast.Common.Controllers
         private static ProcessEventWatcher ProcessEventWatcher { get; } = new ProcessEventWatcher();
         private static bool GameFound = false;
 
-        public void DoTick()
-        {
-            throw new NotImplementedException();
-        }
+        public static EventHandler BaronEnd, DragonEnd;
+        public static EventHandler<ObjectiveTakenArgs> DragonTaken, BaronTaken;
 
         public IngameController()
         {
-            LoLDataProvider = new();
-
             this.gameState = new State(this);
             this.gameData = new GameMetaData();
+            LiveEventsProvider = new();
 
             AppStateController.GameStop += OnGameStop;
 
-            StartWaitingForTargetProcess();
+            BaronTaken += OnBaronTaken;
+            BaronEnd += OnBaronEnd;
+            DragonTaken += OnDragonTaken;
+            DragonEnd += OnDragonEnd;
+
+            
         }
 
-        public void EnterIngame(object sender, EventArgs e)
+        public async void DoTick()
+        {
+            //Check if ingame and get game meta data
+            var newGameData = await LoLDataProvider.GetGameData();
+
+            //Discard late rejected responses by API
+            if (BroadcastController.CurrentLeagueState != "InProgress" || newGameData == null || LeagueProcess == null)
+                return;
+
+            //Wait until the game has been found
+            if (!GameFound)
+            {
+                /*
+                if(!await LoLDataProvider.IsSpectatorGame())
+                {
+                    Log.Warn("Essence not enabled in live game");
+                    AppStateController.GameStop.Invoke(null, EventArgs.Empty);
+                    return;
+                }
+                */
+                LoadGame(newGameData);
+            }
+
+            #region GameTime
+            //Check if game is paused/unpaused
+            double timeDiff = newGameData.gameTime - gameData.gameTime;
+            if(timeDiff == 0 || newGameData.gameTime == 0)
+            {
+                if(!gameState.stateData.gamePaused)
+                {
+                    SetGamePauseState(true);
+                }
+                return;
+            }
+            if(gameState.stateData.gamePaused)
+            {
+                SetGamePauseState(false);
+            }
+            var backDragon = gameState.stateData.backDragon;
+            var backBaron = gameState.stateData.backBaron;
+
+            //Check for time scrolled back
+            if (newGameData.gameTime < gameData.gameTime && gameState.pastIngameEvents.Count != 0)
+            {
+                Log.Info("Scrolled back in timeline, reverting state");
+                Log.Info(newGameData.gameTime);
+                gameState.pastIngameEvents = gameState.pastIngameEvents.Where((e) => e.EventTime < gameData.gameTime).ToList();
+                Log.Verbose("Rolling back Players");
+                gameState.GetAllPlayers().ForEach(p => {
+                    //Roll back gold history
+                    p.goldHistory = p.goldHistory
+                    .Where(pair => pair.Key < gameData.gameTime)
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+                    //Set current cs to clostest old known value
+                    var keys = new List<double>(p.csHistory.Keys);
+                    var closestCsIndex = keys.BinarySearch(gameData.gameTime);
+                    if(closestCsIndex != -1)
+                        p.scores.creepScore = p.csHistory[closestCsIndex];
+
+                    //Roll back cs history
+                    p.csHistory = p.csHistory
+                    .Where(pair => pair.Key < gameData.gameTime)
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
+                });
+
+                Log.Verbose("Rolling back Objectives");
+                //Check if Elder died in roll back period
+                if (backDragon.DurationRemaining - timeDiff > 150)
+                {
+                    backDragon.DurationRemaining = 0;
+                    gameState.blueTeam.hasElder = false;
+                    gameState.redTeam.hasElder = false;
+                    OnDragonEnd(null, EventArgs.Empty);
+                }
+
+                //Check if Baron died in roll back period
+                if (backBaron.DurationRemaining - timeDiff > 180)
+                {
+                    backBaron.DurationRemaining = 0;
+                    gameState.blueTeam.hasBaron = false;
+                    gameState.redTeam.hasBaron = false;
+                    gameState.GetAllPlayers().ForEach(p => p.diedDuringBaron = false);
+                    OnBaronEnd(null, EventArgs.Empty);
+                }
+            }
+            #endregion
+
+            #region Objectives
+            //Update remaining time for objectives incase either team has them
+
+            if (backDragon.DurationRemaining > 0)
+            {
+                gameState.SetObjectiveData(backDragon, gameState.stateData.dragon, backDragon.DurationRemaining - timeDiff);
+                Log.Verbose($"Elder Time left: {backDragon.DurationRemaining}");
+                if (backDragon.DurationRemaining <= 0)
+                {
+                    OnDragonEnd(null, EventArgs.Empty);
+                    gameState.blueTeam.hasElder = gameState.redTeam.hasElder = false;
+                    gameState.GetAllPlayers().ForEach(p => p.diedDuringElder = false);
+                }
+            }
+
+
+            if (backBaron.DurationRemaining > 0)
+            {
+                gameState.SetObjectiveData(backBaron, gameState.stateData.baron, backBaron.DurationRemaining - timeDiff);
+                Log.Verbose($"Baron Time left: {backBaron.DurationRemaining}");
+                if (backBaron.DurationRemaining <= 0)
+                {
+                    backBaron.DurationRemaining = 0;
+                    OnBaronEnd(null, EventArgs.Empty);
+                    gameState.blueTeam.hasBaron = gameState.redTeam.hasBaron = false;
+                    gameState.GetAllPlayers().ForEach(p => p.diedDuringBaron = false);
+                }
+            }
+            #endregion
+
+            //Update Meta Data
+            gameData = newGameData;
+            gameState.stateData.gameTime = gameData.gameTime;
+
+            //Update State
+            try
+            {
+                var snapshot = BroadcastController.Instance.MemoryController.CreateSnapshot();
+                gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, snapshot);
+                gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, snapshot);
+            }
+            catch (Exception canceled)
+            {
+                Log.Warn(canceled.Message);
+            }
+
+            //Update frontend
+            EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+        }
+
+        private void LoadGame(GameMetaData gameData)
+        {
+            GameFound = true;
+            this.gameData = gameData;
+            this.gameData.gameTime = 0;
+            Log.Verbose("Game Loaded");
+            EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
+            AppStateController.GameLoad?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SetGamePauseState(bool PauseState)
+        {
+            gameState.stateData.gamePaused = PauseState;
+            IsPaused = PauseState;
+            Log.Info(PauseState? "Game Paused" : "Game Resumed");
+            EmbedIOServer.socketServer.SendEventToAllAsync(PauseState? new GameUnpause(gameData.gameTime): new GamePause(gameData.gameTime));
+        }
+
+        public void EnterIngame(object sender, Process p)
         {
             var Instance = BroadcastController.Instance;
             if(Instance.ToTick.Contains(this))
@@ -58,26 +222,16 @@ namespace LeagueBroadcast.Common.Controllers
             InitGameState();
         }
 
-        private void OnGameStop(object sender, EventArgs e)
-        {
-            BroadcastController.CurrentLeagueState = "None";
-            //GameInfoPage.ClearPlayers();
-            BroadcastController.Instance.ToTick.Remove(this);
-            //OnBaronDespawn();
-            //OnElderDespawn();
-            //EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
-            //EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
-            Log.Info("Game ended");
-        }
-
         public void InitGameState()
         {
-            //this.gameState.ResetState();
+            Log.Verbose("Init Game State");
+            this.gameState.ResetState();
             GameFound = false;
         }
 
+        #region Process
         //Following adapted from https://github.com/Johannes-Schneider/GoldDiff/blob/master/GoldDiff/App.xaml.cs
-        private void StartWaitingForTargetProcess()
+        public void StartWaitingForTargetProcess()
         {
             ProcessEventWatcher.ProcessStarted += ProcessEventWatcher_OnProcessStarted;
             ProcessEventWatcher.ProcessStopped += ProcessEventWatcher_OnProcessStopped;
@@ -86,7 +240,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (processes.Length > 0)
             {
                 LeagueProcess = processes[0];
-                TargetProcessStarted();
+                TargetProcessStarted(LeagueProcess);
             }
         }
 
@@ -100,13 +254,13 @@ namespace LeagueBroadcast.Common.Controllers
             try
             {
                 var newProcess = Process.GetProcessById(e.ProcessId);
-                if (!newProcess.ProcessName.Equals(TargetProcessName))
+                if (newProcess != null && !newProcess.ProcessName.Equals(TargetProcessName))
                 {
                     return;
                 }
 
                 LeagueProcess = newProcess;
-                TargetProcessStarted();
+                TargetProcessStarted(LeagueProcess);
             }
             catch
             {
@@ -125,10 +279,10 @@ namespace LeagueBroadcast.Common.Controllers
             TargetProcessStopped();
         }
 
-        private void TargetProcessStarted()
+        private void TargetProcessStarted(Process p)
         {
             Log.Info($"Target process ({TargetProcessName}) detected.");
-            AppStateController.GameStart?.Invoke(this, EventArgs.Empty);
+            AppStateController.GameStart?.Invoke(this, p);
         }
 
         private void TargetProcessStopped()
@@ -140,8 +294,74 @@ namespace LeagueBroadcast.Common.Controllers
         {
             ProcessEventWatcher.Dispose();
         }
+
+        #endregion
+
+        #region Events
+        public void OnDragonTaken(object sender, ObjectiveTakenArgs e)
+        {
+            Log.Info($"{e.Type} Dragon Taken by {e.Team.teamName}");
+            e.Team.dragonsTaken.Add(e.Type);
+            if(e.Type.Equals("Elder", StringComparison.OrdinalIgnoreCase))
+            {
+                gameState.stateData.backDragon.TakeGameTime = gameData.gameTime;
+                gameState.stateData.backDragon.BlueStartGold = gameState.blueTeam.GetGold();
+                gameState.stateData.backDragon.RedStartGold = gameState.redTeam.GetGold();
+                gameState.SetObjectiveData(gameState.stateData.backDragon, gameState.stateData.dragon, 150);
+                e.Team.hasElder = true;
+            }
+        }
+
+        public void OnBaronTaken(object sender, ObjectiveTakenArgs e)
+        {
+            Log.Info($"Baron Taken by {e.Team.teamName}");
+            gameState.stateData.backBaron.TakeGameTime = gameData.gameTime;
+            gameState.stateData.backBaron.BlueStartGold = gameState.blueTeam.GetGold();
+            gameState.stateData.backBaron.RedStartGold = gameState.redTeam.GetGold();
+            gameState.SetObjectiveData(gameState.stateData.backBaron, gameState.stateData.baron, 180);
+            e.Team.hasBaron = true;
+        }
+
+        public void OnBaronEnd(object sender, EventArgs e)
+        {
+            gameState.GetBothTeams().ForEach(t => t.players.ForEach(p => p.diedDuringBaron = false));
+        }
+
+        public void OnDragonEnd(object sender, EventArgs e)
+        {
+            gameState.GetBothTeams().ForEach(t => t.players.ForEach(p => p.diedDuringElder = false));
+        }
+
+        private void OnGameStop(object sender, EventArgs e)
+        {
+            BroadcastController.CurrentLeagueState = "None";
+            //GameInfoPage.ClearPlayers();
+            BroadcastController.Instance.ToTick.Remove(this);
+            EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+            EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
+            Log.Info("Game ended");
+        }
+
+        public void OnLevelUp(LevelUpEventArgs e)
+        {
+            if (!CurrentSettings.LevelUp)
+                return;
+            Log.Info("Player " + e.playerId + " lvl up");
+            EmbedIOServer.socketServer.SendEventToAllAsync(new PlayerLevelUp(e.playerId, e.level));
+        }
+
+        public void OnItemCompleted(ItemCompletedEventArgs e)
+        {
+            if (!CurrentSettings.LevelUp)
+                return;
+            Log.Info("Player " + e.playerId + " finished Item " + e.itemData.itemID);
+            EmbedIOServer.socketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
+        }
+
+        #endregion
     }
 
+    #region EventArgs
     public class LevelUpEventArgs : EventArgs
     {
         public int playerId;
@@ -166,18 +386,23 @@ namespace LeagueBroadcast.Common.Controllers
         }
     }
 
+    #endregion
+
     public class CurrentSettings
     {
-        public bool Baron;
-        public bool SendBaron;
-        public bool Elder;
-        public bool SendElder;
-        public bool Items;
-        public bool LevelUp;
-        public bool GoldGraph;
-        public bool TeamNames;
-        public bool TeamStats;
-        public bool Inhibs;
-        public bool CS;
+        public bool Baron => ConfigController.Component.Ingame.Objectives.DoBaronKill;
+        public bool Elder => ConfigController.Component.Ingame.Objectives.DoDragonKill;
+        public bool Inhibs => ConfigController.Component.Ingame.Objectives.DoInhibitors;
+        public bool Items => ConfigController.Component.Ingame.DoItemCompleted;
+        public bool LevelUp => ConfigController.Component.Ingame.DoLevelUp;
+        public bool TeamNames => ConfigController.Component.Ingame.Teams.DoTeamNames;
+        public bool TeamIcons => ConfigController.Component.Ingame.Teams.DoTeamIcons;
+        public bool TeamStats => ConfigController.Component.Ingame.Teams.DoTeamScores;
+        
+        public bool CS = false;
+        public bool CSPerMin = false;
+        public bool EXP = false;
+        public bool GoldGraph = false;
+        public bool PlayerGold = false;
     }
 }

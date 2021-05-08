@@ -6,7 +6,64 @@
              xmlns:local="clr-namespace:LeagueBroadcast.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Home" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    <Grid >
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" x:Name="Main">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding PostGameVM.IsOpen}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
+                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
+                                            <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="-720,0,0,0"/>
+                                        </ThicknessAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
+                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
+                                            <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="0,0,0,0"/>
+                                        </ThicknessAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <ContentControl Content="{Binding PickBanVM}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding PickBanVM.IsOpen}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
+                                            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
+                                                <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="720,0,0,0"/>
+                                            </ThicknessAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
+                                            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
+                                                <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="0,0,0,0"/>
+                                            </ThicknessAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <ContentControl Margin="0,0,0,0" Content="{Binding IngameVM}"/>
+            <ContentControl Margin="0,0,0,0" Content="{Binding PostGameVM}" HorizontalAlignment="Right"/>
+        </StackPanel>
     </Grid>
 </UserControl>

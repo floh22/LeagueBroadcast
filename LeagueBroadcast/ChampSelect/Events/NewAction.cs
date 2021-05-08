@@ -1,5 +1,5 @@
 ﻿using LeagueBroadcast.Common.Events;
-using static LeagueBroadcast.ChampSelect.State.StateData;
+using static LeagueBroadcast.ChampSelect.StateInfo.StateData;
 
 namespace LeagueBroadcast.ChampSelect.Events
 {

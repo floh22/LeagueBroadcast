@@ -5,6 +5,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
 {
     public class Inhibitor
     {
+        private static List<Inhibitor> _inhibitors;
         [JsonIgnore]
         public static List<Inhibitor> Inhibitors => InhibList();
 
@@ -21,8 +22,19 @@ namespace LeagueBroadcast.Ingame.Data.LBH
 
         private static List<Inhibitor> InhibList()
         {
-            return new List<Inhibitor>() { new Inhibitor(0, "T1_L1"), new Inhibitor(1, "T1_C1"), new Inhibitor(2, "T1_R1"),
-                new Inhibitor(3, "T2_L1"), new Inhibitor(4, "T2_C1"), new Inhibitor(5, "T2_R1")};
+            if(_inhibitors == null)
+            {
+                _inhibitors = new List<Inhibitor>() { 
+                    new Inhibitor(0, "T1_L1"), 
+                    new Inhibitor(1, "T1_C1"), 
+                    new Inhibitor(2, "T1_R1"),
+                    new Inhibitor(3, "T2_L1"), 
+                    new Inhibitor(4, "T2_C1"), 
+                    new Inhibitor(5, "T2_R1")
+                };
+            }
+            return _inhibitors;
+            
         }
     }
 }

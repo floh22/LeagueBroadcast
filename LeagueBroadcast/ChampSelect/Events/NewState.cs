@@ -1,4 +1,4 @@
-﻿using LeagueBroadcast.ChampSelect.State;
+﻿using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.Common.Events;
 using System;
 using System.Collections.Generic;

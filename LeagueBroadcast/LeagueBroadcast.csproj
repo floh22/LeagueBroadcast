@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.0.90.0</AssemblyVersion>
-    <FileVersion>1.0.90.21118</FileVersion>
+    <AssemblyVersion>1.0.387.0</AssemblyVersion>
+    <FileVersion>1.0.387.21128</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +25,8 @@
     <None Remove="Assets\Icons\JglIcon.ico" />
     <None Remove="Assets\Icons\LeagueNew.ico" />
     <None Remove="Assets\Icons\MidIcon.ico" />
+    <None Remove="Assets\Images\ArrowsDown.png" />
+    <None Remove="Assets\Images\ArrowsDownWhite.png" />
     <None Include="Assets\Images\BE_icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -44,6 +46,12 @@
     <Content Include="Assets\Icons\MidIcon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Images\ArrowsDown.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\ArrowsDownWhite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Images\BE_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -51,13 +59,15 @@
 
   <ItemGroup>
     <PackageReference Include="EmbedIO" Version="3.4.3" />
-    <PackageReference Include="floh22.Trinket" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LCUSharp\LCUSharp.csproj" />
     <ProjectReference Include="..\LeagueBroadcast.Common\LeagueBroadcast.Common.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Farsight\LeagueBroadcast.Farsight.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Trinket\LeagueBroadcast.Trinket.csproj" />
     <ProjectReference Include="..\LeagueBroadcast.Update\LeagueBroadcast.Update.csproj" />
   </ItemGroup>
 
@@ -66,8 +76,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ChampSelect\Data\Provider\" />
-    <Folder Include="MVVM\Converters\" />
     <Folder Include="MVVM\DragDrop\" />
   </ItemGroup>
 

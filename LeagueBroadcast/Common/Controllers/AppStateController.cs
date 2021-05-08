@@ -1,7 +1,7 @@
 ﻿using LCUSharp;
 using LCUSharp.Websocket;
 using LeagueBroadcast.ChampSelect.Data.LCU;
-using LeagueBroadcast.ChampSelect.State;
+using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.MVVM.ViewModel;
 using Newtonsoft.Json;
 using System;
@@ -15,7 +15,8 @@ namespace LeagueBroadcast.Common.Controllers
 {
     class AppStateController : ITickable
     {
-        public static EventHandler GameStart, GameLoad, GameStop, ChampSelectStart, ChampSelectStop;
+        public static EventHandler GameLoad, GameStop, ChampSelectStart, ChampSelectStop;
+        public static EventHandler<Process> GameStart;
         public static List<Summoner> summoners = new();
 
         private static AppStateController _instance;
@@ -52,7 +53,7 @@ namespace LeagueBroadcast.Common.Controllers
             }
             if(ConfigController.Component.Ingame.IsActive)
             {
-
+                EnableIngame();
             }
         }
 
@@ -121,7 +122,8 @@ namespace LeagueBroadcast.Common.Controllers
             api.EventHandler.Subscribe("/lol-champ-select/vi/sfx-notifications", ChampSelectSFXChanged);
             stopwatch.Stop();
             State.LeagueConntected();
-            mainCtx.ConnectionStatus = ConnectionStatusViewModel.LCU;
+            if(mainCtx.ConnectionStatus != ConnectionStatusViewModel.CONNECTED)
+                mainCtx.ConnectionStatus = ConnectionStatusViewModel.LCU;
             Log.Info($"Connected to League Client in {stopwatch.ElapsedMilliseconds} ms");
             return api;
         }
@@ -134,9 +136,6 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 case "ChampSelect":
                     ChampSelectStart?.Invoke(this, EventArgs.Empty);
-                    break;
-                case "InProgress":
-                    GameStart?.Invoke(this, EventArgs.Empty);
                     break;
                 default:
                     break;
@@ -214,15 +213,6 @@ namespace LeagueBroadcast.Common.Controllers
         public static Summoner GetSummonerById(int id)
         {
             return summoners.Single(summoner => summoner.summonerId == id);
-        }
-
-        public async void CheckLeagueRunning()
-        {
-            var gameData = await IngameController.LoLDataProvider.GetGameData();
-            if (gameData == null)
-                return;
-
-            GameStart?.Invoke(this, EventArgs.Empty);
         }
 
     }

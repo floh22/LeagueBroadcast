@@ -1,6 +1,6 @@
 ﻿using LeagueBroadcast.ChampSelect.Data.LCU;
 using LeagueBroadcast.ChampSelect.Events;
-using LeagueBroadcast.ChampSelect.State;
+using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.Http;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace LeagueBroadcast.Common.Controllers
         {
             if (ConfigController.Component.PickBan.IsActive)
             {
-
+                Enable();
             }
         }
 
@@ -34,15 +34,15 @@ namespace LeagueBroadcast.Common.Controllers
             StopHeartbeat();
         }
 
-        public void DoTick()
+        public async void DoTick()
         {
             //Update the timer since LCUSharp only fires event when champ select changes states
             //Obviously does not include timer update since that would ruin the point of events
             if (!UpdatedThisTick)
             {
-                //Timer raw = await StateController.GetTimer();
-                //State.Client.State.data.timer = Converter.ConvertTimer(raw);
-                //State.Client.State.TriggerUpdate();
+                Timer raw = await AppStateController.GetTimer();
+                State.data.timer = Converter.ConvertTimer(raw);
+                State.TriggerUpdate();
             }
 
             UpdatedThisTick = false;
@@ -55,8 +55,7 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 Log.Info("ChampSelect started!");
                 State.OnChampSelectStarted();
-                // Also cache information about summoners
-                //Logging.Verbose(e.Data.ToString());
+                // Also cache information about summoners since this wont change
                 var t = (Task)AppStateController.CacheSummoners(newState.session);
                 t.Wait();
             }

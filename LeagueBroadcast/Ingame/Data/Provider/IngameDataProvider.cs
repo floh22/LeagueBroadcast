@@ -31,7 +31,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             webClient = new HttpClient(handler);
             webClient.DefaultRequestHeaders.ExpectContinue = true;
-            webClient.DefaultRequestHeaders.Add("User-Agent", "LeagueBroadcastHub");
+            webClient.DefaultRequestHeaders.Add("User-Agent", "LeagueBroadcast");
             webClient.Timeout = TimeSpan.FromSeconds(0.25);
         }
 
@@ -82,6 +82,16 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             var events = JsonConvert.DeserializeObject<RiotEventList>(result).Events;
             return events;
+        }
+
+        public async Task<bool> IsSpectatorGame()
+        {
+            HttpResponseMessage response = await webClient.GetAsync("https://127.0.0.1:2999/liveclientdata/eventdata");
+            if(JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync()).errorCode == "RPC_ERROR")
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

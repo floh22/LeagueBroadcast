@@ -26,6 +26,9 @@ namespace LeagueBroadcast.MVVM.View
         {
             InitializeComponent();
 
+            OpenContent.Width = 360;
+            OpenContent.Opacity = 0;
+
             App.Instance.Exit += (s, e) => { if (_openColorPicker != null) { _openColorPicker.Close(); } };
         }
         private void TeamNameChanged(object sender, TextChangedEventArgs e)
@@ -59,18 +62,7 @@ namespace LeagueBroadcast.MVVM.View
                 ConfigController.PickBan.UpdateFile();
             }
         }
-        /*
-        private void ColorChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            TeamConfig config = (string)textBox.Tag == "Blue" ? ConfigController.PickBan.frontend.blueTeam : ConfigController.PickBan.frontend.redTeam;
-            if (textBox.Text != config.color)
-            {
-                config.color = textBox.Text;
-                ConfigController.PickBan.UpdateFile();
-            }
-        }
-        */
+
         private void PatchChanged(object sender, TextChangedEventArgs e)
         {
             TextBox textBox = sender as TextBox;
@@ -90,6 +82,8 @@ namespace LeagueBroadcast.MVVM.View
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 _openColorPicker = new ColorPickerWindow(TeamConfigViewModel.BlueTeam);
+                _openColorPicker.Owner = Window.GetWindow(this);
+                _openColorPicker.Topmost = true;
                 _openColorPicker.Show();
             });
         }
@@ -100,7 +94,9 @@ namespace LeagueBroadcast.MVVM.View
                 _openColorPicker.Close();
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
-                _openColorPicker = new ColorPickerWindow(TeamConfigViewModel.BlueTeam);
+                _openColorPicker = new ColorPickerWindow(TeamConfigViewModel.RedTeam);
+                _openColorPicker.Owner = Window.GetWindow(this);
+                _openColorPicker.Topmost = true;
                 _openColorPicker.Show();
             });
         }

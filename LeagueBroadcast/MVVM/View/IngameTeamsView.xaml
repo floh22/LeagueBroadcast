@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="LeagueBroadcast.MVVM.View.IngameTeamsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LeagueBroadcast.MVVM.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="1080">
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <StackPanel x:Name="BlueTeam" Margin="0,0,20,0" HorizontalAlignment="Right" Grid.Row="0">
+            <TextBlock FontWeight="Normal" 
+                       Text="Blue Team" 
+                       Margin="10,10,0,25"
+                       Foreground="White"
+                       FontSize="25"/>
+            <ListView x:Name="BluePlayerList"
+                        Width="250" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ListViewItem Background="Transparent" Margin="-10,-7,-15,0">
+                            <Border Background="#40404a">
+                                <Grid HorizontalAlignment="Stretch" Width="250" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="35"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="0"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="1" Grid.Row="0" Background="{Binding TeamColor}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding ChampionName}" 
+                                                   FontSize="25" TextAlignment="Center" 
+                                                   VerticalAlignment="Top"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="White"
+                                                   Margin="0,-3,0,0"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding PlayerName}"
+                                           FontSize="18"
+                                           FontWeight="Light"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Center"
+                                           TextWrapping="NoWrap"      
+                                           Foreground="White"/>
+                                </Grid>
+                            </Border>
+                        </ListViewItem>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+        <StackPanel x:Name="RedTeam" 
+                    Margin="20,0,0,0" Grid.Column="1" Grid.Row="0"
+                    HorizontalAlignment="Left">
+            <TextBlock FontWeight="Normal" 
+                       Text="Red Team" 
+                       Margin="0,10,10,25"
+                       Foreground="White"
+                       FontSize="25"
+                       HorizontalAlignment="Right"/>
+            <ListView x:Name="RedPlayerList"
+                        Width="250" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ListViewItem Background="Transparent" Margin="-10,-7,-15,0">
+                            <Border Background="#40404a">
+                                <Grid HorizontalAlignment="Stretch" Width="250" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="35"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="0"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="1" Grid.Row="0" Background="{Binding TeamColor}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding ChampionName}" 
+                                                   FontSize="25" TextAlignment="Center" 
+                                                   VerticalAlignment="Top"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="White"
+                                                   Margin="0,-3,0,0"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding PlayerName}"
+                                           FontSize="18"
+                                           FontWeight="Light"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Center"
+                                           TextWrapping="NoWrap"      
+                                           Foreground="White"/>
+                                </Grid>
+                            </Border>
+                        </ListViewItem>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+        <Border Background="#2f2f36" Grid.Row="1" Grid.ColumnSpan="2">
+        </Border>
+    </Grid>
+</UserControl>

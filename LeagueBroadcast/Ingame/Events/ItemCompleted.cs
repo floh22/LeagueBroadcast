@@ -1,4 +1,5 @@
-﻿using LeagueBroadcast.Common.Events;
+﻿using LeagueBroadcast.Common.Data.RIOT;
+using LeagueBroadcast.Common.Events;
 using LeagueBroadcast.Ingame.Data.RIOT;
 
 namespace LeagueBroadcast.Ingame.Events

@@ -1,5 +1,5 @@
 ﻿using LeagueBroadcast.ChampSelect.Events;
-using LeagueBroadcast.ChampSelect.State;
+using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.OperatingSystem;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using static LeagueBroadcast.ChampSelect.State.StateData;
+using static LeagueBroadcast.ChampSelect.StateInfo.StateData;
 
 namespace LeagueBroadcast.Http
 {

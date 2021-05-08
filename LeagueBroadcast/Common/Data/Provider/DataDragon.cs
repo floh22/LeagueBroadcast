@@ -1,7 +1,4 @@
-﻿using LeagueBroadcast.ChampSelect.Data.DTO;
-using LeagueBroadcast.Ingame.Data.RIOT;
-using LeagueBroadcast.OperatingSystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +9,8 @@ using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.MVVM.Core;
 using LeagueBroadcast.MVVM.ViewModel;
 using Newtonsoft.Json;
+using LeagueBroadcast.Common.Data.DTO;
+using LeagueBroadcast.Common.Data.RIOT;
 
 namespace LeagueBroadcast.Common.Data.Provider
 {
@@ -24,9 +23,6 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public static GameVersion version;
 
-        List<Champion> Champions;
-        List<SummonerSpell> SummonerSpells;
-        List<ItemData> Items;
 
         public List<int> FullIDs;
 
@@ -71,9 +67,6 @@ namespace LeagueBroadcast.Common.Data.Provider
 
             };
 
-            Champions = new List<Champion>();
-            SummonerSpells = new List<SummonerSpell>();
-            Items = new List<ItemData>();
             FullIDs = new List<int>();
 
             StartLoading?.Invoke(this, EventArgs.Empty);
@@ -119,11 +112,11 @@ namespace LeagueBroadcast.Common.Data.Provider
         {
             Log.Info($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}");
 
-            Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
-            Log.Info($"Loaded {Champions.Count} champions");
+            Champion.Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
+            Log.Info($"Loaded {Champion.Champions.Count} champions");
 
-            SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
-            Log.Info($"Loaded {SummonerSpells.Count} summoner spells");
+            SummonerSpell.SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
+            Log.Info($"Loaded {SummonerSpell.SummonerSpells.Count} summoner spells");
 
             List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/item.json")).data.ToObject<Dictionary<int, ItemData>>());
             Log.Info($"Detected {rawItemData.Count} items");
@@ -133,12 +126,12 @@ namespace LeagueBroadcast.Common.Data.Provider
                 itemData.itemID = kvPair.Key;
                 if (itemData.gold.total >= ConfigController.Component.DataDragon.MinimumGoldCost || itemData.specialRecipe != 0)
                 {
-                    Items.Add(itemData);
+                    ItemData.Items.Add(itemData);
                     FullIDs.Add(itemData.itemID);
                 }
             });
 
-            Log.Info($"Loaded {Items.Count} full items");
+            Log.Info($"Loaded {ItemData.Items.Count} full items");
 
             //Download all needed champion, item, and summoner spell data
             await CheckLocalCache();
@@ -149,7 +142,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public Champion GetChampionById(int champID)
         {
-            var champData = Champions.Find(c => c.key == champID);
+            var champData = Champion.Champions.Find(c => c.key == champID);
             if (champData != null)
                 DataDragonUtils.ExtendChampionLocal(champData, version);
             return champData;
@@ -157,7 +150,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public SummonerSpell GetSummonerById(int summonerID)
         {
-            var summonerData = SummonerSpells.Find(s => s.key == summonerID);
+            var summonerData = SummonerSpell.SummonerSpells.Find(s => s.key == summonerID);
             if (summonerData != null)
                 DataDragonUtils.ExtendSummonerLocal(summonerData, version);
             return summonerData;
@@ -165,7 +158,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public ItemData GetItemById(int itemID)
         {
-            var itemData = Items.Find(i => i.itemID == itemID);
+            var itemData = ItemData.Items.Find(i => i.itemID == itemID);
             if (itemData != null)
                 DataDragonUtils.ExtendItemLocal(itemData, version);
             return itemData;
@@ -186,7 +179,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             string item = patchFolder + "/item";
             string spell = patchFolder + "/spell";
 
-            maxTasks = Champions.Count * 4 + Items.Count + SummonerSpells.Count;
+            maxTasks = Champion.Champions.Count * 4 + ItemData.Items.Count + SummonerSpell.SummonerSpells.Count;
 
             if (!Directory.Exists(cache))
                 Directory.CreateDirectory(cache);
@@ -210,15 +203,15 @@ namespace LeagueBroadcast.Common.Data.Provider
             else
             {
                 Log.Info($"Cache {patchFolder} exists already");
-                if(Directory.GetFiles(champ).Length < Champions.Count * 4)
+                if(Directory.GetFiles(champ).Length < Champion.Champions.Count * 4)
                 {
                     DownloadMissingChampionCache(dlTasks, champ);
                 }
-                if(Directory.GetFiles(item).Length < Items.Count)
+                if(Directory.GetFiles(item).Length < ItemData.Items.Count)
                 {
                     DownloadMissingItemCache(dlTasks, item);
                 }
-                if(Directory.GetFiles(spell).Length < SummonerSpells.Count)
+                if(Directory.GetFiles(spell).Length < SummonerSpell.SummonerSpells.Count)
                 {
                     DownloadMissingSummonerSpellCache(dlTasks, spell);
                 } 
@@ -265,15 +258,15 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private void DownloadFullChampionCache(List<Task> dlTasks, string destUri)
         {
-            Log.Info($"Downloading Champion Cache of {Champions.Count * 4} images");
-            Champions.ForEach(findChampion => {
+            Log.Info($"Downloading Champion Cache of {Champion.Champions.Count * 4} images");
+            Champion.Champions.ForEach(findChampion => {
                 DownloadChampionToCache(dlTasks, destUri, findChampion);
             });
         }
 
         private void DownloadMissingChampionCache(List<Task> dlTasks, string destUri)
         {
-            Champions.ForEach(champ => {
+            Champion.Champions.ForEach(champ => {
                 _startupContext.Status = $"Checking {champ} cache";
                 DataDragonUtils.ExtendChampion(champ, version);
                 if (!File.Exists($"{destUri}/{champ.id}_loading.png"))
@@ -306,8 +299,8 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private void DownloadFullItemCache(List<Task> dlTasks, string destUri)
         {
-            Log.Info($"Downloading Item Cache of {Items.Count} images");
-            Items.ForEach(findItem =>
+            Log.Info($"Downloading Item Cache of {ItemData.Items.Count} images");
+            ItemData.Items.ForEach(findItem =>
             {
                 DownloadItemToCache(dlTasks, destUri, findItem);
             });
@@ -315,7 +308,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private void DownloadMissingItemCache(List<Task> dlTasks, string destUri)
         {
-            Items.ForEach(item => {
+            ItemData.Items.ForEach(item => {
                 _startupContext.Status = $"Checking {item} cache";
                 if (!File.Exists($"{destUri}/{item.itemID}.png"))
                     DownloadItemToCache(dlTasks, destUri, item);
@@ -332,15 +325,15 @@ namespace LeagueBroadcast.Common.Data.Provider
         
         private void DownloadFullSummonerSpellCache(List<Task> dlTasks, string destUri)
         {
-            Log.Info($"Downloading Summoner Spell Cache of {SummonerSpells.Count} images");
-            SummonerSpells.ForEach(findSummoner => {
+            Log.Info($"Downloading Summoner Spell Cache of {SummonerSpell.SummonerSpells.Count} images");
+            SummonerSpell.SummonerSpells.ForEach(findSummoner => {
                 DownloadSummonerSpellToCache(dlTasks, destUri, findSummoner);
             });
         }
 
         private void DownloadMissingSummonerSpellCache(List<Task> dlTasks, string destUri)
         {
-            SummonerSpells.ForEach(spell =>
+            SummonerSpell.SummonerSpells.ForEach(spell =>
             {
                 _startupContext.Status = $"Checking {spell} cache";
                 if (!File.Exists($"{destUri}/{spell.id}.png"))

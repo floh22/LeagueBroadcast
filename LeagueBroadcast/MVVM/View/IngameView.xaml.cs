@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeagueBroadcast.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -18,12 +19,38 @@ namespace LeagueBroadcast.MVVM.View
     /// </summary>
     public partial class IngameView : UserControl
     {
+        private IngameViewModel ctx;
         public IngameView()
         {
             InitializeComponent();
 
-            //IDEA: 4 Way Split Event Types: Objective, Player, Team, Other
-            //Scroll Up/Down to get to team overview. Maybe different page?
+            OpenContent.Width = 360;
+            OpenContent.Opacity = 0;
+
+
+            DataContextChanged += (s, e) => {
+                ctx = (IngameViewModel)e.NewValue;
+                //Objectives
+                ObjectivePanel.DataContext = ctx.Objectives;
+                BaronButton.DataContext = ctx.Objectives.BaronTimer;
+                DragonButton.DataContext = ctx.Objectives.ElderTimer;
+                InhibButton.DataContext = ctx.Objectives.InhibTimer;
+
+                //Teams
+                TeamPanel.DataContext = ctx.Teams;
+                TeamNamesButton.DataContext = ctx.Teams.Name;
+                TeamScoresButton.DataContext = ctx.Teams.Score;
+                TeamIconsButton.DataContext = ctx.Teams.Icon;
+                GoldGraphButton.DataContext = ctx.Teams.Gold;
+
+                //Players
+                PlayerPanel.DataContext = ctx.Players;
+                ItemsButton.DataContext = ctx.Players.Items;
+                LevelUpButton.DataContext = ctx.Players.LevelUp;
+                EXPButton.DataContext = ctx.Players.EXP;
+                PlayerGoldButton.DataContext = ctx.Players.PlayerGold;
+            };
+
         }
     }
 }

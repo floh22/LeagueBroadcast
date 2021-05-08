@@ -8,6 +8,7 @@ namespace LeagueBroadcast.Update.Http
     //https://github.com/Johannes-Schneider/GoldDiff/blob/master/GoldDiff.Shared/Http/FileDownloader.cs
     public class FileDownloader
     {
+#nullable enable
         public event EventHandler<DownloadProgressEventArguments>? DownloadProgressChanged;
 
         public async Task DownloadAsync(string? remoteUrl, string? filePath)
@@ -54,4 +55,5 @@ namespace LeagueBroadcast.Update.Http
             await webClient.DownloadFileTaskAsync(remoteUrl!, filePath!);
         }
     }
+#nullable disable
 }

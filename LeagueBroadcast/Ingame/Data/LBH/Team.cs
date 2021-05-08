@@ -10,7 +10,6 @@ namespace LeagueBroadcast.Ingame.Data.LBH
         public string teamName;
 
         public List<Player> players;
-        public int gold;
         public int towers;
 
         public bool hasBaron;
@@ -20,19 +19,16 @@ namespace LeagueBroadcast.Ingame.Data.LBH
         public int elderTimer = 0;
 
         public List<string> dragonsTaken;
-        public Dictionary<double, int> goldHistory;
 
         public Team(int teamId, List<Player> players)
         {
             this.id = teamId;
             this.teamName = (id == 0) ? "ORDER" : "CHAOS";
             this.players = players;
-            gold = 2500;
             towers = 0;
             hasBaron = false;
             hasElder = false;
             dragonsTaken = new List<string>();
-            goldHistory = new Dictionary<double, int>();
         }
 
         public int GetDragonsTaken()
@@ -47,6 +43,16 @@ namespace LeagueBroadcast.Ingame.Data.LBH
                 var teamComponent = id == 0 ? 0 : 5;
                 players.ElementAt(i).id = teamComponent + i;
             }
+        }
+
+        public float GetGold(int i)
+        {
+            return players.Select(p => p.goldHistory.Values.ElementAt(i)).Sum();
+        }
+
+        public float GetGold()
+        {
+            return players.Select(p => p.goldHistory.Values.Last()).Sum();
         }
     }
 }

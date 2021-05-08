@@ -24,7 +24,7 @@ namespace LeagueBroadcast.Common
             this.Level = level;
 
             Sb = new StringBuilder();
-            LogDir = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+            LogDir = $"{Directory.GetCurrentDirectory()}\\Logs";
 
             Directory.CreateDirectory(LogDir);
             FileInfo newFileInfo = new FileInfo(Path.Combine(LogDir, $"Log-{DateTime.Now:yyyy-MM-dd-HH-mm}.log"));

@@ -55,9 +55,9 @@ namespace LeagueBroadcast.Http
                     DirectoryLister = DirectoryLister.Html
                 })
                 // Static files last to avoid conflicts
-                .WithStaticFolder("/frontend", $"{Directory.GetCurrentDirectory()}\\frontend\\ingame", true, m => m
+                .WithStaticFolder("/frontend", $"{Directory.GetCurrentDirectory()}\\Frontend\\ingame", true, m => m
                     .WithContentCaching(true))
-                .WithStaticFolder("/", $"{Directory.GetCurrentDirectory()}\\frontend\\pickban", true, m => m
+                .WithStaticFolder("/", $"{Directory.GetCurrentDirectory()}\\Frontend\\pickban", true, m => m
                     .WithContentCaching(true))
                 ;
 

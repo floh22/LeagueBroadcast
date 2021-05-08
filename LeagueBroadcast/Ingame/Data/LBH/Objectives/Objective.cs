@@ -32,8 +32,9 @@ namespace LeagueBroadcast.Ingame.Data.LBH.Objectives
 
         public enum ObjectiveType
         {
-            Baron,
-            Dragon
+            None = -1,
+            Baron = 0,
+            Dragon = 1
         }
     }
 }
