@@ -13,32 +13,12 @@
 [![MIT License][license-shield]][license-url]
 
 
-
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <h3 align="center">League Broadcast (Essence)</h3>
-
-  <p align="center">
-    A Collection of League of Legends Spectate Overlay tools to enhance streams and tournament productions
-    <br />
-    <a href="https://github.com/floh22/LeagueBroadcastHub"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/floh22/LeagueBroadcastHub">View Demo</a>
-    ·
-    <a href="https://github.com/floh22/LeagueBroadcastHub/issues">Issues</a>
-    ·
-    <a href="https://github.com/floh22/LeagueBroadcastHub/issues">Request Feature</a>
-  </p>
-</p>
-
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## League Broadcast (Essence)
 
 Currently no proper broadcast solution for League of Legends streams exists which can recreate the features of Riot Broadcasts.
 
-This project aims to change that and provide one such singular broadcast solution.
+This project aims to change that and provide one such singular broadcast solution. Remade from the ground up
 
 League Broadcast uses Memory Reading to get information that the Riot API does not expose. This is not endorsed by Riot, though it has been tolerated in this past.
 Use League Broadcast (Essence) at your own risk. Anti Cheat does not run during spectate, but it does however run while in a live game. Having League Broadcast (Essence) open
@@ -55,7 +35,7 @@ Ingame Features currently include:
 
 Includes a C# port of RCVolus ChampSelect tool!
 
-Auto update included!
+Auto update included
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -66,6 +46,7 @@ To get a local copy up and running follow these steps.
 
 
 * Windows 10 20H1 (May 2020 Update) Build 19041
+* Active Internet connection
 
 ### Installation
 
@@ -77,9 +58,9 @@ To get a local copy up and running follow these steps.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-- Components of LBH can be en-/disabled separately. Enable Pick/Ban or Ingame as you need.
+- Components of League Broadcast (Essence) can be en-/disabled separately. Enable Pick/Ban or Ingame as you need.
 
-- On first run League Broadcast Hub will download the latest DataDragon cache. 
+- On first run League Broadcast will download the latest DataDragon cache. 
   -  Champ Select data included to support a port of [RCVolus Pick/Ban](https://github.com/RCVolus/lol-pick-ban-ui) 
   -  Champ Select delay support added! No more waiting between champ select and ingame. Champ select is delayed by a configurable amount to reduce the wait
   
