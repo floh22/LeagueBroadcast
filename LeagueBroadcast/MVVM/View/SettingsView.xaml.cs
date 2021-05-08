@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LeagueBroadcast.Common;
+using LeagueBroadcast.Common.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -21,6 +23,19 @@ namespace LeagueBroadcast.MVVM.View
         public SettingsView()
         {
             InitializeComponent();
+            LogLevelSelector.SelectedIndex = (int)(ConfigController.Component.App.LogLevel);
+
+        }
+
+        private void LogLevelSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Log.LogLevel level = (Log.LogLevel)Enum.Parse(typeof(Log.LogLevel), ((ComboBoxItem)LogLevelSelector.SelectedItem).Tag.ToString());
+            Log.SetLogLevel(level);
+            if (level != ConfigController.Component.App.LogLevel)
+            {
+                Log.Write($"Log Level set to {level.ToString()}");
+                ConfigController.Component.App.LogLevel = level;
+            }
         }
     }
 }

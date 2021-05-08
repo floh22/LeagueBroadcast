@@ -19,6 +19,7 @@
                 <ResourceDictionary Source="MVVM/Resources/ColorStyles.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/GenericToggle.xaml"/>
                 <ResourceDictionary Source="MVVM/Theme/CollapsableStackPanelTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/ComboBoxTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <converters:InvertableBooleanToVisibilityConverter x:Key="BoolToVis"/>

@@ -33,7 +33,6 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             Trinket = new LiveEventConnector();
             Trinket.OnLiveEvent += ReceiveLiveEvent;
-            Trinket.OnLiveEvent += (s, e) => { Log.Verbose($"New Live Event:  {JsonConvert.SerializeObject(e)}"); };
             Trinket.OnConnect += (s, e) => { Log.Verbose("LiveEventAPI Connected"); };
             Trinket.OnConnectionError += (s, e) => { Log.Verbose("LiveEventAPI Connection Failed!"); Log.Warn(e); };
 

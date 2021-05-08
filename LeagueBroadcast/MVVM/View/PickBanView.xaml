@@ -49,7 +49,7 @@
                 </Style.Triggers>
             </Style>
         </Border.Style>
-        
+
         <ScrollViewer VerticalScrollBarVisibility="Hidden"
                   CanContentScroll="True"
                   IsTabStop="False">
@@ -104,6 +104,7 @@
                         <RowDefinition Height="35"/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
@@ -116,32 +117,32 @@
                     <TextBlock Text="Settings" Grid.Column="1" Foreground="White" FontWeight="Light" FontSize="25"/>
                     <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="1"
                                 DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
-                            <TextBlock Text="Patch" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
+                        <TextBlock Text="Patch" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                        HorizontalAlignment="Center"/>
-                            <TextBox TextChanged="PatchChanged" Text="{Binding Patch}" Template="{StaticResource LostFocusTextBox}" Margin="0,5,0,0" Width="100"/>
-                        </StackPanel>
+                        <TextBox TextChanged="PatchChanged" Text="{Binding Patch}" Template="{StaticResource LostFocusTextBox}" Margin="0,5,0,0" Width="100"/>
+                    </StackPanel>
                     <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="1"
                                 DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
-                            <TextBlock Text="Show Score" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
+                        <TextBlock Text="Show Score" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                        HorizontalAlignment="Center"/>
-                            <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                        <controls:ToggleSwitch CheckedBackground="#5cc59e" 
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
                                        HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
                                        SwitchWidth="50" Margin="10,10,0,0"
                                        IsChecked="{Binding Score}"/>
-                        </StackPanel>
+                    </StackPanel>
                     <StackPanel Orientation="Vertical" Grid.Column="3" Grid.Row="1"
                                 DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
-                            <TextBlock Text="Show Coaches" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
+                        <TextBlock Text="Show Coaches" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                        HorizontalAlignment="Center"/>
-                            <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                        <controls:ToggleSwitch CheckedBackground="#5cc59e" 
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
                                        HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
                                        SwitchWidth="50" Margin="10,10,0,0"
                                        IsChecked="{Binding Coaches}"/>
-                        </StackPanel>
+                    </StackPanel>
                     <StackPanel Orientation="Vertical" Grid.Column="4" Grid.Row="1"
                                 DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
                         <TextBlock Text="Show Spells" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
@@ -153,6 +154,30 @@
                                        SwitchWidth="50" Margin="10,10,0,0"
                                        IsChecked="{Binding Spells}"/>
                     </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2"
+                                DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
+                        <TextBlock Text="Use Delay" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
+                                   HorizontalAlignment="Center"/>
+                        <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                       Foreground="White" 
+                                       FontSize="20" FontWeight="Light" 
+                                       HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
+                                       SwitchWidth="50" Margin="10,10,0,0"
+                                       IsChecked="{Binding UseDelay}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="2"
+                                DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
+                        <TextBlock Text="Delay Amount" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
+                                       HorizontalAlignment="Center"/>
+                        <TextBox TextChanged="PatchChanged"
+                                 Text="{Binding DelayValue}"
+                                 Template="{StaticResource LostFocusTextBox}" 
+                                 Margin="-20,5,0,0" Width="100"
+                                 PreviewTextInput="PreviewTextInputHandler" 
+                                 DataObject.Pasting="PastingHandler"/>
+                    </StackPanel>
+                    <TextBlock Text="sec" Grid.Column="2" Grid.Row="2" Foreground="White" Margin="172,45,0,58" FontSize="20" FontWeight="Light"/>
 
                 </Grid>
             </Grid>

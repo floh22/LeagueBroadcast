@@ -100,5 +100,25 @@ namespace LeagueBroadcast.MVVM.View
                 _openColorPicker.Show();
             });
         }
+
+        private bool IsTextAccepted(TextBox sender, String text)
+        {
+            return int.TryParse(sender.Text + text, out int res) || (text == "0" && sender.Text.Length == 0);
+        }
+
+        private void PreviewTextInputHandler(Object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsTextAccepted((TextBox)sender, e.Text);
+        }
+
+        private void PastingHandler(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(String)))
+            {
+                String text = (String)e.DataObject.GetData(typeof(String));
+                if (!IsTextAccepted((TextBox)sender, text)) e.CancelCommand();
+            }
+            else e.CancelCommand();
+        }
     }
 }

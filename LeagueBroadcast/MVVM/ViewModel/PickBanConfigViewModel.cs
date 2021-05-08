@@ -1,4 +1,5 @@
-﻿using LeagueBroadcast.Common.Controllers;
+﻿using LeagueBroadcast.Common;
+using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.MVVM.Core;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,14 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public bool Coaches { get { return ConfigController.PickBan.frontend.coachesEnabled; } set { ConfigController.PickBan.frontend.coachesEnabled = value; OnPropertyChanged("Coaches"); } }
         public bool Score { get { return ConfigController.PickBan.frontend.scoreEnabled; } set { ConfigController.PickBan.frontend.scoreEnabled = value; OnPropertyChanged("Score"); } }
 
+        public bool UseDelay { get { return ConfigController.Component.PickBan.UseDelay; } set { ConfigController.Component.PickBan.UseDelay = value; OnPropertyChanged("UseDelay"); } }
+
+        public string DelayValue { get { return ConfigController.Component.PickBan.DelayValue.ToString(); } set { UpdateDelay(value); OnPropertyChanged("DelayValue"); } }
+
         public static PickBanConfigViewModel ChampSelectSettings = new();
 
         public PickBanConfigViewModel(string patch, bool spells, bool coaches, bool score)
         {
-            this.Patch = patch;
-            this.Score = score;
-            this.Spells = spells;
-            this.Coaches = coaches;
         }
 
         public PickBanConfigViewModel()
@@ -35,6 +36,18 @@ namespace LeagueBroadcast.MVVM.ViewModel
             this.Spells = frontend.spellsEnabled;
             this.Coaches = frontend.coachesEnabled;
             this.Score = frontend.scoreEnabled;
+        }
+
+        private void UpdateDelay(string delay)
+        {
+            bool res = Int32.TryParse(delay, out var val);
+            if(res)
+            {
+                ConfigController.Component.PickBan.DelayValue = val;
+            } else
+            {
+                Log.Warn($"Could not update delay value to {delay}");
+            }
         }
     }
 }

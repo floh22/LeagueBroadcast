@@ -97,7 +97,8 @@ namespace LeagueBroadcast.Common.Data.Config
                         Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System))
                     },
                     OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcastHub/v2/Offsets/",
-                    OffsetPrefix = "Offsets-"
+                    OffsetPrefix = "Offsets-",
+                    CheckForOffsets = true
                 }
             };
         }
@@ -181,6 +182,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public string UpdateRepositoryUrl;
         public string UpdateRepositoryName;
         public List<string> LeagueInstall;
+        public bool CheckForOffsets;
         public string OffsetRepository;
         public string OffsetPrefix;
 

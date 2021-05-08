@@ -3,10 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
              xmlns:local="clr-namespace:LeagueBroadcast.MVVM.View"
+             xmlns:core="clr-namespace:LeagueBroadcast.MVVM.Core"
+             xmlns:converters="clr-namespace:LeagueBroadcast.MVVM.Converters"
+             xmlns:controls="clr-namespace:LeagueBroadcast.MVVM.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="695" d:DesignWidth="1080">
     <Grid>
-        <TextBlock Text="Settings" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <StackPanel Width="250" HorizontalAlignment="Left" Margin="100,40,0,0">
+            <TextBlock Text="Check for App Updates" Foreground="White" FontSize="22"/>
+            <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                       Foreground="White" 
+                                       FontSize="20" FontWeight="Light" 
+                                       HorizontalAlignment="Left" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
+                                       SwitchWidth="50" Margin="20,10,0,0"
+                                       IsChecked="{Binding AppUpdates}"/>
+            <TextBlock Text="Auto Update Offsets" Foreground="White" FontSize="22" Margin="0,20,0,0"/>
+            <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                       Foreground="White" 
+                                       FontSize="20" FontWeight="Light" 
+                                       HorizontalAlignment="Left" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
+                                       SwitchWidth="50" Margin="20,10,0,0"
+                                       IsChecked="{Binding OffsetUpdate}"/>
+
+            <TextBlock Text="Log Level" Foreground="White" FontSize="22" Margin="0,20,0,0"/>
+            <ComboBox 
+                Margin="30,10,100,0" 
+                Style="{StaticResource ComboBoxFlatStyle}" 
+                x:Name="LogLevelSelector"
+                SelectionChanged="LogLevelSelector_SelectionChanged">
+                <ComboBoxItem Tag="None" Content="None"/>
+                <ComboBoxItem Tag="Warn" Content="Warn"/>
+                <ComboBoxItem Tag="Info" Content="Info"/>
+                <ComboBoxItem Tag="Verbose" Content="Verbose"/>
+            </ComboBox>
+        </StackPanel>
     </Grid>
 </UserControl>

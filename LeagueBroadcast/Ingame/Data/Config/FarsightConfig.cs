@@ -40,6 +40,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public async Task<FarsightConfig> CreateDefault()
         {
             //Download from given repo
+            if(!ConfigController.Component.App.CheckForOffsets)
+            {
+                Log.Info("Offset Updates disabled. Cannot automatically get current values");
+                return new FarsightConfig();
+            }
             var offsetUri = $"{ConfigController.Component.App.OffsetRepository}{ConfigController.Component.App.OffsetPrefix}{DataDragon.version.Champion}.json";
             Log.Info($"Fetching new offsets from {offsetUri}");
             string res = await DataDragonUtils.GetAsync(offsetUri);
