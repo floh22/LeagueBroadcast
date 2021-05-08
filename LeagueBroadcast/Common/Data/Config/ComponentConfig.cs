@@ -96,7 +96,7 @@ namespace LeagueBroadcast.Common.Data.Config
                     LeagueInstall = new() {
                         Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System))
                     },
-                    OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcastHub/master/Offsets/",
+                    OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcastHub/v2/Offsets/",
                     OffsetPrefix = "Offsets-"
                 }
             };
