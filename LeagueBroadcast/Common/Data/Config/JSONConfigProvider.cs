@@ -52,6 +52,10 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public void WriteConfig(JSONConfig config)
         {
+            if(config.FileVersion == null)
+            {
+                return;
+            }
             Log.Verbose($"Writing {config.Name} config to file");
             using var stream = File.CreateText(Path.Combine(_configPath, $"{config.Name}.json"));
             var json = config.GETJson();

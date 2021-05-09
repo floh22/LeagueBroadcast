@@ -178,6 +178,13 @@ namespace LeagueBroadcast.Ingame.State
 
             //For each point in time, add gold difference at time to graph
             int dataPoints = blueTeam.players[0].goldHistory.Count;
+            if(dataPoints < 2)
+            {
+                return new Dictionary<double, float>() {
+                    {0, 0},
+                    {1, 0}
+                };
+            }
             for (int i = 0; i < dataPoints; i++)
             {
                 //Sum gold values for all players in respective team and get point in time

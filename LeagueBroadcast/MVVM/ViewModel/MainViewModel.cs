@@ -1,7 +1,6 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.MVVM.Core;
 using LeagueBroadcast.MVVM.View;
-using System.Windows;
 
 namespace LeagueBroadcast.MVVM.ViewModel
 {
@@ -126,5 +125,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
             PostGameVM.IsOpen = true;
             Window.SetPostGameSelected();
         }
+
+        
     }
 }

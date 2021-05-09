@@ -98,7 +98,7 @@ export default class ObjectiveIndicator {
       this.showContent();
     }
     console.log(`Updating ${this.id} content time: ${objective.DurationRemaining}, gold: ${objective.GoldDifference}`);
-    this.gold.text = objective.GoldDifference + '';
+    this.gold.text = Math.trunc(objective.GoldDifference) + '';
     this.time.text = objective.DurationRemaining;
   }
 

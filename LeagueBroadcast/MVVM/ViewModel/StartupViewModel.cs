@@ -61,7 +61,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public void UpdateDDragonProgress(double completed, double total)
         {
-            LoadProgress = (int)LoadStatus.DDragonStart + (completed / total * ((int)LoadStatus.DDragonStart.Next() - (int)LoadStatus.DDragonStart) / 100);
+            LoadProgress = (int)LoadStatus.DDragonStart + (completed / total) * 0.75;
             LoadingBarWidth = (int)((LoadProgress / 100) * 380);
         }
     }

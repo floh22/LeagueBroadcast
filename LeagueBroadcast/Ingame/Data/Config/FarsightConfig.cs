@@ -53,14 +53,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 Log.Warn("Could not fetch updated Offsets! Are they not uploaded yet? Either provide your own, change the source, or wait for an update");
                 return new FarsightConfig();
             }
-            Log.Info("Offsets found. Updating values");
-            var cfg = JsonConvert.DeserializeObject<FarsightConfig>(res);
-            return new FarsightConfig() {
-                FileVersion = cfg.FileVersion,
-                GameVersion = cfg.GameVersion,
-                GameOffsets = cfg.GameOffsets,
-                ObjectOffsets = cfg.ObjectOffsets
-            };
+            var remote = JsonConvert.DeserializeObject<FarsightConfig>(res);
+            Log.Info($"Offsets found. Updating values for game version {remote.GameVersion}");
+            return remote;
         }
 
         public override string GETJson()
@@ -71,7 +66,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override void RevertToDefault()
         {
             var def = CreateDefault().Result;
-            this.FileVersion = def.FileVersion;
+            this.FileVersion = "1.0";
             this.GameVersion = def.GameVersion;
             this.GameOffsets = def.GameOffsets;
             this.ObjectOffsets = def.ObjectOffsets;

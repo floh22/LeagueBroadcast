@@ -26,7 +26,7 @@ export default class GraphPopUp {
         var dataColor = Phaser.Display.Color.IntegerToColor(variables.GOLD_COLOR_LIGHT);
         this.gridColor = Phaser.Display.Color.IntegerToColor(variables.GOLD_COLOR_DARK);
 
-        this.title = scene.add.text(850, 850, 'GOLD DIFFERENCE OVER ENTIRE GAME', {
+        this.title = scene.add.text(800, 850, 'GOLD DIFFERENCE OVER ENTIRE GAME', {
             fontFamily: 'News Cycle',
             fontSize: '22px',
             color: GetRGBAString(titleColor, 1),

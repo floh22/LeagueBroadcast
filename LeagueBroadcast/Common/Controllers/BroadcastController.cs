@@ -79,10 +79,15 @@ namespace LeagueBroadcast.Common.Controllers
             ToTick = new();
             
             _ = new Log(LogLevel.Verbose);
+            
             CfgController = ConfigController.Instance;
+            Log.Info($"League Broadcast (Essence) Version {ConfigController.Component.App.Version}");
             if (await AppUpdateController.Update(_startupContext)) {
                 Startup.Close();
                 App.Instance.Shutdown();
+            } else
+            {
+                Log.Warn("Could not update");
             }
 
             EarlyInitComplete?.Invoke(null, EventArgs.Empty);
