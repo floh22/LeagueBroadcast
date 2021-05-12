@@ -43,7 +43,12 @@ namespace LeagueBroadcast.MVVM.ViewModel
             TeamConfigViewModel.BlueTeam.Init(ConfigController.PickBan.frontend.blueTeam);
             TeamConfigViewModel.RedTeam.Init(ConfigController.PickBan.frontend.redTeam);
 
-            _openCommand = new(o => { IsOpen = true; BroadcastController.Instance.Main.SetPickBanSelected(); });
+            _openCommand = new(o => { 
+                IsOpen = true; 
+                BroadcastController.Instance.Main.SetPickBanSelected();
+                MainViewModel.HomeVM.InfoButtonIsVisible = false;
+                MainViewModel.HomeVM.InfoIsOpen = false;
+            });
             _openCommand.MouseGesture = MouseAction.LeftClick;
 
             _closeCommand = new(o => { IsOpen = false; });

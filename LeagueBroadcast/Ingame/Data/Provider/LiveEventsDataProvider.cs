@@ -16,6 +16,9 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private IngameController Ingame => BroadcastController.Instance.IGController;
 
         private const string EnableAPIString = "[LiveEvents]\nEnable=1\nPort=34243";
+
+        public bool Connected => Trinket.Connected;
+
         public LiveEventsDataProvider()
         {
             //Check default path for league install. Prompt user if it cannot be found
@@ -38,6 +41,11 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             AppStateController.GameLoad += (s, e) => {Trinket.Connect(); };
             AppStateController.GameStop += (s, e) => { Trinket.Disconnect(); Log.Verbose("LiveEventAPI Closed"); };
+        }
+
+        public void Connect()
+        {
+            Trinket.Connect();
         }
 
         private bool CheckGameConfigLocation(string configLocation)

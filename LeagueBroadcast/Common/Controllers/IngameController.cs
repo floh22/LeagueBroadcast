@@ -62,14 +62,12 @@ namespace LeagueBroadcast.Common.Controllers
             //Wait until the game has been found
             if (!GameFound)
             {
-                /*
                 if(!await LoLDataProvider.IsSpectatorGame())
                 {
                     Log.Warn("Essence not enabled in live game");
                     AppStateController.GameStop.Invoke(null, EventArgs.Empty);
                     return;
                 }
-                */
                 LoadGame(newGameData);
             }
 
@@ -87,6 +85,12 @@ namespace LeagueBroadcast.Common.Controllers
             if(gameState.stateData.gamePaused)
             {
                 SetGamePauseState(false);
+                //LiveEvents could not connect because game was paused too long
+                //Reconnect when it is once again accessible because the game has continued
+                if(!LiveEventsProvider.Connected)
+                {
+                    LiveEventsProvider.Connect();
+                }
             }
             var backDragon = gameState.stateData.backDragon;
             var backBaron = gameState.stateData.backBaron;
@@ -175,7 +179,7 @@ namespace LeagueBroadcast.Common.Controllers
             //Update State
             try
             {
-                var snapshot = BroadcastController.Instance.MemoryController.CreateSnapshot();
+                var snapshot = BroadcastController.Instance.MemoryController.CreateSnapshot(gameState.stateData.gameTime);
                 gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, snapshot);
                 gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, snapshot);
             }
@@ -262,7 +266,7 @@ namespace LeagueBroadcast.Common.Controllers
                 LeagueProcess = newProcess;
                 TargetProcessStarted(LeagueProcess);
             }
-            catch
+            catch 
             {
                 // ignored
             }

@@ -90,56 +90,56 @@ namespace LeagueBroadcast.Farsight.Object
 		public class Offsets
         {
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int ID = 0x20;
+			public int ID;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int NetworkID = 0xCC;
+			public int NetworkID;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int Team = 0x4C;
+			public int Team;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int Pos = 0x1D8;
+			public int Pos;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int Mana = 0x298;
+			public int Mana;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int MaxMana = 0x2A8;
+			public int MaxMana;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int Health = 0xD98;
+			public int Health;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int MaxHealth = 0xDA8;
+			public int MaxHealth;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int CurrentGold = 0x1B50;
+			public int CurrentGold;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int GoldTotal = 0x1B60;
+			public int GoldTotal;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int EXP = 0x37AC;
+			public int EXP;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int Name = 0x304c;
+			public int Name;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int ItemList = 0x3714;
+			public int ItemList;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int SpellBook = 0x2BA0;
+			public int SpellBook;
 
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int ItemListItem = 0xC;
+			public int ItemListItem;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int ItemInfo = 0x20;
+			public int ItemInfo;
 
 			[JsonConverter(typeof(HexStringJsonConverter))]
-			public int ItemInfoId = 0x68;
+			public int ItemInfoId;
 		}
 	}
 

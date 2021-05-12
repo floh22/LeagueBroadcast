@@ -37,7 +37,8 @@ namespace LeagueBroadcast.Common
             }
 
             LogFile = newFileInfo;
-            LogFile.Create();
+            var fs = LogFile.Create();
+            fs.Close();
 
             LogTimer = new System.Timers.Timer()
             {
@@ -50,6 +51,7 @@ namespace LeagueBroadcast.Common
 
             //Update log on exit/crash
             AppDomain.CurrentDomain.ProcessExit += WriteToFile;
+            AppDomain.CurrentDomain.UnhandledException += WriteToFile;
 
             Write($"Logging Init. Log Level set to {Level}");
         }
@@ -64,6 +66,17 @@ namespace LeagueBroadcast.Common
             System.Diagnostics.Debug.WriteLine(message);
             Instance.Sb.Append($"[{DateTime.Now:HH-mm-ss}] {message}");
             Instance.Sb.AppendLine();
+        }
+
+        public static void WriteToFileAndPause()
+        {
+            Instance.WriteToFile(null, EventArgs.Empty);
+            Instance.LogTimer.Stop();
+        }
+
+        public static void Resume()
+        {
+            Instance.LogTimer.Start();
         }
 
         public static void Info(object message)
@@ -93,20 +106,18 @@ namespace LeagueBroadcast.Common
 
         private void WriteToFile(object sender, EventArgs e)
         {
-            using (var streamWriter = LogFile.AppendText())
+            using var streamWriter = LogFile.AppendText();
+            try
             {
-                try
-                {
-                    streamWriter.Write(Sb.ToString());
-                    Sb.Clear();
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Could not write to log");
-                    System.Diagnostics.Debug.WriteLine(ex);
-                }
-
+                streamWriter.Write(Sb.ToString());
+                Sb.Clear();
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Could not write to log");
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+            streamWriter.Close();
         }
 
         public enum LogLevel

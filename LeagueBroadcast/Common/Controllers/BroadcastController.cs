@@ -33,6 +33,7 @@ namespace LeagueBroadcast.Common.Controllers
         public DataDragon DDragon;
         public PickBanConnector PBConnector;
         public FarsightController MemoryController;
+        public GameInputController GIController;
 
         public List<ITickable> ToTick;
 
@@ -87,7 +88,7 @@ namespace LeagueBroadcast.Common.Controllers
                 App.Instance.Shutdown();
             } else
             {
-                Log.Warn("Could not update");
+                Log.Info("Using current Version");
             }
 
             EarlyInitComplete?.Invoke(null, EventArgs.Empty);
@@ -106,6 +107,8 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info("DDragon loaded");
             StatusUpdate("Looking for new Offsets");
             ConfigController.LoadOffsetConfig();
+            FarsightController.GameOffsets = ConfigController.Farsight.GameOffsets;
+            FarsightController.ObjectOffsets = ConfigController.Farsight.ObjectOffsets;
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 15);
 
             StatusUpdate("Loading PickBan Controller");
@@ -114,6 +117,7 @@ namespace LeagueBroadcast.Common.Controllers
 
             StatusUpdate("Loading Ingame Controller");
             IGController = new();
+            GIController = new();
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 35);
 
             StatusUpdate("Loading Replay Controller");

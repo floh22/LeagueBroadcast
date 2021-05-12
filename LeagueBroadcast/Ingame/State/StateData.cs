@@ -11,15 +11,20 @@ namespace LeagueBroadcast.Ingame.State
 {
     public class StateData
     {
+
+        #region NotSerialized
+        [JsonIgnore]
+        public BackEndObjective backBaron;
+
+        [JsonIgnore]
+        public BackEndObjective backDragon;
         private State gameState;
 
         public FrontEndObjective dragon;
-        [JsonIgnore]
-        public BackEndObjective backDragon;
 
         public FrontEndObjective baron;
-        [JsonIgnore]
-        public BackEndObjective backBaron;
+        #endregion 
+
 
         public List<string> blueDragons => gameState.blueTeam.dragonsTaken;
         public List<string> redDragons => gameState.redTeam.dragonsTaken;

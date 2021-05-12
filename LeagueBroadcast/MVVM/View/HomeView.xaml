@@ -3,10 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
              xmlns:local="clr-namespace:LeagueBroadcast.MVVM.View"
+             xmlns:core="clr-namespace:LeagueBroadcast.MVVM.Core"
+             xmlns:converters="clr-namespace:LeagueBroadcast.MVVM.Converters"
+             xmlns:controls="clr-namespace:LeagueBroadcast.MVVM.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid >
+             d:DesignHeight="695" d:DesignWidth="1080">
+
+    <UserControl.Resources>
+        <converters:BooleanToColorConverter x:Key="BoolToColor"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:InvertableBooleanToVisibilityConverter x:Key="BoolToVisInv"/>
+
+        <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="HideInfo">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                <SplineThicknessKeyFrame KeyTime="00:00:01" Value="0,-695,0,0" />
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="ShowInfo">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                <SplineThicknessKeyFrame KeyTime="00:00:01" Value="0,0,0,0" />
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" x:Name="Main">
             <StackPanel.Style>
                 <Style TargetType="StackPanel">
@@ -34,7 +55,7 @@
                     </Style.Triggers>
                 </Style>
             </StackPanel.Style>
-            <ContentControl Content="{Binding PickBanVM}">
+            <ContentControl Content="{Binding PickBanVM}" >
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
                         <Style.Triggers>
@@ -62,8 +83,46 @@
                     </Style>
                 </ContentControl.Style>
             </ContentControl>
-            <ContentControl Margin="0,0,0,0" Content="{Binding IngameVM}"/>
-            <ContentControl Margin="0,0,0,0" Content="{Binding PostGameVM}" HorizontalAlignment="Right"/>
+            <ContentControl Margin="0,0,0,0" Content="{Binding IngameVM}" />
+            <ContentControl Margin="0,0,0,0" Content="{Binding PostGameVM}" HorizontalAlignment="Right" />
         </StackPanel>
+        <Border Height="725" Margin="0,-695,0,0" VerticalAlignment="Top" x:Name="InfoContent">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding InfoIsOpen}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource ShowInfo}"/>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HideInfo}"/>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <ContentControl Content="{Binding InfoEditVM }" />
+                <Border Grid.Row="1" Width="100" Height="30" 
+                            Panel.ZIndex="1000"
+                            VerticalAlignment="Top" HorizontalAlignment="Center" 
+                            Background="#2f2f36"
+                            Visibility="{Binding InfoButtonIsVisible, Converter={StaticResource BoolToVis}}">
+                    <Border.InputBindings>
+                        <MouseBinding MouseAction="{Binding InfoEditButtonCommand.MouseGesture}" Command="{Binding InfoEditButtonCommand}"/>
+                    </Border.InputBindings>
+                    <Image Width="100">
+                        <Image.Source>
+                            <BitmapImage UriSource="/Assets/Images/ArrowsDownWhite.png"/>
+                        </Image.Source>
+                    </Image>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

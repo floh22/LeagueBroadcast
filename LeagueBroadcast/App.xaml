@@ -57,6 +57,10 @@
                 <view:IngameTeamsView/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModel:InfoEditViewModel}">
+                <view:InfoEditView/>
+            </DataTemplate>
+
         </ResourceDictionary>
         
     </Application.Resources>

@@ -18,6 +18,9 @@ namespace LeagueBroadcast.Farsight
         public static Offsets GameOffsets = new();
         public static GameObject.Offsets ObjectOffsets = new();
 
+        //Override to turn off memory reading at any point
+        public static bool ShouldRun = true;
+
         public List<string> BlacklistedObjectNames = new() {
             "testcube",
             "testcuberender",
@@ -30,54 +33,39 @@ namespace LeagueBroadcast.Farsight
         public List<int> BlacklistedObjects = new();
         public FarsightController()
         {
+            if (!ShouldRun)
+                return;
             Champions = Champion.Champions.Select(c => c.id).ToList();
             Log.Info($"Farsight loaded. Found {Champions.Count} Champ names");
         }
 
         public void Connect(Process p)
         {
-            
+            if (!ShouldRun)
+                return;
             Memory.Initialize(p);
         }
 
-        public void Test()
-        {
-            
-            var snap = CreateSnapshot();
-            Log.Verbose($"Champs: {snap.Champions.Count}");
-            if (snap.Champions.Count > 0)
-            {
-                var champ = snap.Champions[0];
-                Log.Verbose($"{champ.Name}: {champ.EXP}, lvl: {champ.Level}, {champ.GoldTotal}");
-            }
-        }
-
-        public Snapshot CreateSnapshot(float gameTime = 0)
+        public Snapshot CreateSnapshot(double gameTime = 0)
         {
             
 
             Snapshot snap = new();
-            if (!Memory.IsConnected)
+            if (!Memory.IsConnected || !ShouldRun)
             {
-                Log.Warn("Tried reading League memory while League is not running");
                 return snap;
             }
 
-            ReadObjects(snap);
-            ClearMissing(snap);
-
-            /*
             if (gameTime > 2)
             {
                 ReadObjects(snap);
                 ClearMissing(snap);
             }
-                */
             return snap;
         }
 
 
-        public void ReadObjects(Snapshot snap)
+        private void ReadObjects(Snapshot snap)
         {
             int maxObjects = 500;
             int[] pointers = new int[maxObjects];
@@ -149,19 +137,20 @@ namespace LeagueBroadcast.Farsight
                         snap.ObjectMap[obj.NetworkID] = obj;
                 }
 
-                if(obj.NetworkID != 0)
+                if (obj.NetworkID != 0)
                 {
                     snap.IndexToNetID[obj.ID] = obj.NetworkID;
                     snap.UpdatedThisFrame.Add(obj.NetworkID);
                     if (obj.Name.Length < 2 || BlacklistedObjectNames.Any(s => s.Equals(obj.Name, StringComparison.OrdinalIgnoreCase)))
                         BlacklistedObjects.Add(obj.NetworkID);
-                    if (obj.IsChampion())
-                        snap.Champions.Add(obj);
                 }
+
+                if (obj.IsChampion())
+                    snap.Champions.Add(obj);
             }
         }
 
-        public void ClearMissing(Snapshot snap)
+        private void ClearMissing(Snapshot snap)
         {
             foreach (var s in snap.ObjectMap.Keys.Where(key => !snap.UpdatedThisFrame.Contains(key)).ToList() )
             {
@@ -172,19 +161,19 @@ namespace LeagueBroadcast.Farsight
         public class Offsets
         {
             [JsonConverter(typeof(HexStringJsonConverter))]
-            public int Manager = 0x171BBC4;
+            public int Manager;
 
             [JsonConverter(typeof(HexStringJsonConverter))]
-            public int MapCount = 0x2C;
+            public int MapCount;
 
             [JsonConverter(typeof(HexStringJsonConverter))]
-            public int MapRoot = 0x28;
+            public int MapRoot;
 
             [JsonConverter(typeof(HexStringJsonConverter))]
-            public int MapNodeNetId = 0x10;
+            public int MapNodeNetId;
 
             [JsonConverter(typeof(HexStringJsonConverter))]
-            public int MapNodeObject = 0x14;
+            public int MapNodeObject;
         }
     }
 }

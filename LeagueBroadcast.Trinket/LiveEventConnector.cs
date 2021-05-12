@@ -37,6 +37,7 @@ namespace LeagueBroadcast.Trinket
             catch (Exception e)
             {
                 OnConnectionError?.Invoke(this, e.Message);
+                soc = null;
                 return;
             }
 
@@ -83,6 +84,7 @@ namespace LeagueBroadcast.Trinket
                 }
 
                 soc.Dispose();
+                soc = null;
 
                 OnDisconnect?.Invoke(this, EventArgs.Empty);
             }).Start();
@@ -95,6 +97,8 @@ namespace LeagueBroadcast.Trinket
 
         private bool IsAlive()
         {
+            if (soc == null)
+                return false;
             return !((soc.Poll(1000, SelectMode.SelectRead) && (soc.Available == 0)) || !soc.Connected);
         }
     }

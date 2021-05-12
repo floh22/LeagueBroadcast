@@ -59,7 +59,7 @@
             </Style>
         </Border.Style>
         <Grid>
-            <StackPanel Orientation="Vertical">
+            <StackPanel x:Name="MainContainer" Orientation="Vertical" ScrollViewer.ScrollChanged="MainContainer_ScrollChanged">
                 <Border Height="430" Margin="0,-400,0,0" x:Name="TeamsContent">
                     <Border.Style>
                         <Style TargetType="Border">

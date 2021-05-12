@@ -66,6 +66,8 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                       UncheckedBorderBrush="#3e689f"
+                                       UncheckedForeground="#3e689f"
                                        Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
@@ -126,6 +128,8 @@
                         <TextBlock Text="Show Score" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                        HorizontalAlignment="Center"/>
                         <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                               UncheckedBorderBrush="#3e689f"
+                                       UncheckedForeground="#3e689f"
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
                                        HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
@@ -136,7 +140,9 @@
                                 DataContext="{Binding Source={x:Static viewModel:PickBanConfigViewModel.ChampSelectSettings}}">
                         <TextBlock Text="Show Coaches" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                        HorizontalAlignment="Center"/>
-                        <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                        <controls:ToggleSwitch CheckedBackground="#5cc59e"
+                                               UncheckedBorderBrush="#3e689f"
+                                       UncheckedForeground="#3e689f"
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
                                        HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
@@ -148,6 +154,8 @@
                         <TextBlock Text="Show Spells" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                    HorizontalAlignment="Center"/>
                         <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                               UncheckedBorderBrush="#3e689f"
+                                       UncheckedForeground="#3e689f"
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
                                        HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"
@@ -160,6 +168,8 @@
                         <TextBlock Text="Use Delay" FontSize="20" Foreground="White" FontWeight="Light" Margin="0,10,0,0"
                                    HorizontalAlignment="Center"/>
                         <controls:ToggleSwitch CheckedBackground="#5cc59e" 
+                                               UncheckedBorderBrush="#3e689f"
+                                       UncheckedForeground="#3e689f"
                                        Foreground="White" 
                                        FontSize="20" FontWeight="Light" 
                                        HorizontalAlignment="Center" CheckHorizontalAlignment="Left" SwitchContentPlacement="Left"

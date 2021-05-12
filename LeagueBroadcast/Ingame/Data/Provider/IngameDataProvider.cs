@@ -1,4 +1,5 @@
-﻿using LeagueBroadcast.Ingame.Data.RIOT;
+﻿using LeagueBroadcast.Common;
+using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Ingame.Events;
 using Newtonsoft.Json;
 using System;
@@ -86,8 +87,9 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
         public async Task<bool> IsSpectatorGame()
         {
-            HttpResponseMessage response = await webClient.GetAsync("https://127.0.0.1:2999/liveclientdata/eventdata");
-            if(JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync()).errorCode == "RPC_ERROR")
+            HttpResponseMessage response = await webClient.GetAsync("https://127.0.0.1:2999/liveclientdata/activeplayername");
+            string res = await response.Content.ReadAsStringAsync();
+            if (res.Trim() == "\"\"")
             {
                 return true;
             }

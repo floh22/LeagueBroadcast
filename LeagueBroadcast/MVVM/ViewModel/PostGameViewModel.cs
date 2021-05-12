@@ -41,7 +41,12 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public PostGameViewModel()
         {
-            _openCommand = new(o => { IsOpen = true; BroadcastController.Instance.Main.SetPostGameSelected(); });
+            _openCommand = new(o => {
+                IsOpen = true;
+                BroadcastController.Instance.Main.SetPostGameSelected();
+                MainViewModel.HomeVM.InfoButtonIsVisible = false;
+                MainViewModel.HomeVM.InfoIsOpen = false;
+            });
             _openCommand.MouseGesture = MouseAction.LeftClick;
 
             _closeCommand = new(o => { IsOpen = false; });

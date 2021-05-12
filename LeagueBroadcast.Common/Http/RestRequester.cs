@@ -34,7 +34,7 @@ namespace LeagueBroadcast.Update.Http
                 var response = await Client.GetAsync(url).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log.Warn($"Request to {url} ({nameof(TResultType)} = {typeof(TResultType).Name}) did return status code {response.StatusCode}.");
+                    Log.Warn($"Request to {url} ({nameof(TResultType)} = {typeof(TResultType).Name}) returned status code {response.StatusCode}.");
                     return default!;
                 }
                 var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

@@ -25,6 +25,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public static PostGameViewModel PostGameVM { get; set; }
 
+        public static InfoEditViewModel InfoEditVM { get; set; }
+
 
         private ConnectionStatusViewModel _connectionStatus;
 
@@ -56,6 +58,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
             IngameVM = new();
             PostGameVM = new();
             SettingsVM = new();
+            InfoEditVM = new();
 
             CurrentView = HomeVM;
 
@@ -84,9 +87,11 @@ namespace LeagueBroadcast.MVVM.ViewModel
             {
                 CurrentView = HomeVM;
             }
+            HomeVM.InfoIsOpen = false;
             PickBanVM.IsOpen = false;
             IngameVM.IsOpen = false;
             PostGameVM.IsOpen = false;
+            HomeVM.InfoButtonIsVisible = true;
             Window.SetHomeSelected();
         }
 
@@ -99,6 +104,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
             PickBanVM.IsOpen = true;
             IngameVM.IsOpen = false;
             PostGameVM.IsOpen = false;
+            HomeVM.InfoButtonIsVisible = false;
+            HomeVM.InfoIsOpen = false;
             Window.SetPickBanSelected();
         }
 
@@ -111,6 +118,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
             PickBanVM.IsOpen = false;
             IngameVM.IsOpen = true;
             PostGameVM.IsOpen = false;
+            HomeVM.InfoButtonIsVisible = false;
+            HomeVM.InfoIsOpen = false;
             Window.SetIngameSelected();
         }
 
@@ -123,6 +132,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
             PickBanVM.IsOpen = false;
             IngameVM.IsOpen = false;
             PostGameVM.IsOpen = true;
+            HomeVM.InfoButtonIsVisible = false;
+            HomeVM.InfoIsOpen = false;
             Window.SetPostGameSelected();
         }
 

@@ -61,7 +61,12 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public IngameViewModel()
         {
-            _openCommand = new(o => { IsOpen = true; BroadcastController.Instance.Main.SetIngameSelected(); });
+            _openCommand = new(o => { 
+                IsOpen = true; 
+                BroadcastController.Instance.Main.SetIngameSelected();
+                MainViewModel.HomeVM.InfoButtonIsVisible = false;
+                MainViewModel.HomeVM.InfoIsOpen = false;
+            });
             _openCommand.MouseGesture = MouseAction.LeftClick;
 
             _closeCommand = new(o => { IsOpen = false; });

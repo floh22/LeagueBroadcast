@@ -1,4 +1,5 @@
-﻿using LeagueBroadcast.MVVM.ViewModel;
+﻿using LeagueBroadcast.Common;
+using LeagueBroadcast.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -51,6 +52,19 @@ namespace LeagueBroadcast.MVVM.View
                 PlayerGoldButton.DataContext = ctx.Players.PlayerGold;
             };
 
+        }
+
+        private void MainContainer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if(e.VerticalChange > 0 && ctx.TeamsIsOpen == false)
+            {
+                ctx.TeamsIsOpen = true; 
+            }
+
+            if(e.VerticalChange < 0 && ctx.TeamsIsOpen == true)
+            {
+                ctx.TeamsIsOpen = false;
+            }
         }
     }
 }

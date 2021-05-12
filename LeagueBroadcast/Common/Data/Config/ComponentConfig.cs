@@ -187,6 +187,15 @@ namespace LeagueBroadcast.Common.Data.Config
         public string OffsetPrefix;
 
         [JsonIgnore]
-        public StringVersion Version = StringVersion.TryParse(FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe").FileVersion, out StringVersion version) ? version! : StringVersion.Zero;
+        public StringVersion Version => GetSimpleLocalVersion();
+
+        private StringVersion GetSimpleLocalVersion()
+        {
+            string longVersion = FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe").FileVersion;
+            return StringVersion.TryParse(
+                FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe")
+                .FileVersion.Remove(longVersion.LastIndexOf('.')),
+                out StringVersion version) ? version! : StringVersion.Zero;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 
 namespace LeagueBroadcast.Common.Utils
 {
@@ -17,13 +18,12 @@ namespace LeagueBroadcast.Common.Utils
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            /*
-            var str = existingValue.ToString();
-            if (str == null || !str.StartsWith("0x"))
-                throw new JsonSerializationException();
-            return Convert.ToInt32(str);
-            */
-            return (Int32)existingValue;
+            if(reader.ValueType == typeof(Int32) || reader.ValueType == typeof(Int64))
+            {
+                return Convert.ToInt32(reader.Value);
+            }
+            var res = Int32.Parse(reader.Value.ToString().Remove(0,2), System.Globalization.NumberStyles.HexNumber);
+            return res;
         }
     }
 }

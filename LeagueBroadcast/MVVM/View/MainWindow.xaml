@@ -31,7 +31,7 @@
         <Grid Grid.Row="1" Grid.Column="1" Background="#212126">
         </Grid>
 
-        <Grid Background="#16161a" Grid.ColumnSpan="2" Grid.Row="0" MouseDown="Grid_MouseDown">
+        <Grid Background="#16161a" Grid.ColumnSpan="2" Grid.Row="0" MouseDown="Grid_MouseDown" Panel.ZIndex="1000">
             <Button x:Name="ConnectionStatus" 
                     Style="{StaticResource ConnectionStatusTheme}"
                     DataContext="{Binding Path=ConnectionStatus}" 
