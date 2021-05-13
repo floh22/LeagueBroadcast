@@ -78,12 +78,15 @@ namespace LeagueBroadcast.Ingame.State
                 if (newP == null)
                     return;
 
-                //Get player memory data. Remove spaces since memory names do not contain them
-                var playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.championName.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
+                //Get player memory data. Remove special characters since memory names do not contain them
+                var playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", ""), StringComparison.OrdinalIgnoreCase));
+                
                 //Incorrect values now but its better than crashing? Not sure
-                if(playerObject == null)
+                if (playerObject == null)
                 {
                     playerObject = new();
+                    Log.Info(p.championName + " not found in memory snapshot");
+                    
                 }
 
                 Team playerTeam = (newP.team == "ORDER") ? blueTeam : redTeam;

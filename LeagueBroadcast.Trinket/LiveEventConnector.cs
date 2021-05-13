@@ -22,7 +22,7 @@ namespace LeagueBroadcast.Trinket
         public LiveEventConnector()
         {
 
-            OnConnectionError += (s, e) => soc.Dispose();
+            OnConnectionError += (s, e) => soc?.Dispose();
         }
 
         public void Connect()

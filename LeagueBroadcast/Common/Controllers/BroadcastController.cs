@@ -79,7 +79,7 @@ namespace LeagueBroadcast.Common.Controllers
 
             ToTick = new();
             
-            _ = new Log(LogLevel.Verbose);
+            _ = new Log(LogLevel.Verbose, FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe").FileVersion);
             
             CfgController = ConfigController.Instance;
             Log.Info($"League Broadcast (Essence) Version {ConfigController.Component.App.Version}");

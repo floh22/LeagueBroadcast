@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -13,15 +16,25 @@ namespace LeagueBroadcast.Common
         private string LogDir;
         private FileInfo LogFile;
 
+        private static List<string> ErrorMessageExtras = new List<string>()
+        {
+            "Looks like Viego and Morde bugs got the better of us.",
+            "Everything went according to plan. Seriously, this is the best case scenario.",
+            "Still more stable than the League Client",
+            "Gotta fix this somehow... Up Up Down Down Left Right Left Right B A Enter... Nah, still broken"
+        };
+        private string Version;
+
         public LogLevel Level { private set; get; }
 
-        public Log(LogLevel level)
+        public Log(LogLevel level, string version)
         {
             if (Instance != null)
                 return;
             Instance = this;
 
             this.Level = level;
+            this.Version = version;
 
             Sb = new StringBuilder();
             LogDir = $"{Directory.GetCurrentDirectory()}\\Logs";
@@ -51,7 +64,7 @@ namespace LeagueBroadcast.Common
 
             //Update log on exit/crash
             AppDomain.CurrentDomain.ProcessExit += WriteToFile;
-            AppDomain.CurrentDomain.UnhandledException += WriteToFile;
+            AppDomain.CurrentDomain.UnhandledException += HandleCrash;
 
             Write($"Logging Init. Log Level set to {Level}");
         }
@@ -101,6 +114,31 @@ namespace LeagueBroadcast.Common
             if (Instance.Level >= LogLevel.Verbose)
             {
                 Write(message);
+            }
+        }
+
+        private void HandleCrash(object sender, UnhandledExceptionEventArgs args)
+        {
+            if(args.IsTerminating)
+            {
+                var CrashDirName = "CrashLogs";
+                var CrashDir = $"{LogDir}\\{CrashDirName}";
+                Directory.CreateDirectory(CrashDir);
+
+                Exception e = (Exception) args.ExceptionObject;
+
+                Random r = new Random();
+                File.WriteAllText(Path.Combine(CrashDir, $"Crash-{DateTime.Now:yyyy-MM-dd-HH-mm}.log"), 
+                    $"--- LeagueBroadcast Crash Report --- \n" +
+                    $"{ErrorMessageExtras[r.Next(ErrorMessageExtras.Count)]}\n\n" +
+                    $"Time: {DateTime.Now:yyyy.MM.dd-HH:mm}\n" +
+                    $"Description: {e.Message}\n\n" +
+                    $"Stacktrace: \n{e.StackTrace}\n\n" +
+                    $"-- System Details -- \n" +
+                    $"League Broadcast Version: {Version}\n" +
+                    $"OS: Win 10 {Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ReleaseId", "").ToString()}");
+                Log.Warn($"App Crash detected. Writing Crash report to {CrashDirName}\\Crash-{DateTime.Now:yyyy-MM-dd-HH-mm}.log");
+                WriteToFile(null, EventArgs.Empty);
             }
         }
 
