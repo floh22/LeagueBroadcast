@@ -20,8 +20,10 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Material**
+* If applicable, add screenshots to help explain your problem.
+* Include Logs of when the error occured, as well as the crash log if applicable
+* Please include the .rofl replay file if the issue was present while spectating
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows 10]
