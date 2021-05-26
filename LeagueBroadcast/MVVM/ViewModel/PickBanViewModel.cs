@@ -40,8 +40,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public PickBanViewModel()
         {
 
-            TeamConfigViewModel.BlueTeam.Init(ConfigController.PickBan.frontend.blueTeam);
-            TeamConfigViewModel.RedTeam.Init(ConfigController.PickBan.frontend.redTeam);
+            TeamConfigViewModel.BlueTeam.Init(ConfigController.PickBan.frontend.blueTeam, "blue");
+            TeamConfigViewModel.RedTeam.Init(ConfigController.PickBan.frontend.redTeam, "red");
 
             _openCommand = new(o => { 
                 IsOpen = true; 

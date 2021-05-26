@@ -7,6 +7,9 @@ using LeagueBroadcast.Ingame.Data.LBH.Objectives;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Ingame.Events;
 using LeagueBroadcast.MVVM.View;
+using LeagueBroadcast.MVVM.ViewModel;
+using LeagueBroadcast.OperatingSystem;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,12 +52,14 @@ namespace LeagueBroadcast.Ingame.State
             if (blueTeam == null)
             {
                 blueTeam = new Team(0, bluePlayers);
+                stateData.scoreboard.BlueTeam = new(TeamConfigViewModel.BlueTeam.NameTag, TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString(), false);
                 firstRun = true;
             }
 
             if (redTeam == null)
             {
                 redTeam = new Team(1, redPlayers);
+                stateData.scoreboard.RedTeam = new(TeamConfigViewModel.RedTeam.NameTag, TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString(), true);
                 firstRun = true;
             }
 
@@ -79,7 +84,7 @@ namespace LeagueBroadcast.Ingame.State
                     return;
 
                 //Get player memory data. Remove special characters since memory names do not contain them
-                var playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", ""), StringComparison.OrdinalIgnoreCase));
+                var playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing"), StringComparison.OrdinalIgnoreCase));
                 
                 //Incorrect values now but its better than crashing? Not sure
                 if (playerObject == null)
@@ -121,6 +126,8 @@ namespace LeagueBroadcast.Ingame.State
 
                 //Gold
                 p.goldHistory[stateData.gameTime] = playerObject.GoldTotal;
+
+                //Log.Info($"{p.championName}: {playerObject.GoldTotal}");
 
                 p.UpdateInfo(newP);
                 p.farsightObject = playerObject;
@@ -168,6 +175,53 @@ namespace LeagueBroadcast.Ingame.State
 
             //Save event data;
             pastIngameEvents = allEvents;
+
+            newEvents.ForEach(e => {
+                //Log.Verbose($"New Event: {JsonConvert.SerializeObject(e)}");
+                switch (e.EventName)
+                {
+                    case "TurretKilled":
+                        if (e.TurretKilled.Contains("T2"))
+                        {
+                            blueTeam.towers++;
+                        }
+                        if (e.TurretKilled.Contains("T1"))
+                        {
+                            redTeam.towers++;
+                        }
+                        break;
+                    case "ChampionKill":
+                        UpdateKillsForTeam(blueTeam);
+                        UpdateKillsForTeam(redTeam);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        public void UpdateScoreboard()
+        {
+            stateData.scoreboard.GameTime = stateData.gameTime;
+            stateData.scoreboard.SeriesGameCount = ConfigController.Component.Ingame.SeriesGameCount;
+
+            var currentTeam = stateData.scoreboard.BlueTeam;
+            currentTeam.Name = TeamConfigViewModel.BlueTeam.NameTag;
+            currentTeam.Icon = TeamConfigViewModel.BlueTeam.IconName;
+            currentTeam.Kills = blueTeam.kills;
+            currentTeam.Towers = blueTeam.towers;
+            currentTeam.Gold = blueTeam.GetGold(stateData.gameTime);
+            currentTeam.Score = TeamConfigViewModel.BlueTeam.Score;
+
+            currentTeam = stateData.scoreboard.RedTeam;
+            currentTeam.Name = TeamConfigViewModel.RedTeam.NameTag;
+            currentTeam.Icon = TeamConfigViewModel.RedTeam.IconName;
+            currentTeam.Kills = redTeam.kills;
+            currentTeam.Towers = redTeam.towers;
+            currentTeam.Gold = redTeam.GetGold(stateData.gameTime);
+            currentTeam.Score = TeamConfigViewModel.RedTeam.Score;
+
+            //Log.Verbose(currentTeam.Kills + ", " + currentTeam.Towers + ", " + currentTeam.Gold);
         }
 
         #region Getters
@@ -222,6 +276,11 @@ namespace LeagueBroadcast.Ingame.State
             });
 
             return inhibs;
+        }
+
+        public void UpdateKillsForTeam(Team t)
+        {
+            t.kills = pastIngameEvents.Where(e => e.eventType.Equals("ChampionKill") && t.players.Select(p => p.summonerName).Contains(e.KillerName)).Count();
         }
 
         public List<Player> GetAllPlayers()

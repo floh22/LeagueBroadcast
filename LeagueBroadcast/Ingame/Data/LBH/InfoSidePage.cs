@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace LeagueBroadcast.Ingame.Data.LBH
@@ -19,28 +20,23 @@ namespace LeagueBroadcast.Ingame.Data.LBH
 
         public List<PlayerTab> SetPlayersInOrder(List<PlayerTab> Players)
         {
-            //TODO
-            return null;
-        }
+            switch (Order)
+            {
+                case PlayerOrder.MaxToMin:
+                    return Players.OrderByDescending(o => o.Values.MaxValue).ThenByDescending(o => o.Values.CurrentValue).ToList();
+                case PlayerOrder.MinToMax:
+                    return Players.OrderBy(o => o.Values.MaxValue).ThenBy(o => o.Values.CurrentValue).ToList();
+                default:
+                    break;
+            }
 
-        public static InfoSidePage GetEXPSidePage()
-        {
-            //TODO
-            return null;
-        }
-
-        public static InfoSidePage GetCSSidePage()
-        {
-            //TODO
-            return null;
+            throw new Exception();
         }
     }
 
     public enum PlayerOrder
     {
         MaxToMin,
-        MinToMax,
-        BlueFirst,
-        RedFirst
+        MinToMax
     }
 }

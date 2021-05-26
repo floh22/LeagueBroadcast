@@ -15,18 +15,18 @@
 
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="Hide">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Opacity)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="1"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Width)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="360"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="360"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="Show">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Opacity)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="0"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Width)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="0"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>

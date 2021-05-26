@@ -1,9 +1,11 @@
-﻿using LeagueBroadcast.Common.Utils;
+﻿using LeagueBroadcast.Common.Controllers;
+using LeagueBroadcast.Common.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using static LeagueBroadcast.Common.Log;
 
 namespace LeagueBroadcast.Common.Data.Config
@@ -16,7 +18,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "1.0";
+        public static new string CurrentVersion => "1.1";
 
         public DataDragonConfig DataDragon;
 
@@ -62,13 +64,17 @@ namespace LeagueBroadcast.Common.Data.Config
                 PickBan = new PickBanConfig() {
                     IsActive = true,
                     DelayValue = 300,
-                    UseDelay = false
+                    UseDelay = false,
+                    DefaultBlueColor = "rgb(66, 133, 244)",
+                    DefaultRedColor = "rgb(234, 67, 53)"
                 },
                 Ingame = new IngameConfig() {
                     IsActive = true,
                     UseLiveEvents = true,
                     DoItemCompleted = true,
                     DoLevelUp = true,
+                    UseCustomScoreboard = false,
+                    SeriesGameCount = 3,
                     Objectives = new IngameConfig.ObjectiveConfig() {
                         DoBaronKill = true,
                         DoDragonKill = true,
@@ -108,10 +114,24 @@ namespace LeagueBroadcast.Common.Data.Config
             return SerializeIndented(this);
         }
 
-        public override void UpdateConfigVersion(string oldVersion, dynamic oldValues)
+        public override void UpdateConfigVersion(string oldVersion, string oldValues)
         {
-            //Currently v1.0
-            return;
+            //1.0 to 1.1
+            if(oldVersion.Equals("1.0"))
+            {
+                Task t = new Task(async () => { 
+                    await Task.Delay(100); 
+                    PickBan.DefaultBlueColor = ConfigController.PickBan.frontend.blueTeam.color;
+                    PickBan.DefaultRedColor = ConfigController.PickBan.frontend.redTeam.color;
+
+                    Ingame.SeriesGameCount = 3;
+
+                    FileVersion = CurrentVersion;
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                    Log.Info("Updated Component config from v1.0 to v1.1");
+                });
+                t.Start();
+            }
         }
 
         public override void UpdateValues(string readValues)
@@ -138,6 +158,8 @@ namespace LeagueBroadcast.Common.Data.Config
         public bool IsActive;
         public bool UseDelay;
         public int DelayValue;
+        public string DefaultBlueColor;
+        public string DefaultRedColor;
     }
 
     public class IngameConfig
@@ -146,8 +168,10 @@ namespace LeagueBroadcast.Common.Data.Config
         public bool UseLiveEvents;
         public bool DoLevelUp;
         public bool DoItemCompleted;
+        public int SeriesGameCount;
         public ObjectiveConfig Objectives;
         public TeamInfoConfig Teams;
+        public bool UseCustomScoreboard;
 
         public class ObjectiveConfig
         {

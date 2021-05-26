@@ -52,6 +52,9 @@ namespace LeagueBroadcast.MVVM.ViewModel
             set { _championName = value; OnPropertyChanged(); }
         }
 
+        public SolidColorBrush BlueColor {get { return TeamConfigViewModel.BlueTeam.ColorBrushBlue; } }
+        public SolidColorBrush RedColor { get { return TeamConfigViewModel.RedTeam.ColorBrushRed; } }
+
         public bool HasBaron
         {
             get => HasBaronText == "Baron Active";
@@ -61,8 +64,6 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public int TeamID { get; set; }
 
         public string HasBaronText { get; set; }
-
-        public SolidColorBrush TeamColor { get { return TeamID == 0? TeamConfigViewModel.BlueTeam.ColorBrush : TeamConfigViewModel.RedTeam.ColorBrush; } }
 
         public PlayerViewModel(string playerName, string championName, int id, bool hasBaron)
         {

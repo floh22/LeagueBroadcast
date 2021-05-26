@@ -1,5 +1,6 @@
 ﻿using LeagueBroadcast.Common.Data.RIOT;
 using LeagueBroadcast.Http;
+using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.Provider;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Ingame.Events;
@@ -111,7 +112,7 @@ namespace LeagueBroadcast.Common.Controllers
                     //Set current cs to clostest old known value
                     var keys = new List<double>(p.csHistory.Keys);
                     var closestCsIndex = keys.BinarySearch(gameData.gameTime);
-                    if(closestCsIndex != -1)
+                    if(closestCsIndex >= -1)
                         p.scores.creepScore = p.csHistory[closestCsIndex];
 
                     //Roll back cs history
@@ -182,6 +183,8 @@ namespace LeagueBroadcast.Common.Controllers
                 var snapshot = BroadcastController.Instance.MemoryController.CreateSnapshot(gameState.stateData.gameTime);
                 gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, snapshot);
                 gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, snapshot);
+                gameState.UpdateScoreboard();
+                UpdateInfoPage();
             }
             catch (Exception canceled)
             {
@@ -190,6 +193,28 @@ namespace LeagueBroadcast.Common.Controllers
 
             //Update frontend
             EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+        }
+
+        private void UpdateInfoPage()
+        {
+            if(!CurrentSettings.SideGraph)
+                return;
+
+            if (CurrentSettings.EXP)
+            {
+                gameState.stateData.infoPage = new InfoSidePage("EXP per player", PlayerOrder.MaxToMin, PlayerTab.GetEXPTabs());
+                return;
+            }
+            if(CurrentSettings.PlayerGold)
+            {
+                gameState.stateData.infoPage = new InfoSidePage("Player Gold", PlayerOrder.MaxToMin, PlayerTab.GetGoldTabs());
+                return;
+            }
+            if(CurrentSettings.CSPerMin)
+            {
+                gameState.stateData.infoPage = new InfoSidePage("CS/min", PlayerOrder.MaxToMin, PlayerTab.GetCSPerMinTabs());
+                return;
+            }
         }
 
         private void LoadGame(GameMetaData gameData)
@@ -309,8 +334,8 @@ namespace LeagueBroadcast.Common.Controllers
             if(e.Type.Equals("Elder", StringComparison.OrdinalIgnoreCase))
             {
                 gameState.stateData.backDragon.TakeGameTime = gameData.gameTime;
-                gameState.stateData.backDragon.BlueStartGold = gameState.blueTeam.GetGold();
-                gameState.stateData.backDragon.RedStartGold = gameState.redTeam.GetGold();
+                gameState.stateData.backDragon.BlueStartGold = gameState.blueTeam.GetGold(gameData.gameTime);
+                gameState.stateData.backDragon.RedStartGold = gameState.redTeam.GetGold(gameData.gameTime);
                 gameState.SetObjectiveData(gameState.stateData.backDragon, gameState.stateData.dragon, 150);
                 e.Team.hasElder = true;
             }
@@ -320,8 +345,8 @@ namespace LeagueBroadcast.Common.Controllers
         {
             Log.Info($"Baron Taken by {e.Team.teamName}");
             gameState.stateData.backBaron.TakeGameTime = gameData.gameTime;
-            gameState.stateData.backBaron.BlueStartGold = gameState.blueTeam.GetGold();
-            gameState.stateData.backBaron.RedStartGold = gameState.redTeam.GetGold();
+            gameState.stateData.backBaron.BlueStartGold = gameState.blueTeam.GetGold(gameData.gameTime);
+            gameState.stateData.backBaron.RedStartGold = gameState.redTeam.GetGold(gameData.gameTime);
             gameState.SetObjectiveData(gameState.stateData.backBaron, gameState.stateData.baron, 180);
             e.Team.hasBaron = true;
         }
@@ -341,6 +366,7 @@ namespace LeagueBroadcast.Common.Controllers
             BroadcastController.CurrentLeagueState = "None";
             //GameInfoPage.ClearPlayers();
             BroadcastController.Instance.ToTick.Remove(this);
+            gameState.stateData.scoreboard.GameTime = -1;
             EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
             EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
             Log.Info("Game ended");
@@ -402,11 +428,13 @@ namespace LeagueBroadcast.Common.Controllers
         public bool TeamNames => ConfigController.Component.Ingame.Teams.DoTeamNames;
         public bool TeamIcons => ConfigController.Component.Ingame.Teams.DoTeamIcons;
         public bool TeamStats => ConfigController.Component.Ingame.Teams.DoTeamScores;
-        
+
         public bool CS = false;
         public bool CSPerMin = false;
         public bool EXP = false;
         public bool GoldGraph = false;
         public bool PlayerGold = false;
+
+        public bool SideGraph => CS || CSPerMin || EXP || PlayerGold;
     }
 }

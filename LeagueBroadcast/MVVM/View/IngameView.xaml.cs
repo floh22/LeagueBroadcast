@@ -43,6 +43,7 @@ namespace LeagueBroadcast.MVVM.View
                 TeamScoresButton.DataContext = ctx.Teams.Score;
                 TeamIconsButton.DataContext = ctx.Teams.Icon;
                 GoldGraphButton.DataContext = ctx.Teams.Gold;
+                CustomScoreboardButton.DataContext = ctx.Teams.Scoreboard;
 
                 //Players
                 PlayerPanel.DataContext = ctx.Players;
@@ -50,12 +51,14 @@ namespace LeagueBroadcast.MVVM.View
                 LevelUpButton.DataContext = ctx.Players.LevelUp;
                 EXPButton.DataContext = ctx.Players.EXP;
                 PlayerGoldButton.DataContext = ctx.Players.PlayerGold;
+                PlayerCSpMButton.DataContext = ctx.Players.PlayerCSperMin;
             };
 
         }
 
         private void MainContainer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            /*
             if(e.VerticalChange > 0 && ctx.TeamsIsOpen == false)
             {
                 ctx.TeamsIsOpen = true; 
@@ -65,6 +68,7 @@ namespace LeagueBroadcast.MVVM.View
             {
                 ctx.TeamsIsOpen = false;
             }
+            */
         }
     }
 }

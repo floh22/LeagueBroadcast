@@ -26,4 +26,58 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="AddTheme">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate  TargetType="{x:Type Button}">
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}" 
+                        x:Name="Bd" 
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0" 
+                        CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Path x:Name="Plus" Margin="10" Stroke="White" Data="M0,10 H20 M10,10 V20Z"  StrokeThickness="2" Height="20" Width="20" />
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter Property="Panel.Opacity" TargetName="Bd" Value="0.7"/>
+                            <Setter Property="Shape.Fill" TargetName="Plus" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="SubtractTheme">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate  TargetType="{x:Type Button}">
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}" 
+                        x:Name="Bd" 
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0" 
+                        CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Path x:Name="Minus" Margin="10" Stroke="White" Data="M0,10 H20"  StrokeThickness="2" Height="20" Width="20" />
+
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter Property="Panel.Opacity" TargetName="Bd" Value="0.7"/>
+                            <Setter Property="Shape.Fill" TargetName="Minus" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

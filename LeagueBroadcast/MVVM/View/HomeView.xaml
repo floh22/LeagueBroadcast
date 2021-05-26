@@ -18,12 +18,12 @@
 
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="HideInfo">
             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
-                <SplineThicknessKeyFrame KeyTime="00:00:01" Value="0,-695,0,0" />
+                <SplineThicknessKeyFrame KeyTime="00:00:0.5" Value="0,-695,0,0" />
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="ShowInfo">
             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
-                <SplineThicknessKeyFrame KeyTime="00:00:01" Value="0,0,0,0" />
+                <SplineThicknessKeyFrame KeyTime="00:00:0.5" Value="0,0,0,0" />
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
@@ -37,7 +37,7 @@
                                 <BeginStoryboard>
                                     <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
                                         <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
-                                            <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="-720,0,0,0"/>
+                                            <SplineThicknessKeyFrame KeyTime="00:00:0.2" Value="-720,0,0,0"/>
                                         </ThicknessAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -46,7 +46,7 @@
                                 <BeginStoryboard>
                                     <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
                                         <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
-                                            <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="0,0,0,0"/>
+                                            <SplineThicknessKeyFrame KeyTime="00:00:0.2" Value="0,0,0,0"/>
                                         </ThicknessAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -64,7 +64,7 @@
                                     <BeginStoryboard>
                                         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
                                             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
-                                                <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="720,0,0,0"/>
+                                                <SplineThicknessKeyFrame KeyTime="00:00:0.2" Value="720,0,0,0"/>
                                             </ThicknessAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -73,7 +73,7 @@
                                     <BeginStoryboard>
                                         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4">
                                             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
-                                                <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="0,0,0,0"/>
+                                                <SplineThicknessKeyFrame KeyTime="00:00:0.2" Value="0,0,0,0"/>
                                             </ThicknessAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </BeginStoryboard>

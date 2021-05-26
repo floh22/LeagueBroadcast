@@ -29,7 +29,9 @@
 
             <TextBlock Text="Log Level" Foreground="White" FontSize="22" Margin="0,20,0,0"/>
             <ComboBox 
-                Margin="30,10,100,0" 
+                Margin="30,10,100,0"
+                Height="35"
+                FontSize="17"
                 Style="{StaticResource ComboBoxFlatStyle}" 
                 x:Name="LogLevelSelector"
                 SelectionChanged="LogLevelSelector_SelectionChanged">

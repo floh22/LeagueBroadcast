@@ -144,14 +144,16 @@ namespace LeagueBroadcast.MVVM.ViewModel
     public class PlayersTabViewModel : ObservableObject
     {
         public ControlButtonViewModel Items = new("Item Notifications", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.DoItemCompleted);
-        public ControlButtonViewModel LevelUp = new("Level Up Notifications", "Show Lvl Up pop up @ lvls 6/11/16", ConfigController.Component.Ingame.DoItemCompleted);
-        public ControlButtonViewModel EXP = new("EXP Tab", "EXP and Level per Player scoreboard", ConfigController.Component.Ingame.DoItemCompleted);
-        public ControlButtonViewModel PlayerGold = new("Gold Tab", "Gold per Player scoreboard", ConfigController.Component.Ingame.DoItemCompleted);
+        public ControlButtonViewModel LevelUp = new("Level Up Notifications", "Show Lvl Up pop up @ lvls 6/11/16", ConfigController.Component.Ingame.DoLevelUp);
+        public ControlButtonViewModel EXP = new("EXP Tab", "EXP and Level per Player scoreboard", true);
+        public ControlButtonViewModel PlayerGold = new("Gold Tab", "Gold per Player scoreboard", true);
+        public ControlButtonViewModel PlayerCSperMin = new("CS per Min.", "CS per Minute per Player scoreboard", true);
 
         public bool ItemsIsActive { get { return ConfigController.Component.Ingame.DoItemCompleted; } set { ConfigController.Component.Ingame.DoItemCompleted = value; OnPropertyChanged(); } }
         public bool LevelUpIsActive { get { return ConfigController.Component.Ingame.DoLevelUp; } set { ConfigController.Component.Ingame.DoLevelUp = value; OnPropertyChanged(); } }
         public bool EXPIsActive { get { return IngameController.CurrentSettings.EXP; } set { IngameController.CurrentSettings.EXP = value; OnPropertyChanged(); } }
         public bool PlayerGoldIsActive { get { return IngameController.CurrentSettings.PlayerGold; } set { IngameController.CurrentSettings.PlayerGold = value; OnPropertyChanged(); } }
+        public bool PlayerCSPerMinIsActive { get { return IngameController.CurrentSettings.CSPerMin; } set { IngameController.CurrentSettings.CSPerMin = value; OnPropertyChanged(); } }
 
         private DelegateCommand _itemsButtonCommand;
 
@@ -185,6 +187,14 @@ namespace LeagueBroadcast.MVVM.ViewModel
             set { _playerGoldButtonCommand = value; }
         }
 
+        private DelegateCommand _csPerMinButtonCommand;
+
+        public DelegateCommand CsPerMinButtonCommand
+        {
+            get { return _csPerMinButtonCommand; }
+            set { _csPerMinButtonCommand = value; }
+        }
+
 
         private bool _isOpen;
 
@@ -215,6 +225,11 @@ namespace LeagueBroadcast.MVVM.ViewModel
                 PlayerGoldIsActive ^= true;
             });
             _playerGoldButtonCommand.MouseGesture = MouseAction.LeftClick;
+
+            _csPerMinButtonCommand = new(o => {
+                PlayerCSPerMinIsActive ^= true;
+            });
+            _csPerMinButtonCommand.MouseGesture = MouseAction.LeftClick;
         }
     }
 
@@ -224,10 +239,12 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public ControlButtonViewModel Score = new("Team Scores", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamScores);
         public ControlButtonViewModel Icon = new("Team Icons", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamIcons);
         public ControlButtonViewModel Gold = new("Gold Graph", "Scoreboard team gold difference graph since the start of the game", IngameController.CurrentSettings.GoldGraph);
+        public ControlButtonViewModel Scoreboard = new("Scoreboard", "Use custom scoreboard", ConfigController.Component.Ingame.UseCustomScoreboard);
 
         public bool NamesIsActive { get { return ConfigController.Component.Ingame.Teams.DoTeamNames; } set{ ConfigController.Component.Ingame.Teams.DoTeamNames = value; OnPropertyChanged(); } }
         public bool ScoresIsActive { get { return ConfigController.Component.Ingame.Teams.DoTeamScores; } set { ConfigController.Component.Ingame.Teams.DoTeamScores = value; OnPropertyChanged(); } }
         public bool IconsIsActive { get { return ConfigController.Component.Ingame.Teams.DoTeamIcons; } set { ConfigController.Component.Ingame.Teams.DoTeamIcons = value; OnPropertyChanged(); } }
+        public bool ScoreboardIsActive { get { return ConfigController.Component.Ingame.UseCustomScoreboard; } set { ConfigController.Component.Ingame.UseCustomScoreboard = value; OnPropertyChanged(); } }
 
         public bool GoldGraphIsActive { get { return IngameController.CurrentSettings.GoldGraph; } set { IngameController.CurrentSettings.GoldGraph = value; OnPropertyChanged(); } }
 
@@ -245,6 +262,14 @@ namespace LeagueBroadcast.MVVM.ViewModel
         {
             get { return _scoresButtonCommand; }
             set { _scoresButtonCommand = value; }
+        }
+
+        private DelegateCommand _scoreboardButtonCommand;
+
+        public DelegateCommand ScoreboardButtonCommand
+        {
+            get { return _scoreboardButtonCommand; }
+            set { _scoreboardButtonCommand = value; }
         }
 
         private DelegateCommand _iconsButtonCommand;
@@ -282,7 +307,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
             _scoresButtonCommand = new(o => {
                 ScoresIsActive ^= true;
-            }); 
+            });
             _scoresButtonCommand.MouseGesture = MouseAction.LeftClick;
 
             _iconsButtonCommand = new(o => {
@@ -294,6 +319,11 @@ namespace LeagueBroadcast.MVVM.ViewModel
                 GoldGraphIsActive ^= true;
             });
             _goldGraphButtonCommand.MouseGesture = MouseAction.LeftClick;
+
+            _scoreboardButtonCommand = new(o => {
+                ScoreboardIsActive ^= true;
+            });
+            _scoreboardButtonCommand.MouseGesture = MouseAction.LeftClick;
         }
 
     }

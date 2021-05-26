@@ -85,15 +85,27 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             return events;
         }
 
-        public async Task<bool> IsSpectatorGame()
+        public async Task<bool> IsSpectatorGame(int tries = 0)
         {
-            HttpResponseMessage response = await webClient.GetAsync("https://127.0.0.1:2999/liveclientdata/activeplayername");
-            string res = await response.Content.ReadAsStringAsync();
-            if (res.Trim() == "\"\"")
+            if(tries == 10)
             {
-                return true;
+                Log.Warn("Could not determine if is spectator game. Defaulting to yes since this error happens more often in spectate games it seems");
             }
-            return false;
+            try
+            {
+                HttpResponseMessage response = await webClient.GetAsync("https://127.0.0.1:2999/liveclientdata/activeplayername");
+                string res = await response.Content.ReadAsStringAsync();
+                if (res.Trim() == "\"\"")
+                {
+                    return true;
+                }
+                return false;
+            } catch
+            {
+                //This is not the correct way to do this. infinite loops are fun :)
+                return await IsSpectatorGame(tries ++);
+            }
+            
         }
     }
 }

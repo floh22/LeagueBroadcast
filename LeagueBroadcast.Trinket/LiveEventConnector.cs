@@ -27,55 +27,66 @@ namespace LeagueBroadcast.Trinket
 
         public void Connect()
         {
-            new Task(async () => {
-            soc = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            new Task(async () =>
+            {
+                soc = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            try
-            {
-                soc.Connect("127.0.0.1", 34243);
-            }
-            catch (Exception e)
-            {
-                OnConnectionError?.Invoke(this, e.Message);
-                soc = null;
-                return;
-            }
-
-            OnConnect?.Invoke(this, EventArgs.Empty);
-            _run = true;
-            while (_run)
-            {
-                if (soc.Available > 0)
+                try
                 {
-                    int size = soc.Available;
-                    byte[] bytes = new byte[size];
-                    soc.Receive(bytes, 0, size, SocketFlags.None);
-                    string responseContent = Encoding.UTF8.GetString(bytes);
+                    soc.Connect("127.0.0.1", 34243);
+                }
+                catch (Exception e)
+                {
+                    OnConnectionError?.Invoke(this, e.Message);
+                    soc = null;
+                    return;
+                }
 
-                    var chars = responseContent.ToCharArray();
-
-                    //Debug.WriteLine($"LiveEvent content: {responseContent}");
-                    int openBrackets = 0;
-                    int startOfEvent = 0;
-                    for (int i = 0; i < chars.Length; i++)
+                OnConnect?.Invoke(this, EventArgs.Empty);
+                _run = true;
+                while (_run)
+                {
+                    if (soc.Available > 0)
                     {
-                        char c = chars[i];
-                        if (c == '{')
+                        int size = soc.Available;
+                        string responseContent = "";
+                        byte[] bytes = new byte[size];
+                        try
                         {
-                            openBrackets++;
-                            continue;
+                            soc.Receive(bytes, 0, size, SocketFlags.None);
+                            responseContent = Encoding.UTF8.GetString(bytes);
+                        } catch
+                        {
+                            return;
                         }
-                        if (c == '}')
+
+                        var chars = responseContent.ToCharArray();
+
+                        //Debug.WriteLine($"LiveEvent content: {responseContent}");
+                        int openBrackets = 0;
+                        int startOfEvent = 0;
+                        for (int i = 0; i < chars.Length; i++)
                         {
-                            openBrackets--;
-                                if(openBrackets == 0)
+                            char c = chars[i];
+                            if (c == '{')
+                            {
+                                openBrackets++;
+                                continue;
+                            }
+                            if (c == '}')
+                            {
+                                openBrackets--;
+                                if (openBrackets == 0)
                                 {
                                     var length = i - startOfEvent + 1;
-                                    char[] e = new char[length];
-                                    Array.Copy(chars, startOfEvent, e, 0, length);
-                                    LiveEvent response = JsonSerializer.Deserialize<LiveEvent>(new string(e));
-                                    startOfEvent = i + 1;
-                                    OnLiveEvent?.Invoke(this, response);
+                                    if (length != 0)
+                                    {
+                                        char[] e = new char[length];
+                                        Array.Copy(chars, startOfEvent, e, 0, length);
+                                        LiveEvent response = JsonSerializer.Deserialize<LiveEvent>(new string(e));
+                                        startOfEvent = i + 1;
+                                        OnLiveEvent?.Invoke(this, response);
+                                    }
                                 }
                             }
                         }

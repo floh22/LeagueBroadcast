@@ -13,18 +13,18 @@
     <UserControl.Resources>
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="Open">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Width)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="1080"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="1080"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Opacity)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="1"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="Close">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Width)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="360"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="360"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Opacity)">
-                <SplineDoubleKeyFrame KeyTime="00:00:0.4" Value="0"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:0.2" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
@@ -32,12 +32,12 @@
 
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="HideTeams">
             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
-                <SplineThicknessKeyFrame KeyTime="00:00:01" Value="0,-400,0,0" />
+                <SplineThicknessKeyFrame KeyTime="00:00:0.5" Value="0,-400,0,0" />
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard AccelerationRatio="0.4" DecelerationRatio="0.4" x:Key="ShowTeams">
             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
-                <SplineThicknessKeyFrame KeyTime="00:00:01" Value="0,0,0,0" />
+                <SplineThicknessKeyFrame KeyTime="00:00:0.5" Value="0,0,0,0" />
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
@@ -110,7 +110,7 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
-                                <RowDefinition Height="10"/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="Objectives" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Border Grid.Row="1" 
@@ -147,6 +147,11 @@
                                 Margin="10" 
                                 Background="#1a2b42">
                             </Border>
+
+                            <Border Grid.Row="5" 
+                                Margin="10" 
+                                Background="#1a2b42">
+                            </Border>
                         </Grid>
                     </Border>
                     <Border x:Name="PlayerPanel">
@@ -163,7 +168,7 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
-                                <RowDefinition Height="10"/>
+                                <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock Text="Players" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Border Grid.Row="1" 
@@ -206,6 +211,17 @@
                                     <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
                                 </Grid>
                             </Border>
+
+                            <Border Grid.Row="5" 
+                                Margin="10" 
+                                Background="{Binding Path=PlayerCSPerMinIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{Binding CsPerMinButtonCommand.MouseGesture}" Command="{Binding CsPerMinButtonCommand}"/>
+                                </Border.InputBindings>
+                                <Grid x:Name="PlayerCSpMButton">
+                                    <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </Border>
                     <Border x:Name="TeamPanel">
@@ -219,54 +235,69 @@
                         </Border.Style>
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="116"/>
+                                <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock Text="Teams" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <Border Grid.Row="1" 
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border Grid.Row="0" 
+                                Margin="10" 
+                                Background="{Binding Path=ScoreboardIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="{Binding ScoreboardButtonCommand.MouseGesture}" Command="{Binding ScoreboardButtonCommand}"/>
+                                    </Border.InputBindings>
+                                    <Grid x:Name="CustomScoreboardButton">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                                <Border Grid.Row="1" 
                                 Margin="10" 
                                 Background="{Binding Path=NamesIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="{Binding NamesButtonCommand.MouseGesture}" Command="{Binding NamesButtonCommand}"/>
-                                </Border.InputBindings>
-                                <Grid x:Name="TeamNamesButton">
-                                    <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                            <Border Grid.Row="2" 
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="{Binding NamesButtonCommand.MouseGesture}" Command="{Binding NamesButtonCommand}"/>
+                                    </Border.InputBindings>
+                                    <Grid x:Name="TeamNamesButton">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                                <Border Grid.Row="2" 
                                 Margin="10" 
                                 Background="{Binding Path=ScoresIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="{Binding ScoresButtonCommand.MouseGesture}" Command="{Binding ScoresButtonCommand}"/>
-                                </Border.InputBindings>
-                                <Grid x:Name="TeamScoresButton">
-                                    <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                            <Border Grid.Row="3" 
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="{Binding ScoresButtonCommand.MouseGesture}" Command="{Binding ScoresButtonCommand}"/>
+                                    </Border.InputBindings>
+                                    <Grid x:Name="TeamScoresButton">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                                <Border Grid.Row="3" 
                                 Margin="10" 
                                 Background="{Binding Path=IconsIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="{Binding IconsButtonCommand.MouseGesture}" Command="{Binding IconsButtonCommand}"/>
-                                </Border.InputBindings>
-                                <Grid x:Name="TeamIconsButton">
-                                    <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                            <Border Grid.Row="4" 
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="{Binding IconsButtonCommand.MouseGesture}" Command="{Binding IconsButtonCommand}"/>
+                                    </Border.InputBindings>
+                                    <Grid x:Name="TeamIconsButton">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                                <Border Grid.Row="4" 
                                 Margin="10" 
                                 Background="{Binding Path=GoldGraphIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="{Binding GoldGraphButtonCommand.MouseGesture}" Command="{Binding GoldGraphButtonCommand}"/>
-                                </Border.InputBindings>
-                                <Grid x:Name="GoldGraphButton">
-                                    <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
-                                </Grid>
-                            </Border>
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="{Binding GoldGraphButtonCommand.MouseGesture}" Command="{Binding GoldGraphButtonCommand}"/>
+                                    </Border.InputBindings>
+                                    <Grid x:Name="GoldGraphButton">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Grid>
                     </Border>
                 </StackPanel>

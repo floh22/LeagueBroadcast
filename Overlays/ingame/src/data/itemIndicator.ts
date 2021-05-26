@@ -12,8 +12,10 @@ export default class ItemIndicator {
     scene: Phaser.Scene;
 
     constructor(itemData: any, playerID: number, scene: IngameScene ) {
+      console.log(itemData.sprite);
         var spriteLoc = PlaceholderConversion.ConvertItem(itemData).sprite;
-        
+        console.log(spriteLoc);
+
         this.playerID = playerID;
         this.animationPhase = 0;
         this.scene = scene;

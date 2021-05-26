@@ -64,6 +64,8 @@ namespace LeagueBroadcast.MVVM.View
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
         {
+            if (Application.Current.MainWindow == null)
+                return;
             Application.Current.MainWindow.Height = 720;
             Application.Current.MainWindow.Width = 1280;
         }

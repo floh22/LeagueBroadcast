@@ -37,7 +37,12 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
             goldHistory[0] = 500;
         }
 
-        public float GetCSPerMinute(float gameTime)
+        public float GetCSPerMinute()
+        {
+            return GetCSPerMinute(BroadcastController.Instance.IGController.gameData.gameTime);
+        }
+
+        public float GetCSPerMinute(double gameTime)
         {
             return (float)(scores.creepScore / gameTime);
         }

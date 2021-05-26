@@ -11,6 +11,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
 
         public List<Player> players;
         public int towers;
+        public int kills;
 
         public bool hasBaron;
         public bool hasElder;
@@ -19,6 +20,9 @@ namespace LeagueBroadcast.Ingame.Data.LBH
         public int elderTimer = 0;
 
         public List<string> dragonsTaken;
+
+        private double lastGoldCalculated = -1;
+        private float lastGoldValue = 2500;
 
         public Team(int teamId, List<Player> players)
         {
@@ -50,9 +54,13 @@ namespace LeagueBroadcast.Ingame.Data.LBH
             return players.Select(p => p.goldHistory.Values.ElementAt(i)).Sum();
         }
 
-        public float GetGold()
+        public float GetGold(double i)
         {
-            return players.Select(p => p.goldHistory.Values.Last()).Sum();
+            if (i == lastGoldCalculated)
+                return lastGoldValue;
+            lastGoldValue = players.Select(p => p.goldHistory.Values.Last()).Sum();
+            lastGoldCalculated = i;
+            return lastGoldValue;
         }
     }
 }

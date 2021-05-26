@@ -1,4 +1,5 @@
-﻿using LeagueBroadcast.Common.Controllers;
+﻿using LeagueBroadcast.Common;
+using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.MVVM.ViewModel;
 using System;
@@ -28,6 +29,15 @@ namespace LeagueBroadcast.MVVM.View
 
         public static IngameTeamsView Instance;
 
+        private readonly IDictionary<int, int> GameCountToIndex = new Dictionary<int, int>
+        {
+            {1, 0},
+            {2, 1},
+            {3, 2},
+            {5, 3}
+        };
+
+
         public IngameTeamsView()
         {
             InitializeComponent();
@@ -38,7 +48,9 @@ namespace LeagueBroadcast.MVVM.View
             BluePlayerList.ItemsSource = IngameTeamsViewModel.BluePlayers;
             RedPlayerList.ItemsSource = IngameTeamsViewModel.RedPlayers;
 
-            if(BroadcastController.CurrentLeagueState.Equals("InProgress") && !IngameController.IsPaused && IngameTeamsViewModel.BluePlayers.Count == 0)
+            SeriesCountSelector.SelectedIndex = GameCountToIndex[ConfigController.Component.Ingame.SeriesGameCount];
+
+            if (BroadcastController.CurrentLeagueState.Equals("InProgress") && !IngameController.IsPaused && IngameTeamsViewModel.BluePlayers.Count == 0)
             {
                 var gameState = BroadcastController.Instance.IGController.gameState;
 
@@ -48,6 +60,15 @@ namespace LeagueBroadcast.MVVM.View
             var redDropManager = new ListViewDragDropManager<PlayerViewModel>(RedPlayerList);
             blueDropManager.ProcessDrop += PlayerViewModel.OnProcessDrop;
             redDropManager.ProcessDrop += PlayerViewModel.OnProcessDrop;
+        }
+
+        private void SeriesCountSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var gameCount = Int32.Parse((string)((ComboBoxItem)SeriesCountSelector.SelectedItem).Tag);
+            if (gameCount != ConfigController.Component.Ingame.SeriesGameCount)
+            {
+                ConfigController.Component.Ingame.SeriesGameCount = gameCount;
+            }
         }
 
         public static void InitPlayers(Team t)

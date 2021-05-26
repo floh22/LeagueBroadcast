@@ -23,7 +23,7 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public abstract string GETCurrentVersion();
 
-        public abstract void UpdateConfigVersion(string oldVersion, dynamic oldValues);
+        public abstract void UpdateConfigVersion(string oldVersion, string oldValues);
 
         public string SerializeIndented(object o)
         {

@@ -50,7 +50,7 @@ namespace LeagueBroadcast.ChampSelect.Data.Config
             return new PickBanConfig() { FileVersion = CurrentVersion, frontend = FrontendConfig.CreateDefaultConfig(), contentPatch = "latest", contentCdn = "https://ddragon.leagueoflegends.com/cdn" };
         }
 
-        public override void UpdateConfigVersion(string oldVersion, dynamic oldValues)
+        public override void UpdateConfigVersion(string oldVersion, string oldValues)
         {
             //No format change to correct
             return;

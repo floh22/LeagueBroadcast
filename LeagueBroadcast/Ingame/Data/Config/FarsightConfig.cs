@@ -84,6 +84,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override void RevertToDefault()
         {
             var def = CreateDefault().Result;
+            {
+                Log.Warn("Farsight disabled");
+            }
             this.FileVersion = "1.0";
             this.GameVersion = def.GameVersion;
             this.GameOffsets = def.GameOffsets;
@@ -99,7 +102,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.ObjectOffsets = def.ObjectOffsets;
         }
 
-        public override void UpdateConfigVersion(string oldVersion, dynamic oldValues)
+        public override void UpdateConfigVersion(string oldVersion, string oldValues)
         {
             return;
         }
@@ -111,6 +114,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
             {
                 Log.Info("Outdated Offsets detected. Downloading new ones");
                 UpdateGameVersion(Cfg);
+                if(!FarsightController.ShouldRun)
+                {
+                    Log.Warn("Farsight disabled");
+                    return;
+                }
                 Log.Info("Saving new Offsets to file");
                 ConfigController.UpdateConfigFile(this);
                 return;

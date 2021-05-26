@@ -8,6 +8,10 @@ import ItemIndicator from '~/data/itemIndicator';
 import GraphPopUp from '~/data/graphPopUp';
 import Phaser from 'phaser';
 import GoldEntry from '~/data/goldEntry';
+import Scoreboard from '~/data/scoreboard';
+import ScoreboardConfig from '~/data/scoreboardConfig';
+import InfoSidePageIndicator from '~/data/infoSidePageIndicator';
+import InfoSidePage from '~/data/infoSidePage';
 
 export default class IngameScene extends Phaser.Scene
 {
@@ -16,6 +20,8 @@ export default class IngameScene extends Phaser.Scene
     baronIndicator!: ObjectiveIndicator;
     elderIndicator!: ObjectiveIndicator;
     goldGraph!: GraphPopUp;
+    scoreboard!: Scoreboard;
+    sidePage!: InfoSidePageIndicator;
 
     state!: StateData | null;
 
@@ -58,6 +64,17 @@ export default class IngameScene extends Phaser.Scene
         this.load.image('cdr', 'frontend/images/cdr.png');
 
         this.load.image('centerCover', 'frontend/backgrounds/CenterCover.png');
+
+        this.load.image('scoreboardMask', 'backgrounds/ScoreboardMask.png');
+        this.load.image('fullGoldIcon', 'images/fullGoldIcon.png');
+        this.load.image('tower', 'images/tower.png');
+        this.load.image('sword', 'images/sword.png');
+
+        this.load.image('dragon_Fire', 'images/dragons/fireLarge.png');
+        this.load.image('dragon_Earth', 'images/dragons/mountainLarge.png');
+        this.load.image('dragon_Air', 'images/dragons/cloudLarge.png');
+        this.load.image('dragon_Water', 'images/dragons/oceanLarge.png');
+        this.load.image('dragon_Elder', 'images/dragons/elderLarge.png');
     }
 
     create ()
@@ -83,18 +100,23 @@ export default class IngameScene extends Phaser.Scene
         //Color calc breaks with no data so init with dummy data
         this.goldGraph = new GraphPopUp(this, [new GoldEntry(0,100), new GoldEntry(1,-100)]);
 
+        this.scoreboard = new Scoreboard(this);
+        //this.scoreboard.updateContent(new ScoreboardConfig({BlueTeam: {Name: 'BLU', Score: 1, Kills: 88, Towers: 0, Gold:48838.3459943, Dragons: ['Fire', 'Air', 'Elder'], Icon: 'Cache\\TeamIcons\\LMU.png'}, RedTeam: {Name: 'RED', Score: 1, Kills: 88, Towers: 0, Gold:48438.3459943, Dragons: ['Fire', 'Air', 'Elder'], Icon: 'Cache\\TeamIcons\\LMU.png'}, GameTime: 0, SeriesGameCount: 5}));
+
+        this.sidePage = new InfoSidePageIndicator(this);
+
         const connect = () => {
             this.ws = new WebSocket(`${variables.useSSL? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
             this.ws.onopen = () => {
-                console.log('[LBH] Connection established!')
+                console.log('[LB] Connection established!')
             };
     
             this.ws.onclose = () => {
                 setTimeout(connect, 500);
-                console.log('[LBH] Attempt reconnect in 500ms');
+                console.log('[LB] Attempt reconnect in 500ms');
             };
             this.ws.onerror = () => {
-                console.log('[LBH] Connection error!');
+                console.log('[LB] Connection error!');
             };
     
             this.ws.onmessage = msg => {
@@ -107,6 +129,8 @@ export default class IngameScene extends Phaser.Scene
                             OnNewState(data.stateData);
                             break;
                         case 'PlayerLevelUp':
+                            if(this.sidePage.isActive && data.playerId < 5)
+                                break;
                             doLevelUp(data.playerId, data.level);
                             console.log('Level Up Event with ID: ' + data.playerId + ', lvl: ' + data.level);
                             break;
@@ -119,6 +143,8 @@ export default class IngameScene extends Phaser.Scene
                             hideObjective(data.objective);
                             break;
                         case 'ItemCompleted':
+                            if(this.sidePage.isActive && data.playerId < 5)
+                                break;
                             new ItemIndicator(data.itemData, data.playerId, this);
                             break;
                         case 'GameEnd':
@@ -143,11 +169,11 @@ export default class IngameScene extends Phaser.Scene
                             //pick/ban event, ignore
                             break;
                         default:
-                            console.log('[LBH] Unknown event type: ' + JSON.stringify(data));
+                            console.log('[LB] Unknown event type: ' + JSON.stringify(data));
                             break;
                     }
                 } else {
-                    console.log('[LBH] Unexpected packet format: ' + JSON.stringify(data));
+                    console.log('[LB] Unexpected packet format: ' + JSON.stringify(data));
                 }
             };
         };
@@ -260,11 +286,17 @@ export default class IngameScene extends Phaser.Scene
         const OnNewState = (data: any): void => {
             var newState = new StateData(data);
 
+            if(this.state === undefined)
+                this.state = newState;
+
             //console.log(newState)
             this.baronIndicator.updateContent(newState.baron);
 
             this.elderIndicator.updateContent(newState.dragon);
             this.goldGraph.Update(newState.goldGraph);
+
+            this.scoreboard.updateContent(newState.scoreboard);
+            this.sidePage.updateContent(newState.infoPage);
 
             this.state = newState;
         }

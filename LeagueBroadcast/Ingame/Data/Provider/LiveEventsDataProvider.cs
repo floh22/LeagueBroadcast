@@ -101,20 +101,26 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
         private void ReceiveLiveEvent(object sender, LiveEvent e)
         {
-            if(e.SourceTeam.Equals("Neutral"))
+            try
             {
-                return;
-            }
-            switch(e.EventName)
+                if (e.SourceTeam == null || e.SourceTeam.Equals("Neutral"))
+                {
+                    return;
+                }
+                switch (e.EventName)
+                {
+                    case ("OnMinionKill"):
+                        OnMinionKill(e);
+                        break;
+                    case ("OnNeutralMinionKill"):
+                        OnJglMinionKill(e);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (NullReferenceException ex)
             {
-                case ("OnMinionKill"):
-                    OnMinionKill(e);
-                    break;
-                case ("OnNeutralMinionKill"):
-                    OnJglMinionKill(e);
-                    break;
-                default:
-                    break;
+                Log.Warn($"Could not decode live event:\n{JsonConvert.SerializeObject(e)}");
             }
             
         }

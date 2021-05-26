@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LeagueBroadcast.Common.Utils
 {
@@ -18,6 +17,6 @@ namespace LeagueBroadcast.Common.Utils
                     return indexes;
                 indexes.Add(index);
             }
-        } 
+        }
     }
 }
