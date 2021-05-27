@@ -81,7 +81,9 @@ namespace LeagueBroadcast.Common.Controllers
             
             _ = new Log(LogLevel.Verbose, FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe").FileVersion);
             
+            
             CfgController = ConfigController.Instance;
+            Log.SetLogLevel(ConfigController.Component.App.LogLevel);
             Log.Info($"League Broadcast (Essence) Version {ConfigController.Component.App.Version}");
             if (await AppUpdateController.Update(_startupContext)) {
                 Startup.Close();
@@ -109,6 +111,7 @@ namespace LeagueBroadcast.Common.Controllers
             ConfigController.LoadOffsetConfig();
             FarsightController.GameOffsets = ConfigController.Farsight.GameOffsets;
             FarsightController.ObjectOffsets = ConfigController.Farsight.ObjectOffsets;
+            Log.Info($"Using offsets {ConfigController.Farsight.GameVersion}");
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 15);
 
             StatusUpdate("Loading PickBan Controller");
@@ -145,7 +148,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         private void PostInit()
         {
-            Log.Verbose("Opening main window");
+            Log.Info("Opening main window");
             Application.Current.Dispatcher.Invoke((Action)delegate {
                 Main = new();
                 Main.Show();
@@ -184,10 +187,10 @@ namespace LeagueBroadcast.Common.Controllers
                 Startup.Close();
             });
 
-            Log.Verbose($"Starting Essence with tickrate of {TickRate}tps");
+            Log.Info($"Starting Essence with tickrate of {TickRate}tps");
             tickTimer.Start();
 
-            Log.Verbose("Checking for running Game");
+            Log.Info("Checking for running Game");
             IGController.StartWaitingForTargetProcess();
             _startupContext.UpdateLoadProgress(LoadStatus.PostInit);
 

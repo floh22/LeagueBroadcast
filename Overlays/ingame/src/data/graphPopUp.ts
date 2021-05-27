@@ -3,12 +3,13 @@ import { Chart } from 'phaser3-rex-plugins/templates/ui/ui-components.js';
 import variables from '~/variables';
 import GoldEntry from './goldEntry';
 import RemoveChild from 'phaser3-rex-plugins/plugins/gameobjects/containerlite/RemoveChild';
+import IngameScene from '~/scenes/IngameScene';
 
 
 //@ts-ignore
 export default class GraphPopUp {
 
-    scene: Phaser.Scene;
+    scene: IngameScene;
     background: Phaser.GameObjects.Image;
     title: Phaser.GameObjects.Text;
     graph: Chart;
@@ -130,6 +131,7 @@ export default class GraphPopUp {
         if (this.isActive)
             return;
         this.isActive = true;
+        //this.background.setTint(Phaser.Display.Color.RGBStringToColor(this.scene.state!.uiColor).color);
         this.scene.tweens.add({
             targets: this.mask,
             props: {

@@ -19,6 +19,7 @@ namespace LeagueBroadcast.Ingame.State
 
         [JsonIgnore]
         public BackEndObjective backDragon;
+
         private State gameState;
         #endregion 
 
@@ -33,11 +34,12 @@ namespace LeagueBroadcast.Ingame.State
         public float redGold => gameState.redTeam.GetGold(gameTime);
 
         public Dictionary<double, float> goldGraph => gameState.GetGoldGraph();
-        public List<Inhibitor> inhibitors => gameState.GetInhibitors();
+        public InhibitorInfo inhibitors;
 
         public ScoreboardConfig scoreboard;
 
         public InfoSidePage infoPage;
+        public string uiColor => ConfigController.Ingame.BackgroundColor;
 
         public StateData()
         {
@@ -47,6 +49,7 @@ namespace LeagueBroadcast.Ingame.State
             this.backBaron = new(0);
             this.backDragon = new(0);
             this.scoreboard = new ScoreboardConfig();
+            this.inhibitors = new InhibitorInfo();
         }
 
         public bool ShouldSerializegoldGraph()

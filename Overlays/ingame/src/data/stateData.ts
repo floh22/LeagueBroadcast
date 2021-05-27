@@ -1,7 +1,7 @@
 import FrontEndObjective from "./frontEndObjective";
 import GoldEntry from "./goldEntry";
 import InfoSidePage from "./infoSidePage";
-import Inhibitor from "./inhibitor";
+import Inhibitor, { InhibitorInfo } from "./inhibitor";
 import Objective from "./objective";
 import ScoreboardConfig from "./scoreboardConfig";
 
@@ -19,10 +19,12 @@ export default class StateData {
     redGold: number;
 
     goldGraph: GoldEntry[];
-    inhibitors: Inhibitor[];
+    inhibitors: InhibitorInfo;
 
     scoreboard: ScoreboardConfig;
     infoPage: InfoSidePage;
+
+    uiColor: string;
 
     constructor(message: any){
         this.dragon = message.dragon;
@@ -39,13 +41,10 @@ export default class StateData {
                 this.goldGraph.push(new GoldEntry(+key, value as number ))
             }
         }
-        this.inhibitors = [];
-        if(message.inhibitors != undefined && message.inhibitors != null) {
-            for(const Inhib of Object.entries(message.inhibitors)) {
-                this.inhibitors.push(Inhib as unknown as Inhibitor);
-            }
-        }
+        this.inhibitors = message.inhibitors;
         this.scoreboard = new ScoreboardConfig(message.scoreboard);
         this.infoPage = new InfoSidePage(message.infoPage);
+
+        this.uiColor = message.uiColor;
     }
 }

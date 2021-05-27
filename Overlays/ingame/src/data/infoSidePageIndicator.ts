@@ -50,8 +50,8 @@ export default class InfoSidePageIndicator {
         this.updatePlayerTabs(config);
 
         if (!this.isActive) {
+            this.bg.setFillStyle(Phaser.Display.Color.RGBStringToColor(this.scene.state!.uiColor).color);
             this.showContent();
-        } else {
         }
     }
 
@@ -265,6 +265,12 @@ export class PlayerTabIndicator {
                 //this.mainVal.setFontSize(18);
                 this.setBarWidth(180);
                 this.mainVal.x = 266;
+                break;
+            case 'cspm':
+                min = tabInfo.Values.MinValue.toFixed(1);
+                max = Math.trunc((tabInfo.ExtraInfo[0] as unknown as number)) + '';
+                cur = (tabInfo.ExtraInfo[0] as unknown as number).toFixed(1);
+                this.mainVal.x = 280;
                 break;
             default:
                 min = tabInfo.Values.MinValue + '';

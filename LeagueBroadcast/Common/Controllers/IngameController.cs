@@ -58,14 +58,19 @@ namespace LeagueBroadcast.Common.Controllers
 
             //Discard late rejected responses by API
             if (BroadcastController.CurrentLeagueState != "InProgress" || newGameData == null || LeagueProcess == null)
+            {
+                Log.Verbose("Late game reponse discarded");
                 return;
+            }
+                
 
             //Wait until the game has been found
             if (!GameFound)
             {
+                GameFound = true;
                 if(!await LoLDataProvider.IsSpectatorGame())
                 {
-                    Log.Warn("Essence not enabled in live game");
+                    Log.Warn("Essence not enabled in live game. Stopping game connection");
                     AppStateController.GameStop.Invoke(null, EventArgs.Empty);
                     return;
                 }
@@ -75,6 +80,8 @@ namespace LeagueBroadcast.Common.Controllers
             #region GameTime
             //Check if game is paused/unpaused
             double timeDiff = newGameData.gameTime - gameData.gameTime;
+            Log.Verbose($"Tick: {newGameData.gameTime}. Update duration: {timeDiff}");
+
             if(timeDiff == 0 || newGameData.gameTime == 0)
             {
                 if(!gameState.stateData.gamePaused)
@@ -102,26 +109,23 @@ namespace LeagueBroadcast.Common.Controllers
                 Log.Info("Scrolled back in timeline, reverting state");
                 Log.Info(newGameData.gameTime);
                 gameState.pastIngameEvents = gameState.pastIngameEvents.Where((e) => e.EventTime < gameData.gameTime).ToList();
-                Log.Verbose("Rolling back Players");
+                Log.Info("Rolling back Players");
                 gameState.GetAllPlayers().ForEach(p => {
+
                     //Roll back gold history
                     p.goldHistory = p.goldHistory
-                    .Where(pair => pair.Key < gameData.gameTime)
+                    .Where(pair => pair.Key <= gameData.gameTime)
                     .ToDictionary(pair => pair.Key, pair => pair.Value);
-
-                    //Set current cs to clostest old known value
-                    var keys = new List<double>(p.csHistory.Keys);
-                    var closestCsIndex = keys.BinarySearch(gameData.gameTime);
-                    if(closestCsIndex >= -1)
-                        p.scores.creepScore = p.csHistory[closestCsIndex];
 
                     //Roll back cs history
                     p.csHistory = p.csHistory
                     .Where(pair => pair.Key < gameData.gameTime)
                     .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+                    p.scores.creepScore = p.csHistory.Last().Value;
                 });
 
-                Log.Verbose("Rolling back Objectives");
+                Log.Info("Rolling back Objectives");
                 //Check if Elder died in roll back period
                 if (backDragon.DurationRemaining - timeDiff > 150)
                 {
@@ -149,7 +153,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (backDragon.DurationRemaining > 0)
             {
                 gameState.SetObjectiveData(backDragon, gameState.stateData.dragon, backDragon.DurationRemaining - timeDiff);
-                Log.Verbose($"Elder Time left: {backDragon.DurationRemaining}");
+                Log.Info($"Elder Time left: {backDragon.DurationRemaining}");
                 if (backDragon.DurationRemaining <= 0)
                 {
                     OnDragonEnd(null, EventArgs.Empty);
@@ -162,7 +166,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (backBaron.DurationRemaining > 0)
             {
                 gameState.SetObjectiveData(backBaron, gameState.stateData.baron, backBaron.DurationRemaining - timeDiff);
-                Log.Verbose($"Baron Time left: {backBaron.DurationRemaining}");
+                Log.Info($"Baron Time left: {backBaron.DurationRemaining}");
                 if (backBaron.DurationRemaining <= 0)
                 {
                     backBaron.DurationRemaining = 0;
@@ -171,6 +175,13 @@ namespace LeagueBroadcast.Common.Controllers
                     gameState.GetAllPlayers().ForEach(p => p.diedDuringBaron = false);
                 }
             }
+
+            //Update inhibitors
+            
+            gameState.stateData.inhibitors.Inhibitors.ForEach(inhib => {
+                inhib.timeLeft = Math.Max(0, inhib.timeLeft - timeDiff);
+            });
+
             #endregion
 
             //Update Meta Data
@@ -188,7 +199,7 @@ namespace LeagueBroadcast.Common.Controllers
             }
             catch (Exception canceled)
             {
-                Log.Warn(canceled.Message);
+                Log.Warn("Could not update State:" + canceled.Message);
             }
 
             //Update frontend
@@ -219,10 +230,9 @@ namespace LeagueBroadcast.Common.Controllers
 
         private void LoadGame(GameMetaData gameData)
         {
-            GameFound = true;
             this.gameData = gameData;
             this.gameData.gameTime = 0;
-            Log.Verbose("Game Loaded");
+            Log.Info("Game Loaded");
             EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
             AppStateController.GameLoad?.Invoke(this, EventArgs.Empty);
         }
@@ -253,7 +263,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public void InitGameState()
         {
-            Log.Verbose("Init Game State");
+            Log.Info("Init Game State");
             this.gameState.ResetState();
             GameFound = false;
         }
@@ -353,11 +363,13 @@ namespace LeagueBroadcast.Common.Controllers
 
         public void OnBaronEnd(object sender, EventArgs e)
         {
+            Log.Info("Baron ended. Resetting baron status for all players");
             gameState.GetBothTeams().ForEach(t => t.players.ForEach(p => p.diedDuringBaron = false));
         }
 
         public void OnDragonEnd(object sender, EventArgs e)
         {
+            Log.Info("Elder dragon ended. Resetting baron status for all players");
             gameState.GetBothTeams().ForEach(t => t.players.ForEach(p => p.diedDuringElder = false));
         }
 

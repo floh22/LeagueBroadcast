@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Ingame Overlay for League Broadcast Hub",
 	"scripts": {
-		"start": "parcel src/index.html -p 10001",
+		"start": "parcel src/index.html -p 10001 --public-url /frontend",
 		"build": "parcel build src/index.html --out-dir dist --public-url /frontend",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"

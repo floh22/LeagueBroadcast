@@ -20,8 +20,8 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
 
         public State()
         {
-            Log.Verbose("StateData config set");
-            Log.Verbose(JsonConvert.SerializeObject(data));
+            Log.Info("StateData config set");
+            Log.Info(JsonConvert.SerializeObject(data));
         }
 
         public static void NewState(Converter.StateConversionOutput state)

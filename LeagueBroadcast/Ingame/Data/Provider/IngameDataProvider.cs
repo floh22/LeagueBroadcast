@@ -93,16 +93,20 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             }
             try
             {
+                Log.Verbose("Checking spectate endpoint to determine game type");
                 HttpResponseMessage response = await webClient.GetAsync("https://127.0.0.1:2999/liveclientdata/activeplayername");
                 string res = await response.Content.ReadAsStringAsync();
                 if (res.Trim() == "\"\"")
                 {
+                    Log.Verbose("Found spectate game");
                     return true;
                 }
+                Log.Verbose("Found live game");
                 return false;
-            } catch
+            } catch (Exception e)
             {
                 //This is not the correct way to do this. infinite loops are fun :)
+                Log.Verbose($"Spectate endpoint connection error: {e.Message} \n Attempting again");
                 return await IsSpectatorGame(tries ++);
             }
             

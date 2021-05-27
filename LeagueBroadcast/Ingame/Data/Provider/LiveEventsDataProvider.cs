@@ -36,11 +36,11 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             Trinket = new LiveEventConnector();
             Trinket.OnLiveEvent += ReceiveLiveEvent;
-            Trinket.OnConnect += (s, e) => { Log.Verbose("LiveEventAPI Connected"); };
-            Trinket.OnConnectionError += (s, e) => { Log.Verbose("LiveEventAPI Connection Failed!"); Log.Warn(e); };
+            Trinket.OnConnect += (s, e) => { Log.Info("LiveEventAPI Connected"); };
+            Trinket.OnConnectionError += (s, e) => { Log.Info("LiveEventAPI Connection Failed!"); Log.Warn(e); };
 
             AppStateController.GameLoad += (s, e) => {Trinket.Connect(); };
-            AppStateController.GameStop += (s, e) => { Trinket.Disconnect(); Log.Verbose("LiveEventAPI Closed"); };
+            AppStateController.GameStop += (s, e) => { Trinket.Disconnect(); Log.Info("LiveEventAPI Closed"); };
         }
 
         public void Connect()

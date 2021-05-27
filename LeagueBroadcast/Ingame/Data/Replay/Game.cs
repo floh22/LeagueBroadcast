@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LeagueBroadcast.Ingame.Data.Replay
+﻿namespace LeagueBroadcast.Ingame.Data.Replay
 {
-    class Game
+    public class Game
     {
+        public int processID;
     }
 }

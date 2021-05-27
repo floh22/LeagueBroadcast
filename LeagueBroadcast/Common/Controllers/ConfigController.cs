@@ -15,16 +15,19 @@ namespace LeagueBroadcast.Common.Controllers
         public static ComponentConfig Component = new();
 
         public static FarsightConfig Farsight = new();
+
+        public static IngameConfig Ingame = new();
         public ConfigController()
         {
             Log.Info("Starting Config Controller");
             var controller = JSONConfigProvider.Instance;
 
             controller.ReadConfig(PickBan);
+            controller.ReadConfig(Ingame);
             controller.ReadConfig(Component);
             
 
-            if(PickBan.FileVersion == null || Component.FileVersion == null)
+            if(PickBan.FileVersion == null || Component.FileVersion == null || Ingame.FileVersion == null)
             {
                 Log.Warn("Config load failed");
                 var result = MessageBox.Show("Failed to load configuration. Corrupted Install detected. Try removing Config folder and restarting", "Essence", MessageBoxButton.OK, MessageBoxImage.Error);

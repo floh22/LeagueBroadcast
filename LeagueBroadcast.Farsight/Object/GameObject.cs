@@ -53,6 +53,8 @@ namespace LeagueBroadcast.Farsight.Object
 				byte[] nameBuff = Memory.ReadMemory(Memory.ReadMemory(baseAdr + FarsightController.ObjectOffsets.Name, 4).ToInt(), 50);
 				Name = nameBuff.DecodeAscii();
 
+				Log.Verbose($"{Name}, {Health}, {Mana}");
+
 				if(IsChampion())
                 {
 					LoadChampFromMemory(mem, baseAdr, deepLoad);
@@ -66,6 +68,7 @@ namespace LeagueBroadcast.Farsight.Object
             GoldTotal = source.ToFloat(FarsightController.ObjectOffsets.GoldTotal);
             EXP = source.ToFloat(FarsightController.ObjectOffsets.EXP);
             Level = ChampionLevel.EXPToLevel(EXP);
+			Log.Verbose($"Gold: {CurrentGold}/{GoldTotal}, Exp:{EXP}/{Level}");
         }
 
         private byte LoadIsChampion()

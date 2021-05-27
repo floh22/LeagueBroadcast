@@ -193,7 +193,7 @@ namespace LeagueBroadcast.Common.Data.Provider
         public async Task<bool> CheckLocalCache()
         {
             _startupContext.Status = "Checking Cache";
-            Log.Verbose("Checking Local Cache");
+            Log.Info("Checking Local Cache");
 
             int total = 0;
             FileDownloadComplete += (s, e) => {
@@ -457,14 +457,16 @@ namespace LeagueBroadcast.Common.Data.Provider
                 using FileStream fileStream = new FileStream(path, FileMode.Create);
                 fileStream.Write(fileData, 0, fileData.Length);
                 client.Dispose();
+                Log.Verbose($"{uri} downloaded");
                 FileDownloadComplete.Invoke(null, EventArgs.Empty);
             };
             try
             {
+                Log.Verbose($"Downloading {uri}");
                 client.DownloadDataAsync(new Uri(uri));
             } catch(Exception e)
             {
-                Log.Warn(e.Message);
+                Log.Warn($"Download error: {e.Message}");
             }
         }
 
@@ -474,16 +476,20 @@ namespace LeagueBroadcast.Common.Data.Provider
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             try
             {
+                Log.Verbose($"Downloading {uri}");
                 using HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
+                    Log.Warn($"Could not download {uri}: {response.StatusCode}");
                     return "";
                 }
                 using Stream stream = response.GetResponseStream();
                 using StreamReader reader = new StreamReader(stream);
+                Log.Verbose($"{uri} downloaded");
                 return await reader.ReadToEndAsync();
-            } catch(Exception)
+            } catch(Exception e)
             {
+                Log.Warn($"Could not download {uri}: {e.Message}");
                 return "";
             }
             

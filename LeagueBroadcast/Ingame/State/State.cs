@@ -2,6 +2,7 @@
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.Farsight;
+using LeagueBroadcast.Farsight.Object;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.LBH.Objectives;
 using LeagueBroadcast.Ingame.Data.RIOT;
@@ -84,16 +85,20 @@ namespace LeagueBroadcast.Ingame.State
                     return;
 
                 //Get player memory data. Remove special characters since memory names do not contain them
-                var playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing"), StringComparison.OrdinalIgnoreCase));
-                
-                //Incorrect values now but its better than crashing? Not sure
-                if (playerObject == null)
+                GameObject playerObject;
+                try
                 {
+                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing"), StringComparison.OrdinalIgnoreCase));
+                } catch (Exception e)
+                {
+                    //Incorrect values now but its better than crashing? Not sure
                     playerObject = new();
-                    Log.Info(p.championName + " not found in memory snapshot");
                     
+                    Log.Warn(p.championName + " not found in memory snapshot");
+                    Log.Warn(e.Message);
+                    Log.Verbose(JsonConvert.SerializeObject(gameSnap.Champions));
                 }
-
+                
                 Team playerTeam = (newP.team == "ORDER") ? blueTeam : redTeam;
 
                 //We have all the info we need now, so update the player and check if anything has happened
@@ -103,10 +108,12 @@ namespace LeagueBroadcast.Ingame.State
                 //Check if player died with buff
                 if (playerTeam.hasBaron && newP.isDead && !p.diedDuringBaron)
                 {
+                    Log.Verbose($"{p.championName} died with baron buff");
                     p.diedDuringBaron = true;
                 }
                 if(playerTeam.hasElder && newP.isDead && !p.diedDuringElder)
                 {
+                    Log.Verbose($"{p.championName} died with elder buff");
                     p.diedDuringElder = true;
                 }
 
@@ -127,7 +134,7 @@ namespace LeagueBroadcast.Ingame.State
                 //Gold
                 p.goldHistory[stateData.gameTime] = playerObject.GoldTotal;
 
-                //Log.Info($"{p.championName}: {playerObject.GoldTotal}");
+                Log.Verbose($"{p.championName}: {playerObject.GoldTotal}");
 
                 p.UpdateInfo(newP);
                 p.farsightObject = playerObject;
@@ -141,7 +148,7 @@ namespace LeagueBroadcast.Ingame.State
                     t.hasBaron = false;
                     SetObjectiveData(stateData.backBaron, stateData.baron, 0);
                     controller.OnBaronEnd(null, EventArgs.Empty);
-                    Log.Verbose("All Players died during baron");
+                    Log.Info("All Players died during baron");
                 }
 
                 //Determine if the team still has elder
@@ -150,7 +157,7 @@ namespace LeagueBroadcast.Ingame.State
                     t.hasElder = false;
                     SetObjectiveData(stateData.backBaron, stateData.dragon, 0);
                     controller.OnDragonEnd(null, EventArgs.Empty);
-                    Log.Verbose("All Players died during elder");
+                    Log.Info("All Players died during elder");
                 }
             });
         }
@@ -170,6 +177,8 @@ namespace LeagueBroadcast.Ingame.State
                 if (pastIngameEvents.Where(o => o.EventID == e.EventID).ToList().Count == 0)
                 {
                     newEvents.Add(e);
+                    if (Log.Instance.Level == Log.LogLevel.Verbose)
+                        Log.Verbose($"New Event: {JsonConvert.SerializeObject(e)}");
                 }
             });
 
@@ -177,7 +186,6 @@ namespace LeagueBroadcast.Ingame.State
             pastIngameEvents = allEvents;
 
             newEvents.ForEach(e => {
-                //Log.Verbose($"New Event: {JsonConvert.SerializeObject(e)}");
                 switch (e.EventName)
                 {
                     case "TurretKilled":
@@ -193,6 +201,9 @@ namespace LeagueBroadcast.Ingame.State
                     case "ChampionKill":
                         UpdateKillsForTeam(blueTeam);
                         UpdateKillsForTeam(redTeam);
+                        break;
+                    case "InhibKilled":
+                        stateData.inhibitors.Inhibitors.Single(inhib => inhib.id == e.InhibKilled.Substring(9, 5)).timeLeft = 300;
                         break;
                     default:
                         break;
@@ -221,7 +232,7 @@ namespace LeagueBroadcast.Ingame.State
             currentTeam.Gold = redTeam.GetGold(stateData.gameTime);
             currentTeam.Score = TeamConfigViewModel.RedTeam.Score;
 
-            //Log.Verbose(currentTeam.Kills + ", " + currentTeam.Towers + ", " + currentTeam.Gold);
+            //Log.Info(currentTeam.Kills + ", " + currentTeam.Towers + ", " + currentTeam.Gold);
         }
 
         #region Getters
@@ -261,21 +272,6 @@ namespace LeagueBroadcast.Ingame.State
             }
 
             return outList;
-        }
-
-        public List<Inhibitor> GetInhibitors()
-        {
-            var inhibs = Inhibitor.Inhibitors;
-            pastIngameEvents.ForEach(e => {
-                //Get inhibs killed within the last 5 minutes
-                if (e.eventType == "InhibKilled" && (stateData.gameTime - e.EventTime) < 300)
-                {
-                    var found = inhibs.Single(i => i.id == e.InhibKilled.Substring(9, 5));
-                    found.timer = TimeSpan.FromMilliseconds(stateData.gameTime - e.EventTime).ToString(@"mm\:ss");
-                }
-            });
-
-            return inhibs;
         }
 
         public void UpdateKillsForTeam(Team t)

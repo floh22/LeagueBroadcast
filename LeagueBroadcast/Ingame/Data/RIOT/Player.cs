@@ -44,7 +44,7 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
 
         public float GetCSPerMinute(double gameTime)
         {
-            return (float)(scores.creepScore / gameTime);
+            return (float)(scores.creepScore / (gameTime / 60));
         }
 
         public void UpdateInfo(Player p)

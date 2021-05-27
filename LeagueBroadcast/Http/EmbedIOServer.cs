@@ -41,7 +41,7 @@ namespace LeagueBroadcast.Http
         private static WebServer CreateWebServer(string url)
         {
             var webRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache");
-            Log.Info($"Server file system starting on: {webRoot}");
+            Log.Info($"Server file system starting");
             var server = new WebServer(o => o
                     .WithUrlPrefix(url)
                     .WithMode(HttpListenerMode.EmbedIO))

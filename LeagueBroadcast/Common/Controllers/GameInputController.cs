@@ -13,10 +13,9 @@ namespace LeagueBroadcast.Common.Controllers
     {
         public GameInputController()
         {
-            AppStateController.GameLoad += InitUI;
         }
 
-        private async void InitUI(object sender, EventArgs e)
+        public static async void InitUI()
         {
             if(ConfigController.Component.Replay.UseAutoInitUI)
             {
@@ -25,7 +24,7 @@ namespace LeagueBroadcast.Common.Controllers
                 InputUtils.SetForegroundWindow(IngameController.LeagueProcess.MainWindowHandle);
                 await Task.Delay(20);
                 InputUtils.SendInput((uint)InputUtils.InputStart.Length, InputUtils.InputStart, Marshal.SizeOf(typeof(InputUtils.Input)));
-                await Task.Delay(20);
+                await Task.Delay(50);
                 InputUtils.SetForegroundWindow(p.MainWindowHandle);
                 InputUtils.SetCursorPosition(cursorP);
             }

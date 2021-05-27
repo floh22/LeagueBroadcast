@@ -131,7 +131,7 @@ namespace LeagueBroadcast.Common.Controllers
         private void ClientStateChanged(object sender, LeagueEvent e)
         {
             string eventType = e.Data.ToString();
-            Log.Verbose($"New League State: {eventType}");
+            Log.Info($"New League State: {eventType}");
             switch (eventType)
             {
                 case "ChampSelect":
@@ -160,7 +160,7 @@ namespace LeagueBroadcast.Common.Controllers
         private void ChampSelectSFXChanged(object sender, LeagueEvent e)
         {
             if (ConfigController.Component.PickBan.IsActive)
-                Log.Verbose($"SFX Change: {e.Data}");
+                Log.Info($"SFX Change: {e.Data}");
         }
 
         public static async Task CacheSummoners(ChampSelect.Data.LCU.Session session)
@@ -180,6 +180,8 @@ namespace LeagueBroadcast.Common.Controllers
                 summoners.Add(JsonConvert.DeserializeObject<Summoner>(await finished));
                 completedJobs.Remove(finished);
             }
+
+            Log.Verbose($"Cached {summoners.Count} summoners");
         }
 
         public static async Task<Timer> GetTimer()
@@ -197,7 +199,7 @@ namespace LeagueBroadcast.Common.Controllers
                 }
                 catch (Exception)
                 {
-                    Log.Verbose("Could not fetch players for team. Is this not a custom game?");
+                    Log.Info("Could not fetch players for team. Is this not a custom game?");
                 }
 
             });

@@ -97,7 +97,7 @@ export default class ObjectiveIndicator {
     if(!this.isActive) {
       this.showContent();
     }
-    console.log(`Updating ${this.id} content time: ${objective.DurationRemaining}, gold: ${objective.GoldDifference}`);
+    //console.log(`Updating ${this.id} content time: ${objective.DurationRemaining}, gold: ${objective.GoldDifference}`);
     this.gold.text = Math.trunc(objective.GoldDifference) + '';
     this.time.text = objective.DurationRemaining;
   }

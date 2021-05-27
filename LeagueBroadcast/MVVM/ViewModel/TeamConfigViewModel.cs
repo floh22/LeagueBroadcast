@@ -17,8 +17,6 @@ namespace LeagueBroadcast.MVVM.ViewModel
     {
         public TeamConfig ConfigReference;
 
-        //TODO Blue side / Red side colors per team
-
         private string _name;
         private int _score;
         private string _coach;
@@ -51,7 +49,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
             }
         }
         [JsonIgnore]
-        public string IconNameFull { get { Log.Info(Path.Combine(Directory.GetCurrentDirectory(), IconName)); return Path.Combine(Directory.GetCurrentDirectory(), IconName); } }
+        public string IconNameFull { get { return Path.Combine(Directory.GetCurrentDirectory(), IconName); } }
         public bool ShowIconReset { get { return IconName != DefaultIconPath; } }
         public string NameTag { get { return _nameTag; } set { _nameTag = value; OnPropertyChanged(); } }
         public ObservableCollection<string> Teams { get { return JSONConfigProvider.Instance.TeamConfigs; } }

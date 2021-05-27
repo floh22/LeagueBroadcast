@@ -15,6 +15,13 @@ namespace LeagueBroadcast.MVVM.ViewModel
     class IngameTeamsViewModel : ObservableObject, INotifyPropertyChanged
     {
 
+        public bool AutoInitUI
+        {
+            get { return ConfigController.Component.Replay.UseAutoInitUI; }
+            set { ConfigController.Component.Replay.UseAutoInitUI = value; OnPropertyChanged(); }
+        }
+
+
         public static ObservableCollection<PlayerViewModel> bluePlayers = new();
         public static ObservableCollection<PlayerViewModel> redPlayers = new();
 

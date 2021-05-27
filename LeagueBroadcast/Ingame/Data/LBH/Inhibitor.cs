@@ -1,40 +1,53 @@
-﻿using Newtonsoft.Json;
+﻿using LeagueBroadcast.Common.Controllers;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace LeagueBroadcast.Ingame.Data.LBH
 {
     public class Inhibitor
     {
-        private static List<Inhibitor> _inhibitors;
-        [JsonIgnore]
-        public static List<Inhibitor> Inhibitors => InhibList();
 
         public string id;
         public int key;
-        public string timer;
+
+        public double timeLeft;
 
         public Inhibitor(int key, string id)
         {
             this.id = id;
             this.key = key;
-            timer = " - ";
+            this.timeLeft = 0;
         }
 
-        private static List<Inhibitor> InhibList()
+        private string GetTimerString()
         {
-            if(_inhibitors == null)
-            {
-                _inhibitors = new List<Inhibitor>() { 
-                    new Inhibitor(0, "T1_L1"), 
-                    new Inhibitor(1, "T1_C1"), 
+            return timeLeft > 0 ? TimeSpan.FromMilliseconds(timeLeft).ToString(@"mm\:ss") : "-";
+        }
+
+        public static List<Inhibitor> InhibList()
+        {
+            return new List<Inhibitor>() {
+                    new Inhibitor(0, "T1_L1"),
+                    new Inhibitor(1, "T1_C1"),
                     new Inhibitor(2, "T1_R1"),
-                    new Inhibitor(3, "T2_L1"), 
-                    new Inhibitor(4, "T2_C1"), 
+                    new Inhibitor(3, "T2_L1"),
+                    new Inhibitor(4, "T2_C1"),
                     new Inhibitor(5, "T2_R1")
                 };
-            }
-            return _inhibitors;
-            
+        }
+    }
+
+    public class InhibitorInfo
+    {
+        public List<Inhibitor> Inhibitors;
+
+        public Vector2 Location => ConfigController.Ingame.InhibDisplay.Location;
+
+        public InhibitorInfo()
+        {
+            this.Inhibitors = Inhibitor.InhibList();
         }
     }
 }

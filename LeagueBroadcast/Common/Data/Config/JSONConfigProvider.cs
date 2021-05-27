@@ -21,7 +21,7 @@ namespace LeagueBroadcast.Common.Data.Config
             _configPath = Path.Combine(Directory.GetCurrentDirectory(), "Config");
             
             Log.Info("Config Provider started");
-            Log.Verbose($"Looking for config files at {_configPath}");
+            Log.Info($"Looking for config files at /Config");
 
             if (!Directory.Exists(_configPath))
             {
@@ -70,7 +70,7 @@ namespace LeagueBroadcast.Common.Data.Config
             {
                 return;
             }
-            Log.Verbose($"Writing {config.Name} config to file");
+            Log.Info($"Writing {config.Name} config to file");
             using var stream = File.CreateText(Path.Combine(_configPath, $"{config.Name}.json"));
             var json = config.GETJson();
             stream.Write(json);

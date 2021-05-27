@@ -33,7 +33,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public ConnectionStatusViewModel ConnectionStatus 
         {
             get { return _connectionStatus; }
-            set { _connectionStatus = value; OnPropertyChanged(); Log.Verbose("Connection State Changed"); }
+            set { _connectionStatus = value; OnPropertyChanged(); Log.Info("Connection State Changed"); }
         }
 
 

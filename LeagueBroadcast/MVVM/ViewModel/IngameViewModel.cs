@@ -72,7 +72,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
             _closeCommand = new(o => { IsOpen = false; });
             _closeCommand.GestureKey = Key.Escape;
 
-            _teamsButtonCommand = new(o => { TeamsIsOpen ^= true; Log.Verbose("Switch Team View visibility"); });
+            _teamsButtonCommand = new(o => { TeamsIsOpen ^= true; Log.Info("Switch Team View visibility"); });
             _teamsButtonCommand.MouseGesture = MouseAction.LeftClick;
 
             IngameTeamsVM = new();

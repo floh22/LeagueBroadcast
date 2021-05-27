@@ -18,13 +18,13 @@ namespace LeagueBroadcast.Common.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "1.1";
+        public static new string CurrentVersion => "1.2";
 
         public DataDragonConfig DataDragon;
 
         public PickBanConfig PickBan;
 
-        public IngameConfig Ingame;
+        public IngameComponentConfig Ingame;
 
         public ReplayConfig Replay;
 
@@ -68,19 +68,19 @@ namespace LeagueBroadcast.Common.Data.Config
                     DefaultBlueColor = "rgb(66, 133, 244)",
                     DefaultRedColor = "rgb(234, 67, 53)"
                 },
-                Ingame = new IngameConfig() {
+                Ingame = new IngameComponentConfig() {
                     IsActive = true,
                     UseLiveEvents = true,
                     DoItemCompleted = true,
                     DoLevelUp = true,
                     UseCustomScoreboard = false,
                     SeriesGameCount = 3,
-                    Objectives = new IngameConfig.ObjectiveConfig() {
+                    Objectives = new IngameComponentConfig.ObjectiveConfig() {
                         DoBaronKill = true,
                         DoDragonKill = true,
                         DoInhibitors = false
                     },
-                    Teams = new IngameConfig.TeamInfoConfig()
+                    Teams = new IngameComponentConfig.TeamInfoConfig()
                     {
                         DoTeamIcons = false,
                         DoTeamNames = false,
@@ -95,7 +95,7 @@ namespace LeagueBroadcast.Common.Data.Config
                     UseAutoInitUI = true
                 },
                 App = new AppConfig() {
-                    LogLevel = LogLevel.Verbose,
+                    LogLevel = LogLevel.Info,
                     CheckForUpdates = true,
                     UpdateRepositoryName = @"floh22/LeagueBroadcastHub",
                     UpdateRepositoryUrl = "https://github.com/floh22/LeagueBroadcastHub",
@@ -116,9 +116,10 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public override void UpdateConfigVersion(string oldVersion, string oldValues)
         {
-            //1.0 to 1.1
+            //1.0 to Current
             if(oldVersion.Equals("1.0"))
             {
+                //1.0 to 1.1
                 Task t = new Task(async () => { 
                     await Task.Delay(100); 
                     PickBan.DefaultBlueColor = ConfigController.PickBan.frontend.blueTeam.color;
@@ -128,9 +129,31 @@ namespace LeagueBroadcast.Common.Data.Config
 
                     FileVersion = CurrentVersion;
                     JSONConfigProvider.Instance.WriteConfig(this);
-                    Log.Info("Updated Component config from v1.0 to v1.1");
+
+                    //1.1 to 1.2
+                    this.App.LogLevel = LogLevel.Info;
+                    Log.SetLogLevel(LogLevel.Info);
+
+                    Log.Info("Updated Component config from v1.0 to v1.2");
                 });
                 t.Start();
+                return;
+            }
+
+            //1.1 to Current
+            if(oldVersion.Equals("1.1"))
+            {
+                //1.1 to 1.2
+                Task t = new Task(async () =>
+                {
+                    await Task.Delay(100);
+                    this.App.LogLevel = LogLevel.Info;
+                    FileVersion = CurrentVersion;
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                    Log.Info("Updated Component config from v1.1 to v1.2");
+                });
+                t.Start();
+                return;
             }
         }
 
@@ -162,7 +185,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public string DefaultRedColor;
     }
 
-    public class IngameConfig
+    public class IngameComponentConfig
     {
         public bool IsActive;
         public bool UseLiveEvents;

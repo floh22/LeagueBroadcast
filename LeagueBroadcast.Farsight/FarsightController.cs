@@ -116,6 +116,7 @@ namespace LeagueBroadcast.Farsight
                 pointers[objNr++] = addr;
             }
 
+            Log.Verbose("Reading objects from Memory");
             for(int i = 0; i < objNr; i++)
             {
                 int netID = Memory.ReadMemory(pointers[i] + ObjectOffsets.NetworkID, 4).ToInt();

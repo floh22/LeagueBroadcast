@@ -263,6 +263,7 @@ export default class Scoreboard {
         //Update scores for both teams
 
         if (scoreConfig.BlueTeam.Score !== undefined || scoreConfig.RedTeam.Score) {
+            this.scoreIsActive = true;
             this.updateScores(scoreConfig);
         }
 
@@ -400,6 +401,8 @@ export default class Scoreboard {
         if (this.isActive) {
             return;
         }
+
+        this.background.setFillStyle(Phaser.Display.Color.RGBStringToColor(this.scene.state!.uiColor).color);
         this.isActive = true;
         var ctx = this;
         this.gameTime.alpha = 0;

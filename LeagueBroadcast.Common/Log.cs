@@ -66,12 +66,13 @@ namespace LeagueBroadcast.Common
             AppDomain.CurrentDomain.ProcessExit += WriteToFile;
             AppDomain.CurrentDomain.UnhandledException += HandleCrash;
 
-            Write($"Logging Init. Log Level set to {Level}");
+            Write($"Logging Init");
         }
 
         public static void SetLogLevel(LogLevel level)
         {
             Instance.Level = level;
+            Write($"Log Level set to {level}");
         }
 
         public static void Write(object message)

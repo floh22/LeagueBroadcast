@@ -62,6 +62,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 //This is in theory a moot point since this means Essence will stop working in a couple of hours, but its better than not working
                 if(DateTime.Now.Hour < 4 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && patch >= 0 && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday)
                 {
+                    Log.Warn("Local offsets not found and future patch detected. Using previous patch data");
                     return CreateDefault(null, $"{versionComponents[0]}.{patch - 1}.{versionComponents[2]}").Result;
                 }
 

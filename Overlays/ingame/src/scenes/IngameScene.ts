@@ -12,6 +12,7 @@ import Scoreboard from '~/data/scoreboard';
 import ScoreboardConfig from '~/data/scoreboardConfig';
 import InfoSidePageIndicator from '~/data/infoSidePageIndicator';
 import InfoSidePage from '~/data/infoSidePage';
+import InhibitorIndicator from '~/data/inhibitorIndicator';
 
 export default class IngameScene extends Phaser.Scene
 {
@@ -22,6 +23,7 @@ export default class IngameScene extends Phaser.Scene
     goldGraph!: GraphPopUp;
     scoreboard!: Scoreboard;
     sidePage!: InfoSidePageIndicator;
+    inhib!: InhibitorIndicator;
 
     state!: StateData | null;
 
@@ -65,16 +67,20 @@ export default class IngameScene extends Phaser.Scene
 
         this.load.image('centerCover', 'frontend/backgrounds/CenterCover.png');
 
-        this.load.image('scoreboardMask', 'backgrounds/ScoreboardMask.png');
-        this.load.image('fullGoldIcon', 'images/fullGoldIcon.png');
-        this.load.image('tower', 'images/tower.png');
-        this.load.image('sword', 'images/sword.png');
+        this.load.image('scoreboardMask', 'frontend/backgrounds/ScoreboardMask.png');
+        this.load.image('fullGoldIcon', 'frontend/images/fullGoldIcon.png');
+        this.load.image('tower', 'frontend/images/tower.png');
+        this.load.image('sword', 'frontend/images/sword.png');
 
-        this.load.image('dragon_Fire', 'images/dragons/fireLarge.png');
-        this.load.image('dragon_Earth', 'images/dragons/mountainLarge.png');
-        this.load.image('dragon_Air', 'images/dragons/cloudLarge.png');
-        this.load.image('dragon_Water', 'images/dragons/oceanLarge.png');
-        this.load.image('dragon_Elder', 'images/dragons/elderLarge.png');
+        this.load.image('dragon_Fire', 'frontend/images/dragons/fireLarge.png');
+        this.load.image('dragon_Earth', 'frontend/images/dragons/mountainLarge.png');
+        this.load.image('dragon_Air', 'frontend/images/dragons/cloudLarge.png');
+        this.load.image('dragon_Water', 'frontend/images/dragons/oceanLarge.png');
+        this.load.image('dragon_Elder', 'frontend/images/dragons/elderLarge.png');
+
+        this.load.svg('top', 'frontend/images/top.svg');
+        this.load.svg('mid', 'frontend/images/mid.svg');
+        this.load.svg('bot', 'frontend/images/bot.svg');
     }
 
     create ()
@@ -104,6 +110,8 @@ export default class IngameScene extends Phaser.Scene
         //this.scoreboard.updateContent(new ScoreboardConfig({BlueTeam: {Name: 'BLU', Score: 1, Kills: 88, Towers: 0, Gold:48838.3459943, Dragons: ['Fire', 'Air', 'Elder'], Icon: 'Cache\\TeamIcons\\LMU.png'}, RedTeam: {Name: 'RED', Score: 1, Kills: 88, Towers: 0, Gold:48438.3459943, Dragons: ['Fire', 'Air', 'Elder'], Icon: 'Cache\\TeamIcons\\LMU.png'}, GameTime: 0, SeriesGameCount: 5}));
 
         this.sidePage = new InfoSidePageIndicator(this);
+
+        this.inhib = new InhibitorIndicator(this);
 
         const connect = () => {
             this.ws = new WebSocket(`${variables.useSSL? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
@@ -153,6 +161,7 @@ export default class IngameScene extends Phaser.Scene
                             this.baronIndicator.hideContent();
                             this.elderIndicator.hideContent();
                             this.goldGraph.Disable();
+                            this.inhib.hide();
                             break;
                         case 'GameStart':
                             console.log('Game Start');
@@ -297,6 +306,7 @@ export default class IngameScene extends Phaser.Scene
 
             this.scoreboard.updateContent(newState.scoreboard);
             this.sidePage.updateContent(newState.infoPage);
+            this.inhib.updateContent(newState.inhibitors);
 
             this.state = newState;
         }
