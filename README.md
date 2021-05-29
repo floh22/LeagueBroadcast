@@ -32,6 +32,9 @@ Ingame Features currently include:
 3. Baron Power Play
 4. Elder Power Play
 5. Dynamic Gold Graph
+6. CS/EXP/Gold Player Tab
+7. Custom Scoreboard
+8. Auto init UI on Game Start
 
 Includes a C# port of RCVolus ChampSelect tool!
 
@@ -92,14 +95,7 @@ League Broadcast will now host PickBan automatically when started
 ## Roadmap
 
 Planned Features:
-1. Team Information (Name/Logo)
-2. Team Standings
-3. Inhibitor Indicators
-4. CS Graph
-5. Exp Graph
-6. Player Gold Graph
-7. Tournament/Game Series support
-9. Web Control
+1. Web Control
 
 See the [open issues](https://github.com/floh22/LeagueBroadcastHub/issues) for a list of proposed features (and known issues).
 
