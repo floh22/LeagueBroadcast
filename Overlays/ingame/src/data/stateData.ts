@@ -25,6 +25,8 @@ export default class StateData {
     infoPage: InfoSidePage;
 
     uiColor: string;
+    blueColor: string;
+    redColor: string;
 
     constructor(message: any){
         this.dragon = message.dragon;
@@ -46,5 +48,7 @@ export default class StateData {
         this.infoPage = new InfoSidePage(message.infoPage);
 
         this.uiColor = message.uiColor;
+        this.blueColor = message.blueColor;
+        this.redColor = message.redColor;
     }
 }

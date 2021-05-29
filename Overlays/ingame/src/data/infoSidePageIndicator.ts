@@ -79,7 +79,7 @@ export default class InfoSidePageIndicator {
         ctx.scene.tweens.add({
             targets: ctx.mask,
             props: {
-                x: { value: '+= 300', duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: -300, to: 0, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
@@ -98,7 +98,7 @@ export default class InfoSidePageIndicator {
         ctx.scene.tweens.add({
             targets: ctx.mask,
             props: {
-                x: { value: '-= 300', duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: 0, to: -300, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
@@ -153,9 +153,9 @@ export class PlayerTabIndicator {
             color: 'rgb(255,255,255)',
         });
 
-        var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[1] === "ORDER" ? variables.blueColor : variables.redColor);
-        if (this.scene.state?.scoreboard !== undefined) {
-            color = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[1] === "ORDER" ? this.scene.state?.scoreboard.BlueTeam.Color! : this.scene.state?.scoreboard.RedTeam.Color!);
+        var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.blueColor : variables.redColor);
+        if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
+            color = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.scene.state?.blueColor : this.scene.state?.redColor);
         }
 
         this.progressBarTotal = this.scene.add.rectangle(52, baseOffset + 40 + row * tabHeight, this.progressBarWidth, 10, 0x000000);
@@ -235,10 +235,12 @@ export class PlayerTabIndicator {
             this.loadIcon(tabInfo.IconPath, `${this.row}_champIcon`, this.row)
             this.playerName = tabInfo.PlayerName;
             this.progresssBarCompleted.width = newWidth;
+
             var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.blueColor : variables.redColor);
-            if (this.scene.state?.scoreboard !== null) {
-                color = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.scene.state?.scoreboard.BlueTeam.Color! : this.scene.state?.scoreboard.RedTeam.Color!);
+            if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
+                color = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.scene.state?.blueColor : this.scene.state?.redColor);
             }
+
             this.progresssBarCompleted.setFillStyle(color.color);
         } else {
             var ctx = this;
@@ -259,24 +261,27 @@ export class PlayerTabIndicator {
 
         switch (tabInfo.ExtraInfo[1]) {
             case "gold":
-                min = Math.trunc(tabInfo.Values.MinValue) + '';
-                max = Math.trunc(tabInfo.Values.MaxValue) + '';
-                cur = this.convertGold(tabInfo.ExtraInfo[0] as unknown as number);
-                //this.mainVal.setFontSize(18);
+                //min = Math.trunc(tabInfo.Values.MinValue) + '';
+                min = '';
+                max = Math.trunc(tabInfo.Values.CurrentValue) + '';
+                let val = Math.trunc(tabInfo.Values.CurrentValue);
+                cur = this.convertGold(val);
+                if(cur.includes('NaN')) {
+                    console.log(`${val} -> ${cur}`);
+                }
                 this.setBarWidth(180);
                 this.mainVal.x = 266;
                 break;
             case 'cspm':
                 min = tabInfo.Values.MinValue.toFixed(1);
                 max = Math.trunc((tabInfo.ExtraInfo[0] as unknown as number)) + '';
-                cur = (tabInfo.ExtraInfo[0] as unknown as number).toFixed(1);
+                cur = (tabInfo.Values.CurrentValue).toFixed(1);
                 this.mainVal.x = 280;
                 break;
             default:
                 min = tabInfo.Values.MinValue + '';
                 max = tabInfo.Values.MaxValue + ''
                 cur = tabInfo.ExtraInfo[0];
-                //this.mainVal.setFontSize(25);
                 this.setBarWidth();
                 this.mainVal.x = 280;
                 break;

@@ -1,5 +1,4 @@
 export default class FrontEndTeam {
-    Color: string;
     Name: string;
     Icon: string;
     Score: number;
@@ -10,7 +9,6 @@ export default class FrontEndTeam {
     Dragons: string[];
 
     constructor(o:any) {
-        this.Color = o.Color;
         this.Name = o.Name;
         this.Icon = o.Icon;
         this.Score = o.Score;

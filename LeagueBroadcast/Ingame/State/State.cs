@@ -53,14 +53,14 @@ namespace LeagueBroadcast.Ingame.State
             if (blueTeam == null)
             {
                 blueTeam = new Team(0, bluePlayers);
-                stateData.scoreboard.BlueTeam = new(TeamConfigViewModel.BlueTeam.NameTag, TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString(), false);
+                stateData.scoreboard.BlueTeam = new(TeamConfigViewModel.BlueTeam.NameTag, false);
                 firstRun = true;
             }
 
             if (redTeam == null)
             {
                 redTeam = new Team(1, redPlayers);
-                stateData.scoreboard.RedTeam = new(TeamConfigViewModel.RedTeam.NameTag, TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString(), true);
+                stateData.scoreboard.RedTeam = new(TeamConfigViewModel.RedTeam.NameTag, true);
                 firstRun = true;
             }
 
@@ -233,6 +233,12 @@ namespace LeagueBroadcast.Ingame.State
             currentTeam.Score = TeamConfigViewModel.RedTeam.Score;
 
             //Log.Info(currentTeam.Kills + ", " + currentTeam.Towers + ", " + currentTeam.Gold);
+        }
+
+        public void UpdateTeamColors()
+        {
+            blueTeam.color = TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString();
+            redTeam.color = TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString();
         }
 
         #region Getters

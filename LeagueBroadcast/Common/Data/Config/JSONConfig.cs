@@ -1,5 +1,6 @@
 ﻿using LeagueBroadcast.Common.Controllers;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Common.Data.Config
 {
@@ -33,6 +34,11 @@ namespace LeagueBroadcast.Common.Data.Config
         public void UpdateFile()
         {
             ConfigController.UpdateConfigFile(this);
+        }
+
+        public async void Reload()
+        {
+            JSONConfigProvider.Instance.ReadConfig(this);
         }
     }
 }

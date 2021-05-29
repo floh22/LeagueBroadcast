@@ -28,11 +28,14 @@ export default class IngameScene extends Phaser.Scene
     state!: StateData | null;
 
     graphics!: Phaser.GameObjects.Graphics;
+
+    static Instance: IngameScene;
     
 
     constructor ()
     {
         super('ingameOverlay');
+        IngameScene.Instance = this;
         this.players = [];
     }
 
@@ -121,6 +124,9 @@ export default class IngameScene extends Phaser.Scene
     
             this.ws.onclose = () => {
                 setTimeout(connect, 500);
+                this.scoreboard.hideContent();
+                this.sidePage.hideContent();
+                this.goldGraph.Disable();
                 console.log('[LB] Attempt reconnect in 500ms');
             };
             this.ws.onerror = () => {
@@ -222,8 +228,13 @@ export default class IngameScene extends Phaser.Scene
             var y = team ? 289 + ((playerId - 5) * 103) : 289 + (playerId * 103);
             console.log(x + ', ' + y);
             var finalY = y - 100;
-            //var colorRect = this.add.image(x, y, team ? 'red' : 'blue');
-            var colorRect = this.add.rectangle(x,y,100,100, team? variables.redColor : variables.blueColor);
+            var color = Phaser.Display.Color.IntegerToColor(team ? variables.redColor : variables.blueColor);
+
+            if (this.state?.blueColor !== undefined && this.state?.blueColor !== '') {
+                color = Phaser.Display.Color.RGBStringToColor(team ?  this.state?.redColor! : this.state?.blueColor!);
+            }
+
+            var colorRect = this.add.rectangle(x,y,100,100, color.color);
 
             var textX;
             switch (level) {
@@ -298,64 +309,45 @@ export default class IngameScene extends Phaser.Scene
             if(this.state === undefined)
                 this.state = newState;
 
-            //console.log(newState)
-            this.baronIndicator.updateContent(newState.baron);
-
-            this.elderIndicator.updateContent(newState.dragon);
-            this.goldGraph.Update(newState.goldGraph);
-
-            this.scoreboard.updateContent(newState.scoreboard);
-            this.sidePage.updateContent(newState.infoPage);
-            this.inhib.updateContent(newState.inhibitors);
+            console.log(newState);
+            this.scoreboard.updateContent(newState);
 
             this.state = newState;
+
+            this.baronIndicator.updateContent(newState.baron);
+            this.elderIndicator.updateContent(newState.dragon);
+
+            this.goldGraph.Update(newState.goldGraph);
+            this.sidePage.updateContent(newState.infoPage);
+            this.inhib.updateContent(newState.inhibitors);
         }
 
         connect();
-
-        //Objective Timer debugging
-        /*
-        this.state = new StateData({
-            "dragon":{
-               "Objective":{
-                  "Type":"cloud",
-                  "Cooldown":117,
-                  "IsAlive":false,
-                  "TimesTakenInMatch":3,
-                  "LastTakenBy":0
-               },
-               "DurationRemaining":"00:00",
-               "GoldDifference":0
-            },
-            "baron":{
-               "Objective":{
-                  "Type":"Baron",
-                  "Cooldown":354,
-                  "IsAlive":false,
-                  "TimesTakenInMatch":11,
-                  "LastTakenBy":0
-               },
-               "DurationRemaining":"01:58",
-               "GoldDifference":2300
-            },
-            "blueDragons":[
-               
-            ],
-            "redDragons":[
-               
-            ],
-            "gameTime":1174.7066650390625,
-            "gamePaused":false,
-            "blueGold":45400,
-            "redGold":35900
-         });
-         var s = this.state!;
-        s.baron.DurationRemaining = '02:00';
-        s.baron.GoldDifference = 0;
-        s.dragon.DurationRemaining = '1:35';
-        s.dragon.GoldDifference = 1500;
-        showObjective('baron');
-        showObjective('elder');
-        */
     }
+
+    GetBlueColor = (state: StateData = this.state!): string => {
+        let color = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.blueColor), 1);
+        if(state !== undefined && state.blueColor !== undefined && state.blueColor !== '') {
+            color = state.blueColor;
+        }
+
+        return color;
+    }
+    
+    GetRedColor = (state: StateData = this.state!): string => {
+        let color = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.redColor), 1);
+        if(state !== undefined && state.redColor !== undefined && state.redColor !== '') {
+            color = state.redColor;
+        }
+
+        return color;
+    }
+    
+}
+
+var GetRGBAString = function (color, alpha) {
+    if (alpha === undefined) {
+        alpha = color.alphaGL;
+    }
+    return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
 }

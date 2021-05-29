@@ -40,8 +40,8 @@ export default class InhibitorIndicator {
         var tempMask = this.mask.createGeometryMask();
 
         var color = Phaser.Display.Color.IntegerToColor(variables.blueColor);
-        if (this.scene.state?.scoreboard.BlueTeam.Color !== undefined) {
-            color = Phaser.Display.Color.RGBStringToColor(this.scene.state?.scoreboard.BlueTeam.Color!);
+        if (this.scene.state?.blueColor !== undefined && this.scene.state.blueColor !== '') {
+            color = Phaser.Display.Color.RGBStringToColor(this.scene.state?.blueColor);
         }
 
         this.blueTopIndicator = scene.make.sprite({ x: 40, y: this.blueOffset, key: 'top', add: true });
@@ -86,8 +86,8 @@ export default class InhibitorIndicator {
 
 
         color = Phaser.Display.Color.IntegerToColor(variables.redColor);
-        if (this.scene.state?.scoreboard.RedTeam.Color !== undefined) {
-            color = Phaser.Display.Color.RGBStringToColor(this.scene.state?.scoreboard.RedTeam.Color!);
+        if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
+            color = Phaser.Display.Color.RGBStringToColor(this.scene.state.redColor);
         }
 
         this.redTopIndicator = scene.make.sprite({ x: 40, y: this.redOffset, key: 'top', add: true });

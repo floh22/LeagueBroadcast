@@ -373,6 +373,8 @@ namespace LeagueBroadcast.MVVM.View
                 currentConfig.ColorBlue = toLoad.BlueColor.ToColor();
                 currentConfig.ColorRed = toLoad.RedColor.ToColor();
                 currentConfig.IconName = toLoad.IconLocation;
+
+                BroadcastController.Instance.IGController.gameState.UpdateTeamColors();
             }
         }
 
@@ -417,6 +419,8 @@ namespace LeagueBroadcast.MVVM.View
 
             OrderSelector.SelectedItem = TeamConfigViewModel.BlueTeam.Name;
             ChaosSelector.SelectedItem = TeamConfigViewModel.RedTeam.Name;
+
+            BroadcastController.Instance.IGController.gameState.UpdateTeamColors();
         }
     }
 }

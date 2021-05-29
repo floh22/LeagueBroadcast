@@ -1,4 +1,7 @@
-﻿using LeagueBroadcast.Ingame.Data.RIOT;
+﻿using LeagueBroadcast.Common.Controllers;
+using LeagueBroadcast.Ingame.Data.RIOT;
+using LeagueBroadcast.MVVM.ViewModel;
+using LeagueBroadcast.OperatingSystem;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +11,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
     {
         public int id;
         public string teamName;
+        public string color;
 
         public List<Player> players;
         public int towers;
@@ -29,6 +33,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
             this.id = teamId;
             this.teamName = (id == 0) ? "ORDER" : "CHAOS";
             this.players = players;
+            this.color = (id == 0) ? TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString() : TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString();
             towers = 0;
             hasBaron = false;
             hasElder = false;

@@ -93,6 +93,8 @@ namespace LeagueBroadcast.MVVM.View
                 _teamConfigVM.ColorRed = VM.SelectedColor;
             }
 
+            BroadcastController.Instance.IGController.gameState.UpdateTeamColors();
+
             Close();
         }
 

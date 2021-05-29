@@ -11,7 +11,6 @@ namespace LeagueBroadcast.Ingame.Data.Frontend
         private bool mapSide;
 
         #region TeamProperties
-        public string Color;
         public string Name;
         public string Icon;
         public int Score;
@@ -24,13 +23,12 @@ namespace LeagueBroadcast.Ingame.Data.Frontend
         public List<string> Dragons { get { return mapSide ? BroadcastController.Instance.IGController.gameState.redTeam.dragonsTaken : BroadcastController.Instance.IGController.gameState.blueTeam.dragonsTaken; } }
         #endregion
 
-        public FrontEndTeam(string tag, string color, bool mapSide)
+        public FrontEndTeam(string tag, bool mapSide)
         {
             this.mapSide = mapSide;
 
             this.Score = 0;
             this.Icon = TeamConfigViewModel.DefaultIconPath;
-            this.Color = color;
             this.Name = tag;
 
             this.Kills = 0;
@@ -53,12 +51,6 @@ namespace LeagueBroadcast.Ingame.Data.Frontend
         {
             return IngameController.CurrentSettings.TeamNames;
         }
-
-        public bool ShouldSerializeColor()
-        {
-            return IngameController.CurrentSettings.TeamNames;
-        }
-
 
         public bool ShouldSerializeKills()
         {

@@ -39,7 +39,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public async void OnGameLoad(object sender, EventArgs e)
         {
-            await Task.Delay(2000);
+            await Task.Delay(1000);
             Log.Info("Init UI");
             result = await GetRequestContent("https://127.0.0.1:2999/replay/render");
 

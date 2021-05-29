@@ -57,7 +57,7 @@ export default class GraphPopUp {
                     },
                 ]
             },
-            plugins: [ColorPlugin],
+            plugins: [this.ColorPlugin],
             options: {
                 legend: {
                     display: false,
@@ -197,6 +197,35 @@ export default class GraphPopUp {
         }
         this.graph.chart.update();
     }
+    
+    ColorPlugin = {
+        beforeRender: function (x, options) {
+            
+            var c = x.chart
+            var dataset = x.data.datasets[0];
+            var yScale = x.scales['y-axis-0'];
+            var yPos = yScale.getPixelForValue(0);
+    
+            var gradientFill = c.ctx.createLinearGradient(0, 0, 0, c.height);
+            gradientFill.addColorStop(0, IngameScene.Instance.GetBlueColor());
+            var blue = yPos / c.height - 0.01;
+            if (blue > 1)
+                blue = 1;
+            else if (blue < 0)
+                blue = 0;
+            gradientFill.addColorStop(blue, IngameScene.Instance.GetBlueColor());
+            var red = yPos / c.height + 0.01;
+            if (red > 1)
+                red = 1;
+            else if (red < 0)
+                red = 0;
+            gradientFill.addColorStop(red, IngameScene.Instance.GetRedColor());
+            gradientFill.addColorStop(1, IngameScene.Instance.GetRedColor());
+    
+            var model = x.data.datasets[0]._meta[Object.keys(dataset._meta)[0]].dataset._model;
+            model.backgroundColor = gradientFill;
+        }
+    }
 
 }
 
@@ -205,37 +234,6 @@ var GetRGBAString = function (color, alpha) {
         alpha = color.alphaGL;
     }
     return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
-}
-
-const blueRGB = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.blueColor), 1);
-const redRGB = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.redColor), 1);
-
-var ColorPlugin = {
-    beforeRender: function (x, options) {
-        var c = x.chart
-        var dataset = x.data.datasets[0];
-        var yScale = x.scales['y-axis-0'];
-        var yPos = yScale.getPixelForValue(0);
-
-        var gradientFill = c.ctx.createLinearGradient(0, 0, 0, c.height);
-        gradientFill.addColorStop(0, blueRGB);
-        var blue = yPos / c.height - 0.01;
-        if (blue > 1)
-            blue = 1;
-        else if (blue < 0)
-            blue = 0;
-        gradientFill.addColorStop(blue, blueRGB);
-        var red = yPos / c.height + 0.01;
-        if (red > 1)
-            red = 1;
-        else if (red < 0)
-            red = 0;
-        gradientFill.addColorStop(red, redRGB);
-        gradientFill.addColorStop(1, redRGB);
-
-        var model = x.data.datasets[0]._meta[Object.keys(dataset._meta)[0]].dataset._model;
-        model.backgroundColor = gradientFill;
-    }
 }
 
 var FormatGold = function (num) {

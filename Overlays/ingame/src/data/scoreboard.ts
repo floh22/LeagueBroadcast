@@ -2,6 +2,8 @@ import PlaceholderConversion from "~/PlaceholderConversion";
 import IngameScene from "~/scenes/IngameScene";
 import variables from "~/variables";
 import ScoreboardConfig from "./scoreboardConfig";
+import stateData from "./stateData";
+import StateData from "./stateData";
 
 export default class Scoreboard {
 
@@ -218,21 +220,29 @@ export default class Scoreboard {
         });
     }
 
-    updateContent = (scoreConfig: ScoreboardConfig) => {
+    updateContent = (state: StateData) => {
+        let scoreConfig = state.scoreboard;
+
         if (scoreConfig.GameTime === undefined || scoreConfig.GameTime === null || scoreConfig.GameTime == -1) {
             if (this.isActive) {
                 this.hideContent();
             }
             return;
         }
+
+        let updateScores = false;
         var timeInSec = Math.round(scoreConfig.GameTime);
         this.gameTime.text = (Math.floor(timeInSec / 60) >= 10 ? Math.floor(timeInSec / 60) : '0' + Math.floor(timeInSec / 60)) + ':' + (timeInSec % 60 >= 10 ? timeInSec % 60 : '0' + timeInSec % 60);
 
         //Update blue team values
-        if (this.blueTextColor !== scoreConfig.BlueTeam.Color && scoreConfig.BlueTeam.Color !== undefined) {
-            this.blueGold.setColor(scoreConfig.BlueTeam.Color);
-            this.blueKills.setColor(scoreConfig.BlueTeam.Color);
-            this.blueTowers.setColor(scoreConfig.BlueTeam.Color);
+        if (this.blueTextColor !== state.blueColor && state.blueColor !== undefined) {
+            console.log('Updating blue color');
+            this.blueGold.setColor(state.blueColor);
+            this.blueKills.setColor(state.blueColor);
+            this.blueTowers.setColor(state.blueColor);
+            this.blueTag.setColor(state.blueColor);
+            this.blueTextColor = state.blueColor;
+            updateScores = true;
         }
         var hundred = Math.round((scoreConfig.BlueTeam.Gold % 1000) / 100);
         var thousand = Math.floor(scoreConfig.BlueTeam.Gold / 1000);
@@ -260,23 +270,20 @@ export default class Scoreboard {
 
         this.updateDragons(scoreConfig.BlueTeam.Dragons, false);
 
-        //Update scores for both teams
-
-        if (scoreConfig.BlueTeam.Score !== undefined || scoreConfig.RedTeam.Score) {
-            this.scoreIsActive = true;
-            this.updateScores(scoreConfig);
-        }
-
         if(this.scoreIsActive && ( scoreConfig.BlueTeam.Score === undefined || scoreConfig.RedTeam.Score === undefined)) {
             this.scene.graphics.clear();
         }
 
 
         //Update red team values
-        if (this.redTextColor !== scoreConfig.RedTeam.Color && scoreConfig.RedTeam.Color !== undefined) {
-            this.redGold.setColor(scoreConfig.RedTeam.Color);
-            this.redKills.setColor(scoreConfig.RedTeam.Color);
-            this.redTowers.setColor(scoreConfig.RedTeam.Color);
+        if (this.redTextColor !== state.redColor && state.redColor !== undefined) {
+            console.log('Updating red color');
+            this.redGold.setColor(state.redColor);
+            this.redKills.setColor(state.redColor);
+            this.redTowers.setColor(state.redColor);
+            this.redTag.setColor(state.redColor);
+            this.redTextColor = state.redColor;
+            updateScores = true;
         }
         hundred = Math.round((scoreConfig.RedTeam.Gold % 1000) / 100);
         thousand = Math.floor(scoreConfig.RedTeam.Gold / 1000);
@@ -303,6 +310,16 @@ export default class Scoreboard {
         }
 
         this.updateDragons(scoreConfig.RedTeam.Dragons, true);
+
+        //Update scores for both teams
+
+        if (scoreConfig.BlueTeam.Score !== undefined || scoreConfig.RedTeam.Score !== undefined) {
+            this.updateScores(state, updateScores);
+        }
+
+        if(state.uiColor !== this.scene.state?.uiColor) {
+            this.background.setFillStyle(Phaser.Display.Color.RGBStringToColor(state.uiColor).color);
+        }
 
         if (!this.isActive) {
             this.showContent();
@@ -332,20 +349,25 @@ export default class Scoreboard {
         }
     }
 
-    updateScores = (conf: ScoreboardConfig) => {
-        if (conf.RedTeam.Score !== this.redWins || conf.BlueTeam.Score !== this.blueWins) {
-            var redWins = conf.RedTeam.Score;
-            var blueWins = conf.BlueTeam.Score;
+    updateScores = (state: stateData, forceUpdate: boolean) => {
+        let conf = state.scoreboard;
+        if (forceUpdate || conf.RedTeam.Score !== this.redWins || conf.BlueTeam.Score !== this.blueWins) {
+            let redWins = conf.RedTeam.Score;
+            let blueWins = conf.BlueTeam.Score;
 
             this.scene.graphics.clear();
             this.scene.graphics.setDepth(1);
 
-
             //Draw red score icons
-            this.scene.graphics.fillStyle(variables.redColor, 1);
-            this.scene.graphics.lineStyle(3, variables.redColor, 1);
+            let color = Phaser.Display.Color.IntegerToColor(variables.redColor);
+            if (state.redColor !== undefined && state.redColor !== '') {
+                color = Phaser.Display.Color.RGBStringToColor(state.redColor);
+            }
 
-            var numIcons = this.totalGameToWinsNeeded[conf.SeriesGameCount];
+            this.scene.graphics.fillStyle(color.color, 1);
+            this.scene.graphics.lineStyle(3, color.color, 1);
+
+            let numIcons = this.totalGameToWinsNeeded[conf.SeriesGameCount];
             this.redScoreTemplates.forEach(template => {
                 if (numIcons-- > 0) {
                     if (redWins-- > 0) {
@@ -357,8 +379,13 @@ export default class Scoreboard {
             });
 
             //Draw blue score icons
-            this.scene.graphics.fillStyle(variables.blueColor, 1);
-            this.scene.graphics.lineStyle(3, variables.blueColor, 1);
+            color = Phaser.Display.Color.IntegerToColor(variables.blueColor);
+            if (state.blueColor !== undefined && state.blueColor !== '') {
+                color = Phaser.Display.Color.RGBStringToColor(state.blueColor);
+            }
+
+            this.scene.graphics.fillStyle(color.color, 1);
+            this.scene.graphics.lineStyle(3, color.color, 1);
             numIcons = this.totalGameToWinsNeeded[conf.SeriesGameCount];
             this.blueScoreTemplates.forEach(template => {
                 if (numIcons-- > 0) {
@@ -402,7 +429,6 @@ export default class Scoreboard {
             return;
         }
 
-        this.background.setFillStyle(Phaser.Display.Color.RGBStringToColor(this.scene.state!.uiColor).color);
         this.isActive = true;
         var ctx = this;
         this.gameTime.alpha = 0;
@@ -415,7 +441,6 @@ export default class Scoreboard {
         this.blueGoldImage.alpha = 0;
         this.blueTowerImage.alpha = 0;
         this.blueDragons.forEach(d => d.alpha = 0);
-        //this.blueScores.forEach(s => s.alpha = 0);
         if(this.blueIconSprite !== undefined)
             this.blueIconSprite.alpha = 0;
 
@@ -426,7 +451,6 @@ export default class Scoreboard {
         this.redGoldImage.alpha = 0;
         this.redTowerImage.alpha = 0;
         this.redDragons.forEach(d => d.alpha = 0);
-        //this.redScores.forEach(s => s.alpha = 0);
         if(this.redIconSprite !== undefined)
         this.redIconSprite.alpha = 0;
 
