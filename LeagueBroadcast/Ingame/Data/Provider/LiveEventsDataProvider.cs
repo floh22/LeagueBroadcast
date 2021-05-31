@@ -3,10 +3,12 @@ using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Trinket;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace LeagueBroadcast.Ingame.Data.Provider
 {
@@ -28,10 +30,22 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 found = CheckGameConfigLocation(InstallLocation) || found;
             });
 
+            found = false;
             if(!found)
             {
+
                 //Prompt user for league install location
-                Log.Warn("Game Location not found. Asking user on startup");
+                Log.Warn("Game Location not found. Asking user to edit config");
+                Log.WriteToFileAndPause();
+                MessageBoxResult result = MessageBox.Show("Could not detect League Install. \n Please manually add it to Config/Componen.json.\nStop League Broadcast now?", "League Broadcast", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                
+                if(result == MessageBoxResult.OK)
+                {
+                    Application.Current.Dispatcher.Invoke((Action)delegate {
+                        App.Instance.Shutdown();
+                    });
+                }
+                Log.Resume();
             }
 
             Trinket = new LiveEventConnector();
@@ -58,7 +72,9 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 if (!(cfgContent.Contains("[LiveEvents]") && cfgContent.Contains("Enable=1")))
                 {
                     Log.Info("Could not find LiveEvents in game config. Appending to end");
-                    File.AppendText(Path.Join(LeagueFolder, "game.cfg")).Write($"\n{EnableAPIString}");
+                    var writer = File.AppendText(Path.Join(LeagueFolder, "game.cfg"));
+                    writer.Write($"\n\n{EnableAPIString}");
+                    writer.Close();
                     Log.Info("Updated Game Config");
                 }
                 else
@@ -173,11 +189,15 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
         private Player GetPlayer(LiveEvent e)
         {
+            if (Ingame.gameState.blueTeam == null || Ingame.gameState.redTeam == null)
+                return null;
             return Ingame.gameState.GetTeam(e.SourceTeam).players.SingleOrDefault(p => p.summonerName.Equals(e.Source, StringComparison.OrdinalIgnoreCase));
         }
 
         private Player GetPlayer(LiveEvent e, Team t)
         {
+            if (t == null)
+                return null;
             return t.players.SingleOrDefault(p => p.summonerName.Equals(e.Source, StringComparison.OrdinalIgnoreCase));
         }
 

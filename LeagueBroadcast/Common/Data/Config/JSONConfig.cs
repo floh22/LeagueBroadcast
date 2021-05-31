@@ -36,7 +36,7 @@ namespace LeagueBroadcast.Common.Data.Config
             ConfigController.UpdateConfigFile(this);
         }
 
-        public async void Reload()
+        public void Reload()
         {
             JSONConfigProvider.Instance.ReadConfig(this);
         }

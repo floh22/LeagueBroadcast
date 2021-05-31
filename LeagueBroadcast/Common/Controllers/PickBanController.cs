@@ -127,7 +127,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         private void SendHeartbeat()
         {
-            EmbedIOServer.socketServer.SendEventToAllAsync(new Heartbeat(State.GetConfig));
+            EmbedIOServer.socketServer?.SendEventToAllAsync(new Heartbeat(State.GetConfig));
         }
     }
 }

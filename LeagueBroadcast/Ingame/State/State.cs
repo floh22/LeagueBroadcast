@@ -134,8 +134,6 @@ namespace LeagueBroadcast.Ingame.State
                 //Gold
                 p.goldHistory[stateData.gameTime] = playerObject.GoldTotal;
 
-                Log.Verbose($"{p.championName}: {playerObject.GoldTotal}");
-
                 p.UpdateInfo(newP);
                 p.farsightObject = playerObject;
             });

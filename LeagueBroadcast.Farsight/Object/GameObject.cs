@@ -14,7 +14,7 @@ namespace LeagueBroadcast.Farsight.Object
 	{
 		private byte isChampion = byte.MaxValue;
 
-		public const int buffSize = 0x4000;
+		public static int buffSize = 0x3F00;
 		public const int buffDeepSize = 0x1000;
 
 		public short ID;
@@ -33,6 +33,10 @@ namespace LeagueBroadcast.Farsight.Object
 
 		public void LoadFromMemory(int baseAdr, bool deepLoad = true)
         {
+			//TODO Make VirtualQueryEx functional, currently always returns 0. If buff size every becomes a problem again, actually fix this
+			if (buffSize == 0x0)
+				buffSize = Memory.GetChampionObjectSize(baseAdr);
+
 			var mem = Memory.ReadMemory(baseAdr, buffSize);
 
 			ID = mem.ToShort(FarsightController.ObjectOffsets.ID);
@@ -53,8 +57,6 @@ namespace LeagueBroadcast.Farsight.Object
 				byte[] nameBuff = Memory.ReadMemory(Memory.ReadMemory(baseAdr + FarsightController.ObjectOffsets.Name, 4).ToInt(), 50);
 				Name = nameBuff.DecodeAscii();
 
-				Log.Verbose($"{Name}, {Health}, {Mana}");
-
 				if(IsChampion())
                 {
 					LoadChampFromMemory(mem, baseAdr, deepLoad);
@@ -68,7 +70,7 @@ namespace LeagueBroadcast.Farsight.Object
             GoldTotal = source.ToFloat(FarsightController.ObjectOffsets.GoldTotal);
             EXP = source.ToFloat(FarsightController.ObjectOffsets.EXP);
             Level = ChampionLevel.EXPToLevel(EXP);
-			Log.Verbose($"Gold: {CurrentGold}/{GoldTotal}, Exp:{EXP}/{Level}");
+			Log.Verbose($"{Name} Gold: {CurrentGold}/{GoldTotal}, Exp:{EXP}/{Level}");
         }
 
         private byte LoadIsChampion()

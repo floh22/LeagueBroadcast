@@ -132,6 +132,14 @@ namespace LeagueBroadcast.Farsight
 
             return arr;
         }
+
+        public static int GetChampionObjectSize(int Address)
+        {
+            var res = new MEMORY_BASIC_INFORMATION();
+            VirtualQueryEx((int)m_pProcessHandle, Address, out res, Convert.ToUInt32(Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION))));
+            Log.Verbose("Champ region size:" + res.RegionSize);
+            return res.RegionSize > 0? res.RegionSize : 0x3A00;
+        }
         #endregion
 
         #region DllImports
@@ -144,6 +152,9 @@ namespace LeagueBroadcast.Farsight
 
         [DllImport("kernel32.dll")]
         private static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, out int lpNumberOfBytesWritten);
+
+        [DllImport("kernel32.dll")]
+        static extern int VirtualQueryEx(int hProcess, int lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
         #endregion
 
         #region Constants
@@ -151,6 +162,18 @@ namespace LeagueBroadcast.Farsight
         const int PROCESS_VM_OPERATION = 0x0008;
         const int PROCESS_VM_READ = 0x0010;
         const int PROCESS_VM_WRITE = 0x0020;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MEMORY_BASIC_INFORMATION
+        {
+            public int BaseAddress;
+            public int AllocationBase;
+            public uint AllocationProtect;
+            public int RegionSize;
+            public uint State;
+            public uint Protect;
+            public uint Type;
+        }
 
         #endregion
     }

@@ -13,6 +13,7 @@ export default class Scoreboard {
     
     scene: IngameScene;
     isActive: boolean;
+    isLoaded: boolean;
     scoreIsActive: boolean;
     gameTime: Phaser.GameObjects.Text;
     swordIcon: Phaser.GameObjects.Sprite;
@@ -61,6 +62,7 @@ export default class Scoreboard {
     constructor(scene: IngameScene) {
         this.scene = scene;
         this.isActive = false;
+        this.isLoaded = false;
         this.scoreIsActive = false;
 
         //Mask
@@ -211,12 +213,40 @@ export default class Scoreboard {
             this.blueIconSprite = this.scene.make.sprite({ x: 523, y: 37.5, key: 'blue_icon', add: true });
             this.blueIconSprite.displayWidth = 75;
             this.blueIconSprite.displayHeight = 75;
+
+            if(!this.isLoaded) {
+                let ctx = this;
+                this.blueIconSprite.alpha = 0;
+                this.scene.tweens.add({
+                    targets: ctx.blueIconSprite,
+                    props: {
+                        alpha: { from: 0, to: 1, duration: 1000, ease: 'Cubic.easeOut' }
+                    },
+                    paused: false,
+                    yoyo: false,
+                    delay: 550
+                });
+            }
         });
 
         this.scene.load.on(`filecomplete-image-red_icon`, () => {
             this.redIconSprite = this.scene.make.sprite({ x: 1398, y: 37.5, key: 'red_icon', add: true });
             this.redIconSprite.displayWidth = 75;
             this.redIconSprite.displayHeight = 75;
+
+            if(!this.isLoaded) {
+                let ctx = this;
+                this.redIconSprite.alpha = 0;
+                this.scene.tweens.add({
+                    targets: ctx.redIconSprite,
+                    props: {
+                        alpha: { from: 0, to: 1, duration: 1000, ease: 'Cubic.easeOut' }
+                    },
+                    paused: false,
+                    yoyo: false,
+                    delay: 550
+                });
+            }
         });
     }
 
@@ -431,78 +461,67 @@ export default class Scoreboard {
 
         this.isActive = true;
         var ctx = this;
-        this.gameTime.alpha = 0;
-        this.swordIcon.alpha = 0;
 
-        this.blueTag.alpha = 0;
-        this.blueGold.alpha = 0;
-        this.blueKills.alpha = 0;
-        this.blueTowers.alpha = 0;
-        this.blueGoldImage.alpha = 0;
-        this.blueTowerImage.alpha = 0;
-        this.blueDragons.forEach(d => d.alpha = 0);
-        if(this.blueIconSprite !== undefined)
+        if (this.blueIconSprite !== undefined)
             this.blueIconSprite.alpha = 0;
 
-        this.redTag.alpha = 0;
-        this.redGold.alpha = 0;
-        this.redKills.alpha = 0;
-        this.redTowers.alpha = 0;
-        this.redGoldImage.alpha = 0;
-        this.redTowerImage.alpha = 0;
+        if (this.redIconSprite !== undefined)
+            this.redIconSprite.alpha = 0;
+
         this.redDragons.forEach(d => d.alpha = 0);
-        if(this.redIconSprite !== undefined)
-        this.redIconSprite.alpha = 0;
+        this.blueDragons.forEach(d => d.alpha = 0);
+
+        this.scene.graphics.alpha = 0;
 
         this.scene.tweens.add({
             targets: this.maskImage,
             props: {
-                y: { value: '+=' + 100, duration: 550, ease: 'Circ.easeOut' }
+                y: { from: -100, to: 0, duration: 550, ease: 'Circ.easeOut' }
             },
             paused: false,
             yoyo: false,
-            duration: 550,
+            duration: 550
+        });
 
-            onComplete: function () {
-                ctx.scene.tweens.add({
-                    targets: [ctx.gameTime, ctx.swordIcon, ctx.blueTowers, ctx.blueGold, ctx.blueKills, ctx.redGold, ctx.redKills, ctx.redTowers, ctx.redGoldImage, ctx.redTowerImage, ctx.blueGoldImage, ctx.blueTowerImage, ctx.blueTag, ctx.redTag, ctx.redIconSprite, ctx.blueIconSprite],
-                    props: {
-                        alpha: { value: 1, duration: 1000, ease: 'Cubic.easeOut' }
-                    },
-                    paused: false,
-                    yoyo: false
-                });
-                ctx.scene.tweens.add({
-                    targets: ctx.blueDragons,
-                    props: {
-                        alpha: { value: 1, duration: 1000, ease: 'Cubic.easeOut' }
-                    },
-                    paused: false,
-                    yoyo: false,
-                    delay: 500
-                });
-                ctx.scene.tweens.add({
-                    targets: ctx.redDragons,
-                    props: {
-                        alpha: { value: 1, duration: 1000, ease: 'Cubic.easeOut' }
-                    },
-                    paused: false,
-                    yoyo: false,
-                    delay: 500
-                });
-                
-                ctx.scene.tweens.add({
-                    targets: ctx.scene.graphics,
-                    props: {
-                        alpha: { value: 1, duration: 1000, ease: 'Cubic.easeOut' }
-                    },
-                    paused: false,
-                    yoyo: false,
-                    delay: 500
-                });
-                
+        this.scene.tweens.add({
+            targets: [ctx.gameTime, ctx.swordIcon, ctx.blueTowers, ctx.blueGold, ctx.blueKills, ctx.redGold, ctx.redKills, ctx.redTowers, ctx.redGoldImage, ctx.redTowerImage, ctx.blueGoldImage, ctx.blueTowerImage, ctx.blueTag, ctx.redTag, ctx.redIconSprite, ctx.blueIconSprite],
+            props: {
+                alpha: { from: 0, to: 1, duration: 1000, ease: 'Cubic.easeOut' }
+            },
+            paused: false,
+            yoyo: false,
+            delay: 550
+        });
+        this.scene.tweens.add({
+            targets: ctx.blueDragons,
+            props: {
+                alpha: { from: 0, to: 1, duration: 1000, ease: 'Cubic.easeOut' }
+            },
+            paused: false,
+            yoyo: false,
+            delay: 1500
+        });
+        this.scene.tweens.add({
+            targets: ctx.redDragons,
+            props: {
+                alpha: { from: 0, to: 1, duration: 1000, ease: 'Cubic.easeOut' }
+            },
+            paused: false,
+            yoyo: false,
+            delay: 1500
+        });
+        
+        this.scene.tweens.add({
+            targets: ctx.scene.graphics,
+            props: {
+                alpha: { from: 0, to: 1, duration: 1000, ease: 'Cubic.easeOut' }
+            },
+            paused: false,
+            yoyo: false,
+            delay: 1500,
+            onComplete: function() {
+                ctx.isLoaded = true;
             }
-
         });
 
     }
@@ -518,7 +537,7 @@ export default class Scoreboard {
         this.scene.tweens.add({
             targets: [ctx.gameTime, ctx.swordIcon, ctx.blueTowers, ctx.blueGold, ctx.blueKills, ctx.redGold, ctx.redKills, ctx.redTowers, ctx.redGoldImage, ctx.redTowerImage, ctx.blueGoldImage, ctx.blueTowerImage, ctx.blueTag, ctx.redTag, ctx.redIconSprite, ctx.blueIconSprite],
             props: {
-                alpha: { value: 0, duration: 50, ease: 'Cubic.easeOut' }
+                alpha: { from: 1, to: 0, duration: 50, ease: 'Cubic.easeOut' }
             },
             paused: false,
             yoyo: false,
@@ -527,10 +546,13 @@ export default class Scoreboard {
                 ctx.scene.tweens.add({
                     targets: ctx.maskImage,
                     props: {
-                        y: { value: '-=' + 100, duration: 550, ease: 'Circ.easeOut' }
+                        y: { from: 0, to: -100, duration: 550, ease: 'Circ.easeOut' }
                     },
                     paused: false,
-                    yoyo: false
+                    yoyo: false,
+                    onComplete: function() {
+                        ctx.isLoaded = false;
+                    }
                 });
             }
         });
@@ -538,7 +560,7 @@ export default class Scoreboard {
         this.scene.tweens.add({
             targets: ctx.blueDragons,
             props: {
-                alpha: { value: 0, duration: 50, ease: 'Cubic.easeOut' }
+                alpha: { from: 1, to: 0, duration: 50, ease: 'Cubic.easeOut' }
             },
             paused: false,
             yoyo: false
@@ -546,7 +568,7 @@ export default class Scoreboard {
         this.scene.tweens.add({
             targets: ctx.redDragons,
             props: {
-                alpha: { value: 0, duration: 50, ease: 'Cubic.easeOut' }
+                alpha: { from: 1, to: 0, duration: 50, ease: 'Cubic.easeOut' }
             },
             paused: false,
             yoyo: false
@@ -554,7 +576,7 @@ export default class Scoreboard {
         this.scene.tweens.add({
             targets: ctx.scene.graphics,
             props: {
-                alpha: { value: 0, duration: 50, ease: 'Cubic.easeOut' }
+                alpha: { from: 1, to: 0, duration: 50, ease: 'Cubic.easeOut' }
             },
             paused: false,
             yoyo: false
