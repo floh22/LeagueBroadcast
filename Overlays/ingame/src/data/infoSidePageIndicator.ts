@@ -18,8 +18,8 @@ export default class InfoSidePageIndicator {
         this.scene = scene;
         this.isActive = false;
         this.isLoaded = false;
-        this.bg = this.scene.add.rectangle(0,135,300,600, 0x13183f);
-        this.bg.setOrigin(0,0);
+        this.bg = this.scene.add.rectangle(0, 135, 300, 600, 0x13183f);
+        this.bg.setOrigin(0, 0);
 
         this.mask = scene.make.graphics({});
         this.mask.fillStyle(0xffffff);
@@ -56,7 +56,7 @@ export default class InfoSidePageIndicator {
     }
 
     updatePlayerTabs = (config: InfoSidePage) => {
-        if(this.playerTabs.length === 0) {
+        if (this.playerTabs.length === 0) {
             //init player tabs
             var i = 0;
             config.Players.forEach(pt => {
@@ -73,24 +73,28 @@ export default class InfoSidePageIndicator {
     }
 
     showContent = () => {
+        if (this.isActive)
+            return
         this.isActive = true;
         var ctx = this;
 
         ctx.scene.tweens.add({
             targets: ctx.mask,
             props: {
-                x: { from: -300, to: 0, duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: 0, to: 300, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
-            onComplete: function() {
+            onComplete: function () {
                 ctx.playerTabs.forEach(pt => pt.show());
                 ctx.isLoaded = true;
-            } 
+            }
         });
     }
 
     hideContent = () => {
+        if (!this.isActive)
+            return;
         console.log('hiding side bar');
         this.isActive = false;
         var ctx = this;
@@ -98,12 +102,12 @@ export default class InfoSidePageIndicator {
         ctx.scene.tweens.add({
             targets: ctx.mask,
             props: {
-                x: { from: 0, to: -300, duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: 300, to: 0, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
             delay: 500,
-            onComplete: function()  {
+            onComplete: function () {
                 ctx.isLoaded = false;
             }
         });
@@ -126,23 +130,23 @@ export class PlayerTabIndicator {
 
     row: number;
 
-    constructor(tabInfo: PlayerInfoTab, scene: IngameScene, row: number){
+    constructor(tabInfo: PlayerInfoTab, scene: IngameScene, row: number) {
         this.scene = scene;
         this.row = row;
         var baseOffset = 185;
         var tabHeight = 55;
         this.progressBarWidth = 210;
-        this.topSeparator = scene.add.rectangle(0,baseOffset + row * tabHeight, 300, 2, 0xffffff);
-        this.topSeparator.setOrigin(0,0);
+        this.topSeparator = scene.add.rectangle(0, baseOffset + row * tabHeight, 300, 2, 0xffffff);
+        this.topSeparator.setOrigin(0, 0);
         this.topSeparator.setAlpha(0.6);
 
         var id = `${row}_champIcon`;
         this.scene.load.on(`filecomplete-image-${id}`, () => {
             this.image = this.scene.make.sprite({ x: 4, y: baseOffset + 8 + row * tabHeight, key: id, add: true });
-            this.image.setOrigin(0,0);
+            this.image.setOrigin(0, 0);
             this.image.displayWidth = 42;
             this.image.displayHeight = 42;
-            if(!this.scene.sidePage.isLoaded) {
+            if (!this.scene.sidePage.isLoaded) {
                 this.image.alpha = 0;
             }
         });
@@ -159,9 +163,9 @@ export class PlayerTabIndicator {
         }
 
         this.progressBarTotal = this.scene.add.rectangle(52, baseOffset + 40 + row * tabHeight, this.progressBarWidth, 10, 0x000000);
-        this.progressBarTotal.setOrigin(0,0);
+        this.progressBarTotal.setOrigin(0, 0);
         this.progresssBarCompleted = this.scene.add.rectangle(52, baseOffset + 40 + row * tabHeight, this.progressBarWidth * ((tabInfo.Values.CurrentValue - tabInfo.Values.MinValue) / (tabInfo.Values.MaxValue - tabInfo.Values.MinValue)), 10, 0xffffff);
-        this.progresssBarCompleted.setOrigin(0,0);
+        this.progresssBarCompleted.setOrigin(0, 0);
         this.progresssBarCompleted.setFillStyle(color.color);
 
         this.minVal = scene.add.text(54, baseOffset + 22 + row * tabHeight, tabInfo.Values.MinValue + '', {
@@ -176,7 +180,7 @@ export class PlayerTabIndicator {
             align: 'right',
             color: 'rgb(255,255,255)',
         });
-        this.maxVal.setOrigin(1,0);
+        this.maxVal.setOrigin(1, 0);
 
         this.mainVal = scene.add.text(280, baseOffset + 15 + row * tabHeight, tabInfo.ExtraInfo[0], {
             fontFamily: 'News Cycle',
@@ -184,7 +188,7 @@ export class PlayerTabIndicator {
             align: 'right',
             color: 'rgb(255,255,255)',
         });
-        this.mainVal.setOrigin(0.5,0);
+        this.mainVal.setOrigin(0.5, 0);
 
         this.playerName = tabInfo.PlayerName;
         this.loadIcon(tabInfo.IconPath, id, row);
@@ -201,7 +205,7 @@ export class PlayerTabIndicator {
     loadIcon = (iconLoc: string, id: string, row: number) => {
         iconLoc = PlaceholderConversion.MakeUrlAbsolute(iconLoc.replace('Cache', '/cache').replace('\\', '/').replace('\'', '').replace('Wukong', 'MonkeyKing').replace(' ', ''));
 
-        if(this.image !== undefined && this.image !== null) {
+        if (this.image !== undefined && this.image !== null) {
             this.image.destroy();
         }
 
@@ -217,7 +221,7 @@ export class PlayerTabIndicator {
     convertGold = (gold: number): string => {
         let hundred = Math.round((gold % 1000) / 100);
         let thousand = Math.floor(gold / 1000);
-        if(hundred === 10) {
+        if (hundred === 10) {
             thousand++;
             hundred = 0;
         }
@@ -252,7 +256,7 @@ export class PlayerTabIndicator {
                 paused: false,
                 yoyo: false
             });
-            
+
         }
 
         let min = "";
@@ -266,7 +270,7 @@ export class PlayerTabIndicator {
                 max = Math.trunc(tabInfo.Values.CurrentValue) + '';
                 let val = Math.trunc(tabInfo.Values.CurrentValue);
                 cur = this.convertGold(val);
-                if(cur.includes('NaN')) {
+                if (cur.includes('NaN')) {
                     console.log(`${val} -> ${cur}`);
                 }
                 this.setBarWidth(180);
@@ -295,7 +299,7 @@ export class PlayerTabIndicator {
     }
 
     setBarWidth = (width: number = 210) => {
-        if(width === this.progressBarWidth)
+        if (width === this.progressBarWidth)
             return;
         this.progressBarWidth = width;
 

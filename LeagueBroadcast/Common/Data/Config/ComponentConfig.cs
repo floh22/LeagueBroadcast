@@ -100,7 +100,12 @@ namespace LeagueBroadcast.Common.Data.Config
                     UpdateRepositoryName = @"floh22/LeagueBroadcastHub",
                     UpdateRepositoryUrl = "https://github.com/floh22/LeagueBroadcastHub",
                     LeagueInstall = new() {
-                        Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System))
+                        "C:\\",
+                        "D:\\",
+                        "E:\\",
+                        "F:\\",
+                        "C:\\Program Files",
+                        "C:\\Program Files (x86)"
                     },
                     OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcastHub/v2/Offsets/",
                     OffsetPrefix = "Offsets-",

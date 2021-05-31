@@ -55,12 +55,12 @@ namespace LeagueBroadcast.Http
 
         public void SendEventToAllAsync(LeagueEvent leagueEvent)
         {
-            BroadcastAsync(JsonConvert.SerializeObject(leagueEvent));
+            BroadcastAsync(JsonConvert.SerializeObject(leagueEvent, Formatting.Indented));
         }
 
         public void SendEventAsync(IWebSocketContext context, LeagueEvent leagueEvent)
         {
-            SendAsync(context, JsonConvert.SerializeObject(leagueEvent));
+            SendAsync(context, JsonConvert.SerializeObject(leagueEvent, Formatting.Indented));
         }
     }
 }

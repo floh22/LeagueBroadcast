@@ -131,7 +131,7 @@ namespace LeagueBroadcast.Common.Controllers
             MemoryController = new();
 
             StatusUpdate("Loading Frontend Webserver (HTTP/WS)");
-            var WebServer = new EmbedIOServer("localhost", 9001);
+            var WebServer = new EmbedIOServer("*", 9001);
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 85);
 
             StatusUpdate("Whats that ticking noise?");
