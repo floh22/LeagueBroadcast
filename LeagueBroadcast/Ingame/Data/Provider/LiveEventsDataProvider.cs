@@ -30,7 +30,6 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 found = CheckGameConfigLocation(InstallLocation) || found;
             });
 
-            found = false;
             if(!found)
             {
 
