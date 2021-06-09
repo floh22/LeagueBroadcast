@@ -116,7 +116,6 @@ namespace LeagueBroadcast.Farsight
                 pointers[objNr++] = addr;
             }
 
-            Log.Verbose("Reading objects from Memory");
             for(int i = 0; i < objNr; i++)
             {
                 int netID = Memory.ReadMemory(pointers[i] + ObjectOffsets.NetworkID, 4).ToInt();
@@ -127,12 +126,12 @@ namespace LeagueBroadcast.Farsight
                 if(!snap.ObjectMap.ContainsKey(netID))
                 {
                     obj = new();
-                    obj.LoadFromMemory(pointers[i], true);
+                    obj.LoadFromMemory(pointers[i], true, ObjectOffsets.EXP + 0x4);
                     snap.ObjectMap.Add(netID, obj);
                 } else
                 {
                     obj = snap.ObjectMap[netID];
-                    obj.LoadFromMemory(pointers[i]);
+                    obj.LoadFromMemory(pointers[i], true, ObjectOffsets.EXP + 0x4);
 
                     if (netID != obj.NetworkID)
                         snap.ObjectMap[obj.NetworkID] = obj;

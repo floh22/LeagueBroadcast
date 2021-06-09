@@ -19,7 +19,7 @@ namespace LeagueBroadcast.Common.Controllers
     {
         public static string AppVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         public static int TickRate = 2;
-        public static string CurrentLeagueState = "None";
+        public static LeagueState CurrentLeagueState;
         public static BroadcastController Instance => GetInstance();
         public static EventHandler EarlyInitComplete, InitComplete, PostInitComplete;
 
@@ -212,11 +212,12 @@ namespace LeagueBroadcast.Common.Controllers
         }
     }
 
+    [Flags]
     public enum LeagueState
     {
-        Disconnected,
-        None,
-        InChampSelect,
-        InGame
+        Connected,
+        ChampSelect,
+        InProgress,
+        PostGame
     }
 }

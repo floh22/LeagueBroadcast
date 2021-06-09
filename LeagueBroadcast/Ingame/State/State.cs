@@ -88,7 +88,12 @@ namespace LeagueBroadcast.Ingame.State
                 GameObject playerObject;
                 try
                 {
-                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing"), StringComparison.OrdinalIgnoreCase));
+                    //Wukong <-> MonkeyKing
+                    //Rek'Sai, Cho'Gath <-> RekSai, ChoGath
+                    //Dr. Mundo <-> DrMundo
+
+                    //Replace this with a map of some kind between memory names and API names
+                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing").Replace(".", ""), StringComparison.OrdinalIgnoreCase));
                 } catch (Exception e)
                 {
                     //Incorrect values now but its better than crashing? Not sure
@@ -235,6 +240,9 @@ namespace LeagueBroadcast.Ingame.State
 
         public void UpdateTeamColors()
         {
+            //Nothing to update if not ingame
+            if (blueTeam == null || redTeam == null)
+                return;
             blueTeam.color = TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString();
             redTeam.color = TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString();
         }

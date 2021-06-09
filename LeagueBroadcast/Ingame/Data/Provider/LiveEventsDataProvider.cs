@@ -36,7 +36,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 //Prompt user for league install location
                 Log.Warn("Game Location not found. Asking user to edit config");
                 Log.WriteToFileAndPause();
-                MessageBoxResult result = MessageBox.Show("Could not detect League Install. \n Please manually add it to Config/Componen.json.\nStop League Broadcast now?", "League Broadcast", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Could not detect League Install. \nPlease manually add the folder containing 'Riot Games' to Config/Component.json\nStop League Broadcast now?", "League Broadcast", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
                 
                 if(result == MessageBoxResult.OK)
                 {

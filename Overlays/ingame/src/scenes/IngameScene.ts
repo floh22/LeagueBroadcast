@@ -166,6 +166,7 @@ export default class IngameScene extends Phaser.Scene
                             this.state = null;
                             this.baronIndicator.hideContent();
                             this.elderIndicator.hideContent();
+                            this.sidePage.hideContent();
                             this.goldGraph.Disable();
                             this.inhib.hide();
                             break;

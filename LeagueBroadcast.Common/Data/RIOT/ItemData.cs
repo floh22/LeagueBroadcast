@@ -12,6 +12,7 @@ namespace LeagueBroadcast.Common.Data.RIOT
         public ItemCost gold;
         public int specialRecipe;
         public string sprite;
+        public string name;
 
         public ItemData(int itemID)
         {

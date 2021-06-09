@@ -223,7 +223,7 @@ namespace LeagueBroadcast.Common.Data.Provider
                 Log.Info("Current Patch cache not detected, removing old Patch data");
                 _startupContext.Status = "Yeeting old patch onto Dominion map";
 
-                List<string> dirs = new List<string>(Directory.EnumerateDirectories(cache));
+                List<string> dirs = new List<string>(Directory.EnumerateDirectories(cache).Where(d => !d.Contains("TeamIcons")));
 
                 dirs.ForEach(dir => {
                     new DirectoryInfo(dir).Empty();

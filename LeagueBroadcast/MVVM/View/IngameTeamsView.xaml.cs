@@ -50,7 +50,7 @@ namespace LeagueBroadcast.MVVM.View
 
             SeriesCountSelector.SelectedIndex = GameCountToIndex[ConfigController.Component.Ingame.SeriesGameCount];
 
-            if (BroadcastController.CurrentLeagueState.Equals("InProgress") && !IngameController.IsPaused && IngameTeamsViewModel.BluePlayers.Count == 0)
+            if (BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) && !IngameController.IsPaused && IngameTeamsViewModel.BluePlayers.Count == 0)
             {
                 var gameState = BroadcastController.Instance.IGController.gameState;
 

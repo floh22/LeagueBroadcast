@@ -35,9 +35,9 @@ namespace LeagueBroadcast.Ingame.Data.LBH
                     new Inhibitor(0, "T1_L1"),
                     new Inhibitor(1, "T1_C1"),
                     new Inhibitor(2, "T1_R1"),
-                    new Inhibitor(3, "T2_L1"),
+                    new Inhibitor(3, "T2_R1"),
                     new Inhibitor(4, "T2_C1"),
-                    new Inhibitor(5, "T2_R1")
+                    new Inhibitor(5, "T2_L1")
                 };
         }
     }

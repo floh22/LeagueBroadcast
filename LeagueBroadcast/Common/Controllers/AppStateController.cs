@@ -3,6 +3,7 @@ using LCUSharp.Websocket;
 using LeagueBroadcast.ChampSelect.Data.LCU;
 using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.MVVM.ViewModel;
+using LeagueBroadcast.OperatingSystem;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public void DisableChampSelect()
         {
-            if (BroadcastController.CurrentLeagueState == "ChampSelect")
+            if (BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
             {
                 ConfigController.Component.PickBan.IsActive = true;
                 Log.Warn("Tried disabling Champ Select while active");
@@ -87,7 +88,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public static void DisableIngame()
         {
-            if (BroadcastController.CurrentLeagueState == "InProgress")
+            if (BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress))
             {
                 ConfigController.Component.Ingame.IsActive = true;
                 Log.Warn("Tried disabling Ingame while active");
@@ -103,10 +104,11 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 State.LeagueDisconnected();
                 mainCtx.ConnectionStatus = ConnectionStatusViewModel.DISCONNECTED;
+                FlagsHelper.Unset(ref BroadcastController.CurrentLeagueState, LeagueState.Connected);
                 Log.Info("Client Disconnected! Attempting to reconnect...");
                 await ClientAPI.ReconnectAsync();
                 State.LeagueConntected();
-                BroadcastController.CurrentLeagueState = "None";
+                FlagsHelper.Set(ref BroadcastController.CurrentLeagueState, LeagueState.Connected);
                 mainCtx.ConnectionStatus = ConnectionStatusViewModel.LCU;
                 Log.Info("Client Reconnected!");
             };
@@ -124,6 +126,7 @@ namespace LeagueBroadcast.Common.Controllers
             State.LeagueConntected();
             if(mainCtx.ConnectionStatus != ConnectionStatusViewModel.CONNECTED)
                 mainCtx.ConnectionStatus = ConnectionStatusViewModel.LCU;
+            FlagsHelper.Set(ref BroadcastController.CurrentLeagueState, LeagueState.Connected);
             Log.Info($"Connected to League Client in {stopwatch.ElapsedMilliseconds} ms");
             return api;
         }
@@ -131,30 +134,28 @@ namespace LeagueBroadcast.Common.Controllers
         private void ClientStateChanged(object sender, LeagueEvent e)
         {
             string eventType = e.Data.ToString();
-            Log.Info($"New League State: {eventType}");
-            switch (eventType)
-            {
-                case "ChampSelect":
-                    ChampSelectStart?.Invoke(this, EventArgs.Empty);
-                    break;
-                default:
-                    break;
-            }
-            if (!eventType.Equals("InProgress") && BroadcastController.CurrentLeagueState.Equals("InProgress"))
+            Log.Info($"League State: {eventType}");
+
+            if (!eventType.Equals("InProgress") && BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress))
             {
                 GameStop?.Invoke(this, EventArgs.Empty);
             }
-            if (!eventType.Equals("ChampSelect") && BroadcastController.CurrentLeagueState.Equals("ChampSelect"))
+            if (!eventType.Equals("ChampSelect") && BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
             {
                 ChampSelectStop?.Invoke(this, EventArgs.Empty);
             }
-            BroadcastController.CurrentLeagueState = eventType;
         }
 
         private void ChampSelectChanged(object sender, LeagueEvent e)
         {
             if (ConfigController.Component.PickBan.IsActive)
+            {
+                if(!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
+                {
+                    ChampSelectStart?.Invoke(this, EventArgs.Empty);
+                }
                 BroadcastController.Instance.PBController.ApplyNewState(e);
+            }  
         }
 
         private void ChampSelectSFXChanged(object sender, LeagueEvent e)
@@ -163,7 +164,7 @@ namespace LeagueBroadcast.Common.Controllers
                 Log.Info($"SFX Change: {e.Data}");
         }
 
-        public static async Task CacheSummoners(ChampSelect.Data.LCU.Session session)
+        public static async Task CacheSummoners(Session session)
         {
             //Clear to reset summoners before caching
             summoners.Clear();

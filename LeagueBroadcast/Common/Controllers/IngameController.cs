@@ -57,7 +57,7 @@ namespace LeagueBroadcast.Common.Controllers
             var newGameData = await LoLDataProvider.GetGameData();
 
             //Discard late rejected responses by API
-            if (BroadcastController.CurrentLeagueState != "InProgress" || newGameData == null || LeagueProcess == null)
+            if (!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) || newGameData == null || LeagueProcess == null)
             {
                 Log.Verbose("Late game reponse discarded");
                 return;
@@ -253,11 +253,7 @@ namespace LeagueBroadcast.Common.Controllers
                 return;
             }
             Instance.ToTick.Add(this);
-            if(BroadcastController.CurrentLeagueState == "ChampSelect")
-            {
-                Instance.ToTick.Remove(Instance.PBController);
-            }
-            BroadcastController.CurrentLeagueState = "InProgress";
+            FlagsHelper.Set( ref BroadcastController.CurrentLeagueState, LeagueState.InProgress);
             InitGameState();
         }
 
@@ -375,10 +371,11 @@ namespace LeagueBroadcast.Common.Controllers
 
         private void OnGameStop(object sender, EventArgs e)
         {
-            BroadcastController.CurrentLeagueState = "None";
+            FlagsHelper.Unset(ref BroadcastController.CurrentLeagueState, LeagueState.InProgress);
             //GameInfoPage.ClearPlayers();
             BroadcastController.Instance.ToTick.Remove(this);
             gameState.stateData.scoreboard.GameTime = -1;
+            gameState.stateData.gameTime = -1;
             EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
             EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
             Log.Info("Game ended");

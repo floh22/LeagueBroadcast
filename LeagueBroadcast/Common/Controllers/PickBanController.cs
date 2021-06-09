@@ -2,6 +2,7 @@
 using LeagueBroadcast.ChampSelect.Events;
 using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.Http;
+using LeagueBroadcast.OperatingSystem;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -40,9 +41,16 @@ namespace LeagueBroadcast.Common.Controllers
             //Obviously does not include timer update since that would ruin the point of events
             if (!UpdatedThisTick)
             {
-                Timer raw = await AppStateController.GetTimer();
-                State.data.timer = Converter.ConvertTimer(raw);
-                State.TriggerUpdate();
+                try
+                {
+                    Timer raw = await AppStateController.GetTimer();
+                    State.data.timer = Converter.ConvertTimer(raw);
+                    State.TriggerUpdate();
+                } catch
+                {
+                    State.data.champSelectActive = false;
+                    AppStateController.ChampSelectStop.Invoke(this, EventArgs.Empty);
+                }
             }
 
             UpdatedThisTick = false;
@@ -86,14 +94,8 @@ namespace LeagueBroadcast.Common.Controllers
                 return;
             }
 
-            Log.Info("Starting PickBan Controller");
             Instance.ToTick.Insert(0, this);
-
-            if (BroadcastController.CurrentLeagueState == "InProgress")
-            {
-                Instance.ToTick.Remove(Instance.IGController);
-            }
-            BroadcastController.CurrentLeagueState = "ChampSelect";
+            FlagsHelper.Set(ref BroadcastController.CurrentLeagueState, LeagueState.ChampSelect);
         }
 
         public void OnPickBanExit(object sender, EventArgs e)
@@ -102,6 +104,7 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 bool finished = State.data.timer == 0 && lastTime == 0;
                 var finishedText = finished ? "finished" : "ended early";
+                FlagsHelper.Unset(ref BroadcastController.CurrentLeagueState, LeagueState.ChampSelect);
                 Log.Info($"ChampSelect {finishedText}!");
                 State.OnChampSelectEnded(finished);
                 BroadcastController.Instance.ToTick.Remove(this);

@@ -52,7 +52,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 int patch = Int32.Parse(versionComponents[1]);
                 if (cfg != null && 
                      patch - 1 == Int32.Parse(cfg.GameVersion.Substring(3, 2).Replace(".", "")) && 
-                    (DateTime.Now.Hour < 4 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday))
+                    (DateTime.Now.Hour < 12 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday))
                 {
                     Log.Info("Night before patch. Using old offsets");
                     return cfg;
@@ -60,7 +60,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
                 //We do not have a local version available. Incase this has been started for the first time on a tuesday before a patch, get old offsets
                 //This is in theory a moot point since this means Essence will stop working in a couple of hours, but its better than not working
-                if(DateTime.Now.Hour < 4 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && patch >= 0 && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday)
+                if(DateTime.Now.Hour < 24 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && patch >= 0 && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday)
                 {
                     Log.Warn("Local offsets not found and future patch detected. Using previous patch data");
                     return CreateDefault(null, $"{versionComponents[0]}.{patch - 1}.{versionComponents[2]}").Result;

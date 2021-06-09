@@ -16,6 +16,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public bool IsActive
         {
             get { return ConfigController.Component.Ingame.IsActive; }
+            //TODO Update App state on change
             set { ConfigController.Component.Ingame.IsActive = value; OnPropertyChanged(); }
         }
 
