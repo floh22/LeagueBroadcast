@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using EmbedIO.WebSockets;
 using LeagueBroadcast.ChampSelect.Events;
@@ -6,22 +9,42 @@ using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Events;
+using LeagueBroadcast.Ingame.Events;
 using LeagueBroadcast.OperatingSystem;
 using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Http
 {
-    class IngameWSServer : WebSocketModule
+    class WSServer : WebSocketModule
     {
-        public IngameWSServer(string urlPath) : base(urlPath, true)
-        {
 
+        private List<IngameWSClient> clients;
+        public WSServer(string urlPath) : base(urlPath, true)
+        {
+            this.clients = new();
+
+            //Inform clients when overlay configs change
+            ConfigController.Ingame.ConfigUpdate += (s, e) => {
+                clients.ForEach(c => c.UpdateFrontEnd(IngameOverlay.Instance));
+            };
         }
 
 
         protected override Task OnMessageReceivedAsync(IWebSocketContext context, byte[] rxBuffer, IWebSocketReceiveResult rxResult)
         {
             //return SendToOthersAsync(context, Encoding.GetString(rxBuffer));
+            string message = Encoding.GetString(rxBuffer);
+            dynamic res = JsonConvert.DeserializeObject<dynamic>(message);
+            if(res.requestType.Equals("overlayConfig", StringComparison.OrdinalIgnoreCase))
+            {
+                if(clients.Any(c => c.Equals(context)))
+                {
+                    //Send current config
+                    //TODO Change this when multiple frontends support configs like this to only send needed configs
+                    SendEventAsync(context, IngameOverlay.Instance);
+                }
+                clients.Add(new IngameWSClient(context, res.overlayType));
+            }
             Log.Info($"Message received: {Encoding.GetString(rxBuffer)}");
             return Task.CompletedTask;
         }

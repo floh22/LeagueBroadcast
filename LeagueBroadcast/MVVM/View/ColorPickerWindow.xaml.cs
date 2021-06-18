@@ -26,7 +26,7 @@ namespace LeagueBroadcast.MVVM.View
             this.mapSide = mapSide;
             InitializeComponent();
             VM = (ColorPickerViewModel)DataContext;
-            VM.SelectedColor = mapSide == "blue" ? configVM.ColorBlue : configVM.ColorRed;
+            VM.SelectedColor = configVM.Color;
             VM.UpdateColorValues();
             _teamConfigVM = configVM;
         }
@@ -77,21 +77,15 @@ namespace LeagueBroadcast.MVVM.View
                 return;
             }
 
-            if ((mapSide == "blue" ? _teamConfigVM.ColorBlue : _teamConfigVM.ColorRed) == VM.SelectedColor)
+            if (_teamConfigVM.Color == VM.SelectedColor)
             {
                 Log.Warn("Tried updating color to same color. Ingoring color change");
                 Close();
                 return;
             }
 
-            if (mapSide == "blue")
-            {
-                _teamConfigVM.ColorBlue = VM.SelectedColor;
-            }
-            else
-            {
-                _teamConfigVM.ColorRed = VM.SelectedColor;
-            }
+            _teamConfigVM.Color = VM.SelectedColor;
+
 
             BroadcastController.Instance.IGController.gameState.UpdateTeamColors();
 

@@ -84,9 +84,16 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info("Saving all configs to file");
             var controller = JSONConfigProvider.Instance;
 
+            PickBanWatcher.Stop();
+            ComponentWatcher.Stop();
+            FarsightWatcher.Stop();
+            IngameWatcher.Stop();
+
             controller.WriteConfig(PickBan);
             controller.WriteConfig(Component);
             controller.WriteConfig(Farsight);
+            controller.WriteConfig(Ingame);
+
             Log.Info("Configs saved");
         }
     }
@@ -114,6 +121,11 @@ namespace LeagueBroadcast.Common.Controllers
             watcher.EnableRaisingEvents = true;
 
             Log.Info($"Watching {watcher.Filter} for changes");
+        }
+
+        public void Stop()
+        {
+            watcher.Dispose();
         }
 
         public async void OnChanged(object sender, FileSystemEventArgs e)

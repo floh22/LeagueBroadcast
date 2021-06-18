@@ -52,13 +52,17 @@ namespace LeagueBroadcast.Common.Data.Config
 
             var configString = File.ReadAllText(fileLocation);
             dynamic readConfig = JsonConvert.DeserializeObject<dynamic>(configString);
+            bool updateValues = true;
             if (readConfig.FileVersion != config.GETCurrentVersion())
             {
                 Log.Info($"Config {config.Name} outdated. Updating file version");
-                config.UpdateConfigVersion(readConfig.FileVersion.ToString(), configString);
+                updateValues = config.UpdateConfigVersion(readConfig.FileVersion.ToString(), configString);
             }
-            Log.Info($"Found {config.Name}.json. Reading values");
-            config.UpdateValues(configString);
+            if(updateValues)
+            {
+                Log.Info($"Found {config.Name}.json. Reading values");
+                config.UpdateValues(configString);
+            }
             if(Log.Instance.Level == Log.LogLevel.Verbose)
                 Log.Verbose(config.GETJson());
             Log.Info($"Config {config.Name} loaded");

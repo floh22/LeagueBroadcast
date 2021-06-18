@@ -103,9 +103,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.ObjectOffsets = def.ObjectOffsets;
         }
 
-        public override void UpdateConfigVersion(string oldVersion, string oldValues)
+        public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
-            return;
+            return true;
         }
 
         public override void UpdateValues(string readValues)

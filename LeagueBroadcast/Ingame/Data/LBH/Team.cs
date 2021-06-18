@@ -33,7 +33,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
             this.id = teamId;
             this.teamName = (id == 0) ? "ORDER" : "CHAOS";
             this.players = players;
-            this.color = (id == 0) ? TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString() : TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString();
+            this.color = (id == 0) ? TeamConfigViewModel.BlueTeam.Color.ToSerializedString() : TeamConfigViewModel.RedTeam.Color.ToSerializedString();
             towers = 0;
             hasBaron = false;
             hasElder = false;

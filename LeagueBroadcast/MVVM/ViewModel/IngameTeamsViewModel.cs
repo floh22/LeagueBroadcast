@@ -59,8 +59,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
             set { _championName = value; OnPropertyChanged(); }
         }
 
-        public SolidColorBrush BlueColor {get { return TeamConfigViewModel.BlueTeam.ColorBrushBlue; } }
-        public SolidColorBrush RedColor { get { return TeamConfigViewModel.RedTeam.ColorBrushRed; } }
+        public SolidColorBrush Color {get { return TeamConfigViewModel.BlueTeam.ColorBrush; } }
 
         public bool HasBaron
         {

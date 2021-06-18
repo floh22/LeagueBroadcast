@@ -20,8 +20,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
         private string _name;
         private int _score;
         private string _coach;
-        private Color _colorBlue, _colorRed;
-        private SolidColorBrush _colorBrushBlue, _colorBrushRed;
+        private Color _color;
+        private SolidColorBrush _colorBrush;
 
         private string _iconName;
         private string _nameTag;
@@ -30,10 +30,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public string Name { get { return _name; } set { _name = value; OnPropertyChanged(); } }
         public int Score { get { return _score; } set { _score = value; OnPropertyChanged(); } }
         public string Coach { get { return _coach; } set { _coach = value; OnPropertyChanged(); } }
-        public Color ColorBlue { get { return _colorBlue; } set { _colorBlue = value; OnPropertyChanged(); UpdateColorConfig(); } }
-        public Color ColorRed { get { return _colorRed; } set { _colorRed = value; OnPropertyChanged(); UpdateColorConfig(); } }
-        public SolidColorBrush ColorBrushBlue { get { return _colorBrushBlue; } set { _colorBrushBlue = value; OnPropertyChanged(); } }
-        public SolidColorBrush ColorBrushRed { get { return _colorBrushRed; } set { _colorBrushRed = value; OnPropertyChanged(); } }
+        public Color Color { get { return _color; } set { _color = value; OnPropertyChanged(); UpdateColorConfig(); } }
+        public SolidColorBrush ColorBrush { get { return _colorBrush; } set { _colorBrush = value; OnPropertyChanged(); } }
         public string IconName
         {
             get
@@ -80,8 +78,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
                 this.Score = ConfigReference.score;
                 this.Coach = ConfigReference.coach;
                 this.IconName = DefaultIconPath;
-                this.ColorBlue = ConfigController.Component.PickBan.DefaultBlueColor.ToColor();
-                this.ColorRed = ConfigController.Component.PickBan.DefaultRedColor.ToColor();
+                
 
             } else
             {
@@ -91,9 +88,9 @@ namespace LeagueBroadcast.MVVM.ViewModel
                 this.Score = cfg.Config.score;
                 this.Coach = cfg.Config.coach;
                 this.IconName = cfg.IconLocation;
-                this.ColorBlue = cfg.BlueColor.ToColor();
-                this.ColorRed = cfg.RedColor.ToColor();
             }
+
+            this.Color = mapSide == "blue" ? ConfigController.Component.PickBan.DefaultBlueColor.ToColor() : ConfigController.Component.PickBan.DefaultRedColor.ToColor();
         }
 
         private void UpdateColorConfig()
@@ -101,11 +98,8 @@ namespace LeagueBroadcast.MVVM.ViewModel
             if (ConfigReference == null)
                 return;
 
-            ColorBrushBlue = new SolidColorBrush(ColorBlue);
-            ColorBrushRed = new SolidColorBrush(ColorRed);
-
-            Color c = MapSide == "blue" ? ColorBlue : ColorRed;
-            ConfigReference.color = c.ToSerializedString();
+            ColorBrush = new SolidColorBrush(Color);
+            ConfigReference.color = Color.ToSerializedString();
 
         }
 

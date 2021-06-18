@@ -1,11 +1,14 @@
 ﻿using LeagueBroadcast.Common.Controllers;
 using Newtonsoft.Json;
+using System;
 using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Common.Data.Config
 {
     public abstract class JSONConfig
     {
+        [JsonIgnore]
+        public EventHandler ConfigUpdate;
         [JsonIgnore]
         public abstract string Name { get; }
 
@@ -24,7 +27,7 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public abstract string GETCurrentVersion();
 
-        public abstract void UpdateConfigVersion(string oldVersion, string oldValues);
+        public abstract bool UpdateConfigVersion(string oldVersion, string oldValues);
 
         public string SerializeIndented(object o)
         {
@@ -39,6 +42,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public void Reload()
         {
             JSONConfigProvider.Instance.ReadConfig(this);
+            ConfigUpdate.Invoke(this, EventArgs.Empty);
         }
     }
 }

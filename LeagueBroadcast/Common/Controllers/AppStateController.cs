@@ -144,6 +144,11 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 ChampSelectStop?.Invoke(this, EventArgs.Empty);
             }
+            //Backup state change
+            if (eventType.Equals("ChampSelect") && !BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
+            {
+                ChampSelectStart?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void ChampSelectChanged(object sender, LeagueEvent e)
@@ -194,6 +199,8 @@ namespace LeagueBroadcast.Common.Controllers
         {
             var toFinish = new Dictionary<Cell, Task<string>>();
             team.ForEach(cell => {
+                if (cell.summonerId == 0)
+                    return;
                 try
                 {
                     toFinish.Add(cell, Instance.ClientAPI.RequestHandler.GetJsonResponseAsync(HttpMethod.Get, $"lol-summoner/v1/summoners/{cell.summonerId}"));
@@ -215,7 +222,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public static Summoner GetSummonerById(int id)
         {
-            return summoners.Single(summoner => summoner.summonerId == id);
+            return summoners.SingleOrDefault(summoner => summoner.summonerId == id);
         }
 
     }

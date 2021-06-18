@@ -34,7 +34,7 @@ namespace LeagueBroadcast.Http
 
             var toRemove = EventQueue.Where(k => k.Value <= 0).ToList();
             toRemove.ForEach(async e => {
-                EmbedIOServer.socketServer.SendEventToAllAsync(e.Key);
+                EmbedIOServer.SocketServer.SendEventToAllAsync(e.Key);
                 EventQueue.TryRemove(e.Key, out var val);
                 await Task.Delay(50);
             });
@@ -76,7 +76,7 @@ namespace LeagueBroadcast.Http
             {
                 Log.Warn("Disabled Champ Select Delay while P&B was still active! This might cause some errors");
                 EventQueue.Keys.ToList().ForEach(e => {
-                    EmbedIOServer.socketServer.SendEventToAllAsync(e);
+                    EmbedIOServer.SocketServer.SendEventToAllAsync(e);
                 });
                 EventQueue.Clear();
             }
@@ -127,30 +127,30 @@ namespace LeagueBroadcast.Http
             //That means that Start has already been sent, so we have to send an End event. Don't otherwise
             if (!EventQueue.Keys.ToList().Contains(new ChampSelectStartEvent()))
             {
-                EmbedIOServer.socketServer.SendEventToAllAsync(new NewState(State.data));
-                EmbedIOServer.socketServer.SendEventToAllAsync(new ChampSelectEndEvent());
+                EmbedIOServer.SocketServer.SendEventToAllAsync(new NewState(State.data));
+                EmbedIOServer.SocketServer.SendEventToAllAsync(new ChampSelectEndEvent());
             }
 
             EventQueue.Clear();
         }
         private void SendStartDirect(object sender, EventArgs e)
         {
-            EmbedIOServer.socketServer.SendEventToAllAsync(new ChampSelectStartEvent());
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new ChampSelectStartEvent());
         }
 
         private void SendEndDirect(object sender, bool finished)
         {
-            EmbedIOServer.socketServer.SendEventToAllAsync(new ChampSelectEndEvent());
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new ChampSelectEndEvent());
         }
 
         private void SendDirect(object sender, StateData e)
         {
-            EmbedIOServer.socketServer.SendEventToAllAsync(new NewState(e));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new NewState(e));
         }
 
         private void SendDirect(object sender, CurrentAction e)
         {
-            EmbedIOServer.socketServer.SendEventToAllAsync(new NewActionEvent(e));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new NewActionEvent(e));
         }
 
         public enum ClientConnectorMode

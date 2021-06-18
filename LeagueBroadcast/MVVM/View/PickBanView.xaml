@@ -148,16 +148,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock Text="Color" FontSize="20" Foreground="White" FontWeight="Light" />
-                            <Grid Margin="10,5,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="6"/>
-                                    <ColumnDefinition Width="0.5*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Name="BlueColorSelect" Tag="Blue" Style="{StaticResource ColorSelectLeftTheme}" Height="40" Click="BlueColorSelectBlue_Click" Background="{Binding ColorBrushBlue}"/>
-                                <TextBlock Text="Active" Foreground="White" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="17" HorizontalAlignment="Left" />
-                                <Button Name="BlueColorSelect1" Tag="Blue" Grid.Column="2" Style="{StaticResource ColorSelectRightTheme}" Height="40"  Click="BlueColorSelectRed_Click" Background="{Binding ColorBrushRed}"/>
-                            </Grid>
+                            <Button Margin="10,5,0,0" Name="BlueColorSelect" Tag="Blue" Style="{StaticResource ColorSelectTheme}" Height="40" Click="BlueColorSelect_Click" Background="{Binding ColorBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <Grid>
@@ -248,16 +239,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock Text="Color" FontSize="20" Foreground="White" FontWeight="Light" />
-                            <Grid Margin="10,5,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*"/>
-                                    <ColumnDefinition Width="6"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Button Name="RedColorSelect" Tag="Red" Style="{StaticResource ColorSelectLeftTheme}" Height="40" Click="RedColorSelectBlue_Click" Background="{Binding ColorBrushBlue}"/>
-                                <Button Name="RedColorSelect1" Tag="Red" Grid.Column="2" Style="{StaticResource ColorSelectRightTheme}" Height="40"  Click="RedColorSelectRed_Click" Background="{Binding ColorBrushRed}"/>
-                                <TextBlock Text="Active" Grid.Column="2" Foreground="White" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="17" HorizontalAlignment="Left" />
-                            </Grid>
+                            <Button Margin="10,5,0,0" Name="RedColorSelect" Tag="Red" Grid.Column="2" Style="{StaticResource ColorSelectTheme}" Height="40"  Click="RedColorSelect_Click" Background="{Binding ColorBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <Grid>

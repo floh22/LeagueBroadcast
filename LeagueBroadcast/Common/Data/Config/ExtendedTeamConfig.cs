@@ -22,9 +22,6 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public TeamConfig Config;
 
-        public string BlueColor;
-        public string RedColor;
-
         public string IconLocation;
 
         public ExtendedTeamConfig(string TeamName)
@@ -55,10 +52,10 @@ namespace LeagueBroadcast.Common.Data.Config
             throw new InvalidOperationException();
         }
 
-        public override void UpdateConfigVersion(string oldVersion, string oldValues)
+        public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
             //No update needed yet
-            return;
+            return true;
         }
 
         public override void UpdateValues(string readValues)
@@ -66,8 +63,6 @@ namespace LeagueBroadcast.Common.Data.Config
             var cfg = JsonConvert.DeserializeObject<ExtendedTeamConfig>(readValues);
             this.Config = cfg.Config;
             this.IconLocation = cfg.IconLocation;
-            this.BlueColor = cfg.BlueColor;
-            this.RedColor = cfg.RedColor;
         }
     }
 }

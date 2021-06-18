@@ -5,6 +5,7 @@ using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.OperatingSystem;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using static LeagueBroadcast.ChampSelect.StateInfo.StateData;
 
 namespace LeagueBroadcast.ChampSelect.StateInfo
@@ -80,7 +81,7 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
         public static void TriggerUpdate()
         {
             PickBanController.UpdatedThisTick = true;
-            StateUpdate?.Invoke(BroadcastController.Instance, data);
+            StateUpdate.Invoke(BroadcastController.Instance, data);
         }
 
         public static string GetVersionCDN => DataDragon.version.GetVersionCDN();

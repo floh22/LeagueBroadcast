@@ -15,7 +15,7 @@ namespace LeagueBroadcast.Http
     {
         private WebServer webServer;
 
-        public static IngameWSServer socketServer;
+        public static WSServer SocketServer;
 
         public EmbedIOServer(string location, int port)
         {
@@ -48,7 +48,7 @@ namespace LeagueBroadcast.Http
                 // Add modules
                 .WithLocalSessionManager()
                 .WithCors()
-                .WithModule(socketServer = new("/api"))
+                .WithModule(SocketServer = new("/api"))
                 .WithModule(new FileModule("/cache",
                     new FileSystemProvider(webRoot, false))
                 {

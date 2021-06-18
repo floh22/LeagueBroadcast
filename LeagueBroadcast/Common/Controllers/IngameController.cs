@@ -203,7 +203,7 @@ namespace LeagueBroadcast.Common.Controllers
             }
 
             //Update frontend
-            EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
         }
 
         private void UpdateInfoPage()
@@ -233,7 +233,7 @@ namespace LeagueBroadcast.Common.Controllers
             this.gameData = gameData;
             this.gameData.gameTime = 0;
             Log.Info("Game Loaded");
-            EmbedIOServer.socketServer.SendEventToAllAsync(new GameStart());
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new GameStart());
             AppStateController.GameLoad?.Invoke(this, EventArgs.Empty);
         }
 
@@ -242,7 +242,7 @@ namespace LeagueBroadcast.Common.Controllers
             gameState.stateData.gamePaused = PauseState;
             IsPaused = PauseState;
             Log.Info(PauseState? "Game Paused" : "Game Resumed");
-            EmbedIOServer.socketServer.SendEventToAllAsync(PauseState? new GameUnpause(gameData.gameTime): new GamePause(gameData.gameTime));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(PauseState? new GameUnpause(gameData.gameTime): new GamePause(gameData.gameTime));
         }
 
         public void EnterIngame(object sender, Process p)
@@ -376,8 +376,8 @@ namespace LeagueBroadcast.Common.Controllers
             BroadcastController.Instance.ToTick.Remove(this);
             gameState.stateData.scoreboard.GameTime = -1;
             gameState.stateData.gameTime = -1;
-            EmbedIOServer.socketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
-            EmbedIOServer.socketServer.SendEventToAllAsync(new GameEnd());
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new HeartbeatEvent(gameState.stateData));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new GameEnd());
             Log.Info("Game ended");
         }
 
@@ -386,7 +386,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (!CurrentSettings.LevelUp)
                 return;
             Log.Info("Player " + e.playerId + " lvl up");
-            EmbedIOServer.socketServer.SendEventToAllAsync(new PlayerLevelUp(e.playerId, e.level));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new PlayerLevelUp(e.playerId, e.level));
         }
 
         public void OnItemCompleted(ItemCompletedEventArgs e)
@@ -394,7 +394,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (!CurrentSettings.LevelUp)
                 return;
             Log.Info("Player " + e.playerId + " finished Item " + e.itemData.itemID);
-            EmbedIOServer.socketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
         }
 
         #endregion

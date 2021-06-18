@@ -119,7 +119,7 @@ namespace LeagueBroadcast.Common.Data.Config
             return SerializeIndented(this);
         }
 
-        public override void UpdateConfigVersion(string oldVersion, string oldValues)
+        public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
             //1.0 to Current
             if(oldVersion.Equals("1.0"))
@@ -142,7 +142,7 @@ namespace LeagueBroadcast.Common.Data.Config
                     Log.Info("Updated Component config from v1.0 to v1.2");
                 });
                 t.Start();
-                return;
+                return true;
             }
 
             //1.1 to Current
@@ -158,8 +158,9 @@ namespace LeagueBroadcast.Common.Data.Config
                     Log.Info("Updated Component config from v1.1 to v1.2");
                 });
                 t.Start();
-                return;
+                return true;
             }
+            return true;
         }
 
         public override void UpdateValues(string readValues)

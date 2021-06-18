@@ -39,8 +39,6 @@ namespace LeagueBroadcast.Ingame.State
         public ScoreboardConfig scoreboard;
 
         public InfoSidePage infoPage;
-
-        public string uiColor => ConfigController.Ingame.BackgroundColor;
         public string blueColor => gameState.blueTeam.color;
         public string redColor => gameState.redTeam.color;
 

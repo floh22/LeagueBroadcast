@@ -104,7 +104,7 @@ namespace LeagueBroadcast.MVVM.View
             }
         }
 
-        private void BlueColorSelectBlue_Click(object sender, RoutedEventArgs e)
+        private void BlueColorSelect_Click(object sender, RoutedEventArgs e)
         {
             if (_openColorPicker != null)
                 _openColorPicker.Close();
@@ -118,34 +118,7 @@ namespace LeagueBroadcast.MVVM.View
             });
         }
 
-        private void BlueColorSelectRed_Click(object sender, RoutedEventArgs e)
-        {
-            if (_openColorPicker != null)
-                _openColorPicker.Close();
-
-            Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                _openColorPicker = new ColorPickerWindow(TeamConfigViewModel.BlueTeam, "red");
-                _openColorPicker.Owner = Window.GetWindow(this);
-                _openColorPicker.Topmost = true;
-                _openColorPicker.Show();
-            });
-        }
-
-        private void RedColorSelectBlue_Click(object sender, RoutedEventArgs e)
-        {
-            if (_openColorPicker != null)
-                _openColorPicker.Close();
-            Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                _openColorPicker = new ColorPickerWindow(TeamConfigViewModel.RedTeam, "blue");
-                _openColorPicker.Owner = Window.GetWindow(this);
-                _openColorPicker.Topmost = true;
-                _openColorPicker.Show();
-            });
-        }
-
-        private void RedColorSelectRed_Click(object sender, RoutedEventArgs e)
+        private void RedColorSelect_Click(object sender, RoutedEventArgs e)
         {
             if (_openColorPicker != null)
                 _openColorPicker.Close();
@@ -192,9 +165,7 @@ namespace LeagueBroadcast.MVVM.View
             var toAdd = new ExtendedTeamConfig(currentConfig.Name)
             {
                 Config = currentConfig.ConfigReference,
-                IconLocation = currentConfig.IconName,
-                BlueColor = currentConfig.ColorBlue.ToSerializedString(),
-                RedColor = currentConfig.ColorRed.ToSerializedString()
+                IconLocation = currentConfig.IconName
             };
 
             if (cfg != "" && cfg != null)
@@ -262,9 +233,7 @@ namespace LeagueBroadcast.MVVM.View
             var toAdd = new ExtendedTeamConfig(currentConfig.Name)
             {
                 Config = currentConfig.ConfigReference,
-                IconLocation = currentConfig.IconName,
-                BlueColor = currentConfig.ColorBlue.ToSerializedString(),
-                RedColor = currentConfig.ColorRed.ToSerializedString()
+                IconLocation = currentConfig.IconName
             };
 
             if (cfg != "" && cfg != null)
@@ -370,8 +339,6 @@ namespace LeagueBroadcast.MVVM.View
                 currentConfig.NameTag = toLoad.Config.nameTag;
                 currentConfig.Score = 0;
                 currentConfig.Coach = toLoad.Config.coach;
-                currentConfig.ColorBlue = toLoad.BlueColor.ToColor();
-                currentConfig.ColorRed = toLoad.RedColor.ToColor();
                 currentConfig.IconName = toLoad.IconLocation;
 
                 BroadcastController.Instance.IGController.gameState.UpdateTeamColors();
@@ -395,8 +362,6 @@ namespace LeagueBroadcast.MVVM.View
                 Name = TeamConfigViewModel.BlueTeam.Name,
                 NameTag = TeamConfigViewModel.BlueTeam.NameTag,
                 Coach = TeamConfigViewModel.BlueTeam.Coach,
-                ColorBlue = TeamConfigViewModel.BlueTeam.ColorBlue,
-                ColorRed = TeamConfigViewModel.BlueTeam.ColorRed,
                 IconName = TeamConfigViewModel.BlueTeam.IconName,
                 Score = TeamConfigViewModel.BlueTeam.Score
             };
@@ -406,16 +371,12 @@ namespace LeagueBroadcast.MVVM.View
             TeamConfigViewModel.BlueTeam.Coach = TeamConfigViewModel.RedTeam.Coach;
             TeamConfigViewModel.BlueTeam.IconName = TeamConfigViewModel.RedTeam.IconName;
             TeamConfigViewModel.BlueTeam.Score = TeamConfigViewModel.RedTeam.Score;
-            TeamConfigViewModel.BlueTeam.ColorBlue = TeamConfigViewModel.RedTeam.ColorBlue;
-            TeamConfigViewModel.BlueTeam.ColorRed = TeamConfigViewModel.RedTeam.ColorRed;
 
             TeamConfigViewModel.RedTeam.Name = temp.Name;
             TeamConfigViewModel.RedTeam.NameTag = temp.NameTag;
             TeamConfigViewModel.RedTeam.Coach = temp.Coach;
             TeamConfigViewModel.RedTeam.IconName = temp.IconName;
             TeamConfigViewModel.RedTeam.Score = temp.Score;
-            TeamConfigViewModel.RedTeam.ColorBlue = temp.ColorBlue;
-            TeamConfigViewModel.RedTeam.ColorRed = temp.ColorRed;
 
             OrderSelector.SelectedItem = TeamConfigViewModel.BlueTeam.Name;
             ChaosSelector.SelectedItem = TeamConfigViewModel.RedTeam.Name;

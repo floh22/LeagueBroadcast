@@ -28,6 +28,7 @@ namespace LeagueBroadcast.Common.Controllers
         public void Enable()
         {
             StartHeartbeat();
+            //_ = new State();
         }
 
         public void Disable()
@@ -41,16 +42,10 @@ namespace LeagueBroadcast.Common.Controllers
             //Obviously does not include timer update since that would ruin the point of events
             if (!UpdatedThisTick)
             {
-                try
-                {
-                    Timer raw = await AppStateController.GetTimer();
-                    State.data.timer = Converter.ConvertTimer(raw);
-                    State.TriggerUpdate();
-                } catch
-                {
-                    State.data.champSelectActive = false;
-                    AppStateController.ChampSelectStop.Invoke(this, EventArgs.Empty);
-                }
+
+                Timer raw = await AppStateController.GetTimer();
+                State.data.timer = Converter.ConvertTimer(raw);
+                State.TriggerUpdate();
             }
 
             UpdatedThisTick = false;
@@ -93,7 +88,7 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 return;
             }
-
+            Log.Info("Starting PickBan Tick");
             Instance.ToTick.Insert(0, this);
             FlagsHelper.Set(ref BroadcastController.CurrentLeagueState, LeagueState.ChampSelect);
         }
@@ -130,7 +125,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         private void SendHeartbeat()
         {
-            EmbedIOServer.socketServer?.SendEventToAllAsync(new Heartbeat(State.GetConfig));
+            EmbedIOServer.SocketServer?.SendEventToAllAsync(new Heartbeat(State.GetConfig));
         }
     }
 }

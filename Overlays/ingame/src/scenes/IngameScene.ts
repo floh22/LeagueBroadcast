@@ -13,6 +13,7 @@ import ScoreboardConfig from '~/data/scoreboardConfig';
 import InfoSidePageIndicator from '~/data/infoSidePageIndicator';
 import InfoSidePage from '~/data/infoSidePage';
 import InhibitorIndicator from '~/data/inhibitorIndicator';
+import WindowUtils from '~/convert/windowUtils';
 
 export default class IngameScene extends Phaser.Scene
 {
@@ -46,6 +47,8 @@ export default class IngameScene extends Phaser.Scene
                 families: ['Droid Sans', 'News Cycle', 'News Cycle:bold']
             }
         };
+
+        variables.backendUrl = WindowUtils.GetQueryVariable('backend');
 
         //@ts-ignore
         this.graphics = this.add.graphics();

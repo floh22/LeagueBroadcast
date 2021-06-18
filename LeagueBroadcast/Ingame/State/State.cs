@@ -243,8 +243,8 @@ namespace LeagueBroadcast.Ingame.State
             //Nothing to update if not ingame
             if (blueTeam == null || redTeam == null)
                 return;
-            blueTeam.color = TeamConfigViewModel.BlueTeam.ColorBlue.ToSerializedString();
-            redTeam.color = TeamConfigViewModel.RedTeam.ColorRed.ToSerializedString();
+            blueTeam.color = TeamConfigViewModel.BlueTeam.Color.ToSerializedString();
+            redTeam.color = TeamConfigViewModel.RedTeam.Color.ToSerializedString();
         }
 
         #region Getters
