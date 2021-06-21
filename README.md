@@ -11,6 +11,7 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
+[![Donate][donate-paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSY2FXPUHXVUJ)
 
 
 <!-- ABOUT THE PROJECT -->
@@ -109,17 +110,17 @@ Distributed under the MIT License. See `LICENSE` for more information.
 __This is a standalone project from Lars Eble. Riot Games does not endorse or sponsor this project.__  
 _The project was certified as ToS-compliant in a previous state. The current version using memory reading has not yet been certified._ 
 
+_Riot Games has expressed tolerance of passive memory reading in past statements, this however may change at any moment. Use this tool at your own discretion._
+
 This project's port of [lol-pick-ban-ui](https://github.com/RCVolus/lol-pick-ban-ui) and its author are in no way affiliated or partnered with Riot Community Volunteers.
 
 
 <!-- CONTACT -->
 ## Contact
 
-Lars Eble - [@larseble](https://twitter.com/@larseble)
+Twitter - [@larseble](https://twitter.com/@larseble)
 
-Project Link: [https://github.com/floh22/LeagueBroadcastHub](https://github.com/floh22/LeagueBroadcastHub)
-
-
+Support this project: [![Donate](https://img.shields.io/badge/Paypal-Donate-blueviolet?style=flat-square&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSY2FXPUHXVUJ)
 
 
 
@@ -138,3 +139,4 @@ Project Link: [https://github.com/floh22/LeagueBroadcastHub](https://github.com/
 [license-url]: https://github.com/floh22/LeagueBroadcastHub/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/floh22
+[donate-paypal]: https://img.shields.io/badge/Paypal-Donate-blueviolet?style=for-the-badge&logo=paypal
