@@ -8,5 +8,7 @@ namespace LeagueBroadcast.Common.Events
     public abstract class OverlayConfig : LeagueEvent
     {
         public FrontEndType type;
+
+        public OverlayConfig() : base("OverlayConfig") { }
     }
 }

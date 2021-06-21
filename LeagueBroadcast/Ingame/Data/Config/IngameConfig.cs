@@ -73,7 +73,38 @@ namespace LeagueBroadcast.Ingame.Data.Config
             return new IngameConfig()
             {
                 FileVersion = CurrentVersion,
-                Inhib = new InhibitorDisplayConfig() { Location = new Vector2(0, 845), Size = new Vector2(306, 118) },
+                Inhib = new InhibitorDisplayConfig() {
+                    Location = new Vector2(0, 845),
+                    Size = new Vector2(306, 118),
+                    Font = new FontConfig()
+                    {
+                        Align = "right",
+                        Color = "rgb(100,100,100)",
+                        IsGoogleFont = true,
+                        Name = "News Cycle",
+                        Size = "15px",
+                        Style = "Normal"
+                    },
+                    IconSize = 40f,
+                    UseImage = false,
+                    Color = "rgb(19,24,63)",
+                    AlwaysShowWhenEnabled = false,
+                    BlueTeam = new InhibitorDisplayConfig.InhibTeamConfig() {
+                        UseTeamColor = true,
+                        Color = "rgb(0,0,0)",
+                        IconOffset = new Vector2(5, 0),
+                        LaneOffset = new Vector2(100, 0),
+                        Position = new Vector2(20, 50)
+                    },
+                    RedTeam = new InhibitorDisplayConfig.InhibTeamConfig()
+                    {
+                        UseTeamColor = true,
+                        Color = "rgb(0,0,0)",
+                        IconOffset = new Vector2(5, 0),
+                        LaneOffset = new Vector2(100, 0),
+                        Position = new Vector2(120, 50)
+                    }
+                },
                 Score = new ScoreDisplayConfig()
                 {
                     Location = new Vector2(906, 0),
@@ -89,11 +120,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
@@ -115,11 +146,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
@@ -135,11 +166,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Position = new Vector2(0, 0),
@@ -149,11 +180,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
@@ -188,11 +219,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
@@ -214,11 +245,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
@@ -234,11 +265,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Position = new Vector2(0, 0),
@@ -248,11 +279,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Font = new FontConfig()
                             {
-                                Align = "Right",
+                                Align = "right",
                                 Color = "rgb(100,100,100)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = 15f,
+                                Size = "15px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
@@ -270,7 +301,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             UseSameFontStyle = false,
                             UseSameFontColor = false,
                             UseSameFontSize = false,
-                            Font = "News Cylce",
+                            Font = "News Cycle",
                             IsGoogleFont = true,
                             FontColor = "rgb(0,0,0)",
                             FontSize = 10,
@@ -299,24 +330,199 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     BackgroundColor = "rbg(100,100,100)",
                     Font = new FontConfig()
                     {
-                        Align = "Right",
+                        Align = "right",
                         Color = "rgb(100,100,100)",
                         IsGoogleFont = true,
                         Name = "News Cycle",
-                        Size = 15f,
+                        Size = "15px",
                         Style = "Normal"
                     },
                     UseBackgroundColorTransparency = true,
                     UseBackgroundImage = false
                 },
                 ItemComplete = new ItemCompletedDisplayConfig() {
-                    ShowItemName = false,
+                    UseCustomVideo = false,
+                    ShowItemName = true,
                     ShowOnChampionIndicator = true,
-                    ShowOnScoreboard = false
+                    ShowOnScoreboard = false,
+                    ItemAnimationStates = new List<VisualElementAnimationConfig>() {
+                        new VisualElementAnimationConfig() {
+                            Alpha = 0,
+                            Position = new Vector2(0,0),
+                            Mirror = false,
+                            Duration = 0,
+                            Scale = 0,
+                            Ease = "",
+                            Delay = 0
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,0),
+                            Mirror = false,
+                            Duration = 400,
+                            Scale = 1,
+                            Ease = "Quad.easeIn",
+                            Delay = 0
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,0),
+                            Mirror = false,
+                            Duration = 3200,
+                            Scale = 1.1f,
+                            Ease = "Linear",
+                            Delay = 0
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 0,
+                            Position = new Vector2(0,0),
+                            Mirror = false,
+                            Duration = 400,
+                            Scale = 2.5f,
+                            Ease = "Quad.easeOut",
+                            Delay = 0
+                        }
+                    },
+                    InfoText = new FontConfig()
+                    {
+                        Align = "center",
+                        Color = "rgb(255,255,255)",
+                        IsGoogleFont = true,
+                        Name = "News Cycle",
+                        Size = "20px",
+                        Style = "Normal"
+                    },
+                    InfoBackgroundAnimationStates = new List<VisualElementAnimationConfig>()
+                    {
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,80),
+                            Mirror = false,
+                            Duration = 0,
+                            Scale = 1f,
+                            Ease = "",
+                            Delay = 0
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,0),
+                            Mirror = false,
+                            Duration = 200,
+                            Scale = 1f,
+                            Ease = "Quad.easeOut",
+                            Delay = 800
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,-80),
+                            Mirror = false,
+                            Duration = 200,
+                            Scale = 1f,
+                            Ease = "Quad.easeIn",
+                            Delay = 2200
+                        }
+                    },
+                    InfoTextAnimationStates = new List<VisualElementAnimationConfig>()
+                    {
+                        new VisualElementAnimationConfig() {
+                            Alpha = 0,
+                            Position = new Vector2(55,0),
+                            Mirror = true,
+                            Duration = 0,
+                            Scale = 1f,
+                            Ease = "",
+                            Delay = 0
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(55,0),
+                            Mirror = true,
+                            Duration = 200,
+                            Scale = 1f,
+                            Ease = "Quad.easeOut",
+                            Delay = 1000
+                        },
+                        new VisualElementAnimationConfig() {
+                            Alpha = 0,
+                            Position = new Vector2(55,0),
+                            Mirror = true,
+                            Duration = 200,
+                            Scale = 1f,
+                            Ease = "Quad.easeIn",
+                            Delay = 1800
+                        }
+                    }
                 },
                 LevelUp = new LevelUpDisplayConfig() {
+                    UseCustomVideo = false,
                     ShowOnChampionIndicator = true,
-                    ShowOnScoreboard = false
+                    ShowOnScoreboard = false,
+                    UseTeamColors = true,
+                    ChaosColor = "rgb(255,0,0)",
+                    OrderColor = "rgb(0,0,255)",
+                    LevelFont = new FontConfig()
+                    {
+                        Align = "center",
+                        Color = "rgb(255,255,255)",
+                        IsGoogleFont = true,
+                        Name = "News Cycle",
+                        Size = "60px",
+                        Style = "Normal"
+                    },
+                    NumberAnimationStates = new List<VisualElementAnimationConfig>() {
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,70),
+                            Mirror = true,
+                            Duration = 0,
+                            Scale = 1f,
+                            Ease = "",
+                            Delay = 0
+                        },new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,-30),
+                            Mirror = true,
+                            Duration = 300,
+                            Scale = 1f,
+                            Ease = "Quad.easeOut",
+                            Delay = 250
+                        },new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,-130),
+                            Mirror = true,
+                            Duration = 400,
+                            Scale = 1f,
+                            Ease = "Quad.easeIn",
+                            Delay = 3500
+                        }
+                    },
+                    BackgroundAnimationStates = new List<VisualElementAnimationConfig>() {
+                        new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,100),
+                            Mirror = false,
+                            Duration = 0,
+                            Scale = 1f,
+                            Ease = "",
+                            Delay = 0
+                        },new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(0,0),
+                            Mirror = false,
+                            Duration = 300,
+                            Scale = 1f,
+                            Ease = "Quad.easeOut",
+                            Delay = 250
+                        },new VisualElementAnimationConfig() {
+                            Alpha = 1,
+                            Position = new Vector2(-90,0),
+                            Mirror = true,
+                            Duration = 400,
+                            Scale = 1f,
+                            Ease = "Quad.easeIn",
+                            Delay = 4000
+                        }
+                    }
                 },
                 ObjectiveKill = new ObjectiveKillConfig()
                 {
@@ -378,6 +584,21 @@ namespace LeagueBroadcast.Ingame.Data.Config
             public Vector2 Location;
             public Vector2 Size;
             public bool UseImage;
+            public string Color;
+            public FontConfig Font;
+            public float IconSize;
+            public bool AlwaysShowWhenEnabled;
+            public InhibTeamConfig BlueTeam;
+            public InhibTeamConfig RedTeam;
+            
+            public class InhibTeamConfig
+            {
+                public Vector2 Position;
+                public Vector2 LaneOffset;
+                public bool UseTeamColor;
+                public string Color;
+                public Vector2 IconOffset;
+            }
         }
 
         public class ObjectiveKillConfig
@@ -398,15 +619,43 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public class ItemCompletedDisplayConfig
         {
+            public bool UseCustomVideo;
             public bool ShowItemName;
             public bool ShowOnScoreboard;
             public bool ShowOnChampionIndicator;
+
+            public FontConfig InfoText;
+
+            public List<VisualElementAnimationConfig> ItemAnimationStates;
+            public List<VisualElementAnimationConfig> InfoTextAnimationStates;
+            public List<VisualElementAnimationConfig> InfoBackgroundAnimationStates;
+
         }
 
         public class LevelUpDisplayConfig
         {
+            public bool UseCustomVideo;
             public bool ShowOnScoreboard;
             public bool ShowOnChampionIndicator;
+
+            public FontConfig LevelFont;
+            public bool UseTeamColors;
+            public string OrderColor;
+            public string ChaosColor;
+
+            public List<VisualElementAnimationConfig> NumberAnimationStates;
+            public List<VisualElementAnimationConfig> BackgroundAnimationStates;
+        }
+
+        public class VisualElementAnimationConfig
+        {
+            public float Scale;
+            public float Alpha;
+            public Vector2 Position;
+            public bool Mirror;
+            public float Duration;
+            public string Ease;
+            public float Delay;
         }
 
         public class ScoreDisplayConfig
@@ -497,7 +746,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             public string Style;
             public string Name;
             public bool IsGoogleFont;
-            public float Size;
+            public string Size;
             public string Align;
             public string Color;
         }

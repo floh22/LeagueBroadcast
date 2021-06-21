@@ -1,6 +1,6 @@
 import 'phaser';
 import IngameScene from '~/scenes/IngameScene';
-import FrontEndObjective from './frontEndObjective';
+import FrontEndObjective from '../data/frontEndObjective';
 
 export default class ObjectiveIndicator {
   backgroundBox: Phaser.GameObjects.Image;

@@ -1,9 +1,9 @@
 import PlaceholderConversion from "~/PlaceholderConversion";
 import IngameScene from "~/scenes/IngameScene";
 import variables from "~/variables";
-import ScoreboardConfig from "./scoreboardConfig";
-import stateData from "./stateData";
-import StateData from "./stateData";
+import ScoreboardConfig from "../data/scoreboardConfig";
+import stateData from "../data/stateData";
+import StateData from "../data/stateData";
 
 export default class Scoreboard {
 
@@ -248,6 +248,8 @@ export default class Scoreboard {
                 });
             }
         });
+
+        this.showContent();
     }
 
     updateContent = (state: StateData) => {

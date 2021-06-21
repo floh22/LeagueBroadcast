@@ -1,8 +1,8 @@
 import PlaceholderConversion from "~/PlaceholderConversion";
 import IngameScene from "~/scenes/IngameScene";
 import variables from "~/variables";
-import InfoSidePage from "./infoSidePage";
-import PlayerInfoTab from "./playerInfoTab";
+import InfoSidePage from "../data/infoSidePage";
+import PlayerInfoTab from "../data/playerInfoTab";
 
 export default class InfoSidePageIndicator {
 

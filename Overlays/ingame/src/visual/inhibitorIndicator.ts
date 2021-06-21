@@ -1,12 +1,14 @@
+import { InhibitorDisplayConfig } from "~/data/config/overlayConfig";
 import IngameScene from "~/scenes/IngameScene";
 import variables from "~/variables";
-import { InhibitorInfo } from "./inhibitor";
+import { InhibitorInfo } from "../data/inhibitor";
 
 export default class InhibitorIndicator {
     scene: IngameScene;
     isActive: boolean;
     isLoaded: boolean;
     bg: Phaser.GameObjects.Rectangle;
+    bgImage!: Phaser.GameObjects.Sprite;
     mask: Phaser.GameObjects.Graphics;
 
     blueOffset: number = 825;
@@ -130,7 +132,16 @@ export default class InhibitorIndicator {
         this.redMidIndicator.tint = color.color;
         this.redBotIndicator.tint = color.color;
 
-        this.getVisibleComponents().forEach(c => {c.y += this.bg.height; c.mask = tempMask;});
+        this.getVisibleComponents().forEach(c => {
+            if (c === null || c === undefined)
+                return;
+            c.y += this.bg.height;
+            c.mask = tempMask;
+        });
+
+        this.scene.load.on(`filecomplete-image-inhibitorBg`, () => {
+            this.bgImage.setTexture('inhibitorBg');
+        });
  
     }
 
@@ -157,6 +168,47 @@ export default class InhibitorIndicator {
         }
     }
 
+    configureContent = (cfg: InhibitorDisplayConfig) => {
+        //Update Icon Colors
+        var color = Phaser.Display.Color.IntegerToColor(variables.blueColor);
+        if (this.scene.state?.blueColor !== undefined && this.scene.state.blueColor !== '') {
+            color = Phaser.Display.Color.RGBStringToColor(this.scene.state?.blueColor);
+        }
+
+        this.blueTopIndicator.tint = color.color;
+        this.blueMidIndicator.tint = color.color;
+        this.blueBotIndicator.tint = color.color;
+
+        color = Phaser.Display.Color.IntegerToColor(variables.redColor);
+        if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
+            color = Phaser.Display.Color.RGBStringToColor(this.scene.state.redColor);
+        }
+
+        this.redTopIndicator.tint = color.color;
+        this.redMidIndicator.tint = color.color;
+        this.redBotIndicator.tint = color.color;
+
+        //Update Mask
+        this.mask.clear();
+        this.mask.fillStyle(0xffffff);
+        this.mask.fillRect(cfg.Location.X, cfg.Location.Y, cfg.Size.X, cfg.Size.Y);
+        var tempMask = this.mask.createGeometryMask();
+
+        //Update Background
+        this.bg.setPosition(cfg.Location.X, cfg.Location.Y);
+        this.bg.setSize(cfg.Size.X, cfg.Size.Y);
+        if(cfg.UseImage) {
+            this.bg.setAlpha(0);
+            this.bgImage = this.scene.make.sprite({x: cfg.Location.X , y: cfg.Location.Y, key: 'inhibitorBg', add: true});
+            this.scene.load.image('inhibitorBg', 'frontend/backgrounds/Inhibitor.png');
+        } else {
+            if(this.bgImage !== undefined || this.bgImage !== null) {
+                this.bgImage.destroy();
+            }
+            this.bg.setFillStyle(Phaser.Display.Color.RGBStringToColor(cfg.Color).color, 1);
+        }
+    }
+
 
     toTimeString = (time: number): string => {
         if(time <= 0) {
@@ -172,7 +224,7 @@ export default class InhibitorIndicator {
     }
 
     getVisibleComponents = (): any[] => {
-        return [this.bg, this.blueTopIndicator, this.blueTopTime, this.blueMidIndicator, this.blueMidTime, this.blueBotIndicator, this.blueBotTime, this.redTopIndicator, this.redTopTime, this.redMidIndicator, this.redMidTime, this.redBotIndicator, this.redBotTime];
+        return [this.bg, this.bgImage, this.blueTopIndicator, this.blueTopTime, this.blueMidIndicator, this.blueMidTime, this.blueBotIndicator, this.blueBotTime, this.redTopIndicator, this.redTopTime, this.redMidIndicator, this.redMidTime, this.redBotIndicator, this.redBotTime];
     }
 
     show = () => {

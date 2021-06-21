@@ -1,8 +1,6 @@
-import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import { Chart } from 'phaser3-rex-plugins/templates/ui/ui-components.js';
 import variables from '~/variables';
-import GoldEntry from './goldEntry';
-import RemoveChild from 'phaser3-rex-plugins/plugins/gameobjects/containerlite/RemoveChild';
+import GoldEntry from '../data/goldEntry';
 import IngameScene from '~/scenes/IngameScene';
 
 
@@ -36,7 +34,6 @@ export default class GraphPopUp {
 
         this.mask = scene.make.graphics();
         this.mask.fillStyle(0xffffff);
-        //this.mask.fillRect(599,845, 735, 235);
         this.mask.fillRect(-200, 845, 735, 235);
         var tempMask = this.mask.createGeometryMask();
 

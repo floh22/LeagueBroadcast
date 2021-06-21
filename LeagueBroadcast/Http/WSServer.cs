@@ -23,8 +23,14 @@ namespace LeagueBroadcast.Http
         {
             this.clients = new();
 
+            BroadcastController.PostInitComplete += (s, e) =>
+            {
+                //Send startup complete? Clients dont seem to get config data when LB starts after frontend
+            };
+
             //Inform clients when overlay configs change
-            ConfigController.Ingame.ConfigUpdate += (s, e) => {
+            ConfigController.Ingame.ConfigUpdate += (s, e) =>
+            {
                 clients.ForEach(c => c.UpdateFrontEnd(IngameOverlay.Instance));
             };
         }
@@ -35,17 +41,18 @@ namespace LeagueBroadcast.Http
             //return SendToOthersAsync(context, Encoding.GetString(rxBuffer));
             string message = Encoding.GetString(rxBuffer);
             dynamic res = JsonConvert.DeserializeObject<dynamic>(message);
-            if(res.requestType.Equals("overlayConfig", StringComparison.OrdinalIgnoreCase))
+            string type = res.requestType;
+            if(type.Equals("OverlayConfig", StringComparison.OrdinalIgnoreCase))
             {
-                if(clients.Any(c => c.Equals(context)))
+                if(!clients.Any(c => c.Equals(context)))
                 {
-                    //Send current config
-                    //TODO Change this when multiple frontends support configs like this to only send needed configs
-                    SendEventAsync(context, IngameOverlay.Instance);
+                    clients.Add(new IngameWSClient(context, ((string)res.OverlayType).Split(",").ToList()));
                 }
-                clients.Add(new IngameWSClient(context, res.overlayType));
+
+                //Send current config
+                //TODO Change this when multiple frontends support configs like this to only send needed configs
+                SendEventAsync(context, IngameOverlay.Instance);
             }
-            Log.Info($"Message received: {Encoding.GetString(rxBuffer)}");
             return Task.CompletedTask;
         }
 
