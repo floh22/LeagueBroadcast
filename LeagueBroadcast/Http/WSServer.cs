@@ -44,14 +44,16 @@ namespace LeagueBroadcast.Http
             string type = res.requestType;
             if(type.Equals("OverlayConfig", StringComparison.OrdinalIgnoreCase))
             {
-                if(!clients.Any(c => c.Equals(context)))
+                List<string> types = ((string)res.OverlayType).Split(",").ToList();
+                if (!clients.Any(c => c.Equals(context)))
                 {
-                    clients.Add(new IngameWSClient(context, ((string)res.OverlayType).Split(",").ToList()));
+                    clients.Add(new IngameWSClient(context,types));
                 }
 
-                //Send current config
-                //TODO Change this when multiple frontends support configs like this to only send needed configs
-                SendEventAsync(context, IngameOverlay.Instance);
+                if (types.Contains("Ingame"))
+                {
+                    SendEventAsync(context, IngameOverlay.Instance);
+                }
             }
             return Task.CompletedTask;
         }

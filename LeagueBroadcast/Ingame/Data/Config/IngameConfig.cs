@@ -25,6 +25,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public ItemCompletedDisplayConfig ItemComplete;
         public LevelUpDisplayConfig LevelUp;
         public InfoPageDisplayConfig InfoPage;
+        public ObjectiveTimerDisplayConfig BaronTimer;
+        public ObjectiveTimerDisplayConfig ElderTimer;
 
         public override string GETCurrentVersion()
         {
@@ -46,6 +48,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
             ItemComplete = Cfg.ItemComplete;
             LevelUp = Cfg.LevelUp;
             ObjectiveKill = Cfg.ObjectiveKill;
+            BaronTimer = Cfg.BaronTimer;
+            ElderTimer = Cfg.ElderTimer;
             FileVersion = Cfg.FileVersion;
         }
 
@@ -64,6 +68,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.ItemComplete = def.ItemComplete;
             this.LevelUp = def.LevelUp;
             this.ObjectiveKill = def.ObjectiveKill;
+            this.BaronTimer = def.BaronTimer;
+            this.ElderTimer = def.ElderTimer;
             this.FileVersion = CurrentVersion;
 
         }
@@ -558,6 +564,14 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         ShowSpawn = false,
                         ShowTeam = false
                     }
+                },
+                BaronTimer = new ObjectiveTimerDisplayConfig()
+                {
+
+                },
+                ElderTimer = new ObjectiveTimerDisplayConfig()
+                {
+
                 }
             };
         }
@@ -580,6 +594,18 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 return false;
             }
             return true;
+        }
+
+        public class ObjectiveTimerDisplayConfig
+        {
+            public Vector2 Position;
+            public Vector2 Size;
+            public string Align;
+            public FontConfig Font;
+            public bool ShowGoldDiff;
+            public bool ShowTimer;
+            public bool ObjectiveIcon;
+            public bool Animate;
         }
 
         public class InhibitorDisplayConfig
