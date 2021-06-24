@@ -84,17 +84,22 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info("Saving all configs to file");
             var controller = JSONConfigProvider.Instance;
 
-            PickBanWatcher.Stop();
-            ComponentWatcher.Stop();
-            FarsightWatcher.Stop();
-            IngameWatcher.Stop();
+            try
+            {
+                PickBanWatcher.Stop();
+                ComponentWatcher.Stop();
+                FarsightWatcher.Stop();
+                IngameWatcher.Stop();
+                controller.WriteConfig(PickBan);
+                controller.WriteConfig(Component);
+                controller.WriteConfig(Farsight);
+                controller.WriteConfig(Ingame);
 
-            controller.WriteConfig(PickBan);
-            controller.WriteConfig(Component);
-            controller.WriteConfig(Farsight);
-            controller.WriteConfig(Ingame);
-
-            Log.Info("Configs saved");
+                Log.Info("Configs saved");
+            } catch
+            {
+                Log.Warn("Could not save all configs");
+            }
         }
     }
 

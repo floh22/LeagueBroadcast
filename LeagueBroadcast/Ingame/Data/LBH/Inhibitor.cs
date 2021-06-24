@@ -27,7 +27,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
     {
         public List<Inhibitor> Inhibitors;
 
-        public Vector2 Location => ConfigController.Ingame.Inhib.Location;
+        public Vector2 Location => ConfigController.Ingame.Inhib.Position;
 
         public InhibitorInfo()
         {

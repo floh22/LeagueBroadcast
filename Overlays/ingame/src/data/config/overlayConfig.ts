@@ -21,10 +21,34 @@ export interface OverlayConfig {
     ItemComplete: ItemCompletedDisplayConfig;
     LevelUp: LevelUpDisplayConfig;
     InfoPage: InhibitorDisplayConfig;
+    BaronTimer: ObjectiveTimerDisplayConfig;
+    ElderTimer: ObjectiveTimerDisplayConfig;
+}
+
+export interface ObjectiveTimerDisplayConfig {
+    Position: Vector2;
+    MaskPosition: Vector2;
+    MaskSize: Vector2;
+    Scale: number;
+    Align: string;
+    ShowGoldDiff: boolean;
+    ShowTimer: boolean;
+    ObjectiveIcon: boolean;
+    Animate: boolean;
+
+    IconPosition: Vector2;
+
+    GoldPosition: Vector2;
+    GoldIconPosition: Vector2;
+    GoldFont: FontConfig;
+
+    TimePosition: Vector2;
+    TimeIconPosition: Vector2;
+    TimeFont: FontConfig;
 }
 
 export interface InhibitorDisplayConfig {
-    Location: Vector2;
+    Position: Vector2;
     Size: Vector2;
     UseBackgroundImage: boolean;
     UseBackgroundVideo: boolean;

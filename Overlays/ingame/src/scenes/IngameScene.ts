@@ -16,6 +16,7 @@ import { Dictionary } from '~/util/Dictionary';
 import LevelUpVisual from '~/visual/LevelUpVisual';
 import RegionMask from '~/data/RegionMask';
 import InhibitorVisual from '~/visual/InhibitorVisual';
+import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
 
 export default class IngameScene extends Phaser.Scene {
     ws!: WebSocket;
@@ -25,6 +26,10 @@ export default class IngameScene extends Phaser.Scene {
     goldGraph!: GraphPopUp;
     scoreboard!: Scoreboard;
     sidePage!: InfoSidePageIndicator;
+
+
+    baronTimer!: ObjectiveTimerVisual;
+    elderTimer!: ObjectiveTimerVisual;
     inhib!: InhibitorVisual;
 
     state!: StateData | null;
@@ -68,7 +73,7 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
         this.load.image('objectiveBg', 'frontend/backgrounds/ObjectiveBG.png');
         this.load.image('objectiveMask', 'frontend/backgrounds/ObjectiveMask.png');
-        this.load.image('dragonIcon', 'frontend/backgrounds/DragonIcon.png');
+        this.load.image('elderIcon', 'frontend/backgrounds/DragonIcon.png');
         this.load.image('objectiveBgLeft', 'frontend/backgrounds/ObjectiveBGLeft.png');
 
         //Scoreboard
@@ -152,8 +157,6 @@ export default class IngameScene extends Phaser.Scene {
 
         this.overlayCfg = null;
 
-        this.baronIndicator = new ObjectiveIndicator('baron', 1800, 55, this, 'baronIcon', 'objectiveBg', '00:00', 0, true);
-        this.elderIndicator = new ObjectiveIndicator('elder', 120, 55, this, 'dragonIcon', 'objectiveBgLeft', '00:00', 0, false);
         //Color calc breaks with no data so init with dummy data
         this.goldGraph = new GraphPopUp(this, [new GoldEntry(0, 100), new GoldEntry(1, -100)]);
 
@@ -179,7 +182,9 @@ export default class IngameScene extends Phaser.Scene {
                 //this.scoreboard.hideContent();
                 //this.sidePage.hideContent();
                 //this.goldGraph.Disable();
-                this.inhib.Stop();
+                this.inhib?.Stop();
+                this.baronTimer?.Stop();
+                this.elderTimer?.Stop();
                 console.log('[LB] Attempt reconnect in 500ms');
             };
             this.ws.onerror = () => {
@@ -293,6 +298,10 @@ export default class IngameScene extends Phaser.Scene {
             //console.log(newState);
             this.scoreboard.updateContent(newState);
 
+            //Migrated
+            this.inhib.UpdateValues(newState.inhibitors);
+
+
             this.state = newState;
 
             this.baronIndicator.updateContent(newState.baron);
@@ -301,8 +310,6 @@ export default class IngameScene extends Phaser.Scene {
             this.goldGraph.Update(newState.goldGraph);
             this.sidePage.updateContent(newState.infoPage);
 
-            //Migrated
-            this.inhib.UpdateValues(newState.inhibitors);
         }
 
         connect();
@@ -327,25 +334,49 @@ export default class IngameScene extends Phaser.Scene {
     }
 
     UpdateConfig = (message: OverlayConfigEvent): void => {
-        console.log('Configuring overlay');
+        console.log('Configuring Visual Elements');
+        console.log(message.config);
 
         if (this.overlayCfg === null) {
             //Init Message, create Visual Elements
             this.overlayCfg = message.config;
             this.inhib = new InhibitorVisual(this);
+            this.baronTimer = new ObjectiveTimerVisual(this, 'baron', message.config.BaronTimer);
+            this.elderTimer = new ObjectiveTimerVisual(this, 'elder', message.config.ElderTimer);
         } else {
             //Update Message, update elements if needed
-            if (this.overlayCfg?.Inhib !== message.config.Inhib) {
-                this.inhib.UpdateConfig(message.config.Inhib);
-            }
+            this.inhib.UpdateConfig(message.config.Inhib);
+            this.baronTimer.UpdateConfig(message.config.BaronTimer);
+            this.elderTimer.UpdateConfig(message.config.ElderTimer);
         }
 
         this.overlayCfg = message.config;
-        console.log(message.config);
+        //console.log(message.config);
 
         //Debug
         this.inhib.Start();
 
+    }
+
+
+    CheckSoulPoint(state: StateData): void {
+        if(state.blueDragons.length === 3 && this.state?.blueDragons.length === 2) {
+            //Blue Soul Point
+        }
+
+        if(state.redDragons.length === 3 && this.state?.redDragons.length === 2) {
+            //Red Soul Point
+        }
+    }
+
+    CheckDragonTaken(state: StateData): void {
+        if(state.blueDragons.length - 1 === this.state?.blueDragons.length) {
+            //Blue Dragon Taken
+        }
+
+        if(state.redDragons.length - 1 === this.state?.redDragons.length) {
+            //Red Dragon Taken
+        }
     }
 
 }

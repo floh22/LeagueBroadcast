@@ -147,6 +147,7 @@ export abstract class VisualElement {
 
     UpdateTextStyle(textElement: Phaser.GameObjects.Text, style: {fontFamily: string, fontSize: string, align: string, color: string, fontStyle: string}): void {
 
+        return;
         textElement.setFontFamily(style.fontFamily);
         textElement.setFontSize(+style.fontSize.replace('/[-]{0,1}[\d]*[.]{0,1}[\d]+/g', ''));
         textElement.setFontStyle(style.fontStyle);

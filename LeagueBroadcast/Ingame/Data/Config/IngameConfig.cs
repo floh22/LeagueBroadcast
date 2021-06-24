@@ -80,7 +80,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             {
                 FileVersion = CurrentVersion,
                 Inhib = new InhibitorDisplayConfig() {
-                    Location = new Vector2(0, 845),
+                    Position = new Vector2(0, 845),
                     Size = new Vector2(306, 118),
                     Font = new FontConfig()
                     {
@@ -112,7 +112,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         LaneOffset = new Vector2(100, 0),
                         Position = new Vector2(40, 80)
                     },
-                    LaneOrder = new List<string>() { "bot", "mid", "top"}
+                    LaneOrder = new List<string>() { "bot", "mid", "top" }
                 },
                 Score = new ScoreDisplayConfig()
                 {
@@ -357,7 +357,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     ItemAnimationStates = new List<VisualElementAnimationConfig>() {
                         new VisualElementAnimationConfig() {
                             Alpha = 0,
-                            Position = new Vector2(0,0),
+                            Position = new Vector2(0, 0),
                             Mirror = false,
                             Duration = 0,
                             Scale = 0,
@@ -366,7 +366,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,0),
+                            Position = new Vector2(0, 0),
                             Mirror = false,
                             Duration = 400,
                             Scale = 1,
@@ -375,7 +375,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,0),
+                            Position = new Vector2(0, 0),
                             Mirror = false,
                             Duration = 3200,
                             Scale = 1.1f,
@@ -384,7 +384,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 0,
-                            Position = new Vector2(0,0),
+                            Position = new Vector2(0, 0),
                             Mirror = false,
                             Duration = 400,
                             Scale = 2.5f,
@@ -405,7 +405,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     {
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,80),
+                            Position = new Vector2(0, 80),
                             Mirror = false,
                             Duration = 0,
                             Scale = 1f,
@@ -414,7 +414,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,0),
+                            Position = new Vector2(0, 0),
                             Mirror = false,
                             Duration = 200,
                             Scale = 1f,
@@ -423,7 +423,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,-80),
+                            Position = new Vector2(0, -80),
                             Mirror = false,
                             Duration = 200,
                             Scale = 1f,
@@ -435,7 +435,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     {
                         new VisualElementAnimationConfig() {
                             Alpha = 0,
-                            Position = new Vector2(55,0),
+                            Position = new Vector2(55, 0),
                             Mirror = true,
                             Duration = 0,
                             Scale = 1f,
@@ -444,7 +444,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(55,0),
+                            Position = new Vector2(55, 0),
                             Mirror = true,
                             Duration = 200,
                             Scale = 1f,
@@ -453,7 +453,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         },
                         new VisualElementAnimationConfig() {
                             Alpha = 0,
-                            Position = new Vector2(55,0),
+                            Position = new Vector2(55, 0),
                             Mirror = true,
                             Duration = 200,
                             Scale = 1f,
@@ -481,23 +481,23 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     NumberAnimationStates = new List<VisualElementAnimationConfig>() {
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,70),
+                            Position = new Vector2(0, 70),
                             Mirror = true,
                             Duration = 0,
                             Scale = 1f,
                             Ease = "",
                             Delay = 0
-                        },new VisualElementAnimationConfig() {
+                        }, new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,-30),
+                            Position = new Vector2(0, -30),
                             Mirror = true,
                             Duration = 300,
                             Scale = 1f,
                             Ease = "Quad.easeOut",
                             Delay = 250
-                        },new VisualElementAnimationConfig() {
+                        }, new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,-130),
+                            Position = new Vector2(0, -130),
                             Mirror = true,
                             Duration = 400,
                             Scale = 1f,
@@ -508,23 +508,23 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     BackgroundAnimationStates = new List<VisualElementAnimationConfig>() {
                         new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,100),
+                            Position = new Vector2(0, 100),
                             Mirror = false,
                             Duration = 0,
                             Scale = 1f,
                             Ease = "",
                             Delay = 0
-                        },new VisualElementAnimationConfig() {
+                        }, new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(0,0),
+                            Position = new Vector2(0, 0),
                             Mirror = false,
                             Duration = 300,
                             Scale = 1f,
                             Ease = "Quad.easeOut",
                             Delay = 250
-                        },new VisualElementAnimationConfig() {
+                        }, new VisualElementAnimationConfig() {
                             Alpha = 1,
-                            Position = new Vector2(-90,0),
+                            Position = new Vector2(-90, 0),
                             Mirror = true,
                             Duration = 400,
                             Scale = 1f,
@@ -567,11 +567,73 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 },
                 BaronTimer = new ObjectiveTimerDisplayConfig()
                 {
-
+                    Position = new Vector2(1800, 55),
+                    MaskPosition = new Vector2(1800, 55),
+                    MaskSize = new Vector2(100, 100),
+                    Scale = 0.8f,
+                    Animate = true,
+                    ObjectiveIcon = true,
+                    ShowGoldDiff = true,
+                    ShowTimer = true,
+                    Align = "right",
+                    GoldFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        IsGoogleFont = true,
+                        Size = "22px",
+                        Style = "Bold",
+                        Color = "rgb(230,190,138)",
+                        Align = "right"
+                    },
+                    GoldPosition = new Vector2(25, -25),
+                    GoldIconPosition = new Vector2(-7, -25),
+                    TimeFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        IsGoogleFont = true,
+                        Size = "22px",
+                        Style = "Bold",
+                        Color = "rgb(230,190,138)",
+                        Align = "right"
+                    },
+                    TimePosition = new Vector2(25,0),
+                    TimeIconPosition = new Vector2(-10,0),
+                    IconPosition = new Vector2(0,0)
                 },
                 ElderTimer = new ObjectiveTimerDisplayConfig()
                 {
-
+                    Position = new Vector2(120, 55),
+                    MaskPosition = new Vector2(120,55),
+                    MaskSize = new Vector2(100, 100),
+                    Scale = 0.8f,
+                    Animate = true,
+                    ObjectiveIcon = true,
+                    ShowGoldDiff = true,
+                    ShowTimer = true,
+                    Align = "left",
+                    GoldFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        IsGoogleFont = true,
+                        Size = "22px",
+                        Style = "Bold",
+                        Color = "rgb(230,190,138)",
+                        Align = "left"
+                    },
+                    GoldPosition = new Vector2(18,-25),
+                    GoldIconPosition = new Vector2(22, -25),
+                    TimeFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        IsGoogleFont = true,
+                        Size = "22px",
+                        Style = "Bold",
+                        Color = "rgb(230,190,138)",
+                        Align = "left"
+                    },
+                    TimePosition = new Vector2(18, 0),
+                    TimeIconPosition = new Vector2(20, -2),
+                    IconPosition = new Vector2(40, 0)
                 }
             };
         }
@@ -599,18 +661,29 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public class ObjectiveTimerDisplayConfig
         {
             public Vector2 Position;
-            public Vector2 Size;
+            public Vector2 MaskPosition;
+            public Vector2 MaskSize;
+            public float Scale;
             public string Align;
-            public FontConfig Font;
             public bool ShowGoldDiff;
             public bool ShowTimer;
             public bool ObjectiveIcon;
             public bool Animate;
+
+            public Vector2 IconPosition;
+
+            public Vector2 GoldPosition;
+            public Vector2 GoldIconPosition;
+            public FontConfig GoldFont;
+
+            public Vector2 TimePosition;
+            public Vector2 TimeIconPosition;
+            public FontConfig TimeFont;
         }
 
         public class InhibitorDisplayConfig
         {
-            public Vector2 Location;
+            public Vector2 Position;
             public Vector2 Size;
             public bool UseBackgroundImage;
             public bool UseBackgroundVideo;

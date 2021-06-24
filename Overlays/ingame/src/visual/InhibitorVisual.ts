@@ -31,11 +31,11 @@ export default class InhibitorVisual extends VisualElement {
     FontConfig: any;
 
     constructor(scene: IngameScene) {
-        super(scene, scene.overlayCfg!.Inhib.Location, 'inhibitorIndicator');
+        super(scene, scene.overlayCfg!.Inhib.Position, 'inhibitorIndicator');
 
         this.maskG = scene.make.graphics({});
         this.maskG.fillStyle(0xffffff);
-        this.maskG.fillRect(this.Config!.Location.X, this.Config!.Location.Y, this.Config!.Size.X, this.Config!.Size.Y);
+        this.maskG.fillRect(this.Config!.Position.X, this.Config!.Position.Y, this.Config!.Size.X, this.Config!.Size.Y);
         this.mask = this.maskG.createGeometryMask();
 
         var color = Phaser.Display.Color.IntegerToColor(variables.fallbackBlue);
@@ -133,7 +133,7 @@ export default class InhibitorVisual extends VisualElement {
 
         //Background Image support
         this.scene.load.on(`filecomplete-image-inhibitorBg`, () => {
-            this.bgImage = this.scene.make.sprite({ x: this.Config!.Location.X, y: this.Config!.Location.Y, key: 'inhibitorBg', add: true });
+            this.bgImage = this.scene.make.sprite({ x: this.Config!.Position.X, y: this.Config!.Position.Y, key: 'inhibitorBg', add: true });
             this.bgImage.setOrigin(0,0);
             this.bgImage.setMask(this.mask);
             this.AddVisualComponent(this.bgImage);
@@ -149,7 +149,7 @@ export default class InhibitorVisual extends VisualElement {
                 this.bgVideo.destroy();
             }
             // @ts-ignore
-            this.bgVideo = this.scene.add.video(this.Config!.Location.X, this.Config!.Location.Y, 'inhibitorBgVideo', false, true);
+            this.bgVideo = this.scene.add.video(this.Config!.Position.X, this.Config!.Position.Y, 'inhibitorBgVideo', false, true);
             this.bgVideo.setOrigin(0,0);
             this.bgVideo.setMask(this.mask);
             this.bgVideo.setLoop(true);
@@ -165,7 +165,7 @@ export default class InhibitorVisual extends VisualElement {
         } else if (this.Config?.UseBackgroundImage) {
             this.scene.load.image('inhibitorBg', 'frontend/backgrounds/Inhibitor.png');
         } else {
-            this.bg = this.scene.add.rectangle(this.Config!.Location.X, this.Config!.Location.Y, this.Config!.Size.X, this.Config!.Size.Y, Phaser.Display.Color.RGBStringToColor(this.Config!.Color).color32);
+            this.bg = this.scene.add.rectangle(this.Config!.Position.X, this.Config!.Position.Y, this.Config!.Size.X, this.Config!.Size.Y, Phaser.Display.Color.RGBStringToColor(this.Config!.Color).color32);
             this.bg.setOrigin(0, 0);
             this.bg.depth = -1;
             this.AddVisualComponent(this.bg);
@@ -222,11 +222,11 @@ export default class InhibitorVisual extends VisualElement {
         const BotIndex = newConfig.LaneOrder.findIndex(l => l === "Bot" || l === "bot");
 
         //Update position
-        this.position = newConfig.Location;
+        this.position = newConfig.Position;
         
         this.maskG.clear();
         this.maskG.fillStyle(0xffffff);
-        this.maskG.fillRect(newConfig.Location.X, newConfig.Location.Y, newConfig.Size.X, newConfig.Size.Y);
+        this.maskG.fillRect(newConfig.Position.X, newConfig.Position.Y, newConfig.Size.X, newConfig.Size.Y);
 
         //Update Text Style
         this.FontConfig = {
@@ -360,7 +360,7 @@ export default class InhibitorVisual extends VisualElement {
                 this.bgVideo.destroy();
             }
             if (this.bg === null || this.bg === undefined) {
-                this.bg = this.scene.add.rectangle(newConfig.Location.X, newConfig.Location.Y, newConfig.Size.X, newConfig.Size.Y, Phaser.Display.Color.RGBStringToColor(newConfig.Color).color, 1);
+                this.bg = this.scene.add.rectangle(newConfig.Position.X, newConfig.Position.Y, newConfig.Size.X, newConfig.Size.Y, Phaser.Display.Color.RGBStringToColor(newConfig.Color).color, 1);
                 this.bg.setMask(this.mask);
                 this.AddVisualComponent(this.bg);
                 if (!this.isActive) {
@@ -368,7 +368,7 @@ export default class InhibitorVisual extends VisualElement {
                 }
             }
             this.bg.setOrigin(0,0);
-            this.bg.setPosition(newConfig.Location.X, newConfig.Location.Y);
+            this.bg.setPosition(newConfig.Position.X, newConfig.Position.Y);
             this.bg.setSize(newConfig.Size.X, newConfig.Size.Y);
             this.bg.setFillStyle(Phaser.Display.Color.RGBStringToColor(newConfig.Color).color, 1);
         }
