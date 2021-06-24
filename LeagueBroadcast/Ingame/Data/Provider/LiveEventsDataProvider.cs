@@ -164,7 +164,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 AddCS(p, 4);
                 if (e.Other.StartsWith("SRU_Dragon"))
                 {
-                    string type = e.Other.Remove(e.Other.Length - 5, 5).Remove(0, 11);
+
+                    string type = e.Other.Remove(0, 11);
 
 
                     IngameController.DragonTaken.Invoke(this, new ObjectiveTakenArgs(type, GetTeam(e), Ingame.gameData.gameTime));
