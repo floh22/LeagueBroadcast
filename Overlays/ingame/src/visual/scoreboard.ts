@@ -249,6 +249,7 @@ export default class Scoreboard {
             }
         });
 
+        //Debug
         this.showContent();
     }
 
@@ -391,7 +392,7 @@ export default class Scoreboard {
             this.scene.graphics.setDepth(1);
 
             //Draw red score icons
-            let color = Phaser.Display.Color.IntegerToColor(variables.redColor);
+            let color = Phaser.Display.Color.IntegerToColor(variables.fallbackRed);
             if (state.redColor !== undefined && state.redColor !== '') {
                 color = Phaser.Display.Color.RGBStringToColor(state.redColor);
             }
@@ -411,7 +412,7 @@ export default class Scoreboard {
             });
 
             //Draw blue score icons
-            color = Phaser.Display.Color.IntegerToColor(variables.blueColor);
+            color = Phaser.Display.Color.IntegerToColor(variables.fallbackBlue);
             if (state.blueColor !== undefined && state.blueColor !== '') {
                 color = Phaser.Display.Color.RGBStringToColor(state.blueColor);
             }
@@ -595,5 +596,5 @@ var GetRGBAString = function (color, alpha) {
     return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
 }
 
-const blueRGB = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.blueColor), 1);
-const redRGB = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.redColor), 1);
+const blueRGB = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.fallbackBlue), 1);
+const redRGB = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.fallbackRed), 1);

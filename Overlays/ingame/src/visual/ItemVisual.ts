@@ -85,6 +85,8 @@ export default class ItemVisual extends VisualElement {
         }
 
         if (this.Config?.ShowItemName) {
+            this.isActive = true;
+            this.isShowing = true;
             const textStart = this.Config?.InfoTextAnimationStates[0];
             const textBgStart = this.Config?.InfoBackgroundAnimationStates[0];
             const align = this.playerID > 4 ? 'right' : 'left';
@@ -124,6 +126,9 @@ export default class ItemVisual extends VisualElement {
                 anim.stop();
             }
         });
+
+        this.isActive = false;
+        this.isShowing = false;
 
         //Destroy this
         this.currentAnimation = [];

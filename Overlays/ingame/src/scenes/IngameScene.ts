@@ -7,7 +7,6 @@ import Phaser from 'phaser';
 import GoldEntry from '~/data/goldEntry';
 import Scoreboard from '~/visual/scoreboard';
 import InfoSidePageIndicator from '~/visual/infoSidePageIndicator';
-import InhibitorIndicator from '~/visual/inhibitorIndicator';
 import WindowUtils from '~/convert/windowUtils';
 import OverlayConfigEvent, { OverlayConfig } from '~/data/config/overlayConfig';
 import ScoreboardConfig from '~/data/scoreboardConfig';
@@ -16,9 +15,9 @@ import { VisualElement } from '~/visual/VisualElement';
 import { Dictionary } from '~/util/Dictionary';
 import LevelUpVisual from '~/visual/LevelUpVisual';
 import RegionMask from '~/data/RegionMask';
+import InhibitorVisual from '~/visual/InhibitorVisual';
 
-export default class IngameScene extends Phaser.Scene
-{
+export default class IngameScene extends Phaser.Scene {
     ws!: WebSocket;
     players: RegionMask[];
     baronIndicator!: ObjectiveIndicator;
@@ -26,7 +25,7 @@ export default class IngameScene extends Phaser.Scene
     goldGraph!: GraphPopUp;
     scoreboard!: Scoreboard;
     sidePage!: InfoSidePageIndicator;
-    inhib!: InhibitorIndicator;
+    inhib!: InhibitorVisual;
 
     state!: StateData | null;
     overlayCfg!: OverlayConfig | null;
@@ -37,17 +36,15 @@ export default class IngameScene extends Phaser.Scene
     visualIDs: number = 0;
 
     static Instance: IngameScene;
-    
 
-    constructor ()
-    {
+
+    constructor() {
         super('ingameOverlay');
         IngameScene.Instance = this;
         this.players = [];
     }
 
-    preload ()
-    {
+    preload() {
         var config = {
             google: {
                 families: ['Droid Sans', 'News Cycle', 'News Cycle:bold']
@@ -103,75 +100,72 @@ export default class IngameScene extends Phaser.Scene
         this.load.image('itemTextMask', 'frontend/masks/ItemText.png');
     }
 
-    create ()
-    {
+    create() {
         var div = document.getElementById('gameContainer');
 
-        const blue_1 = this.make.sprite({x: 39 , y: 152 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
-        const playerNotificationMaskSprite = this.make.sprite({x: 78, y: 152 + 37, key: 'itemTextMask', add: false});
-        playerNotificationMaskSprite.setOrigin(0,0.5);
+        const blue_1 = this.make.sprite({ x: 39, y: 152 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
+        const playerNotificationMaskSprite = this.make.sprite({ x: 78, y: 152 + 37, key: 'itemTextMask', add: false });
+        playerNotificationMaskSprite.setOrigin(0, 0.5);
         var playerNotificationWidth = playerNotificationMaskSprite.width / 2;
         const blue_1_notif = playerNotificationMaskSprite.createBitmapMask();
 
-        const blue_2 = this.make.sprite({x: 39 , y: 255 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
-        const blue_2_notif = this.make.sprite({x: 78 + playerNotificationWidth, y: 255 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const blue_2 = this.make.sprite({ x: 39, y: 255 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
+        const blue_2_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 255 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const blue_3 = this.make.sprite({x: 39 , y: 358 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
-        const blue_3_notif = this.make.sprite({x: 78 + playerNotificationWidth, y: 358 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const blue_3 = this.make.sprite({ x: 39, y: 358 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
+        const blue_3_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 358 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const blue_4 = this.make.sprite({x: 39 , y: 461 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
-        const blue_4_notif = this.make.sprite({x: 78 + playerNotificationWidth, y: 461 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const blue_4 = this.make.sprite({ x: 39, y: 461 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
+        const blue_4_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 461 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const blue_5 = this.make.sprite({x: 39 , y: 564 + 37, key: 'champCoverLeft', add: false}).createBitmapMask();
-        const blue_5_notif = this.make.sprite({x: 78 + playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const blue_5 = this.make.sprite({ x: 39, y: 564 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
+        const blue_5_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
 
-        const red_1 = this.make.sprite({x: 1920 - 39, y: 152 + 37, key:'champCoverRight', add: false}).createBitmapMask();
-        const red_1_notif = this.make.sprite({x: 1920 - 78 - playerNotificationWidth, y: 152 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const red_1 = this.make.sprite({ x: 1920 - 39, y: 152 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
+        const red_1_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 152 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const red_2 = this.make.sprite({x: 1920 - 39, y: 255 + 37, key:'champCoverRight', add: false}).createBitmapMask();
-        const red_2_notif = this.make.sprite({x: 1920 - 78 - playerNotificationWidth, y: 255 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const red_2 = this.make.sprite({ x: 1920 - 39, y: 255 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
+        const red_2_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 255 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const red_3 = this.make.sprite({x: 1920 - 39, y: 358 + 37, key:'champCoverRight', add: false}).createBitmapMask();
-        const red_3_notif = this.make.sprite({x: 1920 - 78 - playerNotificationWidth, y: 358 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const red_3 = this.make.sprite({ x: 1920 - 39, y: 358 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
+        const red_3_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 358 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const red_4 = this.make.sprite({x: 1920 - 39, y: 461 + 37, key:'champCoverRight', add: false}).createBitmapMask();
-        const red_4_notif = this.make.sprite({x: 1920 - 78 - playerNotificationWidth, y: 461 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const red_4 = this.make.sprite({ x: 1920 - 39, y: 461 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
+        const red_4_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 461 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
-        const red_5 = this.make.sprite({x: 1920 - 39, y: 564 + 37, key:'champCoverRight', add: false}).createBitmapMask();
-        const red_5_notif = this.make.sprite({x: 1920 - 78 - playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false}).createBitmapMask();
+        const red_5 = this.make.sprite({ x: 1920 - 39, y: 564 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
+        const red_5_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
 
         this.players = [
-            new RegionMask(0, [blue_1, blue_1_notif]), 
-            new RegionMask(1, [blue_2, blue_2_notif]), 
-            new RegionMask(2, [blue_3, blue_3_notif]), 
-            new RegionMask(3, [blue_4, blue_4_notif]), 
-            new RegionMask(4, [blue_5, blue_5_notif]), 
-            new RegionMask(5, [red_1, red_1_notif]), 
-            new RegionMask(6, [red_2, red_2_notif]), 
-            new RegionMask(7, [red_3, red_3_notif]), 
-            new RegionMask(8, [red_4, red_4_notif]), 
+            new RegionMask(0, [blue_1, blue_1_notif]),
+            new RegionMask(1, [blue_2, blue_2_notif]),
+            new RegionMask(2, [blue_3, blue_3_notif]),
+            new RegionMask(3, [blue_4, blue_4_notif]),
+            new RegionMask(4, [blue_5, blue_5_notif]),
+            new RegionMask(5, [red_1, red_1_notif]),
+            new RegionMask(6, [red_2, red_2_notif]),
+            new RegionMask(7, [red_3, red_3_notif]),
+            new RegionMask(8, [red_4, red_4_notif]),
             new RegionMask(9, [red_5, red_5_notif])];
 
-        this.baronIndicator = new ObjectiveIndicator('baron', 1800, 55, this, 'baronIcon', 'objectiveBg', '00:00', 0, true );
+        this.overlayCfg = null;
+
+        this.baronIndicator = new ObjectiveIndicator('baron', 1800, 55, this, 'baronIcon', 'objectiveBg', '00:00', 0, true);
         this.elderIndicator = new ObjectiveIndicator('elder', 120, 55, this, 'dragonIcon', 'objectiveBgLeft', '00:00', 0, false);
         //Color calc breaks with no data so init with dummy data
-        this.goldGraph = new GraphPopUp(this, [new GoldEntry(0,100), new GoldEntry(1,-100)]);
-
-        //this.goldGraph.Enable();
+        this.goldGraph = new GraphPopUp(this, [new GoldEntry(0, 100), new GoldEntry(1, -100)]);
 
         this.scoreboard = new Scoreboard(this);
         this.sidePage = new InfoSidePageIndicator(this);
 
+        //this.goldGraph.Enable();
         //this.sidePage.showContent();
 
-        this.inhib = new InhibitorIndicator(this);
-
-        //this.inhib.show();
 
         const connect = () => {
-            this.ws = new WebSocket(`${variables.useSSL? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
+            this.ws = new WebSocket(`${variables.useSSL ? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
             this.ws.onopen = () => {
                 console.log('[LB] Connection established!');
                 setTimeout(() => {
@@ -179,18 +173,19 @@ export default class IngameScene extends Phaser.Scene
                     this.ws.send('\{"requestType": "OverlayConfig","OverlayType": "Ingame"\}')
                 }, 1000);
             };
-    
+
             this.ws.onclose = () => {
                 setTimeout(connect, 500);
                 //this.scoreboard.hideContent();
                 //this.sidePage.hideContent();
                 //this.goldGraph.Disable();
+                this.inhib.Stop();
                 console.log('[LB] Attempt reconnect in 500ms');
             };
             this.ws.onerror = () => {
                 console.log('[LB] Connection error!');
             };
-    
+
             this.ws.onmessage = msg => {
                 const data = JSON.parse(msg.data);
                 if (data.eventType) {
@@ -204,7 +199,7 @@ export default class IngameScene extends Phaser.Scene
                             this.UpdateConfig(data);
                             break;
                         case 'PlayerLevelUp':
-                            if(this.sidePage.isActive && data.playerId < 5)
+                            if (this.sidePage.isActive && data.playerId < 5)
                                 break;
                             new LevelUpVisual(this, data.playerId, data.level);
                             break;
@@ -213,11 +208,11 @@ export default class IngameScene extends Phaser.Scene
                             showObjective(data.objective);
                             break;
                         case 'BuffDespawn':
-                            console.log('Legacy objective despawn: ' + JSON.stringify(data)); 
+                            console.log('Legacy objective despawn: ' + JSON.stringify(data));
                             hideObjective(data.objective);
                             break;
                         case 'ItemCompleted':
-                            if(this.sidePage.isActive && data.playerId < 5)
+                            if (this.sidePage.isActive && data.playerId < 5)
                                 break;
                             new ItemVisual(this, data.itemData, data.playerId);
                             break;
@@ -228,7 +223,7 @@ export default class IngameScene extends Phaser.Scene
                             this.elderIndicator.hideContent();
                             this.sidePage.hideContent();
                             this.goldGraph.Disable();
-                            this.inhib.hide();
+                            this.inhib.Stop();
                             break;
                         case 'GameStart':
                             console.log('Game Start');
@@ -284,9 +279,15 @@ export default class IngameScene extends Phaser.Scene
         }
 
         const OnNewState = (data: any): void => {
+
+            //Dont show anything if overlay has not been configured yet
+            if (this.overlayCfg === null)
+                return;
+
+
             var newState = new StateData(data);
 
-            if(this.state === undefined)
+            if (this.state === undefined)
                 this.state = newState;
 
             //console.log(newState);
@@ -299,24 +300,26 @@ export default class IngameScene extends Phaser.Scene
 
             this.goldGraph.Update(newState.goldGraph);
             this.sidePage.updateContent(newState.infoPage);
-            this.inhib.updateContent(newState.inhibitors);
+
+            //Migrated
+            this.inhib.UpdateValues(newState.inhibitors);
         }
 
         connect();
     }
 
     GetBlueColor = (state: StateData = this.state!): string => {
-        let color = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.blueColor), 1);
-        if(state !== undefined && state.blueColor !== undefined && state.blueColor !== '') {
+        let color = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.fallbackBlue), 1);
+        if (state !== undefined && state.blueColor !== undefined && state.blueColor !== '') {
             color = state.blueColor;
         }
 
         return color;
     }
-    
+
     GetRedColor = (state: StateData = this.state!): string => {
-        let color = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.redColor), 1);
-        if(state !== undefined && state.redColor !== undefined && state.redColor !== '') {
+        let color = GetRGBAString(Phaser.Display.Color.IntegerToColor(variables.fallbackRed), 1);
+        if (state !== undefined && state.redColor !== undefined && state.redColor !== '') {
             color = state.redColor;
         }
 
@@ -325,10 +328,26 @@ export default class IngameScene extends Phaser.Scene
 
     UpdateConfig = (message: OverlayConfigEvent): void => {
         console.log('Configuring overlay');
+
+        if (this.overlayCfg === null) {
+            //Init Message, create Visual Elements
+            this.overlayCfg = message.config;
+            this.inhib = new InhibitorVisual(this);
+        } else {
+            //Update Message, update elements if needed
+            if (this.overlayCfg?.Inhib !== message.config.Inhib) {
+                this.inhib.UpdateConfig(message.config.Inhib);
+            }
+        }
+
         this.overlayCfg = message.config;
         console.log(message.config);
+
+        //Debug
+        this.inhib.Start();
+
     }
-    
+
 }
 
 var GetRGBAString = function (color, alpha) {

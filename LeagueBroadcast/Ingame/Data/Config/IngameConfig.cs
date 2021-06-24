@@ -79,31 +79,34 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     Font = new FontConfig()
                     {
                         Align = "right",
-                        Color = "rgb(100,100,100)",
+                        Color = "rgb(255,255,255)",
                         IsGoogleFont = true,
                         Name = "News Cycle",
                         Size = "15px",
                         Style = "Normal"
                     },
                     IconSize = 40f,
-                    UseImage = false,
-                    Color = "rgb(19,24,63)",
-                    AlwaysShowWhenEnabled = false,
+                    UseBackgroundImage = false,
+                    UseBackgroundVideo = false,
+                    Color = "rgba(19,24,63,255)",
+                    HideWhenNoneDestroyed = true,
+                    UseTeamColors = true,
                     BlueTeam = new InhibitorDisplayConfig.InhibTeamConfig() {
                         UseTeamColor = true,
                         Color = "rgb(0,0,0)",
-                        IconOffset = new Vector2(5, 0),
+                        IconOffset = new Vector2(10, -24),
                         LaneOffset = new Vector2(100, 0),
-                        Position = new Vector2(20, 50)
+                        Position = new Vector2(40, 20)
                     },
                     RedTeam = new InhibitorDisplayConfig.InhibTeamConfig()
                     {
                         UseTeamColor = true,
-                        Color = "rgb(0,0,0)",
-                        IconOffset = new Vector2(5, 0),
+                        Color = "rgb(255,255,255)",
+                        IconOffset = new Vector2(10, -24),
                         LaneOffset = new Vector2(100, 0),
-                        Position = new Vector2(120, 50)
-                    }
+                        Position = new Vector2(40, 80)
+                    },
+                    LaneOrder = new List<string>() { "bot", "mid", "top"}
                 },
                 Score = new ScoreDisplayConfig()
                 {
@@ -583,13 +586,16 @@ namespace LeagueBroadcast.Ingame.Data.Config
         {
             public Vector2 Location;
             public Vector2 Size;
-            public bool UseImage;
+            public bool UseBackgroundImage;
+            public bool UseBackgroundVideo;
             public string Color;
             public FontConfig Font;
             public float IconSize;
-            public bool AlwaysShowWhenEnabled;
+            public bool HideWhenNoneDestroyed;
+            public bool UseTeamColors;
             public InhibTeamConfig BlueTeam;
             public InhibTeamConfig RedTeam;
+            public List<string> LaneOrder;
             
             public class InhibTeamConfig
             {

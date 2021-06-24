@@ -30,7 +30,7 @@ export default class LevelUpVisual extends VisualElement {
         this.PlayerID = playerID;
         this.position = new Vector2(this.Team? 1881 : 39, this.Team ? 189 + ((playerID - 5) * 103) : 189 + (playerID * 103));
 
-        this.BackgroundColor = Phaser.Display.Color.IntegerToColor(this.Team ? variables.redColor : variables.blueColor);
+        this.BackgroundColor = Phaser.Display.Color.IntegerToColor(this.Team ? variables.fallbackRed : variables.fallbackBlue);
 
         if (this.Config?.UseTeamColors ) {
             if(IngameScene.Instance.state?.blueColor !== undefined && IngameScene.Instance.state?.blueColor !== '') {
@@ -92,7 +92,9 @@ export default class LevelUpVisual extends VisualElement {
     }
 
     Start(): void {
-        console.log(`Player ${this.PlayerID} level up (Lvl. ${this.Level})`)
+        console.log(`Player ${this.PlayerID} level up (Lvl. ${this.Level})`);
+        this.isShowing = true;
+        this.isActive = true;
         this.PlayAnimationState(new VisualComponent(this.Background, new Vector2(this.Background.width, this.Background.height), true), this.scene.overlayCfg?.LevelUp.BackgroundAnimationStates!, 0, 1);
         this.PlayAnimationState(new VisualComponent(this.Text, new Vector2(this.Text.width, this.Text.height), false), this.scene.overlayCfg?.LevelUp.NumberAnimationStates!, 1, 1);
     }
@@ -107,6 +109,8 @@ export default class LevelUpVisual extends VisualElement {
                 anim.stop();
             }
         });
+        this.isShowing = false;
+        this.isActive = false;
 
         //Destroy this
         this.currentAnimation = [];

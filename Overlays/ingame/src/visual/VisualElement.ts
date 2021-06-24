@@ -10,7 +10,8 @@ export abstract class VisualElement {
     visualID: number = 0;
     scene: IngameScene;
     isActive = false;
-    isAnimating: boolean = false;
+    isHiding: boolean = false;
+    isShowing: boolean = false;
     visualUpdateQueued: boolean = false;
     position: Vector2 = new Vector2(0,0);
     currentAnimation: Phaser.Tweens.Tween[] = [];
@@ -125,6 +126,32 @@ export abstract class VisualElement {
                 this.scene.currentVisualElements.splice(index, 1);
             }
         })
+    }
+
+
+    RemoveVisualComponent(component: any): void {
+        this.visualComponents = this.visualComponents.filter(c => c !== component);
+    }
+
+    AddVisualComponent(component: any): void {
+        const componentInList = this.visualComponents.find(c => c === component);
+        if(componentInList === undefined) {
+            this.visualComponents.push(component);
+        }
+    }
+
+    GetActiveVisualComponents(): any[] {
+        return this.visualComponents.filter(c => c !== null && c !== undefined);
+    }
+
+
+    UpdateTextStyle(textElement: Phaser.GameObjects.Text, style: {fontFamily: string, fontSize: string, align: string, color: string, fontStyle: string}): void {
+
+        textElement.setFontFamily(style.fontFamily);
+        textElement.setFontSize(+style.fontSize.replace('/[-]{0,1}[\d]*[.]{0,1}[\d]+/g', ''));
+        textElement.setFontStyle(style.fontStyle);
+        textElement.setColor(style.color);
+        textElement.setAlign(style.align);
     }
 
 }

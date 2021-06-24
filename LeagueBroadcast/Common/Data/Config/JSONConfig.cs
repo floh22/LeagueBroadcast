@@ -41,8 +41,14 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public void Reload()
         {
-            JSONConfigProvider.Instance.ReadConfig(this);
-            ConfigUpdate.Invoke(this, EventArgs.Empty);
+            try {
+                JSONConfigProvider.Instance.ReadConfig(this);
+                ConfigUpdate.Invoke(this, EventArgs.Empty);
+            } catch
+            {
+                Log.Warn($"Could not reload {this.Name}");
+            }
+            
         }
     }
 }

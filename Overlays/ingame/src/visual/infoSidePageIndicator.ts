@@ -157,7 +157,7 @@ export class PlayerTabIndicator {
             color: 'rgb(255,255,255)',
         });
 
-        var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.blueColor : variables.redColor);
+        var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.fallbackBlue : variables.fallbackRed);
         if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
             color = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.scene.state?.blueColor : this.scene.state?.redColor);
         }
@@ -240,7 +240,7 @@ export class PlayerTabIndicator {
             this.playerName = tabInfo.PlayerName;
             this.progresssBarCompleted.width = newWidth;
 
-            var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.blueColor : variables.redColor);
+            var color = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.fallbackBlue : variables.fallbackRed);
             if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
                 color = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.scene.state?.blueColor : this.scene.state?.redColor);
             }

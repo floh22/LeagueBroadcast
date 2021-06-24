@@ -26,13 +26,16 @@ export interface OverlayConfig {
 export interface InhibitorDisplayConfig {
     Location: Vector2;
     Size: Vector2;
-    UseImage: boolean;
+    UseBackgroundImage: boolean;
+    UseBackgroundVideo: boolean;
     Color: string;
     Font: FontConfig;
     IconSize: number;
-    AlwaysShowWhenEnabled: boolean;
+    HideWhenNoneDestroyed: boolean;
+    UseTeamColors: boolean;
     BlueTeam: InhibTeamConfig;
     RedTeam: InhibTeamConfig;
+    LaneOrder: string[];
 }
 
 export interface InhibTeamConfig {
