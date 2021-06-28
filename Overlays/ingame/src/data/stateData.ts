@@ -9,9 +9,6 @@ export default class StateData {
     dragon: FrontEndObjective;
     baron: FrontEndObjective;
 
-    blueDragons: string[];
-    redDragons: string[];
-
     gameTime: number;
     gamePaused: boolean;
 
@@ -24,15 +21,12 @@ export default class StateData {
     scoreboard: ScoreboardConfig;
     infoPage: InfoSidePage;
 
-    uiColor: string;
     blueColor: string;
     redColor: string;
 
     constructor(message: any){
         this.dragon = message.dragon;
         this.baron = message.baron;
-        this.blueDragons = message.blueDragons;
-        this.redDragons = message.redDragons;
         this.gameTime = message.gameTime;
         this.gamePaused = message.gamePaused;
         this.blueGold = message.blueGold;
@@ -47,7 +41,6 @@ export default class StateData {
         this.scoreboard = new ScoreboardConfig(message.scoreboard);
         this.infoPage = new InfoSidePage(message.infoPage);
 
-        this.uiColor = message.uiColor;
         this.blueColor = message.blueColor;
         this.redColor = message.redColor;
     }

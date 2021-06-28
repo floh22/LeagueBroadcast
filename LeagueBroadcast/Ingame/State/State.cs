@@ -326,6 +326,7 @@ namespace LeagueBroadcast.Ingame.State
             this.blueTeam = null;
             this.redTeam = null;
             this.stateData = new StateData();
+            this.stateData.inhibitors = new InhibitorInfo();
             this.pastIngameEvents = new List<RiotEvent>();
             Log.Info("Game State reset");
         }

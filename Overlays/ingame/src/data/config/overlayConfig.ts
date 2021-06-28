@@ -14,7 +14,6 @@ export default class OverlayConfigEvent {
 
 export interface OverlayConfig {
     FileVersion: string;
-    GlobalFont: GlobalFontSettings;
     Inhib: InhibitorDisplayConfig;
     Score: ScoreDisplayConfig;
     ObjectiveKill: ObjectiveKillConfig;
@@ -119,10 +118,13 @@ export interface LevelUpDisplayConfig {
 }
 
 export interface ScoreDisplayConfig {
-    Location: Vector2;
+    Position: Vector2;
+    Size: Vector2;
+    TimeFont: FontConfig;
     TimePosition: Vector2;
     BlueTeam: TeamConfig;
     RedTeam: TeamConfig;
+    Background: BackgroundDisplayConfig;
     Misc: ExtraConfigs;
 }
 
@@ -131,34 +133,35 @@ export interface TeamConfig {
     Towers: ElementConfig;
     Gold: ElementConfig;
     Drakes: DrakeConfig;
+    Score: TeamScoreDisplay;
     Name: TeamName;
     Icon: TeamIcon;
-    Misc: MiscTeamSettings;
 }
 
 export interface TeamName {
     UseTag: boolean;
     Position: Vector2;
     Font: FontConfig;
+    MaxSize: Vector2;
+    AdaptiveFontSize: boolean;
 }
 
 export interface TeamIcon {
-    AllowTransparency: boolean;
     Position: Vector2;
     Size: Vector2;
+    UseBackground: boolean;
+    BackgroundOffset: Vector2;
 }
 
-export interface MiscTeamSettings {
-    UseSameFont: boolean;
-    UseSameFontSize: boolean;
-    UseSameFontStyle: boolean;
-    UseSameFontColor: boolean;
-
-    Font: string;
-    IsGoogleFont: boolean;
-    FontSize: number;
-    FontStyle: string;
-    FontColor: string;
+export interface TeamScoreDisplay {
+    Position: Vector2;
+    NumberFont: FontConfig;
+    UseCircleIcons: boolean;
+    CircleOffset: Vector2;
+    CircleRadius: number;
+    UseTeamColor: boolean;
+    StrokeColor: string;
+    FillColor: string;
 }
 
 export interface DrakeConfig {
@@ -168,27 +171,22 @@ export interface DrakeConfig {
 
 export interface ElementConfig {
     Position: Vector2;
-    Size: number;
     Font: FontConfig;
     Icon: IconSettings;
 }
 
-export interface BackgroundConfig {
-    UseImage: boolean;
-    BackgroundImage: string;
-    UseAlphaMask: boolean;
-    BackgroundColor: string;
-}
-
 export interface IconSettings {
     Name: string;
-    Size: number;
+    Size: Vector2;
     Offset: Vector2;
 }
 
 export interface ExtraConfigs {
-    UseAnimations: boolean;
+    Animation: string;
     ShowCenterIcon: boolean;
+    CenterIconPosition: Vector2;
+    CenterIconSize: Vector2;
+    DrakeIconSize: Vector2;
 }
 
 export interface FontConfig {
@@ -200,21 +198,13 @@ export interface FontConfig {
     Color: string;
 }
 
-export interface GlobalFontConfig {
-    Name: string;
-    IsGoogleFont: boolean;
-    Style: string;
-}
-
 export interface InfoPageDisplayConfig {
-    UseBackgroundImage: boolean;
-    BackgroundColor: string;
-    UseBackgroundColorTransparency: boolean;
-    Font: FontConfig;
+
 }
 
-export interface GlobalFontSettings {
-    UseGlobalFont: boolean;
-    UseTeamColors: boolean;
-    GlobalFont: GlobalFontConfig;
+export interface BackgroundDisplayConfig {
+    UseImage: boolean;
+    UseVideo: boolean;
+    UseAlpha: boolean;
+    FallbackColor: string;
 }

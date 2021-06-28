@@ -3,9 +3,9 @@ using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Trinket;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -24,23 +24,25 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         public LiveEventsDataProvider()
         {
             //Check default path for league install. Prompt user if it cannot be found
-            Log.Info("Checking Default League install for LiveEventsAPI");
+            Log.Info("Checking League install for LiveEventsAPI");
             bool found = false;
-            ConfigController.Component.App.LeagueInstall.ForEach(InstallLocation => {
+            ConfigController.Component.App.LeagueInstall.ForEach(InstallLocation =>
+            {
                 found = CheckGameConfigLocation(InstallLocation) || found;
             });
 
-            if(!found)
+            if (!found)
             {
 
                 //Prompt user for league install location
                 Log.Warn("Game Location not found. Asking user to edit config");
                 Log.WriteToFileAndPause();
                 MessageBoxResult result = MessageBox.Show("Could not detect League Install. \nPlease manually add the folder containing 'Riot Games' to Config/Component.json\nStop League Broadcast now?", "League Broadcast", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-                
-                if(result == MessageBoxResult.OK)
+
+                if (result == MessageBoxResult.OK)
                 {
-                    Application.Current.Dispatcher.Invoke((Action)delegate {
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                    {
                         App.Instance.Shutdown();
                     });
                 }
@@ -52,7 +54,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             Trinket.OnConnect += (s, e) => { Log.Info("LiveEventAPI Connected"); };
             Trinket.OnConnectionError += (s, e) => { Log.Info("LiveEventAPI Connection Failed!"); Log.Warn(e); };
 
-            AppStateController.GameLoad += (s, e) => {Trinket.Connect(); };
+            AppStateController.GameLoad += (s, e) => { Trinket.Connect(); };
             AppStateController.GameStop += (s, e) => { Trinket.Disconnect(); Log.Info("LiveEventAPI Closed"); };
         }
 
@@ -63,11 +65,32 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
         private bool CheckGameConfigLocation(string configLocation)
         {
-            string LeagueFolder = Path.Join(Path.Join(Path.Join(configLocation, "Riot Games"), "League of Legends"), "Config");
+            //Check for config file in given folder
+            List<string> files = Directory.GetFiles(configLocation).Select(f => Path.GetFileName(f)).ToList();
+
+            //Check for config folder in given folder
+            List<string> folders = Directory.GetDirectories(configLocation).Select(f => f = f.Replace(configLocation, "").Remove(0, 1)).ToList();
+
+            //Determine which to use depending on location of game.cfg
+            string LeagueFolder = folders.Contains("Config") && configLocation.EndsWith("League of Legends")
+                ? Path.Combine(configLocation, "Config")
+                : files.Contains("game.cfg")
+                    ? configLocation
+                    : Path.Join(Path.Join(Path.Join(configLocation, "Riot Games"), "League of Legends"), "Config");
+
             if (Directory.Exists(LeagueFolder))
             {
                 Log.Info("Found League install location");
-                var cfgContent = File.ReadAllText(Path.Join(LeagueFolder, "game.cfg"));
+                string cfgContent = "";
+                try
+                {
+                    cfgContent = File.ReadAllText(Path.Join(LeagueFolder, "game.cfg"));
+                }
+                catch
+                {
+                    Log.Warn("Could not find config file in config folder");
+                    return false;
+                }
                 if (!(cfgContent.Contains("[LiveEvents]") && cfgContent.Contains("Enable=1")))
                 {
                     Log.Info("Could not find LiveEvents in game config. Appending to end");
@@ -101,7 +124,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 }
                 catch (FileNotFoundException)
                 {
-                    
+
                     Log.Info("LiveEvents.ini not found. Generating now");
                     File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill" });
                     Log.Info("LiveEvents.ini created. Added only nescesary events!");
@@ -133,11 +156,12 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     default:
                         break;
                 }
-            } catch (NullReferenceException ex)
+            }
+            catch (NullReferenceException ex)
             {
                 Log.Warn($"Could not decode live event:\n{JsonConvert.SerializeObject(e)}");
             }
-            
+
         }
 
         private void OnMinionKill(LiveEvent e)
@@ -151,12 +175,12 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             Player p = GetPlayer(e);
             if (p != null)
             {
-                if(e.Other.StartsWith("SRU_Razorbeak") || e.Other.StartsWith("SRU_Krug") || e.Other.StartsWith("SRU_MurkwolfMini"))
+                if (e.Other.StartsWith("SRU_Razorbeak") || e.Other.StartsWith("SRU_Krug") || e.Other.StartsWith("SRU_MurkwolfMini"))
                 {
                     AddCS(p, 1);
                     return;
                 }
-                if(e.Other.StartsWith("SRU_Murkwolf"))
+                if (e.Other.StartsWith("SRU_Murkwolf"))
                 {
                     AddCS(p, 2);
                     return;
@@ -169,7 +193,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
 
                     IngameController.DragonTaken.Invoke(this, new ObjectiveTakenArgs(type, GetTeam(e), Ingame.gameData.gameTime));
-                    
+
                 }
                 if (e.Other.StartsWith("SRU_Baron"))
                 {

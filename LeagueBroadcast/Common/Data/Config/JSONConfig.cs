@@ -41,6 +41,8 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public void Reload()
         {
+            if (ConfigUpdate == null)
+                return;
             try {
                 JSONConfigProvider.Instance.ReadConfig(this);
                 ConfigUpdate.Invoke(this, EventArgs.Empty);

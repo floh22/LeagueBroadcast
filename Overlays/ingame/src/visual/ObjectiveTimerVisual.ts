@@ -42,7 +42,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
         }
 
         if (cfg.ShowGoldDiff) {
-            this.GoldIcon = scene.add.image(this.position.X + cfg.GoldIconPosition.X, this.position.Y + cfg.GoldIconPosition.Y, 'goldIcon');
+            this.GoldIcon = scene.add.image(this.position.X + cfg.GoldIconPosition.X, this.position.Y + cfg.GoldIconPosition.Y, 'objectiveGold');
             this.Gold = scene.add.text(this.position.X + cfg.GoldPosition.X, this.position.Y + cfg.GoldPosition.Y, '+-0', {
                 fontFamily: cfg.GoldFont.Name,
                 fontSize: cfg.GoldFont.Size,
@@ -57,7 +57,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
         }
 
         if (cfg.ShowTimer) {
-            this.TimeIcon = scene.add.image(this.position.X + cfg.TimeIconPosition.X, this.position.Y + cfg.TimeIconPosition.Y, 'cdr');
+            this.TimeIcon = scene.add.image(this.position.X + cfg.TimeIconPosition.X, this.position.Y + cfg.TimeIconPosition.Y, 'objectiveCdr');
             this.Time = scene.add.text(this.position.X + cfg.TimePosition.X, this.position.Y + cfg.TimePosition.Y, '00:00', {
                 fontFamily: cfg.TimeFont.Name,
                 fontSize: cfg.TimeFont.Size,
@@ -132,16 +132,10 @@ export default class ObjectiveTimerVisual extends VisualElement {
         if (newConfig.ShowGoldDiff) {
             if (this.Config?.ShowGoldDiff) {
                 this.Gold?.setPosition(this.position.X + newConfig.GoldPosition.X, this.position.Y + newConfig.GoldPosition.Y);
-                this.UpdateTextStyle(this.Gold!, {
-                    fontFamily: newConfig.GoldFont.Name,
-                    fontSize: newConfig.GoldFont.Size,
-                    align: newConfig.GoldFont.Align,
-                    color: newConfig.GoldFont.Color,
-                    fontStyle: newConfig.GoldFont.Style
-                });
+                this.UpdateTextStyle(this.Gold!, newConfig.GoldFont);
                 this.GoldIcon?.setPosition(this.position.X + newConfig.GoldIconPosition.X, this.position.Y + newConfig.GoldIconPosition.Y);
             } else {
-                this.GoldIcon = this.scene.add.image(this.position.X + newConfig.GoldIconPosition.X, this.position.Y + newConfig.GoldIconPosition.Y, 'goldIcon');
+                this.GoldIcon = this.scene.add.image(this.position.X + newConfig.GoldIconPosition.X, this.position.Y + newConfig.GoldIconPosition.Y, 'objectiveGold');
                 this.Gold = this.scene.add.text(this.position.X + newConfig.GoldPosition.X, this.position.Y + newConfig.GoldPosition.Y, '+-0', {
                     fontFamily: newConfig.GoldFont.Name,
                     fontSize: newConfig.GoldFont.Size,
@@ -165,16 +159,10 @@ export default class ObjectiveTimerVisual extends VisualElement {
         if (newConfig.ShowTimer) {
             if (this.Config?.ShowTimer) {
                 this.Time?.setPosition(this.position.X + newConfig.TimePosition.X, this.position.Y + newConfig.TimePosition.Y);
-                this.UpdateTextStyle(this.Time!, {
-                    fontFamily: newConfig.TimeFont.Name,
-                    fontSize: newConfig.TimeFont.Size,
-                    align: newConfig.TimeFont.Align,
-                    color: newConfig.TimeFont.Color,
-                    fontStyle: newConfig.TimeFont.Style
-                });
+                this.UpdateTextStyle(this.Time!, newConfig.TimeFont);
                 this.TimeIcon?.setPosition(this.position.X + newConfig.TimeIconPosition.X, this.position.Y + newConfig.TimeIconPosition.Y);
             } else {
-                this.TimeIcon = this.scene.add.image(this.position.X + newConfig.TimeIconPosition.X, this.position.Y + newConfig.TimeIconPosition.Y, 'cdr');
+                this.TimeIcon = this.scene.add.image(this.position.X + newConfig.TimeIconPosition.X, this.position.Y + newConfig.TimeIconPosition.Y, 'objectiveCdr');
                 this.Time = this.scene.add.text(this.position.X + newConfig.TimePosition.X, this.position.Y + newConfig.TimePosition.Y, '00:00', {
                     fontFamily: newConfig.TimeFont.Name,
                     fontSize: newConfig.TimeFont.Size,
@@ -197,7 +185,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
     }
     Load(): void {
         this.InitPositions(this.Config!);
-        this.Start();
+        //this.Start();
     }
 
     Start(): void {

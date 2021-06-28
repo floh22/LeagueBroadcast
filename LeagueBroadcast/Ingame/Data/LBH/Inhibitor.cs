@@ -18,7 +18,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
         {
             this.id = id;
             this.key = key;
-            this.timeLeft = 0;
+            timeLeft = 0;
         }
 
     }
@@ -27,11 +27,9 @@ namespace LeagueBroadcast.Ingame.Data.LBH
     {
         public List<Inhibitor> Inhibitors;
 
-        public Vector2 Location => ConfigController.Ingame.Inhib.Position;
-
         public InhibitorInfo()
         {
-            this.Inhibitors = new List<Inhibitor>() {
+            Inhibitors = new List<Inhibitor>() {
                     new Inhibitor(0, "T1_L1"),
                     new Inhibitor(1, "T1_C1"),
                     new Inhibitor(2, "T1_R1"),

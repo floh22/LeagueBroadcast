@@ -145,14 +145,15 @@ export abstract class VisualElement {
     }
 
 
-    UpdateTextStyle(textElement: Phaser.GameObjects.Text, style: {fontFamily: string, fontSize: string, align: string, color: string, fontStyle: string}): void {
+    UpdateTextStyle(textElement: Phaser.GameObjects.Text, style: {Name: string, Size: string, Align: string, Color: string, Style: string}): void {
 
-        return;
-        textElement.setFontFamily(style.fontFamily);
-        textElement.setFontSize(+style.fontSize.replace('/[-]{0,1}[\d]*[.]{0,1}[\d]+/g', ''));
-        textElement.setFontStyle(style.fontStyle);
-        textElement.setColor(style.color);
-        textElement.setAlign(style.align);
+        textElement.setFontFamily(style.Name);
+        //textElement.setFontSize(+style.Size.replace('/[-]{0,1}[\d]*[.]{0,1}[\d]+/g', ''));
+        textElement.setFontStyle(style.Style);
+        //@ts-ignore
+        textElement.setFontSize(style.Size)
+        textElement.setColor(style.Color);
+        textElement.setAlign(style.Align);
     }
 
 }

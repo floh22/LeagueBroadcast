@@ -28,7 +28,6 @@ export default class InhibitorVisual extends VisualElement {
     redBotTime: Phaser.GameObjects.Text;
 
     Config = this.scene.overlayCfg!.Inhib;
-    FontConfig: any;
 
     constructor(scene: IngameScene) {
         super(scene, scene.overlayCfg!.Inhib.Position, 'inhibitorIndicator');
@@ -51,7 +50,7 @@ export default class InhibitorVisual extends VisualElement {
         const MidIndex = this.Config!.LaneOrder.findIndex(l => l === "Mid" || l === "mid");
         const BotIndex = this.Config!.LaneOrder.findIndex(l => l === "Bot" || l === "bot");
 
-        this.FontConfig = {
+        let FontConfig = {
             fontFamily: this.Config!.Font.Name,
             fontSize: this.Config!.Font.Size,
             align: this.Config!.Font.Align,
@@ -78,15 +77,15 @@ export default class InhibitorVisual extends VisualElement {
         this.blueMidIndicator.tint = color.color;
         this.blueBotIndicator.tint = color.color;
 
-        this.blueTopTime = scene.add.text(this.position.X + (TopIndex * this.Config!.BlueTeam.LaneOffset.X) + this.Config!.BlueTeam.Position.X, this.position.Y + (TopIndex * this.Config!.BlueTeam.LaneOffset.Y) + this.Config!.BlueTeam.Position.Y, '-  ', this.FontConfig);
+        this.blueTopTime = scene.add.text(this.position.X + (TopIndex * this.Config!.BlueTeam.LaneOffset.X) + this.Config!.BlueTeam.Position.X, this.position.Y + (TopIndex * this.Config!.BlueTeam.LaneOffset.Y) + this.Config!.BlueTeam.Position.Y, '-  ', FontConfig);
         this.blueTopTime.setOrigin(1, 0);
         this.blueTopTime.setDepth(1);
 
-        this.blueMidTime = scene.add.text(this.position.X + (MidIndex * this.Config!.BlueTeam.LaneOffset.X) + this.Config!.BlueTeam.Position.X, this.position.Y + (MidIndex * this.Config!.BlueTeam.LaneOffset.Y) + this.Config!.BlueTeam.Position.Y, '-  ', this.FontConfig);
+        this.blueMidTime = scene.add.text(this.position.X + (MidIndex * this.Config!.BlueTeam.LaneOffset.X) + this.Config!.BlueTeam.Position.X, this.position.Y + (MidIndex * this.Config!.BlueTeam.LaneOffset.Y) + this.Config!.BlueTeam.Position.Y, '-  ', FontConfig);
         this.blueMidTime.setOrigin(1, 0);
         this.blueMidTime.setDepth(1);
 
-        this.blueBotTime = scene.add.text(this.position.X + (BotIndex * this.Config!.BlueTeam.LaneOffset.X) + this.Config!.BlueTeam.Position.X, this.position.Y + (BotIndex * this.Config!.BlueTeam.LaneOffset.Y) + this.Config!.BlueTeam.Position.Y, '-  ', this.FontConfig);
+        this.blueBotTime = scene.add.text(this.position.X + (BotIndex * this.Config!.BlueTeam.LaneOffset.X) + this.Config!.BlueTeam.Position.X, this.position.Y + (BotIndex * this.Config!.BlueTeam.LaneOffset.Y) + this.Config!.BlueTeam.Position.Y, '-  ', FontConfig);
         this.blueBotTime.setOrigin(1, 0);
         this.blueBotTime.setDepth(1);
 
@@ -115,15 +114,15 @@ export default class InhibitorVisual extends VisualElement {
         this.redBotIndicator.setOrigin(0.5, 0.5);
         this.redBotIndicator.setDepth(1);
 
-        this.redTopTime = scene.add.text(this.position.X + (TopIndex * this.Config!.RedTeam.LaneOffset.X) + this.Config!.RedTeam.Position.X, this.position.Y + (TopIndex * this.Config!.RedTeam.LaneOffset.Y) + this.Config!.RedTeam.Position.Y, '-  ', this.FontConfig);
+        this.redTopTime = scene.add.text(this.position.X + (TopIndex * this.Config!.RedTeam.LaneOffset.X) + this.Config!.RedTeam.Position.X, this.position.Y + (TopIndex * this.Config!.RedTeam.LaneOffset.Y) + this.Config!.RedTeam.Position.Y, '-  ', FontConfig);
         this.redTopTime.setOrigin(1, 0);
         this.redTopTime.setDepth(1);
 
-        this.redMidTime = scene.add.text(this.position.X + (MidIndex * this.Config!.RedTeam.LaneOffset.X) + this.Config!.RedTeam.Position.X, this.position.Y + (MidIndex * this.Config!.RedTeam.LaneOffset.Y) + this.Config!.RedTeam.Position.Y, '-  ', this.FontConfig);
+        this.redMidTime = scene.add.text(this.position.X + (MidIndex * this.Config!.RedTeam.LaneOffset.X) + this.Config!.RedTeam.Position.X, this.position.Y + (MidIndex * this.Config!.RedTeam.LaneOffset.Y) + this.Config!.RedTeam.Position.Y, '-  ', FontConfig);
         this.redMidTime.setOrigin(1, 0);
         this.redMidTime.setDepth(1);
 
-        this.redBotTime = scene.add.text(this.position.X + (BotIndex * this.Config!.RedTeam.LaneOffset.X) + this.Config!.RedTeam.Position.X, this.position.Y + (BotIndex * this.Config!.RedTeam.LaneOffset.Y) + this.Config!.RedTeam.Position.Y, '-  ', this.FontConfig);
+        this.redBotTime = scene.add.text(this.position.X + (BotIndex * this.Config!.RedTeam.LaneOffset.X) + this.Config!.RedTeam.Position.X, this.position.Y + (BotIndex * this.Config!.RedTeam.LaneOffset.Y) + this.Config!.RedTeam.Position.Y, '-  ', FontConfig);
         this.redBotTime.setOrigin(1, 0);
         this.redBotTime.setDepth(1);
 
@@ -192,7 +191,7 @@ export default class InhibitorVisual extends VisualElement {
     }
 
     UpdateValues(newValues: InhibitorInfo): void {
-        if (newValues === undefined || newValues === null || (newValues.Inhibitors.every(i => i.timeLeft <= 0) && this.Config!.HideWhenNoneDestroyed)) {
+        if (newValues === undefined || newValues === null || ((newValues.Inhibitors.every(i => i.timeLeft <= 0) && this.Config!.HideWhenNoneDestroyed))) {
             if (this.isActive) {
                 this.isActive = false;
                 this.Stop();
@@ -229,21 +228,14 @@ export default class InhibitorVisual extends VisualElement {
         this.maskG.fillRect(newConfig.Position.X, newConfig.Position.Y, newConfig.Size.X, newConfig.Size.Y);
 
         //Update Text Style
-        this.FontConfig = {
-            fontFamily: newConfig.Font.Name,
-            fontSize: newConfig.Font.Size,
-            align: newConfig.Font.Align,
-            color: newConfig.Font.Color,
-            fontStyle: newConfig.Font.Style
-        };
 
-        this.UpdateTextStyle(this.blueTopTime, this.FontConfig);
-        this.UpdateTextStyle(this.blueMidTime, this.FontConfig);
-        this.UpdateTextStyle(this.blueBotTime, this.FontConfig);
+        this.UpdateTextStyle(this.blueTopTime, newConfig.Font);
+        this.UpdateTextStyle(this.blueMidTime, newConfig.Font);
+        this.UpdateTextStyle(this.blueBotTime, newConfig.Font);
 
-        this.UpdateTextStyle(this.redTopTime, this.FontConfig);
-        this.UpdateTextStyle(this.redMidTime, this.FontConfig);
-        this.UpdateTextStyle(this.redBotTime, this.FontConfig);
+        this.UpdateTextStyle(this.redTopTime, newConfig.Font);
+        this.UpdateTextStyle(this.redMidTime, newConfig.Font);
+        this.UpdateTextStyle(this.redBotTime, newConfig.Font);
 
         //Update Text Position
         var TextPos: Vector2 = new Vector2(this.position.X + newConfig.BlueTeam.Position.X, this.position.Y + newConfig.BlueTeam.Position.Y);
@@ -426,7 +418,7 @@ export default class InhibitorVisual extends VisualElement {
 
 
     ToTimeString(time: number): string {
-        if (time <= 0) {
+        if (time <= 0.5) {
             return '-  ';
         }
 

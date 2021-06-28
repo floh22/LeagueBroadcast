@@ -18,7 +18,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
         [JsonIgnore]
         public static new string CurrentVersion => "2.0";
 
-        public GlobalFontSettings GlobalFont;
         public InhibitorDisplayConfig Inhib;
         public ScoreDisplayConfig Score;
         public ObjectiveKillConfig ObjectiveKill;
@@ -43,7 +42,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
             var Cfg = JsonConvert.DeserializeObject<IngameConfig>(readValues);
             Inhib = Cfg.Inhib;
             Score = Cfg.Score;
-            GlobalFont = Cfg.GlobalFont;
             InfoPage = Cfg.InfoPage;
             ItemComplete = Cfg.ItemComplete;
             LevelUp = Cfg.LevelUp;
@@ -63,7 +61,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
             var def = CreateDefault();
             this.Inhib = def.Inhib;
             this.Score = def.Score;
-            this.GlobalFont = def.GlobalFont;
             this.InfoPage = def.InfoPage;
             this.ItemComplete = def.ItemComplete;
             this.LevelUp = def.LevelUp;
@@ -116,238 +113,252 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 },
                 Score = new ScoreDisplayConfig()
                 {
-                    Location = new Vector2(906, 0),
-                    TimePosition = new Vector2(0, 0),
+                    Position = new Vector2(960, 0),
+                    Size = new Vector2(800, 100),
+                    TimeFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        IsGoogleFont = true,
+                        Size = "22px",
+                        Style = "Normal",
+                        Color = "rgb(255,255,255)",
+                        Align = "center"
+                    },
+                    TimePosition = new Vector2(0, 70),
                     BlueTeam = new ScoreDisplayConfig.TeamConfig()
                     {
+                        Score = new ScoreDisplayConfig.TeamConfig.TeamScoreDisplay()
+                        {
+                            Position = new Vector2(-380, 70),
+                            NumberFont = new FontConfig()
+                            {
+                                Align = "right",
+                                Color = "rgb(255,255,255)",
+                                IsGoogleFont = true,
+                                Name = "News Cycle",
+                                Size = "15px",
+                                Style = "Normal"
+                            },
+                            UseCircleIcons = true,
+                            CircleOffset = new Vector2(25, 0),
+                            CircleRadius = 10,
+                            UseTeamColor = true,
+                            FillColor = "rgb(255,255,255)",
+                            StrokeColor = "rgb(255,255,255)"
+                        },
                         Drakes = new ScoreDisplayConfig.DrakeConfig()
                         {
-                            Offset = new Vector2(0, 0),
-                            Position = new Vector2(0, 0)
+                            Offset = new Vector2(-12, 0),
+                            Position = new Vector2(-55, 71)
                         },
                         Gold = new ScoreDisplayConfig.ElementConfig()
                         {
                             Font = new FontConfig()
                             {
                                 Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "26px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
                             {
                                 Name = "GoldIcon",
-                                Offset = new Vector2(0, 0),
-                                Size = 100f
+                                Offset = new Vector2(25, 10),
+                                Size = new Vector2(40, 30)
                             },
-                            Position = new Vector2(0, 0),
-                            Size = 1f
+                            Position = new Vector2(-150, 20)
                         },
                         Icon = new ScoreDisplayConfig.TeamConfig.TeamIcon()
                         {
-                            AllowTransparency = true,
-                            Position = new Vector2(0, 0),
-                            Size = new Vector2(100, 100)
+                            Position = new Vector2(-430, 30),
+                            Size = new Vector2(60, 60),
+                            UseBackground = true,
+                            BackgroundOffset = new Vector2(-10, 0)
                         },
                         Kills = new ScoreDisplayConfig.ElementConfig()
                         {
                             Font = new FontConfig()
                             {
                                 Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "50px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
                             {
                                 Name = "KillsIcon",
                                 Offset = new Vector2(0, 0),
-                                Size = 100f
+                                Size = new Vector2(100, 100)
                             },
-                            Position = new Vector2(0, 0),
-                            Size = 1f
+                            Position = new Vector2(-40, 6)
                         },
                         Name = new ScoreDisplayConfig.TeamConfig.TeamName()
                         {
                             Font = new FontConfig()
                             {
-                                Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "40px",
                                 Style = "Normal"
                             },
-                            Position = new Vector2(0, 0),
-                            UseTag = true
+                            Position = new Vector2(-390, 6),
+                            MaxSize = new Vector2(100, 50),
+                            UseTag = true,
+                            AdaptiveFontSize = true
                         },
                         Towers = new ScoreDisplayConfig.ElementConfig()
                         {
                             Font = new FontConfig()
                             {
                                 Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "26px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
                             {
                                 Name = "TowerIcon",
-                                Offset = new Vector2(0, 0),
-                                Size = 100f
+                                Offset = new Vector2(15, 13),
+                                Size = new Vector2(25, 30)
                             },
-                            Position = new Vector2(0, 0),
-                            Size = 1f
-                        },
-                        Misc = new ScoreDisplayConfig.TeamConfig.MiscSettings() {
-                            UseSameFont = false,
-                            UseSameFontStyle = false,
-                            UseSameFontColor = false,
-                            UseSameFontSize = false,
-                            Font = "News Cylce",
-                            IsGoogleFont = true,
-                            FontColor = "rgb(0,0,0)",
-                            FontSize = 10,
-                            FontStyle = "Normal"
+                            Position = new Vector2(-270, 20)
                         }
                     },
                     RedTeam = new ScoreDisplayConfig.TeamConfig()
                     {
-                        Drakes = new ScoreDisplayConfig.DrakeConfig()
+                        Score = new ScoreDisplayConfig.TeamConfig.TeamScoreDisplay()
                         {
-                            Offset = new Vector2(0, 0),
-                            Position = new Vector2(0, 0)
-                        },
-                        Gold = new ScoreDisplayConfig.ElementConfig()
-                        {
-                            Font = new FontConfig()
+                            Position = new Vector2(380, 70),
+                            NumberFont = new FontConfig()
                             {
-                                Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "15px",
                                 Style = "Normal"
                             },
+                            UseCircleIcons = true,
+                            CircleOffset = new Vector2(-25, 0),
+                            CircleRadius = 10,
+                            UseTeamColor = true,
+                            FillColor = "rgb(255,255,255)",
+                            StrokeColor = "rgb(255,255,255)"
+                        },
+                        Drakes = new ScoreDisplayConfig.DrakeConfig()
+                        {
+                            Offset = new Vector2(12, 0),
+                            Position = new Vector2(50, 71)
+                        },
+                        Gold = new ScoreDisplayConfig.ElementConfig()
+                        {
+                            Font = new FontConfig()
+                            {
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
+                                IsGoogleFont = true,
+                                Name = "News Cycle",
+                                Size = "26px",
+                                Style = "Normal"
+                            },
                             Icon = new ScoreDisplayConfig.IconSettings()
                             {
                                 Name = "GoldIcon",
-                                Offset = new Vector2(0, 0),
-                                Size = 100f
+                                Offset = new Vector2(-25, 10),
+                                Size = new Vector2(40, 30)
                             },
-                            Position = new Vector2(0, 0),
-                            Size = 1f
+                            Position = new Vector2(150, 20)
                         },
                         Icon = new ScoreDisplayConfig.TeamConfig.TeamIcon()
                         {
-                            AllowTransparency = true,
-                            Position = new Vector2(0, 0),
-                            Size = new Vector2(100, 100)
+                            Position = new Vector2(430, 30),
+                            Size = new Vector2(60, 60),
+                            UseBackground = true,
+                            BackgroundOffset = new Vector2(10,0)
                         },
                         Kills = new ScoreDisplayConfig.ElementConfig()
                         {
                             Font = new FontConfig()
                             {
-                                Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "50px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
                             {
                                 Name = "KillsIcon",
                                 Offset = new Vector2(0, 0),
-                                Size = 100f
+                                Size = new Vector2(100, 100)
                             },
-                            Position = new Vector2(0, 0),
-                            Size = 1f
+                            Position = new Vector2(40, 6)
                         },
                         Name = new ScoreDisplayConfig.TeamConfig.TeamName()
                         {
                             Font = new FontConfig()
                             {
                                 Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "40px",
                                 Style = "Normal"
                             },
-                            Position = new Vector2(0, 0),
-                            UseTag = true
+                            Position = new Vector2(390, 6),
+                            MaxSize = new Vector2(100, 50),
+                            UseTag = true,
+                            AdaptiveFontSize = true
                         },
                         Towers = new ScoreDisplayConfig.ElementConfig()
                         {
                             Font = new FontConfig()
                             {
-                                Align = "right",
-                                Color = "rgb(100,100,100)",
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
                                 IsGoogleFont = true,
                                 Name = "News Cycle",
-                                Size = "15px",
+                                Size = "26px",
                                 Style = "Normal"
                             },
                             Icon = new ScoreDisplayConfig.IconSettings()
                             {
                                 Name = "TowerIcon",
-                                Offset = new Vector2(0, 0),
-                                Size = 100f
+                                Offset = new Vector2(-15, 13),
+                                Size = new Vector2(25, 30)
                             },
-                            Position = new Vector2(0, 0),
-                            Size = 1f
-                        },
-                        Misc = new ScoreDisplayConfig.TeamConfig.MiscSettings()
-                        {
-                            UseSameFont = false,
-                            UseSameFontStyle = false,
-                            UseSameFontColor = false,
-                            UseSameFontSize = false,
-                            Font = "News Cycle",
-                            IsGoogleFont = true,
-                            FontColor = "rgb(0,0,0)",
-                            FontSize = 10,
-                            FontStyle = "Normal"
+                            Position = new Vector2(270, 20)
                         }
+                    },
+                    Background = new BackgroundDisplayConfig()
+                    {
+                        UseImage = false,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        FallbackColor = "rgba(19,24,63,255)"
                     },
                     Misc = new ScoreDisplayConfig.ExtraConfigs()
                     {
                         ShowCenterIcon = true,
-                        UseAnimations = true
+                        //None, Simple, Fancy
+                        Animation = "Simple",
+                        DrakeIconSize = new Vector2(20,20),
+                        CenterIconPosition = new Vector2(0, 30),
+                        CenterIconSize = new Vector2(40,40)
                     }
-                },
-                GlobalFont = new GlobalFontSettings()
-                {
-                    GlobalFont = new GlobalFontConfig()
-                    {
-                        IsGoogleFont = true,
-                        Name = "News Cycle",
-                        Style = "Normal"
-                    },
-                    UseGlobalFont = false,
-                    UseTeamColors = true
                 },
                 InfoPage = new InfoPageDisplayConfig()
                 {
-                    BackgroundColor = "rbg(100,100,100)",
-                    Font = new FontConfig()
-                    {
-                        Align = "right",
-                        Color = "rgb(100,100,100)",
-                        IsGoogleFont = true,
-                        Name = "News Cycle",
-                        Size = "15px",
-                        Style = "Normal"
-                    },
-                    UseBackgroundColorTransparency = true,
-                    UseBackgroundImage = false
+
                 },
                 ItemComplete = new ItemCompletedDisplayConfig() {
                     UseCustomVideo = false,
@@ -568,8 +579,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 BaronTimer = new ObjectiveTimerDisplayConfig()
                 {
                     Position = new Vector2(1800, 55),
-                    MaskPosition = new Vector2(1800, 55),
-                    MaskSize = new Vector2(100, 100),
+                    MaskPosition = new Vector2(1750, 20),
+                    MaskSize = new Vector2(150, 70),
                     Scale = 0.8f,
                     Animate = true,
                     ObjectiveIcon = true,
@@ -603,8 +614,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 ElderTimer = new ObjectiveTimerDisplayConfig()
                 {
                     Position = new Vector2(120, 55),
-                    MaskPosition = new Vector2(120,55),
-                    MaskSize = new Vector2(100, 100),
+                    MaskPosition = new Vector2(50,20),
+                    MaskSize = new Vector2(150, 70),
                     Scale = 0.8f,
                     Animate = true,
                     ObjectiveIcon = true,
@@ -765,12 +776,14 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public class ScoreDisplayConfig
         {
-            public Vector2 Location;
+            public Vector2 Position;
+            public Vector2 Size;
+            public FontConfig TimeFont;
             public Vector2 TimePosition;
             public TeamConfig BlueTeam;
             public TeamConfig RedTeam;
+            public BackgroundDisplayConfig Background;
             public ExtraConfigs Misc;
-
 
             public class TeamConfig
             {
@@ -780,34 +793,35 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 public DrakeConfig Drakes;
                 public TeamName Name;
                 public TeamIcon Icon;
-                public MiscSettings Misc;
+                public TeamScoreDisplay Score;
 
                 public class TeamName
                 {
                     public bool UseTag;
                     public Vector2 Position;
+                    public bool AdaptiveFontSize;
+                    public Vector2 MaxSize;
                     public FontConfig Font;
                 }
 
                 public class TeamIcon
                 {
-                    public bool AllowTransparency;
                     public Vector2 Position;
                     public Vector2 Size;
+                    public bool UseBackground;
+                    public Vector2 BackgroundOffset;
                 }
 
-                public class MiscSettings
+                public class TeamScoreDisplay
                 {
-                    public bool UseSameFont;
-                    public bool UseSameFontSize;
-                    public bool UseSameFontStyle;
-                    public bool UseSameFontColor;
-
-                    public string Font;
-                    public bool IsGoogleFont;
-                    public float FontSize;
-                    public string FontStyle;
-                    public string FontColor;
+                    public Vector2 Position;
+                    public FontConfig NumberFont;
+                    public bool UseCircleIcons;
+                    public Vector2 CircleOffset;
+                    public float CircleRadius;
+                    public bool UseTeamColor;
+                    public string StrokeColor;
+                    public string FillColor;
                 }
             }
 
@@ -819,30 +833,24 @@ namespace LeagueBroadcast.Ingame.Data.Config
             public class ElementConfig
             {
                 public Vector2 Position;
-                public float Size;
                 public FontConfig Font;
                 public IconSettings Icon;
-            }
-
-            public class BackgroundConfig
-            {
-                public bool UseImage;
-                public string BackgroundImage;
-                public bool UseAlphaMask;
-                public string BackgroundColor;
             }
 
             public class IconSettings
             {
                 public string Name;
-                public float Size;
+                public Vector2 Size;
                 public Vector2 Offset;
             }
 
             public class ExtraConfigs
             {
-                public bool UseAnimations;
+                public string Animation;
                 public bool ShowCenterIcon;
+                public Vector2 CenterIconPosition;
+                public Vector2 CenterIconSize;
+                public Vector2 DrakeIconSize;
             }
         }
 
@@ -856,27 +864,17 @@ namespace LeagueBroadcast.Ingame.Data.Config
             public string Color;
         }
 
-        public class GlobalFontConfig
+        public class BackgroundDisplayConfig
         {
-            public string Name;
-            public string Style;
-            public bool IsGoogleFont;
+            public bool UseImage;
+            public bool UseVideo;
+            public bool UseAlpha;
+            public string FallbackColor;
         }
 
         public class InfoPageDisplayConfig
         {
-            public bool UseBackgroundImage;
-            public string BackgroundColor;
-            public bool UseBackgroundColorTransparency;
-            public FontConfig Font;
-        }
 
-
-        public class GlobalFontSettings
-        {
-            public bool UseGlobalFont;
-            public bool UseTeamColors;
-            public GlobalFontConfig GlobalFont;
         }
     }
 }

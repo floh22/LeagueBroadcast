@@ -50,7 +50,7 @@ export default class InfoSidePageIndicator {
         this.updatePlayerTabs(config);
 
         if (!this.isActive) {
-            this.bg.setFillStyle(Phaser.Display.Color.RGBStringToColor(this.scene.state!.uiColor).color);
+            //this.bg.setFillStyle(Phaser.Display.Color.RGBStringToColor(this.scene.state!.uiColor).color);
             this.showContent();
         }
     }

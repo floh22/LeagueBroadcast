@@ -1,36 +1,32 @@
 import 'phaser';
 import variables from '~/variables';
-import ObjectiveIndicator from '~/visual/objectiveIndicator';
 import StateData from '~/data/stateData';
 import GraphPopUp from '~/visual/graphPopUp';
 import Phaser from 'phaser';
 import GoldEntry from '~/data/goldEntry';
-import Scoreboard from '~/visual/scoreboard';
 import InfoSidePageIndicator from '~/visual/infoSidePageIndicator';
 import WindowUtils from '~/convert/windowUtils';
 import OverlayConfigEvent, { OverlayConfig } from '~/data/config/overlayConfig';
-import ScoreboardConfig from '~/data/scoreboardConfig';
-import ItemVisual from '~/visual/ItemVisual';
 import { VisualElement } from '~/visual/VisualElement';
-import { Dictionary } from '~/util/Dictionary';
-import LevelUpVisual from '~/visual/LevelUpVisual';
 import RegionMask from '~/data/RegionMask';
+
+import ItemVisual from '~/visual/ItemVisual';
+import LevelUpVisual from '~/visual/LevelUpVisual';
 import InhibitorVisual from '~/visual/InhibitorVisual';
 import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
+import ScoreboardVisual from '~/visual/ScoreboardVisual';
 
 export default class IngameScene extends Phaser.Scene {
     ws!: WebSocket;
     players: RegionMask[];
-    baronIndicator!: ObjectiveIndicator;
-    elderIndicator!: ObjectiveIndicator;
     goldGraph!: GraphPopUp;
-    scoreboard!: Scoreboard;
     sidePage!: InfoSidePageIndicator;
 
 
     baronTimer!: ObjectiveTimerVisual;
     elderTimer!: ObjectiveTimerVisual;
     inhib!: InhibitorVisual;
+    score!: ScoreboardVisual;
 
     state!: StateData | null;
     overlayCfg!: OverlayConfig | null;
@@ -66,8 +62,10 @@ export default class IngameScene extends Phaser.Scene {
         //this.load.script('chartjs', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.0-rc/chart.min.js');
 
         //Masks
-        this.load.image('champCoverLeft', 'frontend/images/ChampCoverLeft.png');
-        this.load.image('champCoverRight', 'frontend/images/ChampCoverRight.png');
+        this.load.image('champCoverLeft', 'frontend/masks/ChampCoverLeft.png');
+        this.load.image('champCoverRight', 'frontend/masks/ChampCoverRight.png');
+        this.load.image('scoreboardMask', 'frontend/masks/ScoreboardMask.png');
+        this.load.image('itemTextMask', 'frontend/masks/ItemText.png');
 
         //Objective Timers
         this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
@@ -75,14 +73,15 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('objectiveMask', 'frontend/backgrounds/ObjectiveMask.png');
         this.load.image('elderIcon', 'frontend/backgrounds/DragonIcon.png');
         this.load.image('objectiveBgLeft', 'frontend/backgrounds/ObjectiveBGLeft.png');
+        this.load.image('objectiveGold', 'frontend/images/ObjectiveGold.png');
+        this.load.image('objectiveCdr', 'frontend/images/ObjectiveCdr.png');
 
         //Scoreboard
-        this.load.image('goldIcon', 'frontend/images/goldicon.png');
-        this.load.image('cdr', 'frontend/images/cdr.png');
-        this.load.image('scoreboardMask', 'frontend/backgrounds/ScoreboardMask.png');
-        this.load.image('fullGoldIcon', 'frontend/images/fullGoldIcon.png');
-        this.load.image('tower', 'frontend/images/tower.png');
-        this.load.image('sword', 'frontend/images/sword.png');
+        this.load.image('scoreGold', 'frontend/images/ScoreboardGold.png');
+        this.load.image('scoreTower', 'frontend/images/tower.png');
+        this.load.image('scoreCenter', 'frontend/images/ScoreboardCenterIcon.png');
+        this.load.image('scoreBlueIcon', 'frontend/backgrounds/ScoreTeamIconBGLeft.png');
+        this.load.image('scoreRedIcon', 'frontend/backgrounds/ScoreTeamIconBGRight.png');
 
         //Center Graph
         this.load.image('centerCover', 'frontend/backgrounds/CenterCover.png');
@@ -96,13 +95,12 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('dragon_Elder', 'frontend/images/dragons/elderLarge.png');
 
         //Inhibitor
-        this.load.svg('top', 'frontend/images/top.svg');
-        this.load.svg('mid', 'frontend/images/mid.svg');
-        this.load.svg('bot', 'frontend/images/bot.svg');
+        this.load.svg('top', 'frontend/images/lanes/top.svg');
+        this.load.svg('mid', 'frontend/images/lanes/mid.svg');
+        this.load.svg('bot', 'frontend/images/lanes/bot.svg');
 
         //Item
         this.load.image('itemTextBg', 'frontend/backgrounds/ItemText.png');
-        this.load.image('itemTextMask', 'frontend/masks/ItemText.png');
     }
 
     create() {
@@ -159,13 +157,7 @@ export default class IngameScene extends Phaser.Scene {
 
         //Color calc breaks with no data so init with dummy data
         this.goldGraph = new GraphPopUp(this, [new GoldEntry(0, 100), new GoldEntry(1, -100)]);
-
-        this.scoreboard = new Scoreboard(this);
         this.sidePage = new InfoSidePageIndicator(this);
-
-        //this.goldGraph.Enable();
-        //this.sidePage.showContent();
-
 
         const connect = () => {
             this.ws = new WebSocket(`${variables.useSSL ? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
@@ -179,9 +171,9 @@ export default class IngameScene extends Phaser.Scene {
 
             this.ws.onclose = () => {
                 setTimeout(connect, 500);
-                //this.scoreboard.hideContent();
                 //this.sidePage.hideContent();
                 //this.goldGraph.Disable();
+                this.score?.Stop();
                 this.inhib?.Stop();
                 this.baronTimer?.Stop();
                 this.elderTimer?.Stop();
@@ -224,11 +216,12 @@ export default class IngameScene extends Phaser.Scene {
                         case 'GameEnd':
                             console.log('Game Ended');
                             this.state = null;
-                            this.baronIndicator.hideContent();
-                            this.elderIndicator.hideContent();
+                            this.baronTimer.Stop();
+                            this.elderTimer.Stop();
                             this.sidePage.hideContent();
                             this.goldGraph.Disable();
                             this.inhib.Stop();
+                            this.score.Stop();
                             break;
                         case 'GameStart':
                             console.log('Game Start');
@@ -237,6 +230,8 @@ export default class IngameScene extends Phaser.Scene {
                             break;
                         case 'GameUnpause':
                             break;
+                        case 'ForceRefresh':
+                            window.location.reload();
                         //Ignore pick/ban events
                         case 'newState':
                         case 'newAction':
@@ -258,12 +253,12 @@ export default class IngameScene extends Phaser.Scene {
             console.log(`${objective} taken`);
             switch (objective) {
                 case 'baron':
-                    this.baronIndicator.updateContent(this.state?.baron!);
-                    this.baronIndicator.showContent();
+                    this.baronTimer.UpdateValues(this.state?.baron!);
+                    this.baronTimer.Start();
                     break;
                 case 'elder':
-                    this.elderIndicator.updateContent(this.state?.dragon!);
-                    this.elderIndicator.showContent();
+                    this.elderTimer.UpdateValues(this.state?.dragon!);
+                    this.elderTimer.Start();
                     break;
                 default:
                     break;
@@ -273,10 +268,10 @@ export default class IngameScene extends Phaser.Scene {
         const hideObjective = (objective: string) => {
             switch (objective) {
                 case 'baron':
-                    this.baronIndicator.hideContent();
+                    this.baronTimer.Stop();
                     break;
                 case 'elder':
-                    this.elderIndicator.hideContent();
+                    this.elderTimer.Stop();
                     break;
                 default:
                     break;
@@ -295,17 +290,14 @@ export default class IngameScene extends Phaser.Scene {
             if (this.state === undefined)
                 this.state = newState;
 
-            //console.log(newState);
-            this.scoreboard.updateContent(newState);
-
             //Migrated
             this.inhib.UpdateValues(newState.inhibitors);
+            this.score.UpdateValues(newState);
+            this.baronTimer.UpdateValues(newState.baron);
+            this.elderTimer.UpdateValues(newState.dragon);
 
 
             this.state = newState;
-
-            this.baronIndicator.updateContent(newState.baron);
-            this.elderIndicator.updateContent(newState.dragon);
 
             this.goldGraph.Update(newState.goldGraph);
             this.sidePage.updateContent(newState.infoPage);
@@ -335,7 +327,6 @@ export default class IngameScene extends Phaser.Scene {
 
     UpdateConfig = (message: OverlayConfigEvent): void => {
         console.log('Configuring Visual Elements');
-        console.log(message.config);
 
         if (this.overlayCfg === null) {
             //Init Message, create Visual Elements
@@ -343,11 +334,13 @@ export default class IngameScene extends Phaser.Scene {
             this.inhib = new InhibitorVisual(this);
             this.baronTimer = new ObjectiveTimerVisual(this, 'baron', message.config.BaronTimer);
             this.elderTimer = new ObjectiveTimerVisual(this, 'elder', message.config.ElderTimer);
+            this.score = new ScoreboardVisual(this, message.config.Score);
         } else {
             //Update Message, update elements if needed
             this.inhib.UpdateConfig(message.config.Inhib);
             this.baronTimer.UpdateConfig(message.config.BaronTimer);
             this.elderTimer.UpdateConfig(message.config.ElderTimer);
+            this.score.UpdateConfig(message.config.Score);
         }
 
         this.overlayCfg = message.config;
@@ -355,26 +348,27 @@ export default class IngameScene extends Phaser.Scene {
 
         //Debug
         this.inhib.Start();
+        //this.score.Start();
 
     }
 
 
     CheckSoulPoint(state: StateData): void {
-        if(state.blueDragons.length === 3 && this.state?.blueDragons.length === 2) {
+        if(state.scoreboard.BlueTeam.Dragons.length === 3 && this.state?.scoreboard.BlueTeam.Dragons.length === 2) {
             //Blue Soul Point
         }
 
-        if(state.redDragons.length === 3 && this.state?.redDragons.length === 2) {
+        if(state.scoreboard.RedTeam.Dragons.length === 3 && this.state?.scoreboard.RedTeam.Dragons.length === 2) {
             //Red Soul Point
         }
     }
 
     CheckDragonTaken(state: StateData): void {
-        if(state.blueDragons.length - 1 === this.state?.blueDragons.length) {
+        if(state.scoreboard.BlueTeam.Dragons.length - 1 === this.state?.scoreboard.BlueTeam.Dragons.length) {
             //Blue Dragon Taken
         }
 
-        if(state.redDragons.length - 1 === this.state?.redDragons.length) {
+        if(state.scoreboard.RedTeam.Dragons.length - 1 === this.state?.scoreboard.RedTeam.Dragons.length) {
             //Red Dragon Taken
         }
     }
