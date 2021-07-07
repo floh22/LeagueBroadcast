@@ -1,5 +1,6 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
+using LeagueBroadcast.Common.Utils;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Trinket;
@@ -18,6 +19,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private IngameController Ingame => BroadcastController.Instance.IGController;
 
         private const string EnableAPIString = "[LiveEvents]\nEnable=1\nPort=34243";
+        private const string EnableReplayAPIString = "EnableReplayApi=1";
 
         public bool Connected => Trinket.Connected;
 
@@ -91,6 +93,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     Log.Warn("Could not find config file in config folder");
                     return false;
                 }
+                //Check for Live Events
                 if (!(cfgContent.Contains("[LiveEvents]") && cfgContent.Contains("Enable=1")))
                 {
                     Log.Info("Could not find LiveEvents in game config. Appending to end");
@@ -103,6 +106,47 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 {
                     Log.Info("LiveEvents API found in Game config");
                 }
+
+                //Check for Replay API. This shouldnt be here but i'll shoehorn it in since it works
+                List<string> lines = cfgContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+                int generalLoc = lines.FindIndex(0, l => l == "[General]");
+
+                //found general config
+                if(generalLoc != -1)
+                {
+                    int ReplayAPILineLoc = lines.FindIndex(l => l.StartsWith("EnableReplayApi"));
+                    bool Overwrite = false;
+
+                    //Replay API Line does not exist
+                    if (ReplayAPILineLoc == -1)
+                    {
+                        Log.Verbose("Could not find Replay API in config");
+                        lines.Insert(generalLoc + 2, EnableReplayAPIString);
+                        Overwrite = true;
+                    }
+                    //Replay API disabled
+                    else if(lines[ReplayAPILineLoc].Contains("0"))
+                    {
+                        Log.Info("Replay API has been manually disabled. Reenabling");
+                        lines[ReplayAPILineLoc] = EnableReplayAPIString;
+                        Overwrite = true;
+                    }
+                    
+                    if(Overwrite)
+                    {
+                        Log.Info("Enabling Replay API in Game config");
+                        File.WriteAllLines(Path.Join(LeagueFolder, "game.cfg"), lines);
+                        Log.Verbose("Replay API enabled");
+                    } else
+                    {
+                        //Replay API Enabled
+                        Log.Info("Replay API found in Game config");
+                    }
+                } else
+                {
+                    Log.Warn("Could not parse game config. Replay API may not be enabled!");
+                }
+
 
                 try
                 {
@@ -175,17 +219,35 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             Player p = GetPlayer(e);
             if (p != null)
             {
-                if (e.Other.StartsWith("SRU_Razorbeak") || e.Other.StartsWith("SRU_Krug") || e.Other.StartsWith("SRU_MurkwolfMini"))
+                if (e.Other.StartsWith("SRU_MurkwolfMini"))
                 {
                     AddCS(p, 1);
                     return;
                 }
+
+                //Just count the entire camp instead of trying to somehow predict which mini give cs and which dont
+                //Maybe using statistics also would somehow work, but it can't be much more accurate than this and is far more effort
+                if((e.Other.StartsWith("SRU_Razorbeak") || e.Other.StartsWith("SRU_Krug")) && !e.Other.Contains("Mini"))
+                {
+                    AddCS(p, 4);
+                    return;
+                }
+
                 if (e.Other.StartsWith("SRU_Murkwolf"))
                 {
                     AddCS(p, 2);
                     return;
                 }
+
+                //Do not count mini monsters
+                if(e.Other.Contains("Mini"))
+                {
+                    return;
+                }
+
+                //Scuttle, Herald, Baron, Drake, Blue, Red all give 4 cs
                 AddCS(p, 4);
+
                 if (e.Other.StartsWith("SRU_Dragon"))
                 {
 

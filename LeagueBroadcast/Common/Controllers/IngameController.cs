@@ -59,7 +59,7 @@ namespace LeagueBroadcast.Common.Controllers
             //Discard late rejected responses by API
             if (!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) || newGameData == null || LeagueProcess == null)
             {
-                Log.Verbose("Late game reponse discarded");
+                Log.Verbose("game reponse invalid and discarded");
                 return;
             }
                 

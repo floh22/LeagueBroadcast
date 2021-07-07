@@ -89,7 +89,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         {
             if(tries == 10)
             {
-                Log.Warn("Could not determine if is spectator game. Defaulting to yes since this error happens more often in spectate games it seems");
+                Log.Warn("Could not determine if active game is spectator game. Defaulting to no to protect against usage in live games");
+                return false;
             }
             try
             {
@@ -105,9 +106,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 return false;
             } catch (Exception e)
             {
-                //This is not the correct way to do this. infinite loops are fun :)
                 Log.Verbose($"Spectate endpoint connection error: {e.Message} \n Attempting again");
-                return await IsSpectatorGame(tries ++);
+                return await IsSpectatorGame(tries++);
             }
             
         }

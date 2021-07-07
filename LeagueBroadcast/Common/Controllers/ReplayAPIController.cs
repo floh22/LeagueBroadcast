@@ -43,12 +43,18 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info("Init UI");
             result = await GetRequestContent("https://127.0.0.1:2999/replay/render");
 
-            if (result == "" || !result.Substring(result.IndexOf("interfaceScoreboard") + "interfaceScoreboard".Length + 3, 6).Contains("false"))
+            if (result == "")
+            {
+                Log.Warn("Received invalid response from replay API. Is it enabled?");
                 return;
-            if(ConfigController.Component.Replay.UseAutoInitUI)
-                GameInputController.InitUI();
+            }
 
-            if (ConfigController.Component.Ingame.UseCustomScoreboard)
+            if (ConfigController.Component.Replay.UseAutoInitUI)
+            {
+                GameInputController.InitUI();
+            }
+
+            if (ConfigController.Component.Ingame.UseCustomScoreboard && result.Substring(result.IndexOf("interfaceScoreboard") + "interfaceScoreboard".Length + 3, 6).Contains("false"))
             {
                 Log.Verbose("Disabling ingame score display");
                 _ = PostString("https://127.0.0.1:2999/replay/render", DisableScore());

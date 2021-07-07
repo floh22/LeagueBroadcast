@@ -191,7 +191,7 @@ export default class InhibitorVisual extends VisualElement {
     }
 
     UpdateValues(newValues: InhibitorInfo): void {
-        if (newValues === undefined || newValues === null || ((newValues.Inhibitors.every(i => i.timeLeft <= 0) && this.Config!.HideWhenNoneDestroyed))) {
+        if (newValues === undefined || newValues === null || (newValues.Inhibitors.every(i => i.timeLeft <= 0) && this.Config!.HideWhenNoneDestroyed)) {
             if (this.isActive) {
                 this.isActive = false;
                 this.Stop();
@@ -207,7 +207,6 @@ export default class InhibitorVisual extends VisualElement {
         this.redBotTime.text = this.ToTimeString(newValues.Inhibitors[5].timeLeft);
 
         if (!this.isActive) {
-            this.isActive = true;
             this.Start();
         }
     }
@@ -378,7 +377,7 @@ export default class InhibitorVisual extends VisualElement {
     }
 
     Start(): void {
-        if (this.isActive)
+        if (this.isActive || this.isShowing)
             return;
 
         var ctx = this;
@@ -398,7 +397,7 @@ export default class InhibitorVisual extends VisualElement {
     }
 
     Stop(): void {
-        if (!this.isActive)
+        if (!this.isActive || this.isHiding)
             return;
 
         var ctx = this;

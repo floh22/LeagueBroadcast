@@ -15,18 +15,18 @@ import LevelUpVisual from '~/visual/LevelUpVisual';
 import InhibitorVisual from '~/visual/InhibitorVisual';
 import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
 import ScoreboardVisual from '~/visual/ScoreboardVisual';
+import InfoPageVisual from '~/visual/InfoPageVisual';
 
 export default class IngameScene extends Phaser.Scene {
     ws!: WebSocket;
     players: RegionMask[];
     goldGraph!: GraphPopUp;
-    sidePage!: InfoSidePageIndicator;
-
 
     baronTimer!: ObjectiveTimerVisual;
     elderTimer!: ObjectiveTimerVisual;
     inhib!: InhibitorVisual;
     score!: ScoreboardVisual;
+    info!: InfoPageVisual;
 
     state!: StateData | null;
     overlayCfg!: OverlayConfig | null;
@@ -66,6 +66,8 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('champCoverRight', 'frontend/masks/ChampCoverRight.png');
         this.load.image('scoreboardMask', 'frontend/masks/ScoreboardMask.png');
         this.load.image('itemTextMask', 'frontend/masks/ItemText.png');
+        this.load.image('infoPageMask', 'frontend/masks/InfoPage.png');
+        
 
         //Objective Timers
         this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
@@ -82,6 +84,10 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('scoreCenter', 'frontend/images/ScoreboardCenterIcon.png');
         this.load.image('scoreBlueIcon', 'frontend/backgrounds/ScoreTeamIconBGLeft.png');
         this.load.image('scoreRedIcon', 'frontend/backgrounds/ScoreTeamIconBGRight.png');
+
+
+        //Info Tab
+        this.load.image('infoPageSeparator', 'frontend/images/InfoTabSeparator.png');
 
         //Center Graph
         this.load.image('centerCover', 'frontend/backgrounds/CenterCover.png');
@@ -157,7 +163,6 @@ export default class IngameScene extends Phaser.Scene {
 
         //Color calc breaks with no data so init with dummy data
         this.goldGraph = new GraphPopUp(this, [new GoldEntry(0, 100), new GoldEntry(1, -100)]);
-        this.sidePage = new InfoSidePageIndicator(this);
 
         const connect = () => {
             this.ws = new WebSocket(`${variables.useSSL ? 'wss' : 'ws'}://${variables.backendUrl}:${variables.backendPort}/${variables.backendWsLoc}`);
@@ -171,12 +176,12 @@ export default class IngameScene extends Phaser.Scene {
 
             this.ws.onclose = () => {
                 setTimeout(connect, 500);
-                //this.sidePage.hideContent();
                 //this.goldGraph.Disable();
                 this.score?.Stop();
                 this.inhib?.Stop();
                 this.baronTimer?.Stop();
                 this.elderTimer?.Stop();
+                this.info?.Stop();
                 console.log('[LB] Attempt reconnect in 500ms');
             };
             this.ws.onerror = () => {
@@ -196,7 +201,7 @@ export default class IngameScene extends Phaser.Scene {
                             this.UpdateConfig(data);
                             break;
                         case 'PlayerLevelUp':
-                            if (this.sidePage.isActive && data.playerId < 5)
+                            if (this.info.isActive && data.playerId < 5)
                                 break;
                             new LevelUpVisual(this, data.playerId, data.level);
                             break;
@@ -209,7 +214,7 @@ export default class IngameScene extends Phaser.Scene {
                             hideObjective(data.objective);
                             break;
                         case 'ItemCompleted':
-                            if (this.sidePage.isActive && data.playerId < 5)
+                            if (this.info.isActive && data.playerId < 5)
                                 break;
                             new ItemVisual(this, data.itemData, data.playerId);
                             break;
@@ -218,10 +223,10 @@ export default class IngameScene extends Phaser.Scene {
                             this.state = null;
                             this.baronTimer.Stop();
                             this.elderTimer.Stop();
-                            this.sidePage.hideContent();
                             this.goldGraph.Disable();
                             this.inhib.Stop();
                             this.score.Stop();
+                            this.info?.Stop();
                             break;
                         case 'GameStart':
                             console.log('Game Start');
@@ -295,13 +300,12 @@ export default class IngameScene extends Phaser.Scene {
             this.score.UpdateValues(newState);
             this.baronTimer.UpdateValues(newState.baron);
             this.elderTimer.UpdateValues(newState.dragon);
+            this.info.UpdateValues(newState.infoPage);
 
 
             this.state = newState;
 
             this.goldGraph.Update(newState.goldGraph);
-            this.sidePage.updateContent(newState.infoPage);
-
         }
 
         connect();
@@ -335,20 +339,18 @@ export default class IngameScene extends Phaser.Scene {
             this.baronTimer = new ObjectiveTimerVisual(this, 'baron', message.config.BaronTimer);
             this.elderTimer = new ObjectiveTimerVisual(this, 'elder', message.config.ElderTimer);
             this.score = new ScoreboardVisual(this, message.config.Score);
+            this.info = new InfoPageVisual(this, message.config.InfoPage);
         } else {
             //Update Message, update elements if needed
             this.inhib.UpdateConfig(message.config.Inhib);
             this.baronTimer.UpdateConfig(message.config.BaronTimer);
             this.elderTimer.UpdateConfig(message.config.ElderTimer);
             this.score.UpdateConfig(message.config.Score);
+            this.info.UpdateConfig(message.config.InfoPage);
         }
 
         this.overlayCfg = message.config;
         //console.log(message.config);
-
-        //Debug
-        this.inhib.Start();
-        //this.score.Start();
 
     }
 

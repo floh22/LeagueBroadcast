@@ -282,7 +282,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             Position = new Vector2(430, 30),
                             Size = new Vector2(60, 60),
                             UseBackground = true,
-                            BackgroundOffset = new Vector2(10,0)
+                            BackgroundOffset = new Vector2(10, 0)
                         },
                         Kills = new ScoreDisplayConfig.ElementConfig()
                         {
@@ -351,14 +351,168 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         ShowCenterIcon = true,
                         //None, Simple, Fancy
                         Animation = "Simple",
-                        DrakeIconSize = new Vector2(20,20),
+                        DrakeIconSize = new Vector2(20, 20),
                         CenterIconPosition = new Vector2(0, 30),
-                        CenterIconSize = new Vector2(40,40)
+                        CenterIconSize = new Vector2(40, 40)
                     }
                 },
                 InfoPage = new InfoPageDisplayConfig()
                 {
-
+                    Position = new Vector2(0, 135),
+                    TitleHeight = 45f,
+                    Background = new InfoPageDisplayConfig.InfoPageBackgroundConfig()
+                    {
+                        Size = new Vector2(300, 600),
+                        FallbackColor = "rgb(19, 24, 63)",
+                        UseAlpha = false,
+                        UseImage = false,
+                        UseVideo = false
+                    },
+                    Title = new InfoPageDisplayConfig.InfoTabTextElementConfig()
+                    {
+                        Enabled = true,
+                        Font = new FontConfig()
+                        {
+                            Align = "center",
+                            Color = "rgb(255,255,255)",
+                            IsGoogleFont = true,
+                            Name = "News Cycle",
+                            Size = "26px",
+                            Style = "Normal"
+                        },
+                        Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                        {
+                            XP = new Vector2(150, 15),
+                            CSPM = new Vector2(150, 15),
+                            Gold = new Vector2(150, 15)
+                        }
+                    },
+                    TabConfig = new InfoPageDisplayConfig.InfoTabDisplayConfig()
+                    {
+                        TabSize = new Vector2(300, 55),
+                        UseTeamColorsText = false,
+                        OrderColor = "rgb(255,255,255)",
+                        ChaosColor = "rgb(255,255,255)",
+                        ChampIcon = new InfoPageDisplayConfig.InfoTabImageElementConfig()
+                        {
+                            Enabled = true,
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(4, 8),
+                                CSPM = new Vector2(4, 8),
+                                Gold = new Vector2(4, 8)
+                            },
+                            Size = new Vector2(42, 42)
+                        },
+                        PlayerName = new InfoPageDisplayConfig.InfoTabTextElementConfig()
+                        {
+                            Enabled = true,
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(54, 6),
+                                CSPM = new Vector2(54, 6),
+                                Gold = new Vector2(54, 6)
+                            },
+                            Font = new FontConfig()
+                            {
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
+                                IsGoogleFont = true,
+                                Name = "News Cycle",
+                                Size = "15px",
+                                Style = "Normal"
+                            }
+                        },
+                        MinValue = new InfoPageDisplayConfig.InfoTabTextElementConfig()
+                        {
+                            Enabled = true,
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(54, 22),
+                                CSPM = new Vector2(54, 22),
+                                Gold = new Vector2(54, 22)
+                            },
+                            Font = new FontConfig()
+                            {
+                                Align = "left",
+                                Color = "rgb(255,255,255)",
+                                IsGoogleFont = true,
+                                Name = "News Cycle",
+                                Size = "15px",
+                                Style = "Normal"
+                            }
+                        },
+                        CurrentValue = new InfoPageDisplayConfig.InfoTabTextElementConfig()
+                        {
+                            Enabled = true,
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(280, 15),
+                                CSPM = new Vector2(280, 15),
+                                Gold = new Vector2(270, 15)
+                            },
+                            Font = new FontConfig()
+                            {
+                                Align = "center",
+                                Color = "rgb(255,255,255)",
+                                IsGoogleFont = true,
+                                Name = "News Cycle",
+                                Size = "25px",
+                                Style = "Normal"
+                            }
+                        },
+                        MaxValue = new InfoPageDisplayConfig.InfoTabTextElementConfig()
+                        {
+                            Enabled = true,
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(260, 22),
+                                CSPM = new Vector2(260, 22),
+                                Gold = new Vector2(230, 22)
+                            },
+                            Font = new FontConfig()
+                            {
+                                Align = "right",
+                                Color = "rgb(255,255,255)",
+                                IsGoogleFont = true,
+                                Name = "News Cycle",
+                                Size = "15px",
+                                Style = "Normal"
+                            }
+                        },
+                        ProgressBar = new InfoPageDisplayConfig.InfoTabProgressBarConfig()
+                        {
+                            Enabled = true,
+                            UseTeamColors = true,
+                            DefaultColor = "rgb(0,0,0)",
+                            ChaosColor = "rgb(0,151,196)",
+                            OrderColor = "rgb(222,40,70)",
+                            Animate = true,
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(52, 40),
+                                CSPM = new Vector2(52, 40),
+                                Gold = new Vector2(52, 40)
+                            },
+                            Size = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(210, 10),
+                                CSPM = new Vector2(210, 10),
+                                Gold = new Vector2(180, 10)
+                            },
+                        },
+                        Separator = new InfoPageDisplayConfig.InfoTabImageElementConfig()
+                        {
+                            Enabled = true,
+                            Size = new Vector2(300,2),
+                            Position = new InfoPageDisplayConfig.InfoTabElementVector2()
+                            {
+                                XP = new Vector2(0, 0),
+                                CSPM = new Vector2(0, 0),
+                                Gold = new Vector2(0, 0)
+                            }
+                        }
+                    }
                 },
                 ItemComplete = new ItemCompletedDisplayConfig() {
                     UseCustomVideo = false,
@@ -874,7 +1028,68 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public class InfoPageDisplayConfig
         {
+            public Vector2 Position;
+            public InfoTabTextElementConfig Title;
+            public float TitleHeight;
+            public InfoTabDisplayConfig TabConfig;
+            public InfoPageBackgroundConfig Background;
 
+            public class InfoTabDisplayConfig
+            {
+                public Vector2 TabSize;
+                public bool UseTeamColorsText;
+                public string OrderColor;
+                public string ChaosColor;
+                public InfoTabImageElementConfig ChampIcon;
+                public InfoTabImageElementConfig Separator;
+                public InfoTabTextElementConfig PlayerName;
+                public InfoTabTextElementConfig MinValue;
+                public InfoTabTextElementConfig CurrentValue;
+                public InfoTabTextElementConfig MaxValue;
+                public InfoTabProgressBarConfig ProgressBar;
+            }
+
+            public class InfoTabTextElementConfig
+            {
+                public bool Enabled;
+                public InfoTabElementVector2 Position;
+                public FontConfig Font;
+            }
+
+            public class InfoTabImageElementConfig
+            {
+                public bool Enabled;
+                public InfoTabElementVector2 Position;
+                public Vector2 Size;
+            }
+
+            public class InfoTabElementVector2
+            {
+                public Vector2 Gold;
+                public Vector2 XP;
+                public Vector2 CSPM;
+            }
+
+            public class InfoTabProgressBarConfig
+            {
+                public bool Enabled;
+                public InfoTabElementVector2 Position;
+                public InfoTabElementVector2 Size;
+                public bool UseTeamColors;
+                public string DefaultColor;
+                public string OrderColor;
+                public string ChaosColor;
+                public bool Animate;
+            }
+
+            public class InfoPageBackgroundConfig
+            {
+                public bool UseImage;
+                public bool UseVideo;
+                public bool UseAlpha;
+                public string FallbackColor;
+                public Vector2 Size;
+            }
         }
     }
 }

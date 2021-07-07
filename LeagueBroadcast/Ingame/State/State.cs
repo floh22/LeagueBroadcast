@@ -93,7 +93,7 @@ namespace LeagueBroadcast.Ingame.State
                     //Dr. Mundo <-> DrMundo
 
                     //Replace this with a map of some kind between memory names and API names
-                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing").Replace(".", ""), StringComparison.OrdinalIgnoreCase));
+                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.rawChampionName, StringComparison.OrdinalIgnoreCase));
                 } catch (Exception e)
                 {
                     //Incorrect values now but its better than crashing? Not sure

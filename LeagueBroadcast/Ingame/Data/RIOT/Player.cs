@@ -11,6 +11,7 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
         public int id;
         public string summonerName;
         public string championName;
+        public string rawChampionName;
         public bool isDead;
         public IEnumerable<Item> items;
         public int level;

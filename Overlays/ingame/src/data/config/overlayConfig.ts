@@ -19,7 +19,7 @@ export interface OverlayConfig {
     ObjectiveKill: ObjectiveKillConfig;
     ItemComplete: ItemCompletedDisplayConfig;
     LevelUp: LevelUpDisplayConfig;
-    InfoPage: InhibitorDisplayConfig;
+    InfoPage: InfoPageDisplayConfig;
     BaronTimer: ObjectiveTimerDisplayConfig;
     ElderTimer: ObjectiveTimerDisplayConfig;
 }
@@ -199,7 +199,56 @@ export interface FontConfig {
 }
 
 export interface InfoPageDisplayConfig {
+    Position: Vector2;
+    Title: InfoTabTextElementConfig;
+    TitleHeight: number;
+    TabConfig: InfoTabDisplayConfig;
+    Background: InfoPageBackgroundConfig;
+}
 
+export interface InfoTabDisplayConfig {
+    TabSize: Vector2;
+    UseTeamColorsText: boolean;
+    OrderColor: string;
+    ChaosColor: string;
+    ChampIcon: InfoTabImageElementConfig;
+    Separator: InfoTabImageElementConfig;
+    PlayerName: InfoTabTextElementConfig;
+    MinValue: InfoTabTextElementConfig;
+    CurrentValue: InfoTabTextElementConfig;
+    MaxValue: InfoTabTextElementConfig;
+    ProgressBar: InfoTabProgressBarConfig;
+}
+
+export interface InfoTabProgressBarConfig {
+    Enabled: boolean;
+    Position: Vector2;
+    Size: Vector2;
+    UseTeamColors: boolean;
+    DefaultColor: string;
+    OrderColor: string;
+    ChaosColor: string;
+    Animate: boolean;
+}
+
+export interface InfoTabImageElementConfig {
+    Enabled: boolean;
+    Position: Vector2;
+    Size: Vector2;
+}
+
+export interface InfoTabTextElementConfig {
+    Enabled: boolean;
+    Position: Vector2;
+    Font: FontConfig;
+}
+
+export interface InfoPageBackgroundConfig{
+    UseImage: boolean;
+    UseVideo: boolean;
+    UseAlpha: boolean;
+    FallbackColor: string;
+    Size: Vector2;
 }
 
 export interface BackgroundDisplayConfig {

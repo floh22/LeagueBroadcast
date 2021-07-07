@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LeagueBroadcast.Common.Utils
 {
-    static class StringUtils
+    public static class StringUtils
     {
         public static List<int> AllIndexesOf(this string str, string value)
         {

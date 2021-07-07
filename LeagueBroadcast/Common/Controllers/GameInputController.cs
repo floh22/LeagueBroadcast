@@ -19,6 +19,7 @@ namespace LeagueBroadcast.Common.Controllers
         {
             if(ConfigController.Component.Replay.UseAutoInitUI)
             {
+                Log.Info("Sending game start key inputs");
                 Process p = InputUtils.GetActiveProcess();
                 Point cursorP = InputUtils.GetCursorPosition();
                 InputUtils.SetForegroundWindow(IngameController.LeagueProcess.MainWindowHandle);
