@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:LeagueBroadcast.MVVM.ViewModel"
         xmlns:local="clr-namespace:LeagueBroadcast"
         mc:Ignorable="d"
-        Title="Essence" Height="720" Width="1280"
+        Title="LeagueBroadcast" Height="720" Width="1280"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
@@ -60,13 +60,23 @@
             <StackPanel Orientation="Horizontal">
                 <Image Height="50" Width="50" Margin="10"
                        Source="../../Assets/Images/BE_icon.png"/>
-                <TextBlock Text="Essence"
+                <Grid>
+                    <TextBlock Text="League"
                            Foreground="White"
                            FontSize="25"
                            FontWeight="Medium" 
                            VerticalAlignment="Center"
-                           Margin="0,0,0,0"
+                           Margin="0,-30,0,0"
                            />
+                    <TextBlock Text="Broadcast"
+                           Foreground="White"
+                           FontSize="25"
+                           FontWeight="Medium" 
+                           VerticalAlignment="Center"
+                           Margin="0,20,0,-10"
+                           />
+                </Grid>
+                
             </StackPanel>
             <StackPanel x:Name="Navigation">
                 <RadioButton Content="Home"

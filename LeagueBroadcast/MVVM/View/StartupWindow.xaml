@@ -71,6 +71,24 @@
                     <TextBlock Text="LEAGUE BROADCAST" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
                     <TextBlock Text="{Binding AppVersion}" FontSize="15" Foreground="White" VerticalAlignment="Top" Height="55" Margin="90,90,0,0"/>
                 </Grid>
+                <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="5"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="2" Text="@LarsEble" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
+                        <Image Grid.Row="2" Grid.Column="2" Height="30" Width="30" Source="../../Assets/Images/TwitterSocial.png"/>
+                    </Grid>
+                </Grid>
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>

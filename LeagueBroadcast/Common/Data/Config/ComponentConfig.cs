@@ -97,8 +97,8 @@ namespace LeagueBroadcast.Common.Data.Config
                 App = new AppConfig() {
                     LogLevel = LogLevel.Info,
                     CheckForUpdates = true,
-                    UpdateRepositoryName = @"floh22/LeagueBroadcastHub",
-                    UpdateRepositoryUrl = "https://github.com/floh22/LeagueBroadcastHub",
+                    UpdateRepositoryName = @"floh22/LeagueBroadcast",
+                    UpdateRepositoryUrl = "https://github.com/floh22/LeagueBroadcast",
                     LeagueInstall = new() {
                         "C:\\",
                         "D:\\",
@@ -107,7 +107,7 @@ namespace LeagueBroadcast.Common.Data.Config
                         "C:\\Program Files",
                         "C:\\Program Files (x86)"
                     },
-                    OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcastHub/v2/Offsets/",
+                    OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcast/v2/Offsets/",
                     OffsetPrefix = "Offsets-",
                     CheckForOffsets = true
                 }

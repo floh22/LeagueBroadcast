@@ -70,7 +70,7 @@ namespace LeagueBroadcast.Common.Controllers
                 GameFound = true;
                 if(!await LoLDataProvider.IsSpectatorGame())
                 {
-                    Log.Warn("Essence not enabled in live game. Stopping game connection");
+                    Log.Warn("LeagueBroadcast not enabled in live game. Stopping game connection");
                     AppStateController.GameStop.Invoke(null, EventArgs.Empty);
                     return;
                 }
@@ -153,7 +153,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (backDragon.DurationRemaining > 0)
             {
                 gameState.SetObjectiveData(backDragon, gameState.stateData.dragon, backDragon.DurationRemaining - timeDiff);
-                Log.Info($"Elder Time left: {backDragon.DurationRemaining}");
+                Log.Verbose($"Elder Time left: {backDragon.DurationRemaining:C0}");
                 if (backDragon.DurationRemaining <= 0)
                 {
                     OnDragonEnd(null, EventArgs.Empty);
@@ -166,7 +166,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (backBaron.DurationRemaining > 0)
             {
                 gameState.SetObjectiveData(backBaron, gameState.stateData.baron, backBaron.DurationRemaining - timeDiff);
-                Log.Info($"Baron Time left: {backBaron.DurationRemaining}");
+                Log.Verbose($"Baron Time left: {backBaron.DurationRemaining:C0}");
                 if (backBaron.DurationRemaining <= 0)
                 {
                     backBaron.DurationRemaining = 0;

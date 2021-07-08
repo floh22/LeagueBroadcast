@@ -16,4 +16,20 @@ export default class TextUtils {
             }
         }
     };
+
+
+    static LoadFont(font: any): void {
+        if(font && typeof font === "string") {
+            //Load single font
+            this.LoadFontInternal([font]);
+        }
+        if(font && Array.isArray(font) && typeof font[0] === "string") {
+            //Load multiple fonts
+            this.LoadFontInternal(font)
+        }
+    }
+
+    private static LoadFontInternal(fonts: string[]): void {
+
+    }
 }

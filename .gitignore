@@ -361,5 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/BE_icon.psd
-/Overlays/ingame/IconBackgrounds.psd
+
+# Photoshop - psd files used for dev
+*.psd

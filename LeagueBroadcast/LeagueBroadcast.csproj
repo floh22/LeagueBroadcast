@@ -11,12 +11,12 @@
     <Authors>Lars Eble</Authors>
     <Company />
     <Description>League Broadcast Tools used for streaming LoL Spectator</Description>
-    <PackageProjectUrl>https://github.com/floh22/LeagueBroadcastHub</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/floh22/LeagueBroadcastHub</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/floh22/LeagueBroadcast</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/floh22/LeagueBroadcast</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.3.203.0</AssemblyVersion>
-    <FileVersion>1.3.203.21188</FileVersion>
+    <AssemblyVersion>1.3.219.0</AssemblyVersion>
+    <FileVersion>1.3.219.21189</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,6 +35,7 @@
     <None Remove="Assets\Images\ArrowsDown.png" />
     <None Remove="Assets\Images\ArrowsDownWhite.png" />
     <None Remove="Assets\Images\LeagueOfLegendsIcon.png" />
+    <None Remove="Assets\Images\TwitterSocial.png" />
     <None Remove="Frontend\ingame\backgrounds\BaronIcon.png" />
     <None Remove="Frontend\ingame\backgrounds\CenterCover.png" />
     <None Remove="Frontend\ingame\backgrounds\DragonIcon.png" />
@@ -105,6 +106,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\LeagueOfLegendsIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\TwitterSocial.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

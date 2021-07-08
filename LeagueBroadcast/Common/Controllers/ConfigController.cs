@@ -38,7 +38,7 @@ namespace LeagueBroadcast.Common.Controllers
             if(PickBan.FileVersion == null || Component.FileVersion == null || Ingame.FileVersion == null)
             {
                 Log.Warn("Config load failed");
-                var result = MessageBox.Show("Failed to load configuration. Corrupted Install detected. Try removing Config folder and restarting", "Essence", MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = MessageBox.Show("Failed to load configuration. Corrupted Install detected. Try removing Config folder and restarting", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Dispatcher.Invoke((Action)delegate {
                     Application.Current.Shutdown();
                 });
@@ -58,7 +58,7 @@ namespace LeagueBroadcast.Common.Controllers
             if(Farsight.FileVersion == null)
             {
                 Log.Warn("Could not load Offsets");
-                var result = MessageBox.Show("Failed to load offsets. Manually download or write Config/Farsight.json. Check github for current file version.", "Essence", MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = MessageBox.Show("Failed to load offsets. Manually download or write Config/Farsight.json. Check github for current file version.", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Dispatcher.Invoke((Action)delegate {
                     Application.Current.Shutdown();
                 });

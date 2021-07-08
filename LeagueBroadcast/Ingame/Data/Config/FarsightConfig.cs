@@ -44,22 +44,22 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
             Log.Info($"Fetching new offsets from {offsetUri}");
             string res = await DataDragonUtils.GetAsync(offsetUri);
+            
             if(res == "")
             {
-                //Wednesday at 4AM is usually patch time, so if its earlier, look one patch earlier
+                //Check if an older patch exists. If so, use that one
                 Log.Info("New Offsets not yet online. Checking to make sure if new patch should already be used");
                 var versionComponents = DataDragon.version.Champion.Split('.');
                 int patch = Int32.Parse(versionComponents[1]);
                 if (cfg != null && 
-                     patch - 1 == Int32.Parse(cfg.GameVersion.Substring(3, 2).Replace(".", "")) && 
-                    (DateTime.Now.Hour < 12 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday))
+                     patch - 1 == Int32.Parse(cfg.GameVersion.Substring(3, 2).Replace(".", "")))
                 {
                     Log.Info("Night before patch. Using old offsets");
                     return cfg;
                 }
 
                 //We do not have a local version available. Incase this has been started for the first time on a tuesday before a patch, get old offsets
-                //This is in theory a moot point since this means Essence will stop working in a couple of hours, but its better than not working
+                //This is in theory a moot point since this means LeagueBroadcast will stop working in a couple of hours, but its better than not working
                 if(DateTime.Now.Hour < 24 && DateTime.Now.DayOfWeek <= DayOfWeek.Wednesday && patch >= 0 && DateTime.Now.DayOfWeek >= DayOfWeek.Tuesday)
                 {
                     Log.Warn("Local offsets not found and future patch detected. Using previous patch data");
@@ -67,7 +67,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 }
 
                 //Its not before a patch and offsets could not be found. This means that its probably Wednesday after a patch
-                //Disable memory component of essence. It's better than crashing :)
+                //Disable memory component of LeagueBroadcast. It's better than crashing :)
                 Log.Warn("Could not fetch updated Offsets! Are they not uploaded yet? Either provide your own, change the source, or wait for an update");
                 FarsightController.ShouldRun = false;
                 return new FarsightConfig();
@@ -111,7 +111,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override void UpdateValues(string readValues)
         {
             var Cfg = JsonConvert.DeserializeObject<FarsightConfig>(readValues);
-            if(Cfg.GameVersion != DataDragon.version.Champion)
+            if(Cfg.GameVersion != AppStateController.LocalGameVersion)
             {
                 Log.Info("Outdated Offsets detected. Downloading new ones");
                 UpdateGameVersion(Cfg);

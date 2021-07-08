@@ -650,11 +650,15 @@ export default class ScoreboardVisual extends VisualElement {
                 break;
             case 'simple':
             case 'Simple':
-                this.GetActiveVisualComponents().forEach(c => {
+                
+                [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground].forEach(c => {
+                    if(c === null || c === undefined)
+                        return;
                     c.alpha = 1;
                 });
+                
                 this.currentAnimation[0] = this.scene.tweens.add({
-                    targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueDragons, this.RedDragons, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
+                    targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
                     props: {
                         y: { value: '+=' + ctx.Config.Size.Y, duration: 550, ease: 'Circ.easeOut' }
                     },
@@ -666,6 +670,16 @@ export default class ScoreboardVisual extends VisualElement {
                         ctx.isActive = true;
                         ctx.currentAnimation = [];
                     }
+                });
+                this.currentAnimation[1] = this.scene.tweens.add({
+                    targets: [this.BlueIconSprite, this.RedIconSprite].concat(this.BlueDragons).concat(this.RedDragons),
+                    props: {
+                        alpha: { from: 0, to: 1, duration: 250, ease: 'Circ.easeInOut' }
+                    },
+                    paused: false,
+                    yoyo: false,
+                    delay: 550,
+                    duration: 250
                 });
                 break;
             case 'fancy':
@@ -700,11 +714,12 @@ export default class ScoreboardVisual extends VisualElement {
                 this.currentAnimation[0] = this.scene.tweens.add({
                     targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
                     props: {
-                        y: { value: '-=' + ctx.Config.Size.Y, duration: 550, ease: 'Circ.easeOut' }
+                        y: { value: '-=' + ctx.Config.Size.Y, duration: 550, ease: 'Circ.easeIn' }
                     },
                     paused: false,
                     yoyo: false,
                     duration: 550,
+                    delay: 100,
                     onComplete: function () {
                         ctx.isHiding = false;
                         ctx.currentAnimation = [];
@@ -712,13 +727,13 @@ export default class ScoreboardVisual extends VisualElement {
                 });
 
                 this.currentAnimation[1] = this.scene.tweens.add({
-                    targets: [this.BlueIconSprite, this.RedIconSprite, this.BlueDragons, this.RedDragons],
+                    targets: [this.BlueIconSprite, this.RedIconSprite].concat(this.BlueDragons).concat(this.RedDragons),
                     props: {
-                        alpha: { from: 1, to: 0, duration: 550, ease: 'Circ.easeInOut' }
+                        alpha: { from: 1, to: 0, duration: 250, ease: 'Circ.easeInOut' }
                     },
                     paused: false,
                     yoyo: false,
-                    duration: 200
+                    duration: 100
                 });
                 break;
             case 'fancy':

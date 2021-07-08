@@ -16,7 +16,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "2.0";
+        public static new string CurrentVersion => "2.1";
 
         public InhibitorDisplayConfig Inhib;
         public ScoreDisplayConfig Score;
@@ -24,6 +24,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public ItemCompletedDisplayConfig ItemComplete;
         public LevelUpDisplayConfig LevelUp;
         public InfoPageDisplayConfig InfoPage;
+        public GoldGraphDisplayConfig GoldGraph;
         public ObjectiveTimerDisplayConfig BaronTimer;
         public ObjectiveTimerDisplayConfig ElderTimer;
 
@@ -48,6 +49,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             ObjectiveKill = Cfg.ObjectiveKill;
             BaronTimer = Cfg.BaronTimer;
             ElderTimer = Cfg.ElderTimer;
+            GoldGraph = Cfg.GoldGraph;
             FileVersion = Cfg.FileVersion;
         }
 
@@ -67,6 +69,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.ObjectiveKill = def.ObjectiveKill;
             this.BaronTimer = def.BaronTimer;
             this.ElderTimer = def.ElderTimer;
+            this.GoldGraph = def.GoldGraph;
             this.FileVersion = CurrentVersion;
 
         }
@@ -114,7 +117,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 Score = new ScoreDisplayConfig()
                 {
                     Position = new Vector2(960, 0),
-                    Size = new Vector2(800, 100),
+                    Size = new Vector2(800, 92),
                     TimeFont = new FontConfig()
                     {
                         Name = "News Cycle",
@@ -504,7 +507,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         Separator = new InfoPageDisplayConfig.InfoTabImageElementConfig()
                         {
                             Enabled = true,
-                            Size = new Vector2(300,2),
+                            Size = new Vector2(300, 2),
                             Position = new InfoPageDisplayConfig.InfoTabElementVector2()
                             {
                                 XP = new Vector2(0, 0),
@@ -761,14 +764,14 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         Color = "rgb(230,190,138)",
                         Align = "right"
                     },
-                    TimePosition = new Vector2(25,0),
-                    TimeIconPosition = new Vector2(-10,0),
-                    IconPosition = new Vector2(0,0)
+                    TimePosition = new Vector2(25, 0),
+                    TimeIconPosition = new Vector2(-10, 0),
+                    IconPosition = new Vector2(0, 0)
                 },
                 ElderTimer = new ObjectiveTimerDisplayConfig()
                 {
                     Position = new Vector2(120, 55),
-                    MaskPosition = new Vector2(50,20),
+                    MaskPosition = new Vector2(50, 20),
                     MaskSize = new Vector2(150, 70),
                     Scale = 0.8f,
                     Animate = true,
@@ -785,7 +788,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         Color = "rgb(230,190,138)",
                         Align = "left"
                     },
-                    GoldPosition = new Vector2(18,-25),
+                    GoldPosition = new Vector2(18, -25),
                     GoldIconPosition = new Vector2(22, -25),
                     TimeFont = new FontConfig()
                     {
@@ -799,14 +802,68 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimePosition = new Vector2(18, 0),
                     TimeIconPosition = new Vector2(20, -2),
                     IconPosition = new Vector2(40, 0)
+                },
+                GoldGraph = new GoldGraphDisplayConfig()
+                {
+                    Position = new Vector2(965, 845),
+                    Size = new Vector2(740, 235),
+                    Background = new BackgroundDisplayConfig()
+                    {
+                        UseImage = false,
+                        UseVideo = false,
+                        UseAlpha = false,
+                        FallbackColor = "rgba(19,24,63,255)"
+                    },
+                    Title = new GoldGraphDisplayConfig.TitleConfig()
+                    {
+                        Enabled = true,
+                        Position = new Vector2(0, 10),
+                        Font = new FontConfig()
+                        {
+                            Name = "News Cycle",
+                            IsGoogleFont = true,
+                            Size = "22px",
+                            Style = "Bold",
+                            Color = "rgb(230,190,138)",
+                            Align = "left"
+                        },
+                        Text = "GOLD DIFFERENCE SINCE START"
+                    },
+                    Graph = new GoldGraphDisplayConfig.GraphDisplayConfig()
+                    {
+                        Position = new Vector2(5,40),
+                        Size = new Vector2(710, 190),
+                        InfoFont = new FontConfig()
+                        {
+                            Name = "News Cycle",
+                            IsGoogleFont = true,
+                            Size = "UNUSED",
+                            Style = "UNUSED",
+                            Color = "rgb(230,190,138)",
+                            Align = "UNUSED"
+                        },
+                        BorderUseTeamColors = true,
+                        BorderChaosColor = "rgb(0,0,0)",
+                        BorderOrderColor = "rgb(0,0,0)",
+                        FillUseTeamColors = true,
+                        FillChaosColor = "rgb(0,0,0)",
+                        FillOrderColor = "rgb(0,0,0)",
+                        GridColor = "rgba(255,255,255, 0.3)",
+                        GridEdgeColor = "rgba(255,255,255, 0.4)",
+                        ShowHorizontalGrid = true,
+                        ShowVerticalGrid = true,
+                        LineTension = 0.05f,
+                        TimeStepSize = 30,
+                        ShowTimeStepIndicators = true
+                    }
                 }
             };
         }
 
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
-            //1.0 to 2.0
-            if (oldVersion == "1.0" && CurrentVersion == "2.0")
+            //Update to 2.1
+            if ((oldVersion == "1.0" || oldVersion == "2.0") && CurrentVersion == "2.1")
             {
                 Task t = new Task(async () =>
                 {
@@ -1089,6 +1146,43 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 public bool UseAlpha;
                 public string FallbackColor;
                 public Vector2 Size;
+            }
+        }
+
+        public class GoldGraphDisplayConfig
+        {
+            public Vector2 Position;
+            public Vector2 Size;
+            public BackgroundDisplayConfig Background;
+            public TitleConfig Title;
+            public GraphDisplayConfig Graph;
+            public class GraphDisplayConfig
+            {
+                public Vector2 Position;
+                public Vector2 Size;
+                public bool ShowVerticalGrid;
+                public bool ShowHorizontalGrid;
+                public float LineTension;
+                public string GridColor;
+                public string GridEdgeColor;
+                public bool BorderUseTeamColors;
+                public string BorderOrderColor;
+                public string BorderChaosColor;
+                public bool FillUseTeamColors;
+                public string FillOrderColor;
+                public string FillChaosColor;
+                public FontConfig InfoFont;
+                public int TimeStepSize;
+                public bool ShowTimeStepIndicators;
+                
+            }
+
+            public class TitleConfig
+            {
+                public bool Enabled;
+                public Vector2 Position;
+                public FontConfig Font;
+                public string Text;
             }
         }
     }

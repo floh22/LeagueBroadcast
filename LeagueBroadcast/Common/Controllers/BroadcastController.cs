@@ -84,7 +84,7 @@ namespace LeagueBroadcast.Common.Controllers
             
             CfgController = ConfigController.Instance;
             Log.SetLogLevel(ConfigController.Component.App.LogLevel);
-            Log.Info($"League Broadcast (Essence) Version {ConfigController.Component.App.Version}");
+            Log.Info($"League Broadcast Version {ConfigController.Component.App.Version}");
             if (await AppUpdateController.Update(_startupContext)) {
                 Startup.Close();
                 App.Instance.Shutdown();
@@ -107,12 +107,6 @@ namespace LeagueBroadcast.Common.Controllers
         private void Init()
         {
             Log.Info("DDragon loaded");
-            StatusUpdate("Looking for new Offsets");
-            ConfigController.LoadOffsetConfig();
-            FarsightController.GameOffsets = ConfigController.Farsight.GameOffsets;
-            FarsightController.ObjectOffsets = ConfigController.Farsight.ObjectOffsets;
-            Log.Info($"Using offsets {ConfigController.Farsight.GameVersion}");
-            _startupContext.UpdateLoadProgress(LoadStatus.Init, 15);
 
             StatusUpdate("Loading PickBan Controller");
             PBController = new();
@@ -187,7 +181,7 @@ namespace LeagueBroadcast.Common.Controllers
                 Startup.Close();
             });
 
-            Log.Info($"Starting Essence with tickrate of {TickRate}tps");
+            Log.Info($"Starting LeagueBroadcast with tickrate of {TickRate}tps");
             tickTimer.Start();
 
             Log.Info("Checking for running Game");

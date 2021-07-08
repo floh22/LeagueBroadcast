@@ -2,6 +2,7 @@
 using LCUSharp.Websocket;
 using LeagueBroadcast.ChampSelect.Data.LCU;
 using LeagueBroadcast.ChampSelect.StateInfo;
+using LeagueBroadcast.Farsight;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
 using Newtonsoft.Json;
@@ -19,6 +20,7 @@ namespace LeagueBroadcast.Common.Controllers
         public static EventHandler GameLoad, GameStop, ChampSelectStart, ChampSelectStop;
         public static EventHandler<Process> GameStart;
         public static List<Summoner> summoners = new();
+        public static string LocalGameVersion;
 
         private static AppStateController _instance;
 
@@ -123,11 +125,16 @@ namespace LeagueBroadcast.Common.Controllers
             api.EventHandler.Subscribe("/lol-champ-select/v1/session", ChampSelectChanged);
             api.EventHandler.Subscribe("/lol-champ-select/vi/sfx-notifications", ChampSelectSFXChanged);
             stopwatch.Stop();
-            State.LeagueConntected();
+
             if(mainCtx.ConnectionStatus != ConnectionStatusViewModel.CONNECTED)
                 mainCtx.ConnectionStatus = ConnectionStatusViewModel.LCU;
             FlagsHelper.Set(ref BroadcastController.CurrentLeagueState, LeagueState.Connected);
             Log.Info($"Connected to League Client in {stopwatch.ElapsedMilliseconds} ms");
+
+            State.LeagueConntected();
+            LocalGameVersion = GetLocalGameVersion(await api.RequestHandler.GetResponseAsync<string>(HttpMethod.Get, "/lol-patch/v1/game-version"));
+            LoadOffsets();
+
             return api;
         }
 
@@ -213,6 +220,22 @@ namespace LeagueBroadcast.Common.Controllers
             });
 
             return toFinish;
+        }
+
+        private void LoadOffsets()
+        {
+            Log.Info($"Local Client Version {LocalGameVersion}");
+            Log.Info($"Loading offsets for current patch");
+            ConfigController.LoadOffsetConfig();
+            FarsightController.GameOffsets = ConfigController.Farsight.GameOffsets;
+            FarsightController.ObjectOffsets = ConfigController.Farsight.ObjectOffsets;
+            Log.Info($"Using offsets {ConfigController.Farsight.GameVersion}");
+        }
+
+        private string GetLocalGameVersion(string rawPatch)
+        {
+            string[] patchComponents = rawPatch.Split('.');
+            return $"{patchComponents[0]}.{patchComponents[1]}.1";
         }
 
         public void DoTick()

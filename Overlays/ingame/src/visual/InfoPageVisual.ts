@@ -12,8 +12,6 @@ export default class InfoPageVisual extends VisualElement {
     BackgroundRect: Phaser.GameObjects.Rectangle | null = null;
     BackgroundImage: Phaser.GameObjects.Image | null = null;
     BackgroundVideo: Phaser.GameObjects.Video | null = null;
-
-
     ImgMask!: Phaser.Display.Masks.BitmapMask;
     GeoMask!: Phaser.Display.Masks.GeometryMask;
     MaskImage!: Phaser.GameObjects.Sprite;
@@ -27,11 +25,11 @@ export default class InfoPageVisual extends VisualElement {
     static CurrentInfoType: string = '';
 
     constructor(scene: IngameScene, cfg: InfoPageDisplayConfig) {
-        super(scene, cfg.Position, "InfoPage");
+        super(scene, cfg.Position, "infoPage");
 
         //Mask
         if (cfg.Background.UseAlpha) {
-            this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Background.Size.X, y: cfg.Position.Y, key: 'infoPageMask', add: true });
+            this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Background.Size.X, y: cfg.Position.Y, key: 'infoPageMask', add: false});
             this.MaskImage.setOrigin(0.5, 0);
             this.MaskImage.setDisplaySize(cfg.Background.Size.X, cfg.Background.Size.Y);
             this.ImgMask = this.MaskImage.createBitmapMask();
@@ -40,7 +38,6 @@ export default class InfoPageVisual extends VisualElement {
             this.MaskGeo.fillStyle(0xffffff);
             this.MaskGeo.fillRect(cfg.Position.X, cfg.Position.Y, cfg.Background.Size.X, cfg.Background.Size.Y);
             this.GeoMask = this.MaskGeo.createGeometryMask();
-            //this.MaskGeo.setOrigin(0,0);
             this.MaskGeo.setPosition(cfg.Position.X - cfg.Background.Size.X, 0);
         }
 
@@ -53,7 +50,7 @@ export default class InfoPageVisual extends VisualElement {
             this.BackgroundRect = this.scene.add.rectangle(cfg.Position.X, cfg.Position.Y, cfg.Background.Size.X, cfg.Background.Size.Y, Phaser.Display.Color.RGBStringToColor(cfg.Background.FallbackColor).color);
             this.BackgroundRect.setOrigin(0,0);
             this.BackgroundRect.depth = -1;
-            this.BackgroundRect.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            this.BackgroundRect.setMask(cfg.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundRect);
         }
 
@@ -73,6 +70,12 @@ export default class InfoPageVisual extends VisualElement {
         }
 
         this.PlayerTabs = [];
+
+        //Load Resources
+        if (cfg.Background.UseImage || cfg.Background.UseVideo) {
+            this.scene.load.start();
+        }
+
         this.Init();
     }
     UpdateValues(newValues: InfoSidePage): void {

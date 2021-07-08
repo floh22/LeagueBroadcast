@@ -22,6 +22,7 @@ export interface OverlayConfig {
     InfoPage: InfoPageDisplayConfig;
     BaronTimer: ObjectiveTimerDisplayConfig;
     ElderTimer: ObjectiveTimerDisplayConfig;
+    GoldGraph: GoldGraphDisplayConfig;
 }
 
 export interface ObjectiveTimerDisplayConfig {
@@ -222,8 +223,8 @@ export interface InfoTabDisplayConfig {
 
 export interface InfoTabProgressBarConfig {
     Enabled: boolean;
-    Position: Vector2;
-    Size: Vector2;
+    Position: InfoTabElementVector2;
+    Size: InfoTabElementVector2;
     UseTeamColors: boolean;
     DefaultColor: string;
     OrderColor: string;
@@ -233,14 +234,20 @@ export interface InfoTabProgressBarConfig {
 
 export interface InfoTabImageElementConfig {
     Enabled: boolean;
-    Position: Vector2;
+    Position: InfoTabElementVector2;
     Size: Vector2;
 }
 
 export interface InfoTabTextElementConfig {
     Enabled: boolean;
-    Position: Vector2;
+    Position: InfoTabElementVector2;
     Font: FontConfig;
+}
+
+export interface InfoTabElementVector2 {
+    Gold: Vector2;
+    XP: Vector2;
+    CSPM: Vector2;
 }
 
 export interface InfoPageBackgroundConfig{
@@ -256,4 +263,37 @@ export interface BackgroundDisplayConfig {
     UseVideo: boolean;
     UseAlpha: boolean;
     FallbackColor: string;
+}
+
+export interface GoldGraphDisplayConfig {
+    Position: Vector2;
+    Size: Vector2;
+    Title: GoldGraphTitleConfig;
+    Background: BackgroundDisplayConfig;
+    Graph: GraphDisplayConfig;
+}
+
+export interface GraphDisplayConfig {
+    Position: Vector2;
+    Size: Vector2;
+    InfoFont: FontConfig;
+    BorderUseTeamColors: boolean;
+    BorderChaosColor: string;
+    BorderOrderColor: string;
+    FillUseTeamColors: boolean;
+    FillChaosColor: string;
+    FillOrderColor: string;
+    GridColor: string;
+    GridEdgeColor: string;
+    ShowHorizontalGrid: boolean;
+    ShowVerticalGrid: boolean;
+    LineTension: number;
+    TimeStepSize: number;
+}
+
+export interface GoldGraphTitleConfig {
+    Enabled: boolean;
+    Position: Vector2;
+    Font: FontConfig;
+    Text: string;
 }
