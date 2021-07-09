@@ -144,6 +144,14 @@ namespace LeagueBroadcast.Common.Controllers
                     gameState.GetAllPlayers().ForEach(p => p.diedDuringBaron = false);
                     OnBaronEnd(null, EventArgs.Empty);
                 }
+
+                Log.Info("Rolling back Inhibitors");
+                gameState.stateData.inhibitors.Inhibitors.ForEach(inhib => {
+                    inhib.timeLeft -= timeDiff;
+                    if (inhib.timeLeft > 300)
+                        inhib.timeLeft = 0;
+                });
+
             }
             #endregion
 

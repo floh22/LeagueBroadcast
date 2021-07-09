@@ -2,6 +2,7 @@ import { InhibitorDisplayConfig, ObjectiveTimerDisplayConfig } from "~/data/conf
 import FrontEndObjective from "~/data/frontEndObjective";
 import IngameScene from "~/scenes/IngameScene";
 import Vector2 from "~/util/Vector2";
+import ObjectivePopUpVisual from "./ObjectivePopUpVisual";
 import { VisualElement } from "./VisualElement";
 
 export default class ObjectiveTimerVisual extends VisualElement {
@@ -95,6 +96,14 @@ export default class ObjectiveTimerVisual extends VisualElement {
         }
         if (!this.isActive) {
             this.Start();
+
+            //Objective Pop Ups
+            if (this.Type === 'baron' && this.scene.overlayCfg?.ObjectiveKill.BaronKillScoreboardPopUp.Enabled) {
+                new ObjectivePopUpVisual(this.scene, this.scene.overlayCfg!.ObjectiveKill.BaronKillScoreboardPopUp, `baronKill`);
+            }
+            else if (this.Type === 'elder' && this.scene.overlayCfg?.ObjectiveKill.ElderKillScoreboardPopUp.Enabled) {
+                new ObjectivePopUpVisual(this.scene, this.scene.overlayCfg!.ObjectiveKill.ElderKillScoreboardPopUp, `elderKill`);
+            }
         }
 
         if (this.Gold !== null)

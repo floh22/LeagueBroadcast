@@ -85,7 +85,9 @@ export default class GraphVisual extends VisualElement {
             return;
         }
         if (newValues.length !== 0 && !this.isActive && !this.isShowing) {
-            this.Start();
+
+            //this.Start();
+            this.scene.displayRegions[10].AddToAnimationQueue(this);
         }
 
         this.CurrentData = newValues;
@@ -118,6 +120,8 @@ export default class GraphVisual extends VisualElement {
     UpdateConfig(cfg: GoldGraphDisplayConfig): void {
 
         //Delete the Graph and make a new one
+        if(this.Graph !== null && this.Graph !== undefined)
+            this.Graph.destroy();
         this.RemoveVisualComponent(this.Graph);
 
         //Position
@@ -232,6 +236,7 @@ export default class GraphVisual extends VisualElement {
 
         let goldValues = this.CurrentData.map(a => a.y);
 
+        
         //Graph
         this.Graph = this.scene.rexUI.add.chart(cfg.Position.X + cfg.Graph.Position.X, cfg.Position.Y + cfg.Graph.Position.Y, cfg.Graph.Size.X, cfg.Graph.Size.Y, {
             type: 'line',
@@ -332,6 +337,8 @@ export default class GraphVisual extends VisualElement {
         this.Graph.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
         this.AddVisualComponent(this.Graph);
 
+        
+
         //Title
         if (cfg.Title.Enabled) {
             if (this.Config.Title.Enabled) {
@@ -368,7 +375,7 @@ export default class GraphVisual extends VisualElement {
         
         this.UpdateConfig(this.Config);
 
-        this.scene.tweens.add({
+        this.currentAnimation[0] = this.scene.tweens.add({
             targets: [ctx.MaskGeo, ctx.MaskImage],
             props: {
                 x: { from: ctx.Config.Position.X - ctx.Config.Size.X * 1.5, to: ctx.Config.Position.X - ctx.Config.Size.X * 0.5, duration: 1000, ease: 'Cubic.easeInOut' }
@@ -389,7 +396,7 @@ export default class GraphVisual extends VisualElement {
         this.isHiding = true;
         var ctx = this;
 
-        this.scene.tweens.add({
+        this.currentAnimation[0] = this.scene.tweens.add({
             targets: [ctx.MaskGeo, ctx.MaskImage],
             props: {
                 x: { from: ctx.Config.Position.X - ctx.Config.Size.X * 0.5, to: ctx.Config.Position.X - ctx.Config.Size.X * 1.5, duration: 1000, ease: 'Cubic.easeInOut' }
@@ -399,6 +406,7 @@ export default class GraphVisual extends VisualElement {
             duration: 1000,
             onComplete: function() {
                 ctx.isHiding = false;
+                ctx.AnimationComplete.dispatch();
             }
         });
     }

@@ -703,34 +703,34 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 },
                 ObjectiveKill = new ObjectiveKillConfig()
                 {
-                    BaronScoreboardPopUp = new ScoreboardPopUpConfig() {
-                        Enabled = false,
-                        ShowSpawn = false,
-                        ShowTeam = false
+                    BaronKillScoreboardPopUp = new ScoreboardPopUpConfig() {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
                     },
-                    DrakeScoreboardPopUp = new ScoreboardPopUpConfig()
+                    ElderKillScoreboardPopUp = new ScoreboardPopUpConfig()
                     {
-                        Enabled = false,
-                        ShowSpawn = false,
-                        ShowTeam = false
-                    },
-                    ElderScoreboardPopUp = new ScoreboardPopUpConfig()
-                    {
-                        Enabled = false,
-                        ShowSpawn = false,
-                        ShowTeam = false
-                    },
-                    HeraldScoreboardPopUp = new ScoreboardPopUpConfig()
-                    {
-                        Enabled = false,
-                        ShowSpawn = false,
-                        ShowTeam = false
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
                     },
                     SoulPointScoreboardPopUp = new ScoreboardPopUpConfig()
                     {
-                        Enabled = false,
-                        ShowSpawn = false,
-                        ShowTeam = false
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
                     }
                 },
                 BaronTimer = new ObjectiveTimerDisplayConfig()
@@ -930,18 +930,20 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public class ObjectiveKillConfig
         {
-            public ScoreboardPopUpConfig DrakeScoreboardPopUp;
             public ScoreboardPopUpConfig SoulPointScoreboardPopUp;
-            public ScoreboardPopUpConfig ElderScoreboardPopUp;
-            public ScoreboardPopUpConfig HeraldScoreboardPopUp;
-            public ScoreboardPopUpConfig BaronScoreboardPopUp;
+            public ScoreboardPopUpConfig ElderKillScoreboardPopUp;
+            public ScoreboardPopUpConfig BaronKillScoreboardPopUp;
         }
 
         public class ScoreboardPopUpConfig
         {
             public bool Enabled;
-            public bool ShowTeam;
-            public bool ShowSpawn;
+            public bool UseImage;
+            public bool UseVideo;
+            public bool UseAlpha;
+            public bool ForceDisplayDurationForVideo;
+            public float DisplayDuration;
+            public float AnimationDuration;
         }
 
         public class ItemCompletedDisplayConfig

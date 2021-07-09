@@ -75,12 +75,12 @@ export default class LevelUpVisual extends VisualElement {
         this.Text.alpha = textStart!.Alpha;
         this.Text.scale = textStart!.Scale;
 
-        this.Background.setMask(this.scene.players[this.PlayerID].Masks[0]);
-        this.Text.setMask(this.scene.players[this.PlayerID].Masks[0]);
+        this.Background.setMask(this.scene.displayRegions[this.PlayerID].Masks[0]);
+        this.Text.setMask(this.scene.displayRegions[this.PlayerID].Masks[0]);
 
         this.visualComponents.push([this.Background, this.Text]);
 
-        this.scene.players[this.PlayerID].AddToAnimationQueue(this);
+        this.scene.displayRegions[this.PlayerID].AddToAnimationQueue(this);
     }
 
     UpdateValues(newValues: any): void {

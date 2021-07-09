@@ -154,6 +154,8 @@ namespace LeagueBroadcast.Common.Controllers
                 AppStController = AppStateController.Instance;
             });
 
+            AppStController.Init();
+
             AppStateController.GameStart += (s, p) => {
                 MemoryController.Connect(p);
                 

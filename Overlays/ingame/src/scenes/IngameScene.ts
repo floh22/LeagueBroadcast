@@ -15,11 +15,12 @@ import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
 import ScoreboardVisual from '~/visual/ScoreboardVisual';
 import InfoPageVisual from '~/visual/InfoPageVisual';
 import GraphVisual from '~/visual/GraphVisual';
+import ObjectivePopUpVisual from '~/visual/ObjectivePopUpVisual';
 
 export default class IngameScene extends Phaser.Scene {
     [x: string]: any;
     ws!: WebSocket;
-    players: RegionMask[];
+    displayRegions: RegionMask[];
 
     baronTimer!: ObjectiveTimerVisual;
     elderTimer!: ObjectiveTimerVisual;
@@ -41,7 +42,7 @@ export default class IngameScene extends Phaser.Scene {
     constructor() {
         super('ingameOverlay');
         IngameScene.Instance = this;
-        this.players = [];
+        this.displayRegions = [];
     }
 
     preload() {
@@ -64,7 +65,8 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('scoreboardMask', 'frontend/masks/ScoreboardMask.png');
         this.load.image('itemTextMask', 'frontend/masks/ItemText.png');
         this.load.image('infoPageMask', 'frontend/masks/InfoPage.png');
-        this.load.image('graphMask', 'frontend/Masks/Graph.png')
+        this.load.image('graphMask', 'frontend/Masks/Graph.png');
+        this.load.image('popUpMask', 'frontend/Masks/PopUpMask.png')
 
         //Objective Timers
         this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
@@ -140,7 +142,7 @@ export default class IngameScene extends Phaser.Scene {
         const red_5_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
 
 
-        this.players = [
+        this.displayRegions = [
             new RegionMask(0, [blue_1, blue_1_notif]),
             new RegionMask(1, [blue_2, blue_2_notif]),
             new RegionMask(2, [blue_3, blue_3_notif]),
@@ -150,7 +152,9 @@ export default class IngameScene extends Phaser.Scene {
             new RegionMask(6, [red_2, red_2_notif]),
             new RegionMask(7, [red_3, red_3_notif]),
             new RegionMask(8, [red_4, red_4_notif]),
-            new RegionMask(9, [red_5, red_5_notif])];
+            new RegionMask(9, [red_5, red_5_notif]),
+            new RegionMask(10, [])
+        ];
 
         this.overlayCfg = null;
 
@@ -198,11 +202,9 @@ export default class IngameScene extends Phaser.Scene {
                             break;
                         case 'ObjectiveKilled':
                             console.log('Legacy objective kill: ' + JSON.stringify(data));
-                            showObjective(data.objective);
                             break;
                         case 'BuffDespawn':
                             console.log('Legacy objective despawn: ' + JSON.stringify(data));
-                            hideObjective(data.objective);
                             break;
                         case 'ItemCompleted':
                             if (this.info.isActive && data.playerId < 5)
@@ -245,35 +247,6 @@ export default class IngameScene extends Phaser.Scene {
             };
         };
 
-        const showObjective = (objective: string) => {
-            console.log(`${objective} taken`);
-            switch (objective) {
-                case 'baron':
-                    this.baronTimer.UpdateValues(this.state?.baron!);
-                    this.baronTimer.Start();
-                    break;
-                case 'elder':
-                    this.elderTimer.UpdateValues(this.state?.dragon!);
-                    this.elderTimer.Start();
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        const hideObjective = (objective: string) => {
-            switch (objective) {
-                case 'baron':
-                    this.baronTimer.Stop();
-                    break;
-                case 'elder':
-                    this.elderTimer.Stop();
-                    break;
-                default:
-                    break;
-            }
-        }
-
         const OnNewState = (data: any): void => {
 
             //Dont show anything if overlay has not been configured yet
@@ -292,6 +265,7 @@ export default class IngameScene extends Phaser.Scene {
             this.elderTimer.UpdateValues(newState.dragon);
             this.info.UpdateValues(newState.infoPage);
             this.centerGraph.UpdateValues(newState.goldGraph);
+            this.CheckSoulPoint(newState);
 
             this.state = newState;
         }
@@ -346,22 +320,16 @@ export default class IngameScene extends Phaser.Scene {
 
 
     CheckSoulPoint(state: StateData): void {
-        if(state.scoreboard.BlueTeam.Dragons.length === 3 && this.state?.scoreboard.BlueTeam.Dragons.length === 2) {
+        if (!this.overlayCfg?.ObjectiveKill.SoulPointScoreboardPopUp.Enabled)
+            return;
+        if (state.scoreboard.BlueTeam.Dragons.length === 3 && this.state?.scoreboard.BlueTeam.Dragons.length === 2) {
             //Blue Soul Point
+            new ObjectivePopUpVisual(this, this.overlayCfg!.ObjectiveKill.SoulPointScoreboardPopUp, `${state.scoreboard.BlueTeam.Dragons[2]}Soul`);
         }
 
-        if(state.scoreboard.RedTeam.Dragons.length === 3 && this.state?.scoreboard.RedTeam.Dragons.length === 2) {
+        if (state.scoreboard.RedTeam.Dragons.length === 3 && this.state?.scoreboard.RedTeam.Dragons.length === 2) {
             //Red Soul Point
-        }
-    }
-
-    CheckDragonTaken(state: StateData): void {
-        if(state.scoreboard.BlueTeam.Dragons.length - 1 === this.state?.scoreboard.BlueTeam.Dragons.length) {
-            //Blue Dragon Taken
-        }
-
-        if(state.scoreboard.RedTeam.Dragons.length - 1 === this.state?.scoreboard.RedTeam.Dragons.length) {
-            //Red Dragon Taken
+            new ObjectivePopUpVisual(this, this.overlayCfg!.ObjectiveKill.SoulPointScoreboardPopUp, `${state.scoreboard.RedTeam.Dragons[2]}Soul`);
         }
     }
 

@@ -47,14 +47,17 @@ namespace LeagueBroadcast.Common.Controllers
                 return;
 
             mainCtx = (MainViewModel)BroadcastController.Instance.Main.DataContext;
+        }
 
+        public void Init()
+        {
             InitConnection();
 
-            if(ConfigController.Component.PickBan.IsActive)
+            if (ConfigController.Component.PickBan.IsActive)
             {
                 EnableChampSelect();
             }
-            if(ConfigController.Component.Ingame.IsActive)
+            if (ConfigController.Component.Ingame.IsActive)
             {
                 EnableIngame();
             }

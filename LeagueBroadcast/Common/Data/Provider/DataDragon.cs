@@ -474,10 +474,13 @@ namespace LeagueBroadcast.Common.Data.Provider
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            request.Method = "GET";
+            request.Timeout = 2000;
             try
             {
                 Log.Verbose($"Downloading {uri}");
-                using HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                using HttpWebResponse response = (HttpWebResponse) await request.GetResponseAsync();
+                
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
                     Log.Warn($"Could not download {uri}: {response.StatusCode}");

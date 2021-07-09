@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcast</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.3.219.0</AssemblyVersion>
-    <FileVersion>1.3.219.21189</FileVersion>
+    <AssemblyVersion>1.3.234.0</AssemblyVersion>
+    <FileVersion>1.3.234.21189</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -44,6 +44,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
             Log.Info($"Fetching new offsets from {offsetUri}");
             string res = await DataDragonUtils.GetAsync(offsetUri);
+            Log.Info($"Received updated offsets");
             
             if(res == "")
             {
@@ -85,9 +86,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override void RevertToDefault()
         {
             var def = CreateDefault().Result;
-            {
-                Log.Warn("Farsight disabled");
-            }
             this.FileVersion = "1.0";
             this.GameVersion = def.GameVersion;
             this.GameOffsets = def.GameOffsets;

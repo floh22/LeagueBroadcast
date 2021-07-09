@@ -48,7 +48,7 @@ export default class ItemVisual extends VisualElement {
             var x = team ? 1881 : 39;
             var y = team ? 189 + ((this.playerID - 5) * 103) : 189 + (this.playerID * 103);
             this.position = new Vector2(x, y);
-            this.scene.players[this.playerID].AddToAnimationQueue(this);
+            this.scene.displayRegions[this.playerID].AddToAnimationQueue(this);
         });
 
 
@@ -74,7 +74,7 @@ export default class ItemVisual extends VisualElement {
             const itemStart = this.scene.overlayCfg?.ItemComplete.ItemAnimationStates[0];
 
             this.icon = this.scene.add.image(this.position.X, this.position.Y, this.id);
-            this.icon.setMask(this.scene.players[this.playerID].Masks[0]);
+            this.icon.setMask(this.scene.displayRegions[this.playerID].Masks[0]);
             this.icon.setDisplaySize(ItemVisual.width * itemStart!.Scale, ItemVisual.height * itemStart!.Scale);
             this.icon.setPosition(this.position.X + itemStart!.Position.X * ((itemStart?.Mirror && this.playerID > 4) ? - 1 : 1), this.position.Y + itemStart!.Position.Y);
             this.icon.setAlpha(itemStart!.Alpha);
@@ -108,8 +108,8 @@ export default class ItemVisual extends VisualElement {
             this.infoText.setAlpha(textStart?.Alpha);
             TextUtils.AutoSizeFont(this.infoText, this.infoTextBackground.width - textStart!.Position.X - 20, this.infoTextBackground.height, +this.Config!.InfoText.Size.replace(/[^\d.-]/g, ''));
 
-            this.infoText.setMask(this.scene.players[this.playerID].Masks[1]);
-            this.infoTextBackground.setMask(this.scene.players[this.playerID].Masks[1]);
+            this.infoText.setMask(this.scene.displayRegions[this.playerID].Masks[1]);
+            this.infoTextBackground.setMask(this.scene.displayRegions[this.playerID].Masks[1]);
 
             this.PlayAnimationState(new VisualComponent(this.infoText, new Vector2(this.infoTextBackground.width, this.infoTextBackground.height), false), this.scene.overlayCfg?.ItemComplete.InfoTextAnimationStates!, 1, 1);
             this.PlayAnimationState(new VisualComponent(this.infoTextBackground, new Vector2(this.infoTextBackground.width, this.infoTextBackground.height), true), this.scene.overlayCfg?.ItemComplete.InfoBackgroundAnimationStates!, 2, 1);
