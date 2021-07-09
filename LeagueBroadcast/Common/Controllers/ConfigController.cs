@@ -1,7 +1,10 @@
 ﻿using LeagueBroadcast.Common.Data.Config;
 using LeagueBroadcast.Ingame.Data.Config;
+using LeagueBroadcast.Ingame.Data.Frontend;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -25,6 +28,10 @@ namespace LeagueBroadcast.Common.Controllers
         public static ConfigWatcher IngameWatcher;
 
         public static string ConfigLocation = Path.Combine(Directory.GetCurrentDirectory(), "Config");
+        public static string FontLocation = Path.Combine(Directory.GetCurrentDirectory(), "Cache", "Fonts");
+
+        public ObservableCollection<LocalFont> LocalFonts;
+
         public ConfigController()
         {
             Log.Info("Starting Config Controller");
@@ -48,6 +55,20 @@ namespace LeagueBroadcast.Common.Controllers
             PickBanWatcher = new("PickBan.json", PickBan);
             ComponentWatcher = new("Component.json", Component);
             IngameWatcher = new("Ingame.json", Ingame);
+
+            //TODO Somehow loading these fonts into a stylesheet
+            /*
+            Log.Info("Loading local fonts");
+            Directory.CreateDirectory(FontLocation);
+
+            new ObservableCollection<LocalFont>(Directory
+                .EnumerateFiles(FontLocation, "*", SearchOption.AllDirectories)
+                .Select(f => {
+                    var fontLocation = $"/cache/Fonts/{Path.GetFileName(f)}";
+                    var fontName = Path.GetFileNameWithoutExtension(f);
+                    return new LocalFont();
+                }));
+            */
 
             App.Instance.Exit += OnClose;
         }

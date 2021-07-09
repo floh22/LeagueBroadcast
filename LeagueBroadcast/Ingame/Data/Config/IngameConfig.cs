@@ -27,6 +27,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public GoldGraphDisplayConfig GoldGraph;
         public ObjectiveTimerDisplayConfig BaronTimer;
         public ObjectiveTimerDisplayConfig ElderTimer;
+        public List<string> GoogleFonts;
 
         public override string GETCurrentVersion()
         {
@@ -50,6 +51,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             BaronTimer = Cfg.BaronTimer;
             ElderTimer = Cfg.ElderTimer;
             GoldGraph = Cfg.GoldGraph;
+            GoogleFonts = Cfg.GoogleFonts;
             FileVersion = Cfg.FileVersion;
         }
 
@@ -70,6 +72,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.BaronTimer = def.BaronTimer;
             this.ElderTimer = def.ElderTimer;
             this.GoldGraph = def.GoldGraph;
+            this.GoogleFonts = def.GoogleFonts;
             this.FileVersion = CurrentVersion;
 
         }
@@ -79,6 +82,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             return new IngameConfig()
             {
                 FileVersion = CurrentVersion,
+                GoogleFonts = new List<string>() { "News Cycle", "News Cycle:bold", "Droid Sans" },
                 Inhib = new InhibitorDisplayConfig() {
                     Position = new Vector2(0, 845),
                     Size = new Vector2(306, 118),
@@ -86,7 +90,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     {
                         Align = "right",
                         Color = "rgb(255,255,255)",
-                        IsGoogleFont = true,
                         Name = "News Cycle",
                         Size = "15px",
                         Style = "Normal"
@@ -121,7 +124,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimeFont = new FontConfig()
                     {
                         Name = "News Cycle",
-                        IsGoogleFont = true,
                         Size = "22px",
                         Style = "Normal",
                         Color = "rgb(255,255,255)",
@@ -137,7 +139,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "right",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "15px",
                                 Style = "Normal"
@@ -160,7 +161,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "right",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "26px",
                                 Style = "Normal"
@@ -186,7 +186,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "right",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "50px",
                                 Style = "Normal"
@@ -205,7 +204,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "40px",
                                 Style = "Normal"
@@ -221,7 +219,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "right",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "26px",
                                 Style = "Normal"
@@ -244,7 +241,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "15px",
                                 Style = "Normal"
@@ -267,7 +263,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "26px",
                                 Style = "Normal"
@@ -293,7 +288,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "50px",
                                 Style = "Normal"
@@ -312,7 +306,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "right",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "40px",
                                 Style = "Normal"
@@ -328,7 +321,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "26px",
                                 Style = "Normal"
@@ -378,7 +370,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         {
                             Align = "center",
                             Color = "rgb(255,255,255)",
-                            IsGoogleFont = true,
                             Name = "News Cycle",
                             Size = "26px",
                             Style = "Normal"
@@ -420,7 +411,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "15px",
                                 Style = "Normal"
@@ -439,7 +429,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "left",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "15px",
                                 Style = "Normal"
@@ -458,7 +447,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "center",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "25px",
                                 Style = "Normal"
@@ -477,7 +465,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             {
                                 Align = "right",
                                 Color = "rgb(255,255,255)",
-                                IsGoogleFont = true,
                                 Name = "News Cycle",
                                 Size = "15px",
                                 Style = "Normal"
@@ -564,7 +551,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     {
                         Align = "center",
                         Color = "rgb(255,255,255)",
-                        IsGoogleFont = true,
                         Name = "News Cycle",
                         Size = "20px",
                         Style = "Normal"
@@ -641,7 +627,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     {
                         Align = "center",
                         Color = "rgb(255,255,255)",
-                        IsGoogleFont = true,
                         Name = "News Cycle",
                         Size = "60px",
                         Style = "Normal"
@@ -747,7 +732,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     GoldFont = new FontConfig()
                     {
                         Name = "News Cycle",
-                        IsGoogleFont = true,
                         Size = "22px",
                         Style = "Bold",
                         Color = "rgb(230,190,138)",
@@ -758,7 +742,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimeFont = new FontConfig()
                     {
                         Name = "News Cycle",
-                        IsGoogleFont = true,
                         Size = "22px",
                         Style = "Bold",
                         Color = "rgb(230,190,138)",
@@ -782,7 +765,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     GoldFont = new FontConfig()
                     {
                         Name = "News Cycle",
-                        IsGoogleFont = true,
                         Size = "22px",
                         Style = "Bold",
                         Color = "rgb(230,190,138)",
@@ -793,7 +775,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimeFont = new FontConfig()
                     {
                         Name = "News Cycle",
-                        IsGoogleFont = true,
                         Size = "22px",
                         Style = "Bold",
                         Color = "rgb(230,190,138)",
@@ -821,7 +802,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         Font = new FontConfig()
                         {
                             Name = "News Cycle",
-                            IsGoogleFont = true,
                             Size = "22px",
                             Style = "Bold",
                             Color = "rgb(230,190,138)",
@@ -836,7 +816,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         InfoFont = new FontConfig()
                         {
                             Name = "News Cycle",
-                            IsGoogleFont = true,
                             Size = "UNUSED",
                             Style = "UNUSED",
                             Color = "rgb(230,190,138)",
@@ -1071,7 +1050,6 @@ namespace LeagueBroadcast.Ingame.Data.Config
         {
             public string Style;
             public string Name;
-            public bool IsGoogleFont;
             public string Size;
             public string Align;
             public string Color;

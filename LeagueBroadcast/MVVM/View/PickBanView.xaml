@@ -85,7 +85,6 @@
                                         <Path Width="17" Margin="-40,0,0,0" Height="17" Data="F1M646.688,13.5518L646.783,13.4593 646.965,13.639 668.383,35.0583 689.459,35.0583 665.155,10.751 657.503,3.10126 657.323,2.92023 664.876,-4.63837 689.184,-28.9417 668.109,-28.9417 646.688,-7.52637 636.15,3.01398 646.688,13.5518z" Stretch="Uniform" Fill="#FFFFFFFF" RenderTransformOrigin="0.5,0.5" />
                                     </Grid>
                                 </Border>
-                                <Image Source="{Binding IconNameFull}" x:Name="ButtonImage"/>
                             </Grid>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="UIElement.IsMouseOver" Value="True">

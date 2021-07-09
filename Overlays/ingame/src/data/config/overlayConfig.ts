@@ -23,6 +23,7 @@ export interface OverlayConfig {
     BaronTimer: ObjectiveTimerDisplayConfig;
     ElderTimer: ObjectiveTimerDisplayConfig;
     GoldGraph: GoldGraphDisplayConfig;
+    GoogleFonts: string[];
 }
 
 export interface ObjectiveTimerDisplayConfig {
@@ -71,17 +72,19 @@ export interface InhibTeamConfig {
 }
 
 export interface ObjectiveKillConfig {
-    DrakeScoreboardPopUp: ScoreboardPopUpConfig;
     SoulPointScoreboardPopUp: ScoreboardPopUpConfig;
-    ElderScoreboardPopUp: ScoreboardPopUpConfig;
-    HeraldScoreboardPopUp: ScoreboardPopUpConfig;
-    BaronScoreboardPopUp: ScoreboardPopUpConfig;
+    ElderKillScoreboardPopUp: ScoreboardPopUpConfig;
+    BaronKillScoreboardPopUp: ScoreboardPopUpConfig;
 }
 
 export interface ScoreboardPopUpConfig {
     Enabled: boolean;
-    ShowTeam: boolean;
-    ShowSpawn: boolean;
+    UseImage: boolean;
+    UseVideo: boolean;
+    UseAlpha: boolean;
+    ForceDisplayDurationForVideo: boolean;
+    DisplayDuration: number;
+    AnimationDuration: number;
 }
 
 export interface ItemCompletedDisplayConfig {
@@ -193,7 +196,6 @@ export interface ExtraConfigs {
 export interface FontConfig {
     Style: string;
     Name: string;
-    IsGoogleFont: boolean;
     Size: string;
     Align: string;
     Color: string;
@@ -289,6 +291,7 @@ export interface GraphDisplayConfig {
     ShowVerticalGrid: boolean;
     LineTension: number;
     TimeStepSize: number;
+    ShowTimeStepIndicators: boolean;
 }
 
 export interface GoldGraphTitleConfig {

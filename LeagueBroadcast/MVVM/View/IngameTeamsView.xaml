@@ -69,7 +69,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="0"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="1" Grid.Row="0" Background="{Binding BlueColor}" HorizontalAlignment="Stretch">
+                                    <Border Grid.Column="1" Grid.Row="0" Background="{Binding Color}" HorizontalAlignment="Stretch">
                                         <TextBlock Text="{Binding ChampionName}" 
                                                    FontSize="25" TextAlignment="Center" 
                                                    VerticalAlignment="Top"
@@ -119,7 +119,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="0"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="1" Grid.Row="0" Background="{Binding RedColor}" HorizontalAlignment="Stretch">
+                                    <Border Grid.Column="1" Grid.Row="0" Background="{Binding Color}" HorizontalAlignment="Stretch">
                                         <TextBlock Text="{Binding ChampionName}" 
                                                    FontSize="25" TextAlignment="Center" 
                                                    VerticalAlignment="Top"

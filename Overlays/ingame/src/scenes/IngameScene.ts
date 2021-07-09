@@ -21,6 +21,7 @@ export default class IngameScene extends Phaser.Scene {
     [x: string]: any;
     ws!: WebSocket;
     displayRegions: RegionMask[];
+    loadedFonts: string[];
 
     baronTimer!: ObjectiveTimerVisual;
     elderTimer!: ObjectiveTimerVisual;
@@ -43,20 +44,23 @@ export default class IngameScene extends Phaser.Scene {
         super('ingameOverlay');
         IngameScene.Instance = this;
         this.displayRegions = [];
+        this.loadedFonts = [];
     }
 
     preload() {
+        /*
         var config = {
             google: {
                 families: ['Droid Sans', 'News Cycle', 'News Cycle:bold']
             }
         };
-
+        this.load.rexWebFont(config);
+        */
         variables.backendUrl = WindowUtils.GetQueryVariable('backend');
 
         this.graphics = this.add.graphics();
 
-        this.load.rexWebFont(config);
+        
         this.load.script('chartjs', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js');
 
         //Masks
@@ -193,7 +197,7 @@ export default class IngameScene extends Phaser.Scene {
                         case 'OverlayConfig':
                             if (data.type !== 1)
                                 break;
-                            this.UpdateConfig(data);
+                            this.UpdateConfigWhenReady(data);
                             break;
                         case 'PlayerLevelUp':
                             if (this.info.isActive && data.playerId < 5)
@@ -292,8 +296,7 @@ export default class IngameScene extends Phaser.Scene {
     }
 
     UpdateConfig = (message: OverlayConfigEvent): void => {
-        console.log('Configuring Visual Elements');
-
+        console.log('[LB] Configuring Visual Elements');
         if (this.overlayCfg === null) {
             //Init Message, create Visual Elements
             this.overlayCfg = message.config;
@@ -316,6 +319,29 @@ export default class IngameScene extends Phaser.Scene {
         this.overlayCfg = message.config;
         //console.log(message.config);
 
+    }
+
+    UpdateConfigWhenReady(message: OverlayConfigEvent): void {
+        //Load new fonts
+        let newFonts = message.config.GoogleFonts.filter(f => !this.loadedFonts.includes(f));
+        if (newFonts.length > 0) {
+            this.load.rexWebFont({
+                google: {
+                    families: newFonts
+                }
+            });
+
+            console.log(`[LB] Loading ${newFonts.length} new fonts`);
+            this.load.start();
+            
+            //Wait for loader to finish loading fonts
+            this.load.once('complete', () => {
+                console.log('[LB] Fonts loaded');
+                this.UpdateConfig(message);
+            });
+            return;
+        }
+        this.UpdateConfig(message);
     }
 
 
