@@ -27,13 +27,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         {
             //Check default path for league install. Prompt user if it cannot be found
             Log.Info("Checking League install for LiveEventsAPI");
-            bool found = false;
-            ConfigController.Component.App.LeagueInstall.ForEach(InstallLocation =>
-            {
-                found = CheckGameConfigLocation(InstallLocation) || found;
-            });
-
-            if (!found)
+            if (!ConfigController.Component.App.LeagueInstall.Any(InstallLocation => CheckGameConfigLocation(InstallLocation)))
             {
 
                 //Prompt user for league install location
@@ -67,116 +61,128 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
         private bool CheckGameConfigLocation(string configLocation)
         {
-            //Check for config file in given folder
-            List<string> files = Directory.GetFiles(configLocation).Select(f => Path.GetFileName(f)).ToList();
-
-            //Check for config folder in given folder
-            List<string> folders = Directory.GetDirectories(configLocation).Select(f => f = f.Replace(configLocation, "").Remove(0, 1)).ToList();
-
-            //Determine which to use depending on location of game.cfg
-            string LeagueFolder = folders.Contains("Config") && configLocation.EndsWith("League of Legends")
-                ? Path.Combine(configLocation, "Config")
-                : files.Contains("game.cfg")
-                    ? configLocation
-                    : Path.Join(Path.Join(Path.Join(configLocation, "Riot Games"), "League of Legends"), "Config");
-
-            if (Directory.Exists(LeagueFolder))
+            //Make sure the folder exists
+            if(!Directory.Exists(configLocation))
+                return false;
+            try
             {
-                Log.Info("Found League install location");
-                string cfgContent = "";
-                try
+                //Check for config file in given folder
+                List<string> files = Directory.GetFiles(configLocation).Select(f => Path.GetFileName(f)).ToList();
+
+                //Check for config folder in given folder
+                List<string> folders = Directory.GetDirectories(configLocation).Select(f => f = f.Replace(configLocation, "").Remove(0, 1)).ToList();
+
+                //Determine which to use depending on location of game.cfg
+                string LeagueFolder = folders.Contains("Config") && configLocation.EndsWith("League of Legends")
+                    ? Path.Combine(configLocation, "Config")
+                    : files.Contains("game.cfg")
+                        ? configLocation
+                        : Path.Join(Path.Join(Path.Join(configLocation, "Riot Games"), "League of Legends"), "Config");
+
+                if (Directory.Exists(LeagueFolder))
                 {
-                    cfgContent = File.ReadAllText(Path.Join(LeagueFolder, "game.cfg"));
-                }
-                catch
-                {
-                    Log.Warn("Could not find config file in config folder");
-                    return false;
-                }
-                //Check for Live Events
-                if (!(cfgContent.Contains("[LiveEvents]") && cfgContent.Contains("Enable=1")))
-                {
-                    Log.Info("Could not find LiveEvents in game config. Appending to end");
-                    var writer = File.AppendText(Path.Join(LeagueFolder, "game.cfg"));
-                    writer.Write($"\n\n{EnableAPIString}");
-                    writer.Close();
-                    Log.Info("Updated Game Config");
+                    Log.Info("Found League install location");
+                    string cfgContent = "";
+                    try
+                    {
+                        cfgContent = File.ReadAllText(Path.Join(LeagueFolder, "game.cfg"));
+                    }
+                    catch
+                    {
+                        Log.Warn("Could not find config file in config folder");
+                        return false;
+                    }
+                    //Check for Live Events
+                    if (!(cfgContent.Contains("[LiveEvents]") && cfgContent.Contains("Enable=1")))
+                    {
+                        Log.Info("Could not find LiveEvents in game config. Appending to end");
+                        var writer = File.AppendText(Path.Join(LeagueFolder, "game.cfg"));
+                        writer.Write($"\n\n{EnableAPIString}");
+                        writer.Close();
+                        Log.Info("Updated Game Config");
+                    }
+                    else
+                    {
+                        Log.Info("LiveEvents API found in Game config");
+                    }
+
+                    //Check for Replay API. This shouldnt be here but i'll shoehorn it in since it works
+                    List<string> lines = cfgContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+                    int generalLoc = lines.FindIndex(0, l => l == "[General]");
+
+                    //found general config
+                    if (generalLoc != -1)
+                    {
+                        int ReplayAPILineLoc = lines.FindIndex(l => l.StartsWith("EnableReplayApi"));
+                        bool Overwrite = false;
+
+                        //Replay API Line does not exist
+                        if (ReplayAPILineLoc == -1)
+                        {
+                            Log.Verbose("Could not find Replay API in config");
+                            lines.Insert(generalLoc + 2, EnableReplayAPIString);
+                            Overwrite = true;
+                        }
+                        //Replay API disabled
+                        else if (lines[ReplayAPILineLoc].Contains("0"))
+                        {
+                            Log.Info("Replay API has been manually disabled. Reenabling");
+                            lines[ReplayAPILineLoc] = EnableReplayAPIString;
+                            Overwrite = true;
+                        }
+
+                        if (Overwrite)
+                        {
+                            Log.Info("Enabling Replay API in Game config");
+                            File.WriteAllLines(Path.Join(LeagueFolder, "game.cfg"), lines);
+                            Log.Verbose("Replay API enabled");
+                        }
+                        else
+                        {
+                            //Replay API Enabled
+                            Log.Info("Replay API found in Game config");
+                        }
+                    }
+                    else
+                    {
+                        Log.Warn("Could not parse game config. Replay API may not be enabled!");
+                    }
+
+
+                    try
+                    {
+                        Log.Info("Verifying LiveEvents list");
+                        var liveEventsCfg = Path.Join(LeagueFolder, "LiveEvents.ini");
+                        var events = File.ReadAllLines(liveEventsCfg);
+
+                        if (!events.Contains("OnMinionKill"))
+                        {
+                            File.AppendText(liveEventsCfg).Write("\nOnMinionKill");
+                            Log.Info("Adding OnMinionKill to LiveEvents.ini");
+                        }
+                        if (!events.Contains("OnNeutralMinionKill"))
+                        {
+                            File.AppendText(liveEventsCfg).Write("\nOnNeutralMinionKill");
+                            Log.Info("Adding OnNeutralMinionKill to LiveEvents.ini");
+                        }
+                        return true;
+                    }
+                    catch (FileNotFoundException)
+                    {
+
+                        Log.Info("LiveEvents.ini not found. Generating now");
+                        File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill" });
+                        Log.Info("LiveEvents.ini created. Added only nescesary events!");
+                        return true;
+                    }
                 }
                 else
                 {
-                    Log.Info("LiveEvents API found in Game config");
+                    return false;
                 }
-
-                //Check for Replay API. This shouldnt be here but i'll shoehorn it in since it works
-                List<string> lines = cfgContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
-                int generalLoc = lines.FindIndex(0, l => l == "[General]");
-
-                //found general config
-                if(generalLoc != -1)
-                {
-                    int ReplayAPILineLoc = lines.FindIndex(l => l.StartsWith("EnableReplayApi"));
-                    bool Overwrite = false;
-
-                    //Replay API Line does not exist
-                    if (ReplayAPILineLoc == -1)
-                    {
-                        Log.Verbose("Could not find Replay API in config");
-                        lines.Insert(generalLoc + 2, EnableReplayAPIString);
-                        Overwrite = true;
-                    }
-                    //Replay API disabled
-                    else if(lines[ReplayAPILineLoc].Contains("0"))
-                    {
-                        Log.Info("Replay API has been manually disabled. Reenabling");
-                        lines[ReplayAPILineLoc] = EnableReplayAPIString;
-                        Overwrite = true;
-                    }
-                    
-                    if(Overwrite)
-                    {
-                        Log.Info("Enabling Replay API in Game config");
-                        File.WriteAllLines(Path.Join(LeagueFolder, "game.cfg"), lines);
-                        Log.Verbose("Replay API enabled");
-                    } else
-                    {
-                        //Replay API Enabled
-                        Log.Info("Replay API found in Game config");
-                    }
-                } else
-                {
-                    Log.Warn("Could not parse game config. Replay API may not be enabled!");
-                }
-
-
-                try
-                {
-                    Log.Info("Verifying LiveEvents list");
-                    var liveEventsCfg = Path.Join(LeagueFolder, "LiveEvents.ini");
-                    var events = File.ReadAllLines(liveEventsCfg);
-
-                    if (!events.Contains("OnMinionKill"))
-                    {
-                        File.AppendText(liveEventsCfg).Write("\nOnMinionKill");
-                        Log.Info("Adding OnMinionKill to LiveEvents.ini");
-                    }
-                    if (!events.Contains("OnNeutralMinionKill"))
-                    {
-                        File.AppendText(liveEventsCfg).Write("\nOnNeutralMinionKill");
-                        Log.Info("Adding OnNeutralMinionKill to LiveEvents.ini");
-                    }
-                    return true;
-                }
-                catch (FileNotFoundException)
-                {
-
-                    Log.Info("LiveEvents.ini not found. Generating now");
-                    File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill" });
-                    Log.Info("LiveEvents.ini created. Added only nescesary events!");
-                    return true;
-                }
-            }
-            else
+            } catch (Exception e)
             {
+                Log.Warn($"Could not read config in folder {configLocation}: {e}");
                 return false;
             }
         }
