@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 
 namespace LeagueBroadcast.Ingame.State
@@ -122,13 +123,17 @@ namespace LeagueBroadcast.Ingame.State
                     p.diedDuringElder = true;
                 }
 
-                //Level up Events
-                if (p.level < 6 && newP.level >= 6)
-                    controller.OnLevelUp(new LevelUpEventArgs(p.id, 6));
-                else if (p.level < 11 && newP.level >= 11)
-                    controller.OnLevelUp(new LevelUpEventArgs(p.id, 11));
-                else if (p.level < 16 && newP.level >= 16)
-                    controller.OnLevelUp(new LevelUpEventArgs(p.id, 16));
+                //If Viego is alive and outside of base, his item buys are most likely from possession
+                if(!(p.rawChampionName == "Viego" && !p.isDead && (newP.team == "ORDER"? Vector3.Distance(Vector3.Zero, playerObject.Position) > 1200 : Vector3.Distance(new Vector3(15000,170, 15000), playerObject.Position) > 1200)))
+                {
+                    //Level up Events
+                    if (p.level < 6 && newP.level >= 6)
+                        controller.OnLevelUp(new LevelUpEventArgs(p.id, 6));
+                    else if (p.level < 11 && newP.level >= 11)
+                        controller.OnLevelUp(new LevelUpEventArgs(p.id, 11));
+                    else if (p.level < 16 && newP.level >= 16)
+                        controller.OnLevelUp(new LevelUpEventArgs(p.id, 16));
+                }
 
                 //New item Events
                 var newItems = newP.items.ToList().Where(i => !p.items.ToList().Any(l => i.itemID == l.itemID));

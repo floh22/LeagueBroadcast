@@ -199,12 +199,12 @@ export default class InhibitorVisual extends VisualElement {
             return;
         }
 
-        this.blueTopTime.text = this.ToTimeString(newValues.Inhibitors[0].timeLeft);
+        this.blueBotTime.text = this.ToTimeString(newValues.Inhibitors[0].timeLeft);
         this.blueMidTime.text = this.ToTimeString(newValues.Inhibitors[1].timeLeft);
-        this.blueBotTime.text = this.ToTimeString(newValues.Inhibitors[2].timeLeft);
-        this.redTopTime.text = this.ToTimeString(newValues.Inhibitors[3].timeLeft);
+        this.blueTopTime.text = this.ToTimeString(newValues.Inhibitors[2].timeLeft);
+        this.redBotTime.text = this.ToTimeString(newValues.Inhibitors[3].timeLeft);
         this.redMidTime.text = this.ToTimeString(newValues.Inhibitors[4].timeLeft);
-        this.redBotTime.text = this.ToTimeString(newValues.Inhibitors[5].timeLeft);
+        this.redTopTime.text = this.ToTimeString(newValues.Inhibitors[5].timeLeft);
 
         if (!this.isActive) {
             this.Start();

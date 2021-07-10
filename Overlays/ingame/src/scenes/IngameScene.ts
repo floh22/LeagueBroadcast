@@ -67,7 +67,8 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('champCoverLeft', 'frontend/masks/ChampCoverLeft.png');
         this.load.image('champCoverRight', 'frontend/masks/ChampCoverRight.png');
         this.load.image('scoreboardMask', 'frontend/masks/ScoreboardMask.png');
-        this.load.image('itemTextMask', 'frontend/masks/ItemText.png');
+        this.load.image('itemTextMaskLeft', 'frontend/masks/ItemTextLeft.png');
+        this.load.image('itemTextMaskRight', 'frontend/masks/ItemTextRight.png');
         this.load.image('infoPageMask', 'frontend/masks/InfoPage.png');
         this.load.image('graphMask', 'frontend/Masks/Graph.png');
         this.load.image('popUpMask', 'frontend/Masks/PopUpMask.png')
@@ -75,7 +76,6 @@ export default class IngameScene extends Phaser.Scene {
         //Objective Timers
         this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
         this.load.image('objectiveBg', 'frontend/backgrounds/ObjectiveBG.png');
-        this.load.image('objectiveMask', 'frontend/backgrounds/ObjectiveMask.png');
         this.load.image('elderIcon', 'frontend/backgrounds/DragonIcon.png');
         this.load.image('objectiveBgLeft', 'frontend/backgrounds/ObjectiveBGLeft.png');
         this.load.image('objectiveGold', 'frontend/images/ObjectiveGold.png');
