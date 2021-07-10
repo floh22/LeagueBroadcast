@@ -29,7 +29,7 @@ export default class InfoPageVisual extends VisualElement {
 
         //Mask
         if (cfg.Background.UseAlpha) {
-            this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Background.Size.X, y: cfg.Position.Y, key: 'infoPageMask', add: false});
+            this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Background.Size.X, y: cfg.Position.Y, key: 'infoPageMask', add: false });
             this.MaskImage.setOrigin(0.5, 0);
             this.MaskImage.setDisplaySize(cfg.Background.Size.X, cfg.Background.Size.Y);
             this.ImgMask = this.MaskImage.createBitmapMask();
@@ -48,7 +48,7 @@ export default class InfoPageVisual extends VisualElement {
             this.scene.load.image('infoBg', 'frontend/backgrounds/InfoPage.png');
         } else {
             this.BackgroundRect = this.scene.add.rectangle(cfg.Position.X, cfg.Position.Y, cfg.Background.Size.X, cfg.Background.Size.Y, Phaser.Display.Color.RGBStringToColor(cfg.Background.FallbackColor).color);
-            this.BackgroundRect.setOrigin(0,0);
+            this.BackgroundRect.setOrigin(0, 0);
             this.BackgroundRect.depth = -1;
             this.BackgroundRect.setMask(cfg.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundRect);
@@ -56,7 +56,7 @@ export default class InfoPageVisual extends VisualElement {
 
 
         //Title
-        if(cfg.Title.Enabled) {
+        if (cfg.Title.Enabled) {
             this.Title = scene.add.text(cfg.Position.X + cfg.Title.Position.XP.X, cfg.Position.Y + cfg.Title.Position.XP.Y, 'Info Tab', {
                 fontFamily: cfg.Title.Font.Name,
                 fontSize: cfg.Title.Font.Size,
@@ -64,7 +64,7 @@ export default class InfoPageVisual extends VisualElement {
                 fontStyle: cfg.Title.Font.Style,
                 align: cfg.Title.Font.Align
             });
-            this.Title.setOrigin(0.5,0);
+            this.Title.setOrigin(0.5, 0);
             this.AddVisualComponent(this.Title);
             this.Title.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
         }
@@ -158,10 +158,10 @@ export default class InfoPageVisual extends VisualElement {
                 this.BackgroundImage = null;
             }
             //Reset old Video
-            if(this.scene.cache.video.has('infoBgVideo')) {
+            if (this.scene.cache.video.has('infoBgVideo')) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo?.destroy(),
-                this.BackgroundVideo = null;
+                    this.BackgroundVideo = null;
                 this.scene.cache.video.remove('infoBgVideo');
             }
             this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
@@ -180,7 +180,7 @@ export default class InfoPageVisual extends VisualElement {
             if (this.BackgroundRect === null || this.BackgroundRect === undefined) {
                 this.BackgroundRect = this.scene.add.rectangle(newConfig.Position.X, newConfig.Position.Y, newConfig.Background.Size.X, newConfig.Background.Size.Y, Phaser.Display.Color.RGBStringToColor(newConfig.Background.FallbackColor).color32);
                 this.BackgroundRect.setOrigin(0, 0);
-                this.BackgroundRect.depth = -1;
+                this.BackgroundRect.depth = 1;
                 this.BackgroundRect.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
                 this.AddVisualComponent(this.BackgroundRect);
                 if (!this.isActive) {
@@ -207,6 +207,7 @@ export default class InfoPageVisual extends VisualElement {
                     align: newConfig.Title.Font.Align
                 });
                 this.Title.setOrigin(0.5, 0);
+                this.Title.setDepth(2);
                 this.Title.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
                 this.AddVisualComponent(this.Title);
             }
@@ -243,7 +244,7 @@ export default class InfoPageVisual extends VisualElement {
             yoyo: false,
             onComplete: function () {
                 ctx.PlayerTabs.forEach(pt => pt.Start());
-                setTimeout(() => { ctx.isActive = true; ctx.isShowing = false;}, 500);
+                setTimeout(() => { ctx.isActive = true; ctx.isShowing = false; }, 500);
             }
         });
     }
@@ -274,7 +275,7 @@ export default class InfoPageVisual extends VisualElement {
         this.scene.load.on(`filecomplete-image-scoreBg`, () => {
             this.BackgroundImage = this.scene.make.sprite({ x: this.Config!.Position.X, y: this.Config!.Position.Y, key: 'infoPageBg', add: true });
             this.BackgroundImage.setOrigin(0, 0);
-            this.BackgroundImage.setDepth(-1);
+            this.BackgroundImage.setDepth(1);
             this.BackgroundImage.setMask(this.Config?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundImage);
             if (!this.isActive && !this.isShowing) {
@@ -293,7 +294,7 @@ export default class InfoPageVisual extends VisualElement {
             this.BackgroundVideo.setOrigin(0, 0);
             this.BackgroundVideo.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.BackgroundVideo.setLoop(true);
-            this.BackgroundVideo.setDepth(-1);
+            this.BackgroundVideo.setDepth(1);
             this.BackgroundVideo.play();
             this.AddVisualComponent(this.BackgroundVideo);
             if (!this.isActive && !this.isShowing) {
@@ -304,7 +305,7 @@ export default class InfoPageVisual extends VisualElement {
 
 
     static GetCurrentElementVector2(pos: InfoTabElementVector2, infoType: string = 'current'): Vector2 {
-        if(infoType === 'current') {
+        if (infoType === 'current') {
             infoType = InfoPageVisual.CurrentInfoType;
         }
         switch (infoType) {
@@ -315,7 +316,7 @@ export default class InfoPageVisual extends VisualElement {
             case 'exp':
                 return pos.XP;
             default:
-                return new Vector2(0,0);
+                return new Vector2(0, 0);
         }
     }
 
@@ -366,6 +367,7 @@ export class PlayerTabIndicator {
         if (cfg.TabConfig.Separator.Enabled) {
             this.TopSeparator = scene.make.sprite({ x: cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.Separator.Position, InfoPageVisual.CurrentInfoType).X, y: this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.Separator.Position, InfoPageVisual.CurrentInfoType).Y + row * cfg.TabConfig.TabSize.Y, key: 'infoPageSeparator', add: false });
             this.TopSeparator.setOrigin(0, 0);
+            this.TopSeparator.setDepth(2);
             this.VisualComponents.push(this.TopSeparator);
         }
 
@@ -377,20 +379,23 @@ export class PlayerTabIndicator {
                 fontStyle: cfg.TabConfig.PlayerName.Font.Style,
                 align: cfg.TabConfig.PlayerName.Font.Align
             });
+            this.Name.setDepth(2);
             this.VisualComponents.push(this.Name);
         }
 
         if (cfg.TabConfig.ProgressBar.Enabled) {
             this.ProgressBarTotal = this.Scene.add.rectangle(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).Y + row * cfg.TabConfig.TabSize.Y, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size).Y, Phaser.Display.Color.RGBStringToColor(cfg.TabConfig.ProgressBar.DefaultColor).color);
             this.ProgressBarTotal.setOrigin(0, 0);
+            this.ProgressBarTotal.setDepth(2);
             this.ProgresssBarCompleted = this.Scene.add.rectangle(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).Y + row * cfg.TabConfig.TabSize.Y, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X * ((tabInfo.Values.CurrentValue - tabInfo.Values.MinValue) / (tabInfo.Values.MaxValue - tabInfo.Values.MinValue)), InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).Y, ProgressColor.color);
             this.ProgresssBarCompleted.setOrigin(0, 0);
+            this.ProgresssBarCompleted.setDepth(2);
             this.ProgresssBarCompleted.setFillStyle(ProgressColor.color);
             this.VisualComponents.push(this.ProgressBarTotal, this.ProgresssBarCompleted);
         }
-        
 
-        if(cfg.TabConfig.MinValue.Enabled) {
+
+        if (cfg.TabConfig.MinValue.Enabled) {
             this.MinVal = scene.add.text(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.MinValue.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.MinValue.Position, InfoPageVisual.CurrentInfoType).Y + row * cfg.TabConfig.TabSize.Y, tabInfo.Values.MinValue + '', {
                 fontFamily: cfg.TabConfig.MinValue.Font.Name,
                 fontSize: cfg.TabConfig.MinValue.Font.Size,
@@ -402,10 +407,11 @@ export class PlayerTabIndicator {
                 this.MinVal.setOrigin(1, 0);
             if (cfg.TabConfig.MinValue.Font.Align === "left" || cfg.TabConfig.MinValue.Font.Align === "Left")
                 this.MinVal.setOrigin(0, 0);
-                this.VisualComponents.push(this.MinVal);
+            this.MinVal.setDepth(2);
+            this.VisualComponents.push(this.MinVal);
         }
 
-        if(cfg.TabConfig.MaxValue.Enabled) {
+        if (cfg.TabConfig.MaxValue.Enabled) {
             this.MaxVal = scene.add.text(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.MaxValue.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.MaxValue.Position, InfoPageVisual.CurrentInfoType).Y + row * cfg.TabConfig.TabSize.Y, tabInfo.Values.MaxValue + '', {
                 fontFamily: cfg.TabConfig.MaxValue.Font.Name,
                 fontSize: cfg.TabConfig.MaxValue.Font.Size,
@@ -417,10 +423,11 @@ export class PlayerTabIndicator {
                 this.MaxVal.setOrigin(1, 0);
             if (cfg.TabConfig.MaxValue.Font.Align === "left" || cfg.TabConfig.MaxValue.Font.Align === "Left")
                 this.MaxVal.setOrigin(0, 0);
-                this.VisualComponents.push(this.MaxVal);
+            this.MaxVal.setDepth(2);
+            this.VisualComponents.push(this.MaxVal);
         }
 
-        if(cfg.TabConfig.CurrentValue.Enabled) {
+        if (cfg.TabConfig.CurrentValue.Enabled) {
             this.MainVal = scene.add.text(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.CurrentValue.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.CurrentValue.Position, InfoPageVisual.CurrentInfoType).Y + row * cfg.TabConfig.TabSize.Y, tabInfo.ExtraInfo[0], {
                 fontFamily: cfg.TabConfig.CurrentValue.Font.Name,
                 fontSize: cfg.TabConfig.CurrentValue.Font.Size,
@@ -429,6 +436,7 @@ export class PlayerTabIndicator {
                 align: cfg.TabConfig.CurrentValue.Font.Align
             });
             this.MainVal.setOrigin(0.5, 0);
+            this.MainVal.setDepth(2);
             this.VisualComponents.push(this.MainVal);
         }
 
@@ -437,13 +445,13 @@ export class PlayerTabIndicator {
         this.GetActiveVisualComponents().forEach(vc => {
             vc.alpha = 0;
         });
-        
+
         this.LoadIcon(tabInfo.IconPath, row);
 
 
     }
 
-    LoadIcon (iconLoc: string, row: number): void {
+    LoadIcon(iconLoc: string, row: number): void {
         iconLoc = PlaceholderConversion.MakeUrlAbsolute(iconLoc.replace('Cache', '/cache').replace('\\', '/'));
 
         if (this.Image !== undefined && this.Image !== null) {
@@ -454,7 +462,7 @@ export class PlayerTabIndicator {
             this.Scene.textures.remove(this.Id);
         }
 
-        if(!this.Config?.TabConfig.ChampIcon.Enabled) {
+        if (!this.Config?.TabConfig.ChampIcon.Enabled) {
             return;
         }
 
@@ -493,7 +501,7 @@ export class PlayerTabIndicator {
                 ProgressColor = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.Config!.TabConfig.ProgressBar.OrderColor : this.Config!.TabConfig.ProgressBar.OrderColor);
             }
 
-            if(this.Config!.TabConfig.ProgressBar.Enabled) {
+            if (this.Config!.TabConfig.ProgressBar.Enabled) {
                 this.ProgresssBarCompleted!.width = newWidth;
                 this.ProgresssBarCompleted!.setFillStyle(ProgressColor.color);
             }
@@ -567,22 +575,23 @@ export class PlayerTabIndicator {
 
 
         if (cfg.TabConfig.Separator.Enabled) {
-            if(this.TopSeparator !== null && this.TopSeparator !== undefined) {
+            if (this.TopSeparator !== null && this.TopSeparator !== undefined) {
                 this.TopSeparator.setPosition(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.Separator.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.Separator.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y);
             } else {
                 this.TopSeparator = this.Scene.make.sprite({ x: cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.Separator.Position, InfoPageVisual.CurrentInfoType).X, y: this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.Separator.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y, key: 'infoPageSeparator', add: true });
                 this.TopSeparator.setOrigin(0, 0);
+                this.TopSeparator.setDepth(2);
                 this.VisualComponents.push(this.TopSeparator);
             }
         }
-        if(!cfg.TabConfig.Separator.Enabled && this.Config?.TabConfig.Separator.Enabled) {
+        if (!cfg.TabConfig.Separator.Enabled && this.Config?.TabConfig.Separator.Enabled) {
             this.RemoveVisualComponent(this.TopSeparator);
             this.TopSeparator?.destroy();
             this.TopSeparator = null;
         }
 
         if (cfg.TabConfig.PlayerName.Enabled) {
-            if(this.Name !== null && this.Name !== undefined) {
+            if (this.Name !== null && this.Name !== undefined) {
                 this.Name.setPosition(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.PlayerName.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + 6 + this.Row * cfg.TabConfig.TabSize.Y);
                 this.UpdateTextStyle(this.Name, cfg.TabConfig.PlayerName.Font);
             } else {
@@ -593,26 +602,29 @@ export class PlayerTabIndicator {
                     fontStyle: cfg.TabConfig.PlayerName.Font.Style,
                     align: cfg.TabConfig.PlayerName.Font.Align
                 });
+                this.Name.setDepth(2);
                 this.VisualComponents.push(this.Name);
-            } 
+            }
         }
-        if(!cfg.TabConfig.PlayerName.Enabled && this.Config?.TabConfig.PlayerName.Enabled) {
+        if (!cfg.TabConfig.PlayerName.Enabled && this.Config?.TabConfig.PlayerName.Enabled) {
             this.RemoveVisualComponent(this.Name);
             this.Name?.destroy();
             this.Name = null;
         }
 
         if (cfg.TabConfig.ProgressBar.Enabled) {
-            if(this.ProgressBarTotal !== undefined && this.ProgressBarTotal !== null) {
+            if (this.ProgressBarTotal !== undefined && this.ProgressBarTotal !== null) {
                 this.ProgressBarTotal.setPosition(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y);
                 this.ProgressBarTotal.setDisplaySize(InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size).Y);
                 this.ProgresssBarCompleted?.setPosition(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y);
             } else {
                 this.ProgressBarTotal = this.Scene.add.rectangle(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).Y, Phaser.Display.Color.RGBStringToColor(cfg.TabConfig.ProgressBar.DefaultColor).color);
                 this.ProgressBarTotal.setOrigin(0, 0);
+                this.ProgressBarTotal.setDepth(2);
                 this.ProgresssBarCompleted = this.Scene.add.rectangle(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y, InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X * ((this.CurrentInfo.Values.CurrentValue - this.CurrentInfo.Values.MinValue) / (this.CurrentInfo.Values.MaxValue - this.CurrentInfo.Values.MinValue)), InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).Y, ProgressColor.color);
+                this.ProgresssBarCompleted.setDepth(2);
                 this.ProgresssBarCompleted.setOrigin(0, 0);
-                
+
                 this.VisualComponents.push(this.ProgressBarTotal, this.ProgresssBarCompleted);
             }
             this.ProgresssBarCompleted!.setFillStyle(ProgressColor.color);
@@ -643,6 +655,7 @@ export class PlayerTabIndicator {
                     this.MinVal.setOrigin(1, 0);
                 if (cfg.TabConfig.MinValue.Font.Align === "left" || cfg.TabConfig.MinValue.Font.Align === "Left")
                     this.MinVal.setOrigin(0, 0);
+                this.MinVal.setDepth(2);
                 this.VisualComponents.push(this.MinVal);
             }
         }
@@ -652,7 +665,7 @@ export class PlayerTabIndicator {
             this.MinVal = null;
         }
 
-        if(cfg.TabConfig.MaxValue.Enabled) {
+        if (cfg.TabConfig.MaxValue.Enabled) {
             if (this.MaxVal !== undefined && this.MaxVal !== null) {
                 this.MaxVal.setPosition(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.MaxValue.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.MaxValue.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y);
                 this.UpdateTextStyle(this.MaxVal, cfg.TabConfig.MaxValue.Font);
@@ -668,16 +681,17 @@ export class PlayerTabIndicator {
                     this.MaxVal.setOrigin(1, 0);
                 if (cfg.TabConfig.MaxValue.Font.Align === "left" || cfg.TabConfig.MaxValue.Font.Align === "Left")
                     this.MaxVal.setOrigin(0, 0);
-                    this.VisualComponents.push(this.MaxVal);
+                this.MaxVal.setDepth(2);
+                this.VisualComponents.push(this.MaxVal);
             }
         }
-        if(!cfg.TabConfig.MaxValue.Enabled && this.Config?.TabConfig.MaxValue.Enabled) {
+        if (!cfg.TabConfig.MaxValue.Enabled && this.Config?.TabConfig.MaxValue.Enabled) {
             this.RemoveVisualComponent(this.MaxVal);
             this.MaxVal?.destroy();
             this.MaxVal = null;
         }
 
-        if(cfg.TabConfig.CurrentValue.Enabled) {
+        if (cfg.TabConfig.CurrentValue.Enabled) {
             if (this.MainVal !== undefined && this.MainVal !== null) {
                 this.MainVal.setPosition(cfg.Position.X + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.CurrentValue.Position, InfoPageVisual.CurrentInfoType).X, this.BaseOffset + InfoPageVisual.GetCurrentElementVector2(cfg.TabConfig.CurrentValue.Position, InfoPageVisual.CurrentInfoType).Y + this.Row * cfg.TabConfig.TabSize.Y);
                 this.UpdateTextStyle(this.MainVal, cfg.TabConfig.CurrentValue.Font);
@@ -689,16 +703,17 @@ export class PlayerTabIndicator {
                     fontStyle: cfg.TabConfig.CurrentValue.Font.Style,
                     align: cfg.TabConfig.CurrentValue.Font.Align
                 });
+                this.MainVal.setDepth(2);
                 this.MainVal.setOrigin(0.5, 0);
                 this.VisualComponents.push(this.MainVal);
             }
         }
-        if(!cfg.TabConfig.CurrentValue.Enabled && this.Config?.TabConfig.CurrentValue.Enabled) {
+        if (!cfg.TabConfig.CurrentValue.Enabled && this.Config?.TabConfig.CurrentValue.Enabled) {
             this.RemoveVisualComponent(this.MainVal);
             this.MainVal?.destroy();
             this.MainVal = null;
         }
-        if(this.Scene.info.isActive || this.Scene.info.isHiding) {
+        if (this.Scene.info.isActive || this.Scene.info.isHiding) {
             this.GetActiveVisualComponents().forEach(vc => {
                 vc.alpha = 0;
             });
@@ -744,6 +759,7 @@ export class PlayerTabIndicator {
         this.Scene.load.on(`filecomplete-image-${this.Id}`, () => {
             this.Image = this.Scene.make.sprite({ x: this.Config!.Position.X + InfoPageVisual.GetCurrentElementVector2(this.Config!.TabConfig.ChampIcon.Position).X, y: this.Config!.Position.Y + this.Config!.TitleHeight + this.Row * this.Config!.TabConfig.TabSize.Y + InfoPageVisual.GetCurrentElementVector2(this.Config!.TabConfig.ChampIcon.Position).Y, key: this.Id, add: true });
             this.Image.setOrigin(0, 0);
+            this.Image.setDepth(2);
             this.Image.displayWidth = this.Config!.TabConfig.ChampIcon.Size.X;
             this.Image.displayHeight = this.Config!.TabConfig.ChampIcon.Size.Y;
             this.Image.alpha = 0;
@@ -751,7 +767,7 @@ export class PlayerTabIndicator {
                 this.Image.alpha = 1;
             }
 
-            /*
+            
             if(this.Scene.info.isShowing) {
                 setTimeout(() => {
                     let ctx = this;
@@ -766,7 +782,7 @@ export class PlayerTabIndicator {
                     });
                 }, this.Scene.info.currentAnimation[0].duration - this.Scene.info.currentAnimation[0].elapsed);
             }
-            */
+            
         });
     }
 
@@ -786,12 +802,12 @@ export class PlayerTabIndicator {
 
     AddVisualComponent(component: any): void {
         const componentInList = this.VisualComponents.find(c => c === component);
-        if(componentInList === undefined) {
+        if (componentInList === undefined) {
             this.VisualComponents.push(component);
         }
     }
 
-    UpdateTextStyle(textElement: Phaser.GameObjects.Text, style: {Name: string, Size: string, Align: string, Color: string, Style: string}): void {
+    UpdateTextStyle(textElement: Phaser.GameObjects.Text, style: { Name: string, Size: string, Align: string, Color: string, Style: string }): void {
 
         textElement.setFontFamily(style.Name);
         textElement.setFontStyle(style.Style);
@@ -799,6 +815,6 @@ export class PlayerTabIndicator {
         textElement.setFontSize(style.Size)
         textElement.setColor(style.Color);
         textElement.setAlign(style.Align);
-        
+
     }
 }
