@@ -217,14 +217,24 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private void OnMinionKill(LiveEvent e)
         {
             Player p = GetPlayer(e);
+            
             if (p != null)
+            {
+                if(e.Other.StartsWith("Yorick"))
+                {
+                    return;
+                }
                 AddCS(p, 1);
+            }
+                
         }
         private void OnJglMinionKill(LiveEvent e)
         {
             Player p = GetPlayer(e);
+            
             if (p != null)
             {
+                Log.Info(JsonConvert.SerializeObject(e));
                 if (e.Other.StartsWith("SRU_MurkwolfMini"))
                 {
                     AddCS(p, 1);
@@ -246,7 +256,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 }
 
                 //Do not count mini monsters
-                if(e.Other.Contains("Mini"))
+                //Because Senna Souls and GP Barrels are both Barrels.... and neutral minions. Riot... get help
+                if (e.Other.Contains("Mini") || e.Other.Equals("Barrel"))
                 {
                     return;
                 }

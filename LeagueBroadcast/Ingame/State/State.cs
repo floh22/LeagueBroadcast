@@ -94,7 +94,7 @@ namespace LeagueBroadcast.Ingame.State
                     //Dr. Mundo <-> DrMundo
 
                     //Replace this with a map of some kind between memory names and API names
-                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.rawChampionName, StringComparison.OrdinalIgnoreCase));
+                    playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.rawChampionName, StringComparison.OrdinalIgnoreCase));
                 } catch (Exception e)
                 {
                     //Incorrect values now but its better than crashing? Not sure
@@ -103,6 +103,10 @@ namespace LeagueBroadcast.Ingame.State
                     Log.Warn(p.championName + " not found in memory snapshot");
                     Log.Warn(e.Message);
                     Log.Verbose(JsonConvert.SerializeObject(gameSnap.Champions));
+                }
+                if(playerObject == null)
+                {
+                    return;
                 }
                 
                 Team playerTeam = (newP.team == "ORDER") ? blueTeam : redTeam;

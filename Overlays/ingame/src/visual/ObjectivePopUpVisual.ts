@@ -97,14 +97,14 @@ export default class ObjectivePopUpVisual extends VisualElement {
             delay: delay,
             onComplete: function() {
                 ctx.isHiding = false;
-                ctx.AnimationComplete.dispatch();
+                ctx._animationComplete.dispatch();
             }
         });
     }
 
     CreateTextureListeners(): void {
         //Background Image support
-        this.scene.load.on(`filecomplete-image-${this.Type}PopUp`, () => {
+        this.scene.load.once(`filecomplete-image-${this.Type}PopUp`, () => {
             this.BackgroundImage = this.scene.make.sprite({ x: 960, y: 0, key: `${this.Type}PopUp`, add: true });
             this.BackgroundImage.setOrigin(0.5,0);
             this.BackgroundImage.setDepth(-1);
@@ -114,7 +114,7 @@ export default class ObjectivePopUpVisual extends VisualElement {
         });
 
         //Background Video support
-        this.scene.load.on(`filecomplete-video-${this.Type}PopUpVideo`, () => {
+        this.scene.load.once(`filecomplete-video-${this.Type}PopUpVideo`, () => {
             if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
@@ -123,7 +123,6 @@ export default class ObjectivePopUpVisual extends VisualElement {
             this.BackgroundVideo = this.scene.add.video(960, 0, `${this.Type}PopUpVideo`, false, true);
             this.BackgroundVideo.setOrigin(0.5,0);
             this.BackgroundVideo.setDepth(-1);
-            this.BackgroundVideo.setPosition(960, 1080 - this.BackgroundVideo.displayHeight);
             this.AddVisualComponent(this.BackgroundVideo);
             this.LoadMask();
         });
@@ -141,26 +140,58 @@ export default class ObjectivePopUpVisual extends VisualElement {
             this.MaskGeo = null;
         }
 
-        if(this.BackgroundVideo !== null && this.BackgroundVideo !== undefined) {
-            this.Height = this.BackgroundVideo.displayHeight;
-        } else if(this.BackgroundImage !== null && this.BackgroundImage !== undefined) {
-            this.Height = this.BackgroundImage.displayHeight;
-        } 
         if (this.Config.UseAlpha) {
             this.MaskImage = this.scene.make.sprite({ x: 960, y: 0, key: 'popUpMask', add: false });
             this.MaskImage.setOrigin(0.5,0);
-            this.MaskImage.setPosition(960, 1080 - this.Height)
+            this.Height = this.MaskImage.displayHeight;
+            this.MaskImage.setPosition(960, 1080 - this.Height);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
             this.MaskGeo = this.scene.make.graphics({ add: false });
             this.MaskGeo.fillStyle(0xffffff);
+            if(this.BackgroundVideo !== null && this.BackgroundVideo !== undefined) {
+                this.Height = this.BackgroundVideo.displayHeight;
+            } else if(this.BackgroundImage !== null && this.BackgroundImage !== undefined) {
+                this.Height = this.BackgroundImage.displayHeight;
+            } 
             this.MaskGeo.fillRect(0, 0, 1920, this.Height);
-            this.MaskGeo.setPosition(960, 1080 - this.Height);
+            this.MaskGeo.setPosition(0, 1080 - this.Height);
             this.GeoMask = this.MaskGeo.createGeometryMask();
         }
+
         this.GetActiveVisualComponents().forEach(vc => {
             vc.setMask(this.Config.UseAlpha ? this.ImgMask : this.GeoMask);
+            vc.setPosition(960,1080);
         });
+        this._animationComplete.sub(() => {
+
+            if (this.currentAnimation.some(a => (a !== null && a !== undefined) && a.progress !== 1)) {
+                return;
+            }
+
+            //Reset old Texture
+            if (this.scene.textures.exists(`${this.Type}PopUp`)) {
+                this.RemoveVisualComponent(this.BackgroundImage);
+                this.BackgroundImage?.destroy();
+                this.BackgroundImage = null;
+                this.scene.textures.remove(`${this.Type}PopUp`);
+            }
+
+            //Reset old Video
+            if(this.scene.cache.video.has(`${this.Type}PopUpVideo`)) {
+                this.RemoveVisualComponent(this.BackgroundVideo);
+                this.BackgroundVideo?.destroy(),
+                this.BackgroundVideo = null;
+                this.scene.cache.video.remove(`${this.Type}PopUpVideo`);
+            }
+
+            this.RemoveFromVisualElementList();
+
+            this.AnimationComplete.dispatch();
+
+            console.log('destroyed popup and cleared textures');
+        });
+
         this.scene.displayRegions[10].AddToAnimationQueue(this);
     }
 

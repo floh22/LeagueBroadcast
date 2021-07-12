@@ -43,7 +43,7 @@ export default class ItemVisual extends VisualElement {
     }
 
     Load(): void {
-        this.scene.load.on(`filecomplete-image-${this.id}`, () => {
+        this.scene.load.once(`filecomplete-image-${this.id}`, () => {
             var team = this.playerID > 4;
             var x = team ? 1881 : 39;
             var y = team ? 189 + ((this.playerID - 5) * 103) : 189 + (this.playerID * 103);

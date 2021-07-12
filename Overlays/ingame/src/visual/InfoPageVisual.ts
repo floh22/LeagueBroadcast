@@ -160,8 +160,8 @@ export default class InfoPageVisual extends VisualElement {
             //Reset old Video
             if (this.scene.cache.video.has('infoBgVideo')) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
-                this.BackgroundVideo?.destroy(),
-                    this.BackgroundVideo = null;
+                this.BackgroundVideo?.destroy();
+                this.BackgroundVideo = null;
                 this.scene.cache.video.remove('infoBgVideo');
             }
             this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
@@ -244,7 +244,16 @@ export default class InfoPageVisual extends VisualElement {
             yoyo: false,
             onComplete: function () {
                 ctx.PlayerTabs.forEach(pt => pt.Start());
-                setTimeout(() => { ctx.isActive = true; ctx.isShowing = false; }, 500);
+                setTimeout(() => {
+                    ctx.isActive = true;
+                    ctx.isShowing = false;
+                    //Force Images to show incase some race condition prevented it earlier
+                    ctx.PlayerTabs.forEach(pt => {
+                        if(pt.Image !== null && pt.Image !== undefined) {
+                            pt.Image.setAlpha(1);
+                        }
+                    })
+                }, 500);
             }
         });
     }

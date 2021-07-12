@@ -112,38 +112,38 @@ export default class IngameScene extends Phaser.Scene {
         var div = document.getElementById('gameContainer');
 
         const blue_1 = this.make.sprite({ x: 39, y: 152 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
-        const playerNotificationMaskSprite = this.make.sprite({ x: 78, y: 152 + 37, key: 'itemTextMask', add: false });
+        const playerNotificationMaskSprite = this.make.sprite({ x: 78, y: 152 + 37, key: 'itemTextMaskLeft', add: false });
         playerNotificationMaskSprite.setOrigin(0, 0.5);
         var playerNotificationWidth = playerNotificationMaskSprite.width / 2;
         const blue_1_notif = playerNotificationMaskSprite.createBitmapMask();
 
         const blue_2 = this.make.sprite({ x: 39, y: 255 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
-        const blue_2_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 255 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const blue_2_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 255 + 37, key: 'itemTextMaskLeft', add: false }).createBitmapMask();
 
         const blue_3 = this.make.sprite({ x: 39, y: 358 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
-        const blue_3_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 358 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const blue_3_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 358 + 37, key: 'itemTextMaskLeft', add: false }).createBitmapMask();
 
         const blue_4 = this.make.sprite({ x: 39, y: 461 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
-        const blue_4_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 461 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const blue_4_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 461 + 37, key: 'itemTextMaskLeft', add: false }).createBitmapMask();
 
         const blue_5 = this.make.sprite({ x: 39, y: 564 + 37, key: 'champCoverLeft', add: false }).createBitmapMask();
-        const blue_5_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const blue_5_notif = this.make.sprite({ x: 78 + playerNotificationWidth, y: 564 + 37, key: 'itemTextMaskLeft', add: false }).createBitmapMask();
 
 
         const red_1 = this.make.sprite({ x: 1920 - 39, y: 152 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
-        const red_1_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 152 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const red_1_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 152 + 37, key: 'itemTextMaskRight', add: false }).createBitmapMask();
 
         const red_2 = this.make.sprite({ x: 1920 - 39, y: 255 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
-        const red_2_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 255 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const red_2_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 255 + 37, key: 'itemTextMaskRight', add: false }).createBitmapMask();
 
         const red_3 = this.make.sprite({ x: 1920 - 39, y: 358 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
-        const red_3_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 358 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const red_3_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 358 + 37, key: 'itemTextMaskRight', add: false }).createBitmapMask();
 
         const red_4 = this.make.sprite({ x: 1920 - 39, y: 461 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
-        const red_4_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 461 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const red_4_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 461 + 37, key: 'itemTextMaskRight', add: false }).createBitmapMask();
 
         const red_5 = this.make.sprite({ x: 1920 - 39, y: 564 + 37, key: 'champCoverRight', add: false }).createBitmapMask();
-        const red_5_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 564 + 37, key: 'itemTextMask', add: false }).createBitmapMask();
+        const red_5_notif = this.make.sprite({ x: 1920 - 78 - playerNotificationWidth, y: 564 + 37, key: 'itemTextMaskRight', add: false }).createBitmapMask();
 
 
         this.displayRegions = [
