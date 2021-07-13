@@ -127,7 +127,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private async void Init()
         {
-            Log.Info($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}");
+            Log.Info($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}, DDRAGONLANG: {ConfigController.Component.DataDragon.lang}");
 
             Champion.Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
             Log.Info($"Loaded {Champion.Champions.Count} champions");
@@ -135,7 +135,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             SummonerSpell.SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
             Log.Info($"Loaded {SummonerSpell.SummonerSpells.Count} summoner spells");
 
-            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/item.json")).data.ToObject<Dictionary<int, ItemData>>());
+            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/{ConfigController.Component.DataDragon.lang}/item.json")).data.ToObject<Dictionary<int, ItemData>>());
             Log.Info($"Detected {rawItemData.Count} items");
 
             rawItemData.ForEach(kvPair => {

@@ -59,7 +59,8 @@ namespace LeagueBroadcast.Common.Data.Config
         {
             return new() {
                 DataDragon = new DataDragonConfig() {
-                    MinimumGoldCost = 2000
+                    MinimumGoldCost = 2000,
+					lang = "en_US"
                 },
                 PickBan = new PickBanConfig() {
                     IsActive = true,
@@ -180,6 +181,7 @@ namespace LeagueBroadcast.Common.Data.Config
     public class DataDragonConfig
     {
         public int MinimumGoldCost;
+		public string lang;
     }
 
     public class PickBanConfig
