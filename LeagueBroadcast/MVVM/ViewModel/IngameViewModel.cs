@@ -85,10 +85,14 @@ namespace LeagueBroadcast.MVVM.ViewModel
         public ControlButtonViewModel BaronTimer = new("Baron Timer", "Show Timer and Gold difference when Baron is taken", ConfigController.Component.Ingame.UseLiveEvents);
         public ControlButtonViewModel ElderTimer = new("Elder Timer", "Show Timer and Gold difference when Elder Drake is taken", ConfigController.Component.Ingame.UseLiveEvents);
         public ControlButtonViewModel InhibTimer = new("Inhibitor Timers", "Show Inhibitor Timers", true);
+        public ControlButtonViewModel ObjectiveSpawn = new("Spawn", "Show Spawn PopUp when an objective spawns", ConfigController.Component.Ingame.UseLiveEvents);
+        public ControlButtonViewModel ObjectiveKill = new("Kill", "Show Spawn PopUp when an objective is killed", ConfigController.Component.Ingame.UseLiveEvents);
 
         public bool BaronIsActive { get { return ConfigController.Component.Ingame.Objectives.DoBaronKill; } set { ConfigController.Component.Ingame.Objectives.DoBaronKill = value; OnPropertyChanged(); } }
         public bool ElderIsActive { get { return ConfigController.Component.Ingame.Objectives.DoDragonKill; } set { ConfigController.Component.Ingame.Objectives.DoDragonKill = value; OnPropertyChanged(); } }
         public bool InhibIsActive { get { return ConfigController.Component.Ingame.Objectives.DoInhibitors; } set { ConfigController.Component.Ingame.Objectives.DoInhibitors = value; OnPropertyChanged(); } }
+        public bool ObjectiveSpawnPopUpIsActive { get { return ConfigController.Component.Ingame.Objectives.DoObjectiveSpawnPopUp; } set { ConfigController.Component.Ingame.Objectives.DoObjectiveSpawnPopUp = value; OnPropertyChanged(); } }
+        public bool ObjectiveKillPopUpIsActive { get { return ConfigController.Component.Ingame.Objectives.DoObjectiveKillPopUp; } set { ConfigController.Component.Ingame.Objectives.DoObjectiveKillPopUp = value; OnPropertyChanged(); } }
 
         private DelegateCommand _baronClickCommand;
 
@@ -113,6 +117,23 @@ namespace LeagueBroadcast.MVVM.ViewModel
             get { return _inhibClickCommand; }
             set { _inhibClickCommand = value; }
         }
+
+        private DelegateCommand _objectiveSpawnClickCommand;
+
+        public DelegateCommand ObjectiveSpawnClickCommand
+        {
+            get { return _objectiveSpawnClickCommand; }
+            set { _objectiveSpawnClickCommand = value; }
+        }
+
+        private DelegateCommand _objectiveKillClickCommand;
+
+        public DelegateCommand ObjectiveKillClickCommand
+        {
+            get { return _objectiveKillClickCommand; }
+            set { _objectiveKillClickCommand = value; }
+        }
+
 
         private bool _isOpen;
 
@@ -139,6 +160,18 @@ namespace LeagueBroadcast.MVVM.ViewModel
                 InhibIsActive ^= true;
             });
             _inhibClickCommand.MouseGesture = MouseAction.LeftClick;
+
+            _objectiveKillClickCommand = new(o =>
+            {
+                ObjectiveKillPopUpIsActive ^= true;
+            });
+            _objectiveKillClickCommand.MouseGesture = MouseAction.LeftClick;
+
+            _objectiveSpawnClickCommand = new(o =>
+            {
+                ObjectiveSpawnPopUpIsActive ^= true;
+            });
+            _objectiveSpawnClickCommand.MouseGesture = MouseAction.LeftClick;
         }
     }
 

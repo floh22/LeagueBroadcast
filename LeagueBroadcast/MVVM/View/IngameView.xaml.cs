@@ -36,6 +36,8 @@ namespace LeagueBroadcast.MVVM.View
                 BaronButton.DataContext = ctx.Objectives.BaronTimer;
                 DragonButton.DataContext = ctx.Objectives.ElderTimer;
                 InhibButton.DataContext = ctx.Objectives.InhibTimer;
+                ObjectiveSpawnButton.DataContext = ctx.Objectives.ObjectiveSpawn;
+                ObjectiveKillButton.DataContext = ctx.Objectives.ObjectiveKill;
 
                 //Teams
                 TeamPanel.DataContext = ctx.Teams;

@@ -11,7 +11,11 @@ namespace LeagueBroadcast.Ingame.Data.RIOT
         public int id;
         public string summonerName;
         public string championName;
-        public string rawChampionName;
+        public string rawChampionName
+        {
+            set { championID = value.Split("_")[^1]; }
+        }
+        public string championID;
         public bool isDead;
         public IEnumerable<Item> items;
         public int level;

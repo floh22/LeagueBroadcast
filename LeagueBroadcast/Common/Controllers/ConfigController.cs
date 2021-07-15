@@ -69,7 +69,6 @@ namespace LeagueBroadcast.Common.Controllers
                     return new LocalFont();
                 }));
             */
-
             App.Instance.Exit += OnClose;
         }
 
@@ -168,6 +167,7 @@ namespace LeagueBroadcast.Common.Controllers
                 {
                     await Task.Delay(500);
                     config.Reload();
+                    await Task.Delay(500);
                     waitingForRead = false;
                     return;
                 }

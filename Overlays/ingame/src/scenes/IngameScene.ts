@@ -4,7 +4,7 @@ import StateData from '~/data/stateData';
 import Phaser from 'phaser';
 import GoldEntry from '~/data/goldEntry';
 import WindowUtils from '~/convert/windowUtils';
-import OverlayConfigEvent, { OverlayConfig } from '~/data/config/overlayConfig';
+import OverlayConfigEvent, { ObjectiveSpawnConfig, OverlayConfig, ScoreboardPopUpConfig } from '~/data/config/overlayConfig';
 import { VisualElement } from '~/visual/VisualElement';
 import RegionMask from '~/data/RegionMask';
 
@@ -48,19 +48,8 @@ export default class IngameScene extends Phaser.Scene {
     }
 
     preload() {
-        /*
-        var config = {
-            google: {
-                families: ['Droid Sans', 'News Cycle', 'News Cycle:bold']
-            }
-        };
-        this.load.rexWebFont(config);
-        */
         variables.backendUrl = WindowUtils.GetQueryVariable('backend');
-
         this.graphics = this.add.graphics();
-
-        
         this.load.script('chartjs', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js');
 
         //Masks
@@ -205,10 +194,13 @@ export default class IngameScene extends Phaser.Scene {
                             new LevelUpVisual(this, data.playerId, data.level);
                             break;
                         case 'ObjectiveKilled':
-                            console.log('Legacy objective kill: ' + JSON.stringify(data));
+                            this.OnObjectiveKill(data.ObjectiveName, data.TeamName);
                             break;
                         case 'BuffDespawn':
                             console.log('Legacy objective despawn: ' + JSON.stringify(data));
+                            break;
+                        case 'ObjectiveSpawn':
+                            this.OnObjectiveSpawn(data.ObjectiveName);
                             break;
                         case 'ItemCompleted':
                             if (this.info.isActive && data.playerId < 5)
@@ -297,6 +289,7 @@ export default class IngameScene extends Phaser.Scene {
 
     UpdateConfig = (message: OverlayConfigEvent): void => {
         console.log('[LB] Configuring Visual Elements');
+
         if (this.overlayCfg === null) {
             //Init Message, create Visual Elements
             this.overlayCfg = message.config;
@@ -305,7 +298,7 @@ export default class IngameScene extends Phaser.Scene {
             this.elderTimer = new ObjectiveTimerVisual(this, 'elder', message.config.ElderTimer);
             this.score = new ScoreboardVisual(this, message.config.Score);
             this.info = new InfoPageVisual(this, message.config.InfoPage);
-            this.centerGraph = new GraphVisual(this, message.config.GoldGraph, [new GoldEntry(0, 100), new GoldEntry(40, -100)])
+            this.centerGraph = new GraphVisual(this, message.config.GoldGraph, [new GoldEntry(0, 100), new GoldEntry(40, -100)]);
         } else {
             //Update Message, update elements if needed
             this.inhib.UpdateConfig(message.config.Inhib);
@@ -316,6 +309,7 @@ export default class IngameScene extends Phaser.Scene {
             this.centerGraph.UpdateConfig(message.config.GoldGraph);
         }
 
+        console.log('[LB] Saving new display config');
         this.overlayCfg = message.config;
         //console.log(message.config);
 
@@ -332,6 +326,7 @@ export default class IngameScene extends Phaser.Scene {
             });
 
             console.log(`[LB] Loading ${newFonts.length} new fonts`);
+            this.loadedFonts.push(...newFonts);
             this.load.start();
             
             //Wait for loader to finish loading fonts
@@ -357,6 +352,44 @@ export default class IngameScene extends Phaser.Scene {
             //Red Soul Point
             new ObjectivePopUpVisual(this, this.overlayCfg!.ObjectiveKill.SoulPointScoreboardPopUp, `${state.scoreboard.RedTeam.Dragons[2]}Soul`);
         }
+    }
+
+
+    OnObjectiveSpawn(objectiveName: string): void {
+        let cfg: ScoreboardPopUpConfig | null = null;
+        switch (objectiveName) {
+            case 'Baron':
+                cfg = this.overlayCfg!.ObjectiveSpawn.BaronSpawnScoreboardPopUp;
+                break;
+            case 'Herald':
+                cfg = this.overlayCfg!.ObjectiveSpawn.HeraldSpawnScoreboardPopUp;
+                break;
+            default:
+                cfg = this.overlayCfg!.ObjectiveSpawn.DrakeSpawnScoreboardPopUp;
+                break;
+        }
+
+        new ObjectivePopUpVisual(this, cfg, `${objectiveName.toLowerCase()}Spawn`);
+    }
+
+    OnObjectiveKill(objectiveName: string, teamName: string): void {
+        let cfg: ScoreboardPopUpConfig | null = null;
+        switch (objectiveName) {
+            case 'Herald':
+                cfg = this.overlayCfg!.ObjectiveKill.HeraldKillScoreboardPopUp;
+                break;
+            case 'Baron':
+                cfg = this.overlayCfg!.ObjectiveKill.BaronKillScoreboardPopUp;
+                break;
+            case 'Elder':
+                cfg = this.overlayCfg!.ObjectiveKill.ElderKillScoreboardPopUp;
+                break;
+            default:
+                cfg = this.overlayCfg!.ObjectiveKill.DragonKillScoreboardPopUp;
+                break;
+        }
+
+        new ObjectivePopUpVisual(this, cfg, `${objectiveName.toLowerCase()}Kill`);
     }
 
 }

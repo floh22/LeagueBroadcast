@@ -28,6 +28,12 @@ namespace LeagueBroadcast.Ingame.State
         public int lastGoldDifference;
         public double lastGoldUpdate;
 
+
+        //Track past objectives
+        private GameObject lastDragon;
+        private GameObject lastHerald;
+        private GameObject lastBaron;
+
         public Team blueTeam;
         public Team redTeam;
 
@@ -94,7 +100,7 @@ namespace LeagueBroadcast.Ingame.State
                     //Dr. Mundo <-> DrMundo
 
                     //Replace this with a map of some kind between memory names and API names
-                    playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.rawChampionName, StringComparison.OrdinalIgnoreCase));
+                    playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.championID, StringComparison.OrdinalIgnoreCase));
                 } catch (Exception e)
                 {
                     //Incorrect values now but its better than crashing? Not sure
@@ -128,7 +134,7 @@ namespace LeagueBroadcast.Ingame.State
                 }
 
                 //If Viego is alive and outside of base, his item buys are most likely from possession
-                if(!(p.rawChampionName == "Viego" && !p.isDead && (newP.team == "ORDER"? Vector3.Distance(Vector3.Zero, playerObject.Position) > 1200 : Vector3.Distance(new Vector3(15000,170, 15000), playerObject.Position) > 1200)))
+                if(!(p.championID == "Viego" && !p.isDead && (newP.team == "ORDER"? Vector3.Distance(Vector3.Zero, playerObject.Position) > 1200 : Vector3.Distance(new Vector3(15000,170, 15000), playerObject.Position) > 1200)))
                 {
                     //Level up Events
                     if (p.level < 6 && newP.level >= 6)
@@ -221,6 +227,29 @@ namespace LeagueBroadcast.Ingame.State
                         break;
                 }
             });
+
+
+            //Check for Drake spawn
+            if(gameSnap.Dragon.ID != 0 && lastDragon?.ID == 0)
+            {
+                //Get the last part of the drake name and then map the memory names to API names. I god damn hope these aren't language specific again
+                string drakeName = gameSnap.Dragon.Name.Split("_")[^1].Replace("Air", "Cloud", StringComparison.OrdinalIgnoreCase).Replace("Earth", "Mountain", StringComparison.OrdinalIgnoreCase).Replace("Water", "Ocean", StringComparison.OrdinalIgnoreCase);
+
+                //Dont think this should be saved as a game event? Don't for now and implement it here if I ever need it to be
+                controller.OnObjectiveSpawn(drakeName);
+            }
+
+            //Check for Herald spawn
+            if(gameSnap.Herald.ID != 0 && lastHerald?.ID == 0)
+            {
+                //Same as drake spawn
+                controller.OnObjectiveSpawn("Herald");
+            }
+
+            //Update past objectives
+            lastDragon = gameSnap.Dragon;
+            lastBaron = gameSnap.Baron;
+            lastHerald = gameSnap.Herald;
         }
 
         public void UpdateScoreboard()
@@ -244,7 +273,6 @@ namespace LeagueBroadcast.Ingame.State
             currentTeam.Gold = redTeam.GetGold(stateData.gameTime);
             currentTeam.Score = TeamConfigViewModel.RedTeam.Score;
 
-            //Log.Info(currentTeam.Kills + ", " + currentTeam.Towers + ", " + currentTeam.Gold);
         }
 
         public void UpdateTeamColors()

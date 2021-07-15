@@ -16,11 +16,12 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "2.1";
+        public static new string CurrentVersion => "2.2";
 
         public InhibitorDisplayConfig Inhib;
         public ScoreDisplayConfig Score;
         public ObjectiveKillConfig ObjectiveKill;
+        public ObjectiveSpawnConfig ObjectiveSpawn;
         public ItemCompletedDisplayConfig ItemComplete;
         public LevelUpDisplayConfig LevelUp;
         public InfoPageDisplayConfig InfoPage;
@@ -48,6 +49,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             ItemComplete = Cfg.ItemComplete;
             LevelUp = Cfg.LevelUp;
             ObjectiveKill = Cfg.ObjectiveKill;
+            ObjectiveSpawn = Cfg.ObjectiveSpawn;
             BaronTimer = Cfg.BaronTimer;
             ElderTimer = Cfg.ElderTimer;
             GoldGraph = Cfg.GoldGraph;
@@ -69,6 +71,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.ItemComplete = def.ItemComplete;
             this.LevelUp = def.LevelUp;
             this.ObjectiveKill = def.ObjectiveKill;
+            this.ObjectiveSpawn = def.ObjectiveSpawn;
             this.BaronTimer = def.BaronTimer;
             this.ElderTimer = def.ElderTimer;
             this.GoldGraph = def.GoldGraph;
@@ -688,8 +691,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 },
                 ObjectiveKill = new ObjectiveKillConfig()
                 {
+                    ShowTeamIcon = false,
                     BaronKillScoreboardPopUp = new ScoreboardPopUpConfig() {
-                        Enabled = true,
+                        Enabled = false,
                         UseImage = true,
                         UseVideo = false,
                         UseAlpha = true,
@@ -698,6 +702,16 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         AnimationDuration = 1000
                     },
                     ElderKillScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
+                    },
+                    DragonKillScoreboardPopUp = new ScoreboardPopUpConfig()
                     {
                         Enabled = true,
                         UseImage = true,
@@ -716,6 +730,49 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         ForceDisplayDurationForVideo = true,
                         DisplayDuration = 2000,
                         AnimationDuration = 1000
+                    },
+                    HeraldKillScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
+                    }
+                },
+                ObjectiveSpawn = new ObjectiveSpawnConfig()
+                {
+                    BaronSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = false,
+                        AnimationDuration = 1000,
+                        DisplayDuration = 2000
+                    },
+                    DrakeSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = false,
+                        AnimationDuration = 1000,
+                        DisplayDuration = 2000
+                    },
+                    HeraldSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = false,
+                        AnimationDuration = 1000,
+                        DisplayDuration = 2000
                     }
                 },
                 BaronTimer = new ObjectiveTimerDisplayConfig()
@@ -841,7 +898,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
-            //Update to 2.1
+            //Update from pre 2.1 to Current Version
             if ((oldVersion == "1.0" || oldVersion == "2.0") && CurrentVersion == "2.1")
             {
                 Task t = new Task(async () =>
@@ -855,6 +912,74 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 t.Start();
 
                 return false;
+            }
+
+            //Update from 2.1 to Current Version
+            if(oldVersion == "2.1")
+            {
+                Task t = new Task(async () =>
+                {
+                    await Task.Delay(500);
+                    FileVersion = CurrentVersion;
+                    //2.1 to 2.2
+                    ObjectiveKill.ShowTeamIcon = false;
+                    ObjectiveKill.HeraldKillScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
+                    };
+                    ObjectiveKill.DragonKillScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
+                        Enabled = true,
+                        UseImage = true,
+                        UseVideo = false,
+                        UseAlpha = true,
+                        ForceDisplayDurationForVideo = true,
+                        DisplayDuration = 2000,
+                        AnimationDuration = 1000
+                    };
+                    ObjectiveSpawn = new ObjectiveSpawnConfig()
+                    {
+                        BaronSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
+                        {
+                            Enabled = true,
+                            UseImage = true,
+                            UseVideo = false,
+                            UseAlpha = true,
+                            ForceDisplayDurationForVideo = false,
+                            AnimationDuration = 1000,
+                            DisplayDuration = 2000
+                        },
+                        DrakeSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
+                        {
+                            Enabled = true,
+                            UseImage = true,
+                            UseVideo = false,
+                            UseAlpha = true,
+                            ForceDisplayDurationForVideo = false,
+                            AnimationDuration = 1000,
+                            DisplayDuration = 2000
+                        },
+                        HeraldSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
+                        {
+                            Enabled = true,
+                            UseImage = true,
+                            UseVideo = false,
+                            UseAlpha = true,
+                            ForceDisplayDurationForVideo = false,
+                            AnimationDuration = 1000,
+                            DisplayDuration = 2000
+                        }
+                    };
+
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                });
+                t.Start();
             }
             return true;
         }
@@ -909,9 +1034,19 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public class ObjectiveKillConfig
         {
+            public bool ShowTeamIcon;
             public ScoreboardPopUpConfig SoulPointScoreboardPopUp;
             public ScoreboardPopUpConfig ElderKillScoreboardPopUp;
+            public ScoreboardPopUpConfig DragonKillScoreboardPopUp;
             public ScoreboardPopUpConfig BaronKillScoreboardPopUp;
+            public ScoreboardPopUpConfig HeraldKillScoreboardPopUp;
+        }
+
+        public class ObjectiveSpawnConfig
+        {
+            public ScoreboardPopUpConfig BaronSpawnScoreboardPopUp;
+            public ScoreboardPopUpConfig DrakeSpawnScoreboardPopUp;
+            public ScoreboardPopUpConfig HeraldSpawnScoreboardPopUp;
         }
 
         public class ScoreboardPopUpConfig

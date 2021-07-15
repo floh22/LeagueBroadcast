@@ -1,4 +1,4 @@
-import { VisualElementAnimationConfig } from "~/data/config/overlayConfig";
+import { ItemCompletedDisplayConfig, VisualElementAnimationConfig } from "~/data/config/overlayConfig";
 import PlaceholderConversion from "~/PlaceholderConversion";
 import IngameScene from "~/scenes/IngameScene";
 import TextUtils from "~/util/TextUtils";
@@ -19,8 +19,6 @@ export default class ItemVisual extends VisualElement {
     static width: number = 78;
     static height: number = 74;
 
-    Config = this.scene.overlayCfg?.ItemComplete;
-
     constructor(scene: IngameScene, itemData: any, playerID: number) {
         super(scene, new Vector2(0, 0), `Player_${playerID}`);
 
@@ -40,6 +38,10 @@ export default class ItemVisual extends VisualElement {
 
     UpdateConfig(newConfig: any): void {
         throw new Error("Method not implemented.");
+    }
+
+    static GetConfig(): ItemCompletedDisplayConfig {
+        return IngameScene.Instance.overlayCfg!.ItemComplete;
     }
 
     Load(): void {
@@ -70,7 +72,7 @@ export default class ItemVisual extends VisualElement {
     Start(): void {
         console.log(`Player ${this.playerID} item complete (${this.name})`);
 
-        if(this.Config?.ShowOnChampionIndicator) {
+        if(ItemVisual.GetConfig()?.ShowOnChampionIndicator) {
             const itemStart = this.scene.overlayCfg?.ItemComplete.ItemAnimationStates[0];
 
             this.icon = this.scene.add.image(this.position.X, this.position.Y, this.id);
@@ -84,11 +86,11 @@ export default class ItemVisual extends VisualElement {
             this.PlayAnimationState(new VisualComponent(this.icon, new Vector2(ItemVisual.width, ItemVisual.height), true), this.scene.overlayCfg?.ItemComplete.ItemAnimationStates!, 0, 1);
         }
 
-        if (this.Config?.ShowItemName) {
+        if (ItemVisual.GetConfig()?.ShowItemName) {
             this.isActive = true;
             this.isShowing = true;
-            const textStart = this.Config?.InfoTextAnimationStates[0];
-            const textBgStart = this.Config?.InfoBackgroundAnimationStates[0];
+            const textStart = ItemVisual.GetConfig()?.InfoTextAnimationStates[0];
+            const textBgStart = ItemVisual.GetConfig()?.InfoBackgroundAnimationStates[0];
             const align = this.playerID > 4 ? 'right' : 'left';
 
             this.infoTextBackground = this.scene.add.image(this.position.X + textBgStart!.Position.X * ((textStart?.Mirror && this.playerID > 4) ? - 1 : 1), this.position.Y + textBgStart!.Position.Y, 'itemTextBg');
@@ -97,16 +99,16 @@ export default class ItemVisual extends VisualElement {
 
 
             this.infoText = this.scene.add.text(this.position.X + textStart!.Position.X * ((textBgStart?.Mirror && this.playerID > 4) ? - 1 : 1), this.position.Y + textStart!.Position.Y, this.itemData.name, {
-                fontFamily: this.Config?.InfoText.Name,
-                fontStyle: this.Config!.InfoText.Style,
-                fontSize: this.Config!.InfoText.Size,
+                fontFamily: ItemVisual.GetConfig()?.InfoText.Name,
+                fontStyle: ItemVisual.GetConfig()!.InfoText.Style,
+                fontSize: ItemVisual.GetConfig()!.InfoText.Size,
                 align: align
 
             });
             this.infoText.setOrigin(this.playerID > 4 ? 1 : 0, 0.5);
             this.infoText.setDepth(1);
             this.infoText.setAlpha(textStart?.Alpha);
-            TextUtils.AutoSizeFont(this.infoText, this.infoTextBackground.width - textStart!.Position.X - 20, this.infoTextBackground.height, +this.Config!.InfoText.Size.replace(/[^\d.-]/g, ''));
+            TextUtils.AutoSizeFont(this.infoText, this.infoTextBackground.width - textStart!.Position.X - 20, this.infoTextBackground.height, +ItemVisual.GetConfig()!.InfoText.Size.replace(/[^\d.-]/g, ''));
 
             this.infoText.setMask(this.scene.displayRegions[this.playerID].Masks[1]);
             this.infoTextBackground.setMask(this.scene.displayRegions[this.playerID].Masks[1]);

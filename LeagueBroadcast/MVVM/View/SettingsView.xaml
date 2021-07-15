@@ -11,7 +11,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="695" d:DesignWidth="1080">
     <Grid>
-        <StackPanel Width="250" HorizontalAlignment="Left" Margin="100,40,0,0">
+        <StackPanel Width="300" HorizontalAlignment="Left" Margin="100,40,0,0">
             <TextBlock Text="Check for App Updates" Foreground="White" FontSize="22"/>
             <controls:ToggleSwitch CheckedBackground="#5cc59e" 
                                        Foreground="White" 
@@ -39,6 +39,33 @@
                 <ComboBoxItem Tag="Warn" Content="Warn"/>
                 <ComboBoxItem Tag="Info" Content="Info"/>
                 <ComboBoxItem Tag="Verbose" Content="Verbose"/>
+            </ComboBox>
+            <TextBlock Text="Overlay Language" Foreground="White" FontSize="22" Margin="0,20,0,0"/>
+            <TextBlock Text="Requires restart to apply!" Foreground="White" FontSize="12" Margin="15,0,0,0"/>
+
+            <ComboBox 
+                Margin="30,10,100,0"
+                Height="35"
+                FontSize="17"
+                Style="{StaticResource ComboBoxFlatStyle}" 
+                x:Name="LangSelector"
+                SelectedValuePath="Tag"
+                SelectionChanged="LangSelector_SelectionChanged">
+                <ComboBoxItem Tag="en_US" Content="English"/>
+                <ComboBoxItem Tag="de_DE" Content="Deutsch"/>
+                <ComboBoxItem Tag="pt_BR" Content="Português"/>
+                <ComboBoxItem Tag="fr_FR" Content="Français"/>
+                <ComboBoxItem Tag="es_ES" Content="Español"/>
+                <ComboBoxItem Tag="it_IT" Content="Italiano"/>
+                <ComboBoxItem Tag="ja_JP" Content="日本語"/>
+                <ComboBoxItem Tag="tr_TR" Content="Türkçe"/>
+                <ComboBoxItem Tag="hu_HU" Content="Magyar"/>
+                <ComboBoxItem Tag="pl_PL" Content="Polski"/>
+                <ComboBoxItem Tag="ru_RU" Content="Русский"/>
+                <ComboBoxItem Tag="ro_RO" Content="Română"/>
+                <ComboBoxItem Tag="cs_CZ" Content="Čeština"/>
+                <ComboBoxItem Tag="zh_CN" Content="中国人"/>
+                <ComboBoxItem Tag="ko_KR" Content="한국말"/>
             </ComboBox>
         </StackPanel>
     </Grid>

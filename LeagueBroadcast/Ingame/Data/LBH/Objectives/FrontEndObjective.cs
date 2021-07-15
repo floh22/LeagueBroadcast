@@ -10,11 +10,14 @@ namespace LeagueBroadcast.Ingame.Data.LBH.Objectives
 
         public float GoldDifference { get; set; }
 
-        public FrontEndObjective(ObjectiveType Type)
+        public double SpawnTimer { get; set; }
+
+        public FrontEndObjective(ObjectiveType Type, double SpawnTimer)
         {
             DurationRemaining = "00:00";
             GoldDifference = 0;
             this.Type = Type;
+            this.SpawnTimer = SpawnTimer;
         }
     }
 }

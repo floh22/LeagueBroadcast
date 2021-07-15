@@ -33,7 +33,7 @@ namespace LeagueBroadcast.Common.Controllers
         private static bool GameFound = false;
 
         public static EventHandler BaronEnd, DragonEnd;
-        public static EventHandler<ObjectiveTakenArgs> DragonTaken, BaronTaken;
+        public static EventHandler<ObjectiveTakenArgs> DragonTaken, BaronTaken, HeraldTaken;
 
         public IngameController()
         {
@@ -47,7 +47,7 @@ namespace LeagueBroadcast.Common.Controllers
             BaronEnd += OnBaronEnd;
             DragonTaken += OnDragonTaken;
             DragonEnd += OnDragonEnd;
-
+            HeraldTaken += OnHeraldTaken;
             
         }
 
@@ -82,7 +82,7 @@ namespace LeagueBroadcast.Common.Controllers
             double timeDiff = newGameData.gameTime - gameData.gameTime;
             Log.Verbose($"Tick: {newGameData.gameTime}. Update duration: {timeDiff}");
 
-            if(timeDiff == 0 || newGameData.gameTime == 0)
+            if(timeDiff == 0)
             {
                 if(!gameState.stateData.gamePaused)
                 {
@@ -102,6 +102,11 @@ namespace LeagueBroadcast.Common.Controllers
             }
             var backDragon = gameState.stateData.backDragon;
             var backBaron = gameState.stateData.backBaron;
+
+
+            //Update objective timers - Drake not super useful since I cant get type before it spawns
+            gameState.stateData.dragon.SpawnTimer = Math.Max(0, gameState.stateData.dragon.SpawnTimer - timeDiff);
+            double newBaronTimer = Math.Min(1200, Math.Max(0, gameState.stateData.baron.SpawnTimer - timeDiff));
 
             //Check for time scrolled back
             if (newGameData.gameTime < gameData.gameTime && gameState.pastIngameEvents.Count != 0)
@@ -145,13 +150,51 @@ namespace LeagueBroadcast.Common.Controllers
                     OnBaronEnd(null, EventArgs.Empty);
                 }
 
-                Log.Info("Rolling back Inhibitors");
-                gameState.stateData.inhibitors.Inhibitors.ForEach(inhib => {
-                    inhib.timeLeft -= timeDiff;
-                    if (inhib.timeLeft > 300)
-                        inhib.timeLeft = 0;
-                });
+                var drakesTaken = gameState.pastIngameEvents.Where(e => e.EventName == "ObjectiveKilled" && ((ObjectiveKilled)e).ObjectiveName == "Dragon");
+                int blueDrakesTaken = drakesTaken.Count(e => ((ObjectiveKilled)e).TeamName.Equals("Order", StringComparison.OrdinalIgnoreCase));
+                int redDrakesTaken = drakesTaken.Count(e => ((ObjectiveKilled)e).TeamName.Equals("Chaos", StringComparison.OrdinalIgnoreCase));
 
+                //Remove all drakes taken after this point in time
+                gameState.blueTeam.dragonsTaken.RemoveRange(blueDrakesTaken, gameState.blueTeam.dragonsTaken.Count - blueDrakesTaken);
+                gameState.redTeam.dragonsTaken.RemoveRange(redDrakesTaken, gameState.redTeam.dragonsTaken.Count - redDrakesTaken);
+
+
+                var lastBaronTake = gameState.pastIngameEvents.LastOrDefault(e => e.EventName == "ObjectiveKilled" && ((ObjectiveKilled)e).ObjectiveName == "Baron");
+                if(lastBaronTake != null)
+                {
+                    //7 Minutes minus the time from the last baron take to now
+                    gameState.stateData.baron.SpawnTimer = Math.Max(0, 420 - (lastBaronTake.EventTime - newGameData.gameTime));
+                }
+                else
+                {
+                    //Baron was never taken, so 20 minute spawn timer minus current game time
+                    gameState.stateData.baron.SpawnTimer = Math.Max(0, 1200 - newGameData.gameTime);
+                }
+
+
+                var lastDragonTake = gameState.pastIngameEvents.LastOrDefault(e => e.EventName == "ObjectiveKilled" && ((ObjectiveKilled)e).ObjectiveName == "Dragon");
+                if (lastDragonTake != null)
+                {
+                    //5 or 6 minutes depending on if elder should spawn next minus the time from the last drake taken to now
+                    gameState.stateData.dragon.SpawnTimer = blueDrakesTaken >= 4 || redDrakesTaken >= 4 ? Math.Max(0, 360 - (lastDragonTake.EventTime - newGameData.gameTime)) : Math.Max(0, 300 - (lastDragonTake.EventTime - newGameData.gameTime));
+                }
+                else
+                {
+                    //Dragon was never taken, so 5 minute spawn timer minus current game time
+                    gameState.stateData.dragon.SpawnTimer = Math.Max(0, 300 - newGameData.gameTime);
+                }
+            }
+            else
+            {
+                //Only do this if the game did not scroll back since we do not always want these events to trigger when conditions are met, but rather only at the exact point in time
+
+                //Check for baron spawn
+                if (gameState.stateData.baron.SpawnTimer > 0 && newBaronTimer == 0)
+                {
+                    OnObjectiveSpawn("Baron");
+
+                }
+                gameState.stateData.baron.SpawnTimer = newBaronTimer;
             }
             #endregion
 
@@ -184,10 +227,12 @@ namespace LeagueBroadcast.Common.Controllers
                 }
             }
 
-            //Update inhibitors
-            
+            //Update inhibitors      
             gameState.stateData.inhibitors.Inhibitors.ForEach(inhib => {
                 inhib.timeLeft = Math.Max(0, inhib.timeLeft - timeDiff);
+                //Make sure to reset inhibs incase of scrollback
+                if (inhib.timeLeft > 300)
+                    inhib.timeLeft = 0;
             });
 
             #endregion
@@ -343,9 +388,12 @@ namespace LeagueBroadcast.Common.Controllers
         #region Events
         public void OnDragonTaken(object sender, ObjectiveTakenArgs e)
         {
-            Log.Info($"{e.Type} Dragon Taken by {e.Team.teamName}");
             e.Team.dragonsTaken.Add(e.Type);
-            if(e.Type.Equals("Elder", StringComparison.OrdinalIgnoreCase))
+
+            //Check if the next drake is an elder spawn, and set spawn timer accordingly
+            gameState.stateData.dragon.SpawnTimer = gameState.blueTeam.GetDragonsTaken() >= 4 || gameState.redTeam.GetDragonsTaken() >= 4 ? 360 : 300;
+
+            if (e.Type.Equals("Elder", StringComparison.OrdinalIgnoreCase))
             {
                 gameState.stateData.backDragon.TakeGameTime = gameData.gameTime;
                 gameState.stateData.backDragon.BlueStartGold = gameState.blueTeam.GetGold(gameData.gameTime);
@@ -353,16 +401,28 @@ namespace LeagueBroadcast.Common.Controllers
                 gameState.SetObjectiveData(gameState.stateData.backDragon, gameState.stateData.dragon, 150);
                 e.Team.hasElder = true;
             }
+
+            gameState.pastIngameEvents.Add(new ObjectiveKilled("Dragon", e.Team.teamName, gameData.gameTime));
+            OnObjectiveKilled(e.Type, e.Team.teamName);
         }
 
         public void OnBaronTaken(object sender, ObjectiveTakenArgs e)
         {
-            Log.Info($"Baron Taken by {e.Team.teamName}");
             gameState.stateData.backBaron.TakeGameTime = gameData.gameTime;
             gameState.stateData.backBaron.BlueStartGold = gameState.blueTeam.GetGold(gameData.gameTime);
             gameState.stateData.backBaron.RedStartGold = gameState.redTeam.GetGold(gameData.gameTime);
             gameState.SetObjectiveData(gameState.stateData.backBaron, gameState.stateData.baron, 180);
+            gameState.stateData.baron.SpawnTimer = 420;
             e.Team.hasBaron = true;
+
+            gameState.pastIngameEvents.Add(new ObjectiveKilled("Baron", e.Team.teamName, gameData.gameTime));
+            OnObjectiveKilled("Baron", e.Team.teamName);
+        }
+
+        public void OnHeraldTaken(object sender, ObjectiveTakenArgs e)
+        {
+            gameState.pastIngameEvents.Add(new ObjectiveKilled("Herald", e.Team.teamName, gameData.gameTime));
+            OnObjectiveKilled("Herald", e.Team.teamName);
         }
 
         public void OnBaronEnd(object sender, EventArgs e)
@@ -405,6 +465,22 @@ namespace LeagueBroadcast.Common.Controllers
             EmbedIOServer.SocketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
         }
 
+        public void OnObjectiveSpawn(string objectiveName)
+        {
+            Log.Info($"{objectiveName} spawned");
+            if (!CurrentSettings.ObjectiveSpawnPopUp)
+                return;
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new ObjectiveSpawnSimple(objectiveName));
+        }
+
+        public void OnObjectiveKilled(string objectiveName, string teamName)
+        {
+            Log.Info($"{objectiveName} killed by {teamName}");
+            if (!CurrentSettings.ObjectiveKillPopUp)
+                return;
+            EmbedIOServer.SocketServer.SendEventToAllAsync(new ObjectiveKilledSimple(objectiveName, teamName));
+        }
+
         #endregion
     }
 
@@ -445,6 +521,9 @@ namespace LeagueBroadcast.Common.Controllers
         public bool TeamNames => ConfigController.Component.Ingame.Teams.DoTeamNames;
         public bool TeamIcons => ConfigController.Component.Ingame.Teams.DoTeamIcons;
         public bool TeamStats => ConfigController.Component.Ingame.Teams.DoTeamScores;
+
+        public bool ObjectiveSpawnPopUp => ConfigController.Component.Ingame.Objectives.DoObjectiveSpawnPopUp;
+        public bool ObjectiveKillPopUp => ConfigController.Component.Ingame.Objectives.DoObjectiveKillPopUp;
 
         public bool CS = false;
         public bool CSPerMin = false;

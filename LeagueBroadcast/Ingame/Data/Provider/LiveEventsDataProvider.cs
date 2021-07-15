@@ -234,7 +234,6 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             
             if (p != null)
             {
-                Log.Info(JsonConvert.SerializeObject(e));
                 if (e.Other.StartsWith("SRU_MurkwolfMini"))
                 {
                     AddCS(p, 1);
@@ -268,18 +267,27 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 if (e.Other.StartsWith("SRU_Dragon"))
                 {
 
-                    string type = e.Other.Remove(0, 11);
+                    //Convert types to API friendly names
+                    string type = e.Other.Remove(0, 11).Replace("Air", "Cloud", StringComparison.OrdinalIgnoreCase).Replace("Earth", "Mountain", StringComparison.OrdinalIgnoreCase).Replace("Water", "Ocean", StringComparison.OrdinalIgnoreCase);
 
 
                     IngameController.DragonTaken.Invoke(this, new ObjectiveTakenArgs(type, GetTeam(e), Ingame.gameData.gameTime));
-
+                    return;
                 }
                 if (e.Other.StartsWith("SRU_Baron"))
                 {
                     Team t = GetTeam(e);
                     t.hasBaron = true;
                     t.players.ForEach(p => p.diedDuringBaron = false);
-                    IngameController.BaronTaken.Invoke(this, new ObjectiveTakenArgs("Baron", GetTeam(e), Ingame.gameData.gameTime));
+                    IngameController.BaronTaken.Invoke(this, new ObjectiveTakenArgs("Baron", t, Ingame.gameData.gameTime));
+                    return;
+                }
+
+                if(e.Other.StartsWith("SRU_RiftHerald"))
+                {
+                    Team t = GetTeam(e);
+                    IngameController.HeraldTaken.Invoke(this, new ObjectiveTakenArgs("Herald", GetTeam(e), Ingame.gameData.gameTime));
+                    return;
                 }
             }
         }

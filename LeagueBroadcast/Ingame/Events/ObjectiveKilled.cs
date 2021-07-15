@@ -2,15 +2,29 @@
 
 namespace LeagueBroadcast.Ingame.Events
 {
-    public class ObjectiveKilled : LeagueEvent
+    public class ObjectiveKilled : RiotEvent
     {
-        public string objective;
-        public int teamId;
-        public ObjectiveKilled(string objective, int team)
+        public string ObjectiveName;
+        public string TeamName;
+        public ObjectiveKilled(string ObjectiveName, string TeamName, double gameTime)
         {
             this.eventType = "ObjectiveKilled";
-            this.objective = objective;
-            this.teamId = team;
+            this.ObjectiveName = ObjectiveName;
+            this.TeamName = TeamName;
+            this.EventTime = gameTime;
+            this.EventID = -1;
+        }
+    }
+
+    public class ObjectiveKilledSimple : LeagueEvent
+    {
+        public string ObjectiveName;
+        public string TeamName;
+        public ObjectiveKilledSimple(string ObjectiveName, string TeamName)
+        {
+            this.eventType = "ObjectiveKilled";
+            this.ObjectiveName = ObjectiveName;
+            this.TeamName = TeamName;
         }
     }
 }

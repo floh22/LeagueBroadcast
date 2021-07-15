@@ -24,7 +24,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
                 ret.Add(new PlayerTab()
                 {
                     PlayerName = p.summonerName,
-                    IconPath = $"Cache\\{DataDragon.version.Champion}\\champion\\{p.rawChampionName}_square.png",
+                    IconPath = $"Cache\\{DataDragon.version.Champion}\\champion\\{p.championID}_square.png",
                     Values = new() { MinValue = ChampionLevel.Levels[p.level - 1].exp, MaxValue = ChampionLevel.Levels[p.level].exp, CurrentValue = p.farsightObject.EXP },
                     ExtraInfo = new string[] { p.level + "", "exp", p.team }
                 });
@@ -56,7 +56,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
                 ret.Add(new PlayerTab()
                 {
                     PlayerName = p.summonerName,
-                    IconPath = $"Cache\\{DataDragon.version.Champion}\\champion\\{p.rawChampionName}_square.png",
+                    IconPath = $"Cache\\{DataDragon.version.Champion}\\champion\\{p.championID}_square.png",
                     Values = new() { MinValue = Math.Max(0, leastGold - 100), MaxValue = mostGold, CurrentValue = gold },
                     ExtraInfo = new string[] { gold + "", "gold", p.team}
                 });
@@ -87,7 +87,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
                 ret.Add(new PlayerTab()
                 {
                     PlayerName = p.summonerName,
-                    IconPath = $"Cache\\{DataDragon.version.Champion}\\champion\\{p.rawChampionName}_square.png",
+                    IconPath = $"Cache\\{DataDragon.version.Champion}\\champion\\{p.championID}_square.png",
                     Values = new() { MinValue = leastCSperMin, MaxValue = mostCSperMin, CurrentValue = cspm },
                     ExtraInfo = new string[] { cspm + "", "cspm", p.team }
                 });

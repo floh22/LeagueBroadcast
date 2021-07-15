@@ -23,11 +23,22 @@ export default class ObjectivePopUpVisual extends VisualElement {
 
         this.CreateTextureListeners();
 
+
+        let resourceLocation = `frontend/images/scoreboardPopUps/`;
+        if(type.toLowerCase().includes('baron')) {
+            resourceLocation += 'Baron/';
+        } else if(type.toLowerCase().includes('herald')){
+            resourceLocation += 'Herald/';
+        } else {
+            resourceLocation += `Dragon/${type.replace('Kill', '').replace('Spawn', '').replace('Soul', '')}/`;
+        }
+        resourceLocation += type;
+
         //Background
         if (cfg.UseVideo) {
-            this.scene.load.video(`${type}PopUpVideo`, `frontend/images/scoreboardPopUps/${type}.mp4`);
+            this.scene.load.video(`${type}PopUpVideo`, `${resourceLocation}.mp4`);
         } else if (cfg.UseImage) {
-            this.scene.load.image(`${type}PopUp`, `frontend/images/scoreboardPopUps/${type}.png`);
+            this.scene.load.image(`${type}PopUp`, `${resourceLocation}.png`);
         } else {
             //Do nothing since only a color seems rather useless...
         }
@@ -140,20 +151,20 @@ export default class ObjectivePopUpVisual extends VisualElement {
             this.MaskGeo = null;
         }
 
+        if(this.BackgroundVideo !== null && this.BackgroundVideo !== undefined) {
+            this.Height = this.BackgroundVideo.displayHeight;
+        } else if(this.BackgroundImage !== null && this.BackgroundImage !== undefined) {
+            this.Height = this.BackgroundImage.displayHeight;
+        } 
+
         if (this.Config.UseAlpha) {
             this.MaskImage = this.scene.make.sprite({ x: 960, y: 0, key: 'popUpMask', add: false });
-            this.MaskImage.setOrigin(0.5,0);
-            this.Height = this.MaskImage.displayHeight;
-            this.MaskImage.setPosition(960, 1080 - this.Height);
+            this.MaskImage.setOrigin(0.5,1);
+            this.MaskImage.setPosition(960, 1080);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
             this.MaskGeo = this.scene.make.graphics({ add: false });
             this.MaskGeo.fillStyle(0xffffff);
-            if(this.BackgroundVideo !== null && this.BackgroundVideo !== undefined) {
-                this.Height = this.BackgroundVideo.displayHeight;
-            } else if(this.BackgroundImage !== null && this.BackgroundImage !== undefined) {
-                this.Height = this.BackgroundImage.displayHeight;
-            } 
             this.MaskGeo.fillRect(0, 0, 1920, this.Height);
             this.MaskGeo.setPosition(0, 1080 - this.Height);
             this.GeoMask = this.MaskGeo.createGeometryMask();
@@ -188,8 +199,6 @@ export default class ObjectivePopUpVisual extends VisualElement {
             this.RemoveFromVisualElementList();
 
             this.AnimationComplete.dispatch();
-
-            console.log('destroyed popup and cleared textures');
         });
 
         this.scene.displayRegions[10].AddToAnimationQueue(this);

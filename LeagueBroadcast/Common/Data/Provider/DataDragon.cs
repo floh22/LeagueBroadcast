@@ -20,7 +20,6 @@ namespace LeagueBroadcast.Common.Data.Provider
         public static readonly string currentDir = Directory.GetCurrentDirectory();
         private static DataDragon _instance;
         public static DataDragon Instance => GetInstance();
-        const string Realm = "euw";
 
         public static GameVersion version;
 
@@ -79,8 +78,8 @@ namespace LeagueBroadcast.Common.Data.Provider
             _startupContext.Status = "DataDragon Init";
             version = new GameVersion
             {
-                Version = ConfigController.PickBan.contentPatch,
-                CDN = ConfigController.PickBan.contentCdn
+                Version = ConfigController.Component.DataDragon.Patch,
+                CDN = ConfigController.Component.DataDragon.CDN
 
             };
 
@@ -108,7 +107,7 @@ namespace LeagueBroadcast.Common.Data.Provider
         {
             _startupContext.Status = "Retrieving latest patch info";
             Log.Info("Retrieving latest patch info");
-            dynamic riotVersion = JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"https://ddragon.leagueoflegends.com/realms/{Realm}.json"));
+            dynamic riotVersion = JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json"));
             version.CDN = riotVersion.cdn;
             version.Champion = riotVersion.n.champion;
             version.Item = riotVersion.n.item;
@@ -129,13 +128,13 @@ namespace LeagueBroadcast.Common.Data.Provider
         {
             Log.Info($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}");
 
-            Champion.Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/en_US/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
+            Champion.Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/{ConfigController.Component.DataDragon.Locale}/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
             Log.Info($"Loaded {Champion.Champions.Count} champions");
 
-            SummonerSpell.SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
+            SummonerSpell.SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/{ConfigController.Component.DataDragon.Locale}/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
             Log.Info($"Loaded {SummonerSpell.SummonerSpells.Count} summoner spells");
 
-            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/en_US/item.json")).data.ToObject<Dictionary<int, ItemData>>());
+            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/{ConfigController.Component.DataDragon.Locale}/item.json")).data.ToObject<Dictionary<int, ItemData>>());
             Log.Info($"Detected {rawItemData.Count} items");
 
             rawItemData.ForEach(kvPair => {

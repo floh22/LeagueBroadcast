@@ -1,3 +1,4 @@
+import { LevelUpDisplayConfig } from "~/data/config/overlayConfig";
 import IngameScene from "~/scenes/IngameScene";
 import { Dictionary } from "~/util/Dictionary";
 import Vector2 from "~/util/Vector2";
@@ -16,12 +17,10 @@ export default class LevelUpVisual extends VisualElement {
 
     Text!: Phaser.GameObjects.Text;
     
-    Config = this.scene.overlayCfg?.LevelUp;
-    
     constructor(scene: IngameScene, playerID: number, level: number) {
         super(scene, new Vector2(0,0), `Player_${playerID}`);
         
-        if(this.Config === null || this.Config === undefined) {
+        if(LevelUpVisual.GetConfig() === null || LevelUpVisual.GetConfig() === undefined) {
             console.log('[LB] Tried showing LevelUp without overlay config');
         }
 
@@ -32,14 +31,14 @@ export default class LevelUpVisual extends VisualElement {
 
         this.BackgroundColor = Phaser.Display.Color.IntegerToColor(this.Team ? variables.fallbackRed : variables.fallbackBlue);
 
-        if (this.Config?.UseTeamColors ) {
+        if (LevelUpVisual.GetConfig()?.UseTeamColors ) {
             if(IngameScene.Instance.state?.blueColor !== undefined && IngameScene.Instance.state?.blueColor !== '') {
                 this.BackgroundColor = Phaser.Display.Color.RGBStringToColor(this.Team ?  IngameScene.Instance.state?.redColor! : IngameScene.Instance.state?.blueColor!);
             } else{
                 console.log('[LB] Could not load Team colors');
             }
         } else {
-            this.BackgroundColor = Phaser.Display.Color.RGBStringToColor(this.Team ? this.Config!.ChaosColor : this.Config!.OrderColor);
+            this.BackgroundColor = Phaser.Display.Color.RGBStringToColor(this.Team ? LevelUpVisual.GetConfig()!.ChaosColor : LevelUpVisual.GetConfig()!.OrderColor);
         }
 
         this._animationComplete.sub(() => {
@@ -56,9 +55,13 @@ export default class LevelUpVisual extends VisualElement {
         this.Init();
     }
 
+    static GetConfig(): LevelUpDisplayConfig {
+        return IngameScene.Instance.overlayCfg!.LevelUp;
+    }
+
     Load(): void {
-        const backgroundStart = this.Config?.BackgroundAnimationStates[0];
-        const textStart = this.Config?.NumberAnimationStates[0];
+        const backgroundStart = LevelUpVisual.GetConfig()?.BackgroundAnimationStates[0];
+        const textStart = LevelUpVisual.GetConfig()?.NumberAnimationStates[0];
         const align = this.Team? 'right' : 'left';
         const dirMult = ((textStart?.Mirror && this.PlayerID > 4)? - 1 : 1);
 
@@ -66,9 +69,9 @@ export default class LevelUpVisual extends VisualElement {
         this.Background = this.scene.add.rectangle(this.position.X + backgroundStart!.Position.X * dirMult, this.position.Y + backgroundStart!.Position.Y, ItemVisual.width, ItemVisual.height, this.BackgroundColor.color, backgroundStart!.Alpha);
 
         this.Text = this.scene.add.text(this.position.X + textStart!.Position.X * dirMult, this.position.Y + textStart!.Position.Y , '' + this.Level, {
-            fontFamily: this.Config?.LevelFont.Name,
-            fontSize: this.Config?.LevelFont.Size,
-            fontStyle: this.Config!.LevelFont.Style,
+            fontFamily: LevelUpVisual.GetConfig()?.LevelFont.Name,
+            fontSize: LevelUpVisual.GetConfig()?.LevelFont.Size,
+            fontStyle: LevelUpVisual.GetConfig()!.LevelFont.Style,
             align: align
         });
         this.Text.setOrigin(0.5, 0);

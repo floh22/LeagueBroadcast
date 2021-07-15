@@ -17,6 +17,7 @@ export interface OverlayConfig {
     Inhib: InhibitorDisplayConfig;
     Score: ScoreDisplayConfig;
     ObjectiveKill: ObjectiveKillConfig;
+    ObjectiveSpawn: ObjectiveSpawnConfig;
     ItemComplete: ItemCompletedDisplayConfig;
     LevelUp: LevelUpDisplayConfig;
     InfoPage: InfoPageDisplayConfig;
@@ -72,9 +73,18 @@ export interface InhibTeamConfig {
 }
 
 export interface ObjectiveKillConfig {
+    ShowTeamIcon: boolean;
     SoulPointScoreboardPopUp: ScoreboardPopUpConfig;
     ElderKillScoreboardPopUp: ScoreboardPopUpConfig;
+    DragonKillScoreboardPopUp: ScoreboardPopUpConfig;
     BaronKillScoreboardPopUp: ScoreboardPopUpConfig;
+    HeraldKillScoreboardPopUp: ScoreboardPopUpConfig;
+}
+
+export interface ObjectiveSpawnConfig {
+    BaronSpawnScoreboardPopUp: ScoreboardPopUpConfig;
+    DrakeSpawnScoreboardPopUp: ScoreboardPopUpConfig;
+    HeraldSpawnScoreboardPopUp: ScoreboardPopUpConfig;
 }
 
 export interface ScoreboardPopUpConfig {

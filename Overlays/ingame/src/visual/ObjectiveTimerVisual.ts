@@ -96,14 +96,6 @@ export default class ObjectiveTimerVisual extends VisualElement {
         }
         if (!this.isActive) {
             this.Start();
-
-            //Objective Pop Ups
-            if (this.Type === 'baron' && this.scene.overlayCfg?.ObjectiveKill.BaronKillScoreboardPopUp.Enabled) {
-                new ObjectivePopUpVisual(this.scene, this.scene.overlayCfg!.ObjectiveKill.BaronKillScoreboardPopUp, `baronKill`);
-            }
-            else if (this.Type === 'elder' && this.scene.overlayCfg?.ObjectiveKill.ElderKillScoreboardPopUp.Enabled) {
-                new ObjectivePopUpVisual(this.scene, this.scene.overlayCfg!.ObjectiveKill.ElderKillScoreboardPopUp, `elderKill`);
-            }
         }
 
         if (this.Gold !== null)
@@ -198,7 +190,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
     }
 
     Start(): void {
-        if (this.isActive) {
+        if (this.isActive || this.isShowing) {
             return;
         }
 
@@ -255,7 +247,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
 
 
     Stop(): void {
-        if (!this.isActive) {
+        if (!this.isActive || this.isHiding) {
             return;
         }
         var ctx = this;

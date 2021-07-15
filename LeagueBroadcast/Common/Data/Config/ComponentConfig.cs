@@ -18,7 +18,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "1.2";
+        public static new string CurrentVersion => "1.3";
 
         public DataDragonConfig DataDragon;
 
@@ -57,28 +57,39 @@ namespace LeagueBroadcast.Common.Data.Config
 
         private ComponentConfig CreateDefault()
         {
-            return new() {
-                DataDragon = new DataDragonConfig() {
-                    MinimumGoldCost = 2000
+            return new()
+            {
+                DataDragon = new DataDragonConfig()
+                {
+                    MinimumGoldCost = 2000,
+                    Region = "euw",
+                    Locale = "en_US",
+                    Patch = "latest",
+                    CDN = "https://ddragon.leagueoflegends.com/cdn"
                 },
-                PickBan = new PickBanConfig() {
+                PickBan = new PickBanConfig()
+                {
                     IsActive = true,
                     DelayValue = 300,
                     UseDelay = false,
                     DefaultBlueColor = "rgb(66, 133, 244)",
                     DefaultRedColor = "rgb(234, 67, 53)"
                 },
-                Ingame = new IngameComponentConfig() {
+                Ingame = new IngameComponentConfig()
+                {
                     IsActive = true,
                     UseLiveEvents = true,
                     DoItemCompleted = true,
                     DoLevelUp = true,
                     UseCustomScoreboard = false,
                     SeriesGameCount = 3,
-                    Objectives = new IngameComponentConfig.ObjectiveConfig() {
+                    Objectives = new IngameComponentConfig.ObjectiveConfig()
+                    {
                         DoBaronKill = true,
                         DoDragonKill = true,
-                        DoInhibitors = false
+                        DoInhibitors = false,
+                        DoObjectiveSpawnPopUp = false,
+                        DoObjectiveKillPopUp = false
                     },
                     Teams = new IngameComponentConfig.TeamInfoConfig()
                     {
@@ -87,19 +98,23 @@ namespace LeagueBroadcast.Common.Data.Config
                         DoTeamScores = false
                     }
                 },
-                PostGame = new() {
+                PostGame = new()
+                {
                     IsActive = false
                 },
-                Replay = new ReplayConfig() {
+                Replay = new ReplayConfig()
+                {
                     IsActive = true,
                     UseAutoInitUI = true
                 },
-                App = new AppConfig() {
+                App = new AppConfig()
+                {
                     LogLevel = LogLevel.Info,
                     CheckForUpdates = true,
                     UpdateRepositoryName = @"floh22/LeagueBroadcast",
                     UpdateRepositoryUrl = "https://github.com/floh22/LeagueBroadcast",
-                    LeagueInstall = new() {
+                    LeagueInstall = new()
+                    {
                         "C:\\",
                         "D:\\",
                         "E:\\",
@@ -122,40 +137,82 @@ namespace LeagueBroadcast.Common.Data.Config
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
             //1.0 to Current
-            if(oldVersion.Equals("1.0"))
+            if (oldVersion.Equals("1.0"))
             {
-                //1.0 to 1.1
-                Task t = new Task(async () => { 
-                    await Task.Delay(100); 
+                Task t = new(async () =>
+                {
+                    await Task.Delay(100);
+                    //1.0 to 1.1
+                    FileVersion = CurrentVersion;
+
                     PickBan.DefaultBlueColor = ConfigController.PickBan.frontend.blueTeam.color;
                     PickBan.DefaultRedColor = ConfigController.PickBan.frontend.redTeam.color;
 
                     Ingame.SeriesGameCount = 3;
 
-                    FileVersion = CurrentVersion;
-                    JSONConfigProvider.Instance.WriteConfig(this);
-
                     //1.1 to 1.2
-                    this.App.LogLevel = LogLevel.Info;
-                    Log.SetLogLevel(LogLevel.Info);
+                    App.LogLevel = LogLevel.Info;
+                    SetLogLevel(LogLevel.Info);
 
-                    Log.Info("Updated Component config from v1.0 to v1.2");
+                    //1.2 to 1.3
+                    Ingame.Objectives.DoObjectiveSpawnPopUp = false;
+                    Ingame.Objectives.DoObjectiveKillPopUp = false;
+                    DataDragon.Region = "euw";
+                    DataDragon.Locale = "en_US";
+                    DataDragon.Patch = "latest";
+                    DataDragon.CDN = "https://ddragon.leagueoflegends.com/cdn";
+
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                    Info($"Updated Component config from v1.0 to v{CurrentVersion}");
                 });
                 t.Start();
                 return true;
             }
 
             //1.1 to Current
-            if(oldVersion.Equals("1.1"))
+            if (oldVersion.Equals("1.1"))
             {
-                //1.1 to 1.2
                 Task t = new Task(async () =>
                 {
                     await Task.Delay(100);
-                    this.App.LogLevel = LogLevel.Info;
+                    //1.1 to 1.2
+                    App.LogLevel = LogLevel.Info;
                     FileVersion = CurrentVersion;
+
+                    //1.2 to 1.3
+                    Ingame.Objectives.DoObjectiveSpawnPopUp = false;
+                    Ingame.Objectives.DoObjectiveKillPopUp = false;
+                    DataDragon.Region = "euw";
+                    DataDragon.Locale = "en_US";
+                    DataDragon.Patch = "latest";
+                    DataDragon.CDN = "https://ddragon.leagueoflegends.com/cdn";
+                    FileVersion = CurrentVersion;
+
                     JSONConfigProvider.Instance.WriteConfig(this);
-                    Log.Info("Updated Component config from v1.1 to v1.2");
+                    Info($"Updated Component config from v1.1 to v{CurrentVersion}");
+                });
+                t.Start();
+                return true;
+            }
+
+            //1.2 to Current
+            if (oldVersion.Equals("1.2"))
+            {
+                Task t = new(async () =>
+                {
+                    await Task.Delay(100);
+                    //1.2 to 1.3
+                    FileVersion = CurrentVersion;
+
+                    Ingame.Objectives.DoObjectiveSpawnPopUp = false;
+                    Ingame.Objectives.DoObjectiveKillPopUp = false;
+                    DataDragon.Region = "euw";
+                    DataDragon.Locale = "en_US";
+                    DataDragon.Patch = "latest";
+                    DataDragon.CDN = "https://ddragon.leagueoflegends.com/cdn";
+
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                    Info($"Updated Component config from v1.2 to v{CurrentVersion}");
                 });
                 t.Start();
                 return true;
@@ -180,6 +237,10 @@ namespace LeagueBroadcast.Common.Data.Config
     public class DataDragonConfig
     {
         public int MinimumGoldCost;
+        public string Region;
+        public string Locale;
+        public string CDN;
+        public string Patch;
     }
 
     public class PickBanConfig
@@ -207,6 +268,8 @@ namespace LeagueBroadcast.Common.Data.Config
             public bool DoBaronKill;
             public bool DoDragonKill;
             public bool DoInhibitors;
+            public bool DoObjectiveSpawnPopUp;
+            public bool DoObjectiveKillPopUp;
         }
 
         public class TeamInfoConfig

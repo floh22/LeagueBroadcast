@@ -45,8 +45,8 @@ namespace LeagueBroadcast.Ingame.State
         public StateData()
         {
             this.gameState = BroadcastController.Instance.IGController.gameState;
-            this.dragon = new (Objective.ObjectiveType.Dragon);
-            this.baron = new (Objective.ObjectiveType.Baron);
+            this.dragon = new (Objective.ObjectiveType.Dragon, 300);
+            this.baron = new (Objective.ObjectiveType.Baron, 1200);
             this.backBaron = new(0);
             this.backDragon = new(0);
             this.scoreboard = new ScoreboardConfig();

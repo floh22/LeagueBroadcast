@@ -20,27 +20,28 @@ export default class InfoPageVisual extends VisualElement {
     Title: Phaser.GameObjects.Text | null = null;
     PlayerTabs: PlayerTabIndicator[];
 
-
-    Config = this.scene.overlayCfg!.InfoPage;
     static CurrentInfoType: string = '';
 
     constructor(scene: IngameScene, cfg: InfoPageDisplayConfig) {
         super(scene, cfg.Position, "infoPage");
 
+        this.CreateTextureListeners();
+
         //Mask
         if (cfg.Background.UseAlpha) {
             this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Background.Size.X, y: cfg.Position.Y, key: 'infoPageMask', add: false });
-            this.MaskImage.setOrigin(0.5, 0);
+            this.MaskImage.setOrigin(0, 0);
             this.MaskImage.setDisplaySize(cfg.Background.Size.X, cfg.Background.Size.Y);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
-            this.MaskGeo = scene.make.graphics({});
+            this.MaskGeo = scene.make.graphics({add: false});
             this.MaskGeo.fillStyle(0xffffff);
             this.MaskGeo.fillRect(cfg.Position.X, cfg.Position.Y, cfg.Background.Size.X, cfg.Background.Size.Y);
             this.GeoMask = this.MaskGeo.createGeometryMask();
             this.MaskGeo.setPosition(cfg.Position.X - cfg.Background.Size.X, 0);
         }
 
+        /*
         //Background
         if (cfg.Background.UseVideo) {
             this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
@@ -53,6 +54,7 @@ export default class InfoPageVisual extends VisualElement {
             this.BackgroundRect.setMask(cfg.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundRect);
         }
+        */
 
 
         //Title
@@ -65,8 +67,9 @@ export default class InfoPageVisual extends VisualElement {
                 align: cfg.Title.Font.Align
             });
             this.Title.setOrigin(0.5, 0);
+            this.Title.setDepth(2);
             this.AddVisualComponent(this.Title);
-            this.Title.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            this.Title.setMask(InfoPageVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
         }
 
         this.PlayerTabs = [];
@@ -102,7 +105,7 @@ export default class InfoPageVisual extends VisualElement {
             console.log(cfg);
             var i = 0;
             cfg.Players.forEach(pt => {
-                this.PlayerTabs.push(new PlayerTabIndicator(pt, this.Config, this.scene, i++));
+                this.PlayerTabs.push(new PlayerTabIndicator(pt, InfoPageVisual.GetConfig(), this.scene, i++));
             });
             return;
         }
@@ -129,7 +132,10 @@ export default class InfoPageVisual extends VisualElement {
         if (newConfig.Background.UseImage) {
             if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
-                this.BackgroundVideo.destroy();
+                this.BackgroundVideo?.destroy();
+                this.BackgroundVideo = null;
+                this.scene.cache.video.remove('infoBgVideo');
+
             }
             if (this.BackgroundRect !== undefined && this.BackgroundRect !== null) {
                 this.RemoveVisualComponent(this.BackgroundRect);
@@ -137,13 +143,9 @@ export default class InfoPageVisual extends VisualElement {
                 this.BackgroundRect = null;
             }
             //Reset old Texture
-            if (this.scene.textures.exists('infoBg')) {
-                this.RemoveVisualComponent(this.BackgroundImage);
-                this.BackgroundImage?.destroy();
-                this.BackgroundImage = null;
-                this.scene.textures.remove('infoBg');
+            if (this.BackgroundImage === null || this.BackgroundImage === undefined) {
+                this.scene.load.image('infoBg', 'frontend/backgrounds/InfoPage.png');
             }
-            this.scene.load.image('infoBg', 'frontend/backgrounds/InfoPage.png');
         }
         //Background Video
         else if (newConfig.Background.UseVideo) {
@@ -154,38 +156,35 @@ export default class InfoPageVisual extends VisualElement {
             }
             if (this.BackgroundImage !== undefined && this.BackgroundImage !== null) {
                 this.RemoveVisualComponent(this.BackgroundImage);
-                this.BackgroundImage.destroy();
+                this.BackgroundImage?.destroy();
                 this.BackgroundImage = null;
+                this.scene.textures.remove('infoBg');
             }
             //Reset old Video
-            if (this.scene.cache.video.has('infoBgVideo')) {
-                this.RemoveVisualComponent(this.BackgroundVideo);
-                this.BackgroundVideo?.destroy();
-                this.BackgroundVideo = null;
-                this.scene.cache.video.remove('infoBgVideo');
+            if (this.BackgroundVideo === null || this.BackgroundVideo === undefined) {
+                this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
             }
-            this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
         }
         //Background Color
         else {
             if (this.BackgroundImage !== undefined && this.BackgroundImage !== null) {
                 this.RemoveVisualComponent(this.BackgroundImage);
-                this.BackgroundImage.destroy();
+                this.BackgroundImage?.destroy();
+                this.BackgroundImage = null;
+                this.scene.textures.remove('infoBg');
             }
             if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
-                this.BackgroundVideo.destroy();
+                this.BackgroundVideo?.destroy();
                 this.BackgroundVideo = null;
+                this.scene.cache.video.remove('infoBgVideo');
             }
             if (this.BackgroundRect === null || this.BackgroundRect === undefined) {
                 this.BackgroundRect = this.scene.add.rectangle(newConfig.Position.X, newConfig.Position.Y, newConfig.Background.Size.X, newConfig.Background.Size.Y, Phaser.Display.Color.RGBStringToColor(newConfig.Background.FallbackColor).color32);
                 this.BackgroundRect.setOrigin(0, 0);
-                this.BackgroundRect.depth = 1;
-                this.BackgroundRect.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+                this.BackgroundRect.setDepth(1);
+                this.BackgroundRect.setMask(InfoPageVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
                 this.AddVisualComponent(this.BackgroundRect);
-                if (!this.isActive) {
-                    this.BackgroundRect.alpha = 0;
-                }
             }
             this.BackgroundRect.setPosition(newConfig.Position.X, newConfig.Position.Y);
             this.BackgroundRect.setDisplaySize(newConfig.Background.Size.X, newConfig.Background.Size.Y);
@@ -195,7 +194,7 @@ export default class InfoPageVisual extends VisualElement {
 
         //Title
         if (newConfig.Title.Enabled) {
-            if (this.Config.Title.Enabled) {
+            if (InfoPageVisual.GetConfig().Title.Enabled) {
                 this.Title?.setPosition(newConfig.Position.X + InfoPageVisual.GetCurrentElementVector2(newConfig.Title.Position).X, newConfig.Position.Y + InfoPageVisual.GetCurrentElementVector2(newConfig.Title.Position).Y);
                 this.UpdateTextStyle(this.Title!, newConfig.Title.Font);
             } else {
@@ -208,7 +207,7 @@ export default class InfoPageVisual extends VisualElement {
                 });
                 this.Title.setOrigin(0.5, 0);
                 this.Title.setDepth(2);
-                this.Title.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+                this.Title.setMask(InfoPageVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
                 this.AddVisualComponent(this.Title);
             }
         }
@@ -233,12 +232,12 @@ export default class InfoPageVisual extends VisualElement {
         var ctx = this;
         this.isShowing = true;
 
-        this.UpdateConfig(this.Config);
+        this.UpdateConfig(InfoPageVisual.GetConfig());
 
         this.currentAnimation[0] = ctx.scene.tweens.add({
             targets: [ctx.MaskGeo, ctx.MaskImage],
             props: {
-                x: { from: ctx.Config.Position.X - ctx.Config.Background.Size.X, to: 0, duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: InfoPageVisual.GetConfig().Position.X - InfoPageVisual.GetConfig().Background.Size.X, to: 0, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
@@ -268,7 +267,7 @@ export default class InfoPageVisual extends VisualElement {
         this.currentAnimation[0] = ctx.scene.tweens.add({
             targets: [ctx.MaskGeo, ctx.MaskImage],
             props: {
-                x: { from: 0, to: ctx.position.X - ctx.Config.Background.Size.X, duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: 0, to: ctx.position.X - InfoPageVisual.GetConfig().Background.Size.X, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
@@ -279,13 +278,17 @@ export default class InfoPageVisual extends VisualElement {
         });
     }
 
+    static GetConfig(): InfoPageDisplayConfig {
+        return IngameScene.Instance.overlayCfg!.InfoPage;
+    }
+
     CreateTextureListeners(): void {
         //Background Image support
-        this.scene.load.on(`filecomplete-image-scoreBg`, () => {
-            this.BackgroundImage = this.scene.make.sprite({ x: this.Config!.Position.X, y: this.Config!.Position.Y, key: 'infoPageBg', add: true });
+        this.scene.load.on(`filecomplete-image-infoBg`, () => {
+            this.BackgroundImage = this.scene.make.sprite({ x: InfoPageVisual.GetConfig()!.Position.X, y: InfoPageVisual.GetConfig()!.Position.Y, key: 'infoBg', add: true });
             this.BackgroundImage.setOrigin(0, 0);
             this.BackgroundImage.setDepth(1);
-            this.BackgroundImage.setMask(this.Config?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            this.BackgroundImage.setMask(InfoPageVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundImage);
             if (!this.isActive && !this.isShowing) {
                 this.BackgroundImage.alpha = 0;
@@ -293,15 +296,15 @@ export default class InfoPageVisual extends VisualElement {
         });
 
         //Background Video support
-        this.scene.load.on(`filecomplete-video-scoreBgVideo`, () => {
+        this.scene.load.on(`filecomplete-video-infoBgVideo`, () => {
             if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
             }
             // @ts-ignore
-            this.BackgroundVideo = this.scene.add.video(this.Config!.Position.X, this.Config!.Position.Y, 'infoPageBgVideo', false, true);
+            this.BackgroundVideo = this.scene.add.video(InfoPageVisual.GetConfig()!.Position.X, InfoPageVisual.GetConfig()!.Position.Y, 'infoBgVideo', false, true);
             this.BackgroundVideo.setOrigin(0, 0);
-            this.BackgroundVideo.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            this.BackgroundVideo.setMask(InfoPageVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.BackgroundVideo.setLoop(true);
             this.BackgroundVideo.setDepth(1);
             this.BackgroundVideo.play();
@@ -471,7 +474,7 @@ export class PlayerTabIndicator {
             this.Scene.textures.remove(this.Id);
         }
 
-        if (!this.Config?.TabConfig.ChampIcon.Enabled) {
+        if (!InfoPageVisual.GetConfig()?.TabConfig.ChampIcon.Enabled) {
             return;
         }
 
@@ -492,7 +495,7 @@ export class PlayerTabIndicator {
 
     UpdateValues(tabInfo: PlayerInfoTab): void {
         this.CurrentInfo = tabInfo;
-        let width = InfoPageVisual.GetCurrentElementVector2(this.Config!.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X;
+        let width = InfoPageVisual.GetCurrentElementVector2(InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X;
         var newWidth = width * ((tabInfo.Values.CurrentValue - tabInfo.Values.MinValue) / (tabInfo.Values.MaxValue - tabInfo.Values.MinValue));
         if (newWidth > width)
             newWidth = width;
@@ -504,13 +507,13 @@ export class PlayerTabIndicator {
             this.PlayerName = tabInfo.PlayerName;
 
             var ProgressColor = Phaser.Display.Color.IntegerToColor(tabInfo.ExtraInfo[2] === "ORDER" ? variables.fallbackBlue : variables.fallbackRed);
-            if (this.Config!.TabConfig.ProgressBar.UseTeamColors && this.Scene.state?.blueColor !== undefined && this.Scene.state.blueColor !== '') {
+            if (InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.UseTeamColors && this.Scene.state?.blueColor !== undefined && this.Scene.state.blueColor !== '') {
                 ProgressColor = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.Scene.state?.blueColor : this.Scene.state?.redColor);
             } else {
-                ProgressColor = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? this.Config!.TabConfig.ProgressBar.OrderColor : this.Config!.TabConfig.ProgressBar.OrderColor);
+                ProgressColor = Phaser.Display.Color.RGBStringToColor(tabInfo.ExtraInfo[2] === "ORDER" ? InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.OrderColor : InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.OrderColor);
             }
 
-            if (this.Config!.TabConfig.ProgressBar.Enabled) {
+            if (InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.Enabled) {
                 this.ProgresssBarCompleted!.width = newWidth;
                 this.ProgresssBarCompleted!.setFillStyle(ProgressColor.color);
             }
@@ -555,13 +558,13 @@ export class PlayerTabIndicator {
                 break;
         }
 
-        if (this.Config!.TabConfig.PlayerName.Enabled)
+        if (InfoPageVisual.GetConfig()!.TabConfig.PlayerName.Enabled)
             this.Name!.text = tabInfo.PlayerName;
-        if (this.Config!.TabConfig.MinValue.Enabled)
+        if (InfoPageVisual.GetConfig()!.TabConfig.MinValue.Enabled)
             this.MinVal!.text = min;
-        if (this.Config!.TabConfig.MaxValue.Enabled)
+        if (InfoPageVisual.GetConfig()!.TabConfig.MaxValue.Enabled)
             this.MaxVal!.text = max;
-        if (this.Config!.TabConfig.CurrentValue.Enabled)
+        if (InfoPageVisual.GetConfig()!.TabConfig.CurrentValue.Enabled)
             this.MainVal!.text = cur;
 
     }
@@ -593,7 +596,7 @@ export class PlayerTabIndicator {
                 this.VisualComponents.push(this.TopSeparator);
             }
         }
-        if (!cfg.TabConfig.Separator.Enabled && this.Config?.TabConfig.Separator.Enabled) {
+        if (!cfg.TabConfig.Separator.Enabled && InfoPageVisual.GetConfig()?.TabConfig.Separator.Enabled) {
             this.RemoveVisualComponent(this.TopSeparator);
             this.TopSeparator?.destroy();
             this.TopSeparator = null;
@@ -615,7 +618,7 @@ export class PlayerTabIndicator {
                 this.VisualComponents.push(this.Name);
             }
         }
-        if (!cfg.TabConfig.PlayerName.Enabled && this.Config?.TabConfig.PlayerName.Enabled) {
+        if (!cfg.TabConfig.PlayerName.Enabled && InfoPageVisual.GetConfig()?.TabConfig.PlayerName.Enabled) {
             this.RemoveVisualComponent(this.Name);
             this.Name?.destroy();
             this.Name = null;
@@ -638,7 +641,7 @@ export class PlayerTabIndicator {
             }
             this.ProgresssBarCompleted!.setFillStyle(ProgressColor.color);
         }
-        if (!cfg.TabConfig.ProgressBar.Enabled && this.Config?.TabConfig.ProgressBar.Enabled) {
+        if (!cfg.TabConfig.ProgressBar.Enabled && InfoPageVisual.GetConfig()?.TabConfig.ProgressBar.Enabled) {
             this.RemoveVisualComponent(this.ProgressBarTotal);
             this.RemoveVisualComponent(this.ProgresssBarCompleted);
             this.ProgressBarTotal?.destroy();
@@ -668,7 +671,7 @@ export class PlayerTabIndicator {
                 this.VisualComponents.push(this.MinVal);
             }
         }
-        if (!cfg.TabConfig.MinValue.Enabled && this.Config?.TabConfig.MinValue.Enabled) {
+        if (!cfg.TabConfig.MinValue.Enabled && InfoPageVisual.GetConfig()?.TabConfig.MinValue.Enabled) {
             this.RemoveVisualComponent(this.MinVal);
             this.MinVal?.destroy();
             this.MinVal = null;
@@ -694,7 +697,7 @@ export class PlayerTabIndicator {
                 this.VisualComponents.push(this.MaxVal);
             }
         }
-        if (!cfg.TabConfig.MaxValue.Enabled && this.Config?.TabConfig.MaxValue.Enabled) {
+        if (!cfg.TabConfig.MaxValue.Enabled && InfoPageVisual.GetConfig()?.TabConfig.MaxValue.Enabled) {
             this.RemoveVisualComponent(this.MaxVal);
             this.MaxVal?.destroy();
             this.MaxVal = null;
@@ -717,7 +720,7 @@ export class PlayerTabIndicator {
                 this.VisualComponents.push(this.MainVal);
             }
         }
-        if (!cfg.TabConfig.CurrentValue.Enabled && this.Config?.TabConfig.CurrentValue.Enabled) {
+        if (!cfg.TabConfig.CurrentValue.Enabled && InfoPageVisual.GetConfig()?.TabConfig.CurrentValue.Enabled) {
             this.RemoveVisualComponent(this.MainVal);
             this.MainVal?.destroy();
             this.MainVal = null;
@@ -730,7 +733,7 @@ export class PlayerTabIndicator {
     }
 
     SetBarWidth(width: number = 210): void {
-        if (width === InfoPageVisual.GetCurrentElementVector2(this.Config!.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X || !this.Config!.TabConfig.ProgressBar.Enabled || this.ProgresssBarCompleted === null)
+        if (width === InfoPageVisual.GetCurrentElementVector2(InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X || !InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.Enabled || this.ProgresssBarCompleted === null)
             return;
 
         this.ProgressBarTotal!.width = width;
@@ -766,11 +769,11 @@ export class PlayerTabIndicator {
 
     CreateTextureListeners(): void {
         this.Scene.load.on(`filecomplete-image-${this.Id}`, () => {
-            this.Image = this.Scene.make.sprite({ x: this.Config!.Position.X + InfoPageVisual.GetCurrentElementVector2(this.Config!.TabConfig.ChampIcon.Position).X, y: this.Config!.Position.Y + this.Config!.TitleHeight + this.Row * this.Config!.TabConfig.TabSize.Y + InfoPageVisual.GetCurrentElementVector2(this.Config!.TabConfig.ChampIcon.Position).Y, key: this.Id, add: true });
+            this.Image = this.Scene.make.sprite({ x: InfoPageVisual.GetConfig()!.Position.X + InfoPageVisual.GetCurrentElementVector2(InfoPageVisual.GetConfig()!.TabConfig.ChampIcon.Position).X, y: InfoPageVisual.GetConfig()!.Position.Y + InfoPageVisual.GetConfig()!.TitleHeight + this.Row * InfoPageVisual.GetConfig()!.TabConfig.TabSize.Y + InfoPageVisual.GetCurrentElementVector2(InfoPageVisual.GetConfig()!.TabConfig.ChampIcon.Position).Y, key: this.Id, add: true });
             this.Image.setOrigin(0, 0);
             this.Image.setDepth(2);
-            this.Image.displayWidth = this.Config!.TabConfig.ChampIcon.Size.X;
-            this.Image.displayHeight = this.Config!.TabConfig.ChampIcon.Size.Y;
+            this.Image.displayWidth = InfoPageVisual.GetConfig()!.TabConfig.ChampIcon.Size.X;
+            this.Image.displayHeight = InfoPageVisual.GetConfig()!.TabConfig.ChampIcon.Size.Y;
             this.Image.alpha = 0;
             if (this.Scene.info.isActive) {
                 this.Image.alpha = 1;

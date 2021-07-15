@@ -7,8 +7,6 @@ namespace LeagueBroadcast.ChampSelect.Data.Config
     public class PickBanConfig : JSONConfig
     {
         public FrontendConfig frontend = FrontendConfig.CreateDefaultConfig();
-        public string contentPatch = "";
-        public string contentCdn = "";
 
         [JsonIgnore]
         public override string Name => "PickBan";
@@ -26,8 +24,6 @@ namespace LeagueBroadcast.ChampSelect.Data.Config
         {
             var Cfg = JsonConvert.DeserializeObject<PickBanConfig>(readValues);
             frontend = Cfg.frontend;
-            contentPatch = Cfg.contentPatch;
-            contentCdn = Cfg.contentCdn;
             FileVersion = Cfg.FileVersion;
         }
 
@@ -39,15 +35,13 @@ namespace LeagueBroadcast.ChampSelect.Data.Config
         public override void RevertToDefault()
         {
             var def = CreateDefault();
-            this.contentCdn = def.contentCdn;
-            this.contentPatch = def.contentPatch;
             this.frontend = def.frontend;
             this.FileVersion = CurrentVersion;
         }
 
         private PickBanConfig CreateDefault()
         {
-            return new PickBanConfig() { FileVersion = CurrentVersion, frontend = FrontendConfig.CreateDefaultConfig(), contentPatch = "latest", contentCdn = "https://ddragon.leagueoflegends.com/cdn" };
+            return new PickBanConfig() { FileVersion = CurrentVersion, frontend = FrontendConfig.CreateDefaultConfig()};
         }
 
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)

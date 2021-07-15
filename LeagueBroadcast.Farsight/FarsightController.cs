@@ -146,7 +146,27 @@ namespace LeagueBroadcast.Farsight
                 }
 
                 if (obj.IsChampion())
+                {
                     snap.Champions.Add(obj);
+                    continue;
+                }
+                    
+
+                if(obj.Name.Contains("Dragon"))
+                {
+                    snap.Dragon = obj;
+                    continue;
+                }
+                if(obj.Name.Equals("SRU_Baron"))
+                {
+                    snap.Baron = obj;
+                    continue;
+                }
+                if(obj.Name.Equals("SRU_RiftHerald"))
+                {
+                    snap.Herald = obj;
+                    continue;
+                }
             }
         }
 

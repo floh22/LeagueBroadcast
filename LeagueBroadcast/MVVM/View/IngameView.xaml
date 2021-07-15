@@ -143,11 +143,38 @@
                                     <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
                                 </Grid>
                             </Border>
-                            <Border Grid.Row="4" 
-                                Margin="10" 
-                                Background="#1a2b42">
+                            <Border  Grid.Row="4" Margin="10">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="5"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="Objective Pop Ups" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    <Border Margin="0,0,5,0" Grid.Row="2"
+                                Background="{Binding Path=ObjectiveSpawnPopUpIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="{Binding ObjectiveSpawnClickCommand.MouseGesture}" Command="{Binding ObjectiveSpawnClickCommand}"/>
+                                        </Border.InputBindings>
+                                        <Grid x:Name="ObjectiveSpawnButton">
+                                            <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Margin="5,0,0,0" Grid.Column="1" Grid.Row="2"
+                                Background="{Binding Path=ObjectiveKillPopUpIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="{Binding ObjectiveKillClickCommand.MouseGesture}" Command="{Binding ObjectiveKillClickCommand}"/>
+                                        </Border.InputBindings>
+                                        <Grid x:Name="ObjectiveKillButton">
+                                            <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
                             </Border>
-
                             <Border Grid.Row="5" 
                                 Margin="10" 
                                 Background="#1a2b42">

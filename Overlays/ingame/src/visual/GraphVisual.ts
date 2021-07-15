@@ -1,5 +1,5 @@
 import { Chart } from 'phaser3-rex-plugins/templates/ui/ui-components.js';
-import { GoldGraphDisplayConfig } from "~/data/config/overlayConfig";
+import { GoldGraphDisplayConfig, GraphDisplayConfig } from "~/data/config/overlayConfig";
 import GoldEntry from '~/data/goldEntry';
 import IngameScene from "~/scenes/IngameScene";
 import ColorUtils from '~/util/ColorUtils';
@@ -19,16 +19,17 @@ export default class GraphVisual extends VisualElement {
     Title: Phaser.GameObjects.Text | null = null;
     Graph: Chart;
 
-    Config = IngameScene.Instance.overlayCfg!.GoldGraph;
     CurrentData: GoldEntry[] = [];
 
     constructor(scene: IngameScene, cfg: GoldGraphDisplayConfig, data: GoldEntry[]) {
         super(scene, cfg.Position, "scoreboard");
         this.CurrentData = data;
 
+        this.CreateTextureListeners();
+
         //Mask
         if (cfg.Background.UseAlpha) {
-            this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Size.X * 1.5, y: cfg.Position.Y, key: 'graphMask', add: false});
+            this.MaskImage = scene.make.sprite({ x: cfg.Position.X - cfg.Size.X * 1.5, y: cfg.Position.Y, key: 'graphMask', add: true});
             this.MaskImage.setDisplaySize(cfg.Size.X, cfg.Size.Y);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
@@ -66,7 +67,7 @@ export default class GraphVisual extends VisualElement {
 
         //Set Mask
         this.GetActiveVisualComponents().forEach(vc => {
-            vc.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            vc.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
         });
 
 
@@ -107,9 +108,9 @@ export default class GraphVisual extends VisualElement {
             },
             beginAtZero: true,
             font: {
-                family: ctx.Config.Graph.InfoFont.Name,
+                family: GraphVisual.GetConfig().Graph.InfoFont.Name,
             },
-            color: ctx.Config.Graph.InfoFont.Color,
+            color: GraphVisual.GetConfig().Graph.InfoFont.Color,
             drawBorder: true,
             maxRotation: 0,
             minRotation: 0
@@ -171,7 +172,7 @@ export default class GraphVisual extends VisualElement {
                 this.BackgroundImage = null;
             }
             //Reset old Video
-            if(this.scene.cache.video.has('graphBgVideo')) {
+            if(!this.scene.cache.video.has('graphBgVideo')) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo?.destroy(),
                 this.BackgroundVideo = null;
@@ -194,7 +195,7 @@ export default class GraphVisual extends VisualElement {
                 this.BackgroundRect = this.scene.add.rectangle(cfg.Position.X, cfg.Position.Y, cfg.Size.X, cfg.Size.Y, Phaser.Display.Color.RGBStringToColor(cfg.Background.FallbackColor).color32);
                 this.BackgroundRect.setOrigin(0, 0);
                 this.BackgroundRect.depth = -1;
-                this.BackgroundRect.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+                this.BackgroundRect.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
                 this.AddVisualComponent(this.BackgroundRect);
             }
             this.BackgroundRect.setPosition(cfg.Position.X, cfg.Position.Y);
@@ -334,14 +335,14 @@ export default class GraphVisual extends VisualElement {
             }
         });
         this.Graph.setOrigin(0.5,0);
-        this.Graph.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+        this.Graph.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
         this.AddVisualComponent(this.Graph);
 
         
 
         //Title
         if (cfg.Title.Enabled) {
-            if (this.Config.Title.Enabled) {
+            if (GraphVisual.GetConfig().Title.Enabled) {
                 this.Title?.setPosition(cfg.Position.X + cfg.Title.Position.X, cfg.Position.Y + cfg.Title.Position.Y);
                 this.UpdateTextStyle(this.Title!, cfg.Title.Font);
             } else {
@@ -353,7 +354,7 @@ export default class GraphVisual extends VisualElement {
                     align: 'center'
                 });
                 this.Title.setOrigin(0.5, 0);
-                this.Title.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+                this.Title.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
                 this.AddVisualComponent(this.Title);
             }
         }
@@ -373,12 +374,12 @@ export default class GraphVisual extends VisualElement {
         this.isShowing = true;
         var ctx = this;
         
-        this.UpdateConfig(this.Config);
+        this.UpdateConfig(GraphVisual.GetConfig());
 
         this.currentAnimation[0] = this.scene.tweens.add({
             targets: [ctx.MaskGeo, ctx.MaskImage],
             props: {
-                x: { from: ctx.Config.Position.X - ctx.Config.Size.X * 1.5, to: ctx.Config.Position.X - ctx.Config.Size.X * 0.5, duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: GraphVisual.GetConfig().Position.X - GraphVisual.GetConfig().Size.X * 1.5, to: GraphVisual.GetConfig().Position.X - GraphVisual.GetConfig().Size.X * 0.5, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
@@ -399,7 +400,7 @@ export default class GraphVisual extends VisualElement {
         this.currentAnimation[0] = this.scene.tweens.add({
             targets: [ctx.MaskGeo, ctx.MaskImage],
             props: {
-                x: { from: ctx.Config.Position.X - ctx.Config.Size.X * 0.5, to: ctx.Config.Position.X - ctx.Config.Size.X * 1.5, duration: 1000, ease: 'Cubic.easeInOut' }
+                x: { from: GraphVisual.GetConfig().Position.X - GraphVisual.GetConfig().Size.X * 0.5, to: GraphVisual.GetConfig().Position.X - GraphVisual.GetConfig().Size.X * 1.5, duration: 1000, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
@@ -409,6 +410,10 @@ export default class GraphVisual extends VisualElement {
                 ctx.AnimationComplete.dispatch();
             }
         });
+    }
+
+    static GetConfig(): GoldGraphDisplayConfig {
+        return IngameScene.Instance.overlayCfg!.GoldGraph;
     }
 
     static FormatGold(num: number): string {
@@ -423,10 +428,11 @@ export default class GraphVisual extends VisualElement {
     CreateTextureListeners(): void {
         //Background Image support
         this.scene.load.on(`filecomplete-image-graphBg`, () => {
-            this.BackgroundImage = this.scene.make.sprite({ x: this.Config.Position.X, y: this.Config.Position.Y, key: 'graphBg', add: true });
+            this.BackgroundImage = this.scene.make.sprite({ x: GraphVisual.GetConfig().Position.X, y: GraphVisual.GetConfig().Position.Y, key: 'graphBg', add: true });
             this.BackgroundImage.setOrigin(0.5,0);
+            this.BackgroundImage.setDisplaySize(GraphVisual.GetConfig().Size.X, GraphVisual.GetConfig().Size.Y);
             this.BackgroundImage.setDepth(-1);
-            this.BackgroundImage.setMask(this.Config?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            this.BackgroundImage.setMask(GraphVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundImage);
         });
 
@@ -437,9 +443,10 @@ export default class GraphVisual extends VisualElement {
                 this.BackgroundVideo.destroy();
             }
             // @ts-ignore
-            this.BackgroundVideo = this.scene.add.video(this.Config.Position.X, this.Config!.Position.Y, 'graphBgVideo', false, true);
+            this.BackgroundVideo = this.scene.add.video(GraphVisual.GetConfig().Position.X, GraphVisual.GetConfig()!.Position.Y, 'graphBgVideo', false, true);
+            this.BackgroundVideo.setDisplaySize(GraphVisual.GetConfig().Size.X, GraphVisual.GetConfig().Size.Y);
             this.BackgroundVideo.setOrigin(0.5,0);
-            this.BackgroundVideo.setMask(this.Config.Background.UseAlpha ? this.ImgMask : this.GeoMask);
+            this.BackgroundVideo.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.BackgroundVideo.setLoop(true);
             this.BackgroundVideo.setDepth(-1);
             this.BackgroundVideo.play();
