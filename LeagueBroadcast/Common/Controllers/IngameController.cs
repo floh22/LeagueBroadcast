@@ -82,7 +82,7 @@ namespace LeagueBroadcast.Common.Controllers
             double timeDiff = newGameData.gameTime - gameData.gameTime;
             Log.Verbose($"Tick: {newGameData.gameTime}. Update duration: {timeDiff}");
 
-            if(timeDiff == 0)
+            if(timeDiff == 0 || newGameData.gameTime == 0)
             {
                 if(!gameState.stateData.gamePaused)
                 {

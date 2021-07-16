@@ -83,9 +83,9 @@ export default class IngameScene extends Phaser.Scene {
 
         //Dragons
         this.load.image('dragon_Fire', 'frontend/images/dragons/fireLarge.png');
-        this.load.image('dragon_Earth', 'frontend/images/dragons/mountainLarge.png');
-        this.load.image('dragon_Air', 'frontend/images/dragons/cloudLarge.png');
-        this.load.image('dragon_Water', 'frontend/images/dragons/oceanLarge.png');
+        this.load.image('dragon_Mountain', 'frontend/images/dragons/mountainLarge.png');
+        this.load.image('dragon_Cloud', 'frontend/images/dragons/cloudLarge.png');
+        this.load.image('dragon_Ocean', 'frontend/images/dragons/oceanLarge.png');
         this.load.image('dragon_Elder', 'frontend/images/dragons/elderLarge.png');
 
         //Inhibitor
