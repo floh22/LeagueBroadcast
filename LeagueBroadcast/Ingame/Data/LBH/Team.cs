@@ -1,4 +1,5 @@
-﻿using LeagueBroadcast.Common.Controllers;
+﻿using LeagueBroadcast.Common;
+using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
@@ -33,9 +34,6 @@ namespace LeagueBroadcast.Ingame.Data.LBH
             this.id = teamId;
             this.teamName = (id == 0) ? "ORDER" : "CHAOS";
             this.players = players;
-            this.players.ForEach(p => {
-                p.rawChampionName = p.championName.Replace(" ", "").Replace("'", "").Replace("Wukong", "MonkeyKing").Replace(".", "");
-            });
             this.color = (id == 0) ? TeamConfigViewModel.BlueTeam.Color.ToSerializedString() : TeamConfigViewModel.RedTeam.Color.ToSerializedString();
             towers = 0;
             hasBaron = false;
