@@ -252,7 +252,7 @@ namespace LeagueBroadcast.Common.Controllers
             }
             catch (Exception canceled)
             {
-                Log.Warn("Could not update State:" + canceled.Message);
+                Log.Warn($"Could not update State:\n{canceled.Source} -> {canceled.Message}\n Stacktrace:\n{canceled.StackTrace}");
             }
 
             //Update frontend
