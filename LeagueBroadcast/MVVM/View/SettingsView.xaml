@@ -64,7 +64,8 @@
                 <ComboBoxItem Tag="ru_RU" Content="Русский"/>
                 <ComboBoxItem Tag="ro_RO" Content="Română"/>
                 <ComboBoxItem Tag="cs_CZ" Content="Čeština"/>
-                <ComboBoxItem Tag="zh_CN" Content="中国人"/>
+                <ComboBoxItem Tag="zh_CN" Content="简体字"/>
+                <ComboBoxItem Tag="zh-TW" Content="繁体字"/>
                 <ComboBoxItem Tag="ko_KR" Content="한국말"/>
             </ComboBox>
         </StackPanel>

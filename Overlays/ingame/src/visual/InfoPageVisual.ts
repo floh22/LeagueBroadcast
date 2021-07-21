@@ -221,6 +221,8 @@ export default class InfoPageVisual extends VisualElement {
         if (this.PlayerTabs.length !== 0) {
             this.PlayerTabs.forEach(tab => { tab.UpdateConfig(newConfig) });
         }
+
+        this.scene.load.start();
     }
     Load(): void {
         //Load in constructor

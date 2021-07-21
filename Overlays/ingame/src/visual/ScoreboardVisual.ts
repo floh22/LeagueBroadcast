@@ -417,13 +417,15 @@ export default class ScoreboardVisual extends VisualElement {
             if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
+                this.BackgroundVideo = null;
+                this.scene.cache.video.remove('scoreBgVideo');
             }
             if (this.BackgroundRect !== undefined && this.BackgroundRect !== null) {
                 this.RemoveVisualComponent(this.BackgroundRect);
                 this.BackgroundRect.destroy();
                 this.BackgroundRect = null;
             }
-            //Reset old Texture
+            //Load Texture only if it does not already exist
             if (this.BackgroundImage === null || this.BackgroundImage === undefined) {
                 this.scene.load.image('scoreBg', 'frontend/backgrounds/Score.png');
             }
@@ -439,26 +441,26 @@ export default class ScoreboardVisual extends VisualElement {
                 this.RemoveVisualComponent(this.BackgroundImage);
                 this.BackgroundImage.destroy();
                 this.BackgroundImage = null;
+                this.scene.textures.remove('scoreBg');
             }
-            //Reset old Video
-            if(this.scene.cache.video.has('scoreBgVideo')) {
-                this.RemoveVisualComponent(this.BackgroundVideo);
-                this.BackgroundVideo?.destroy(),
-                this.BackgroundVideo = null;
-                this.scene.cache.video.remove('scoreBgVideo');
+            //Load Video only if it does not already exist
+            if(this.BackgroundVideo === null || this.BackgroundVideo === undefined) {
+                this.scene.load.video('scoreBgVideo', 'frontend/backgrounds/Score.mp4');
             }
-            this.scene.load.video('scoreBgVideo', 'frontend/backgrounds/Score.mp4');
         }
         //Background Color
         else {
             if (this.BackgroundImage !== undefined && this.BackgroundImage !== null) {
                 this.RemoveVisualComponent(this.BackgroundImage);
                 this.BackgroundImage.destroy();
+                this.BackgroundImage = null;
+                this.scene.textures.remove('scoreBg');
             }
             if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
                 this.BackgroundVideo = null;
+                this.scene.cache.video.remove('scoreBgVideo');
             }
             if (this.BackgroundRect === null || this.BackgroundRect === undefined) {
                 this.BackgroundRect = this.scene.add.rectangle(newConfig.Position.X, newConfig.Position.Y + (newConfig.Size.Y / 2), newConfig.Size.X, newConfig.Size.Y, Phaser.Display.Color.RGBStringToColor(newConfig.Background.FallbackColor).color, 1);
@@ -749,12 +751,13 @@ export default class ScoreboardVisual extends VisualElement {
         //Background Image support
         this.scene.load.on(`filecomplete-image-scoreBg`, () => {
             this.BackgroundImage = this.scene.make.sprite({ x: ScoreboardVisual.GetConfig()!.Position.X, y: ScoreboardVisual.GetConfig()!.Position.Y, key: 'scoreBg', add: true });
-            this.BackgroundImage.setOrigin(0.5, 1);
+            this.BackgroundImage.setOrigin(0.5, 0);
             this.BackgroundImage.setDepth(-1);
             this.BackgroundImage.setMask(ScoreboardVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundImage);
             if (!this.isActive && !this.isShowing) {
                 this.BackgroundImage.alpha = 0;
+                this.BackgroundImage.y -= this.BackgroundImage.displayHeight;
             }
         });
 
@@ -766,14 +769,15 @@ export default class ScoreboardVisual extends VisualElement {
             }
             // @ts-ignore
             this.BackgroundVideo = this.scene.add.video(ScoreboardVisual.GetConfig()!.Position.X, ScoreboardVisual.GetConfig()!.Position.Y, 'scoreBgVideo', false, true);
-            this.BackgroundVideo.setOrigin(0.5, 1);
+            this.BackgroundVideo.setOrigin(0.5, 0);
             this.BackgroundVideo.setMask(ScoreboardVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.BackgroundVideo.setLoop(true);
             this.BackgroundVideo.setDepth(-1);
             this.BackgroundVideo.play();
             this.AddVisualComponent(this.BackgroundVideo);
-            if (!this.isActive || this.isHiding) {
+            if (!this.isActive && !this.isShowing) {
                 this.BackgroundVideo.alpha = 0;
+                this.BackgroundVideo.y -= this.BackgroundVideo.displayHeight;
             }
         });
 

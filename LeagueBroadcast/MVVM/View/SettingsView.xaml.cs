@@ -38,7 +38,8 @@ namespace LeagueBroadcast.MVVM.View
             { 11, "ro_RO"},
             { 12, "cs_CZ"},
             { 13, "zh_CN"},
-            { 14, "ko_KR"}
+            { 14, "zh_TW"},
+            { 15, "ko_KR"}
         };
         public SettingsView()
         {

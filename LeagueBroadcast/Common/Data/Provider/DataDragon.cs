@@ -463,6 +463,7 @@ namespace LeagueBroadcast.Common.Data.Provider
                 } catch(Exception e)
                 {
                     Log.Warn($"Could not download {uri}\n{eventArgs.Error.Message}");
+                    FileDownloadComplete.Invoke(null, EventArgs.Empty);
                 }
 
 
