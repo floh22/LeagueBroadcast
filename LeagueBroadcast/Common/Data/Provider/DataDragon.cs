@@ -452,12 +452,20 @@ namespace LeagueBroadcast.Common.Data.Provider
 
             client.DownloadDataCompleted += (sender, eventArgs) =>
             {
-                byte[] fileData = eventArgs.Result;
-                using FileStream fileStream = new FileStream(path, FileMode.Create);
-                fileStream.Write(fileData, 0, fileData.Length);
-                client.Dispose();
-                Log.Verbose($"{uri} downloaded");
-                FileDownloadComplete.Invoke(null, EventArgs.Empty);
+                try
+                {
+                    byte[] fileData = eventArgs.Result;
+                    using FileStream fileStream = new FileStream(path, FileMode.Create);
+                    fileStream.Write(fileData, 0, fileData.Length);
+                    client.Dispose();
+                    Log.Verbose($"{uri} downloaded");
+                    FileDownloadComplete.Invoke(null, EventArgs.Empty);
+                } catch(Exception e)
+                {
+                    Log.Warn($"Could not download {uri}\n{eventArgs.Error.Message}");
+                }
+
+
             };
             try
             {

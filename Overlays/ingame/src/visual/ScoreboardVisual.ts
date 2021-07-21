@@ -424,13 +424,9 @@ export default class ScoreboardVisual extends VisualElement {
                 this.BackgroundRect = null;
             }
             //Reset old Texture
-            if (this.scene.textures.exists('scoreBg')) {
-                this.RemoveVisualComponent(this.BackgroundImage);
-                this.BackgroundImage?.destroy();
-                this.BackgroundImage = null;
-                this.scene.textures.remove('scoreBg');
+            if (this.BackgroundImage === null || this.BackgroundImage === undefined) {
+                this.scene.load.image('scoreBg', 'frontend/backgrounds/Score.png');
             }
-            this.scene.load.image('scoreBg', 'frontend/backgrounds/Score.png');
         }
         //Background Video
         else if (newConfig.Background.UseVideo) {
@@ -753,7 +749,7 @@ export default class ScoreboardVisual extends VisualElement {
         //Background Image support
         this.scene.load.on(`filecomplete-image-scoreBg`, () => {
             this.BackgroundImage = this.scene.make.sprite({ x: ScoreboardVisual.GetConfig()!.Position.X, y: ScoreboardVisual.GetConfig()!.Position.Y, key: 'scoreBg', add: true });
-            this.BackgroundImage.setOrigin(0.5, 0);
+            this.BackgroundImage.setOrigin(0.5, 1);
             this.BackgroundImage.setDepth(-1);
             this.BackgroundImage.setMask(ScoreboardVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundImage);
@@ -770,13 +766,13 @@ export default class ScoreboardVisual extends VisualElement {
             }
             // @ts-ignore
             this.BackgroundVideo = this.scene.add.video(ScoreboardVisual.GetConfig()!.Position.X, ScoreboardVisual.GetConfig()!.Position.Y, 'scoreBgVideo', false, true);
-            this.BackgroundVideo.setOrigin(0.5, 0);
+            this.BackgroundVideo.setOrigin(0.5, 1);
             this.BackgroundVideo.setMask(ScoreboardVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.BackgroundVideo.setLoop(true);
             this.BackgroundVideo.setDepth(-1);
             this.BackgroundVideo.play();
             this.AddVisualComponent(this.BackgroundVideo);
-            if (!this.isActive && !this.isShowing) {
+            if (!this.isActive || this.isHiding) {
                 this.BackgroundVideo.alpha = 0;
             }
         });

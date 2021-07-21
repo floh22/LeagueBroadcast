@@ -142,7 +142,7 @@ export default class InfoPageVisual extends VisualElement {
                 this.BackgroundRect.destroy();
                 this.BackgroundRect = null;
             }
-            //Reset old Texture
+            //Load Texture only if it does not already exist
             if (this.BackgroundImage === null || this.BackgroundImage === undefined) {
                 this.scene.load.image('infoBg', 'frontend/backgrounds/InfoPage.png');
             }
@@ -160,7 +160,7 @@ export default class InfoPageVisual extends VisualElement {
                 this.BackgroundImage = null;
                 this.scene.textures.remove('infoBg');
             }
-            //Reset old Video
+            //Load Video only if it does not already exist
             if (this.BackgroundVideo === null || this.BackgroundVideo === undefined) {
                 this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
             }
