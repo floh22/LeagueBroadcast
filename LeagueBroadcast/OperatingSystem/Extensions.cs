@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Windows;
 using System.Windows.Media;
 
 namespace LeagueBroadcast.OperatingSystem
@@ -28,6 +30,24 @@ namespace LeagueBroadcast.OperatingSystem
         {
             return $"rgb({c.R},{c.G},{c.B})";
         }
+    }
+
+    public static class MessageBoxUtils
+    {
+        private static MessageBoxResult Current = MessageBoxResult.None;
+        public static void ShowErrorBox(string text)
+        {
+            if (Current != MessageBoxResult.None)
+                return;
+            Thread t = new(() =>
+            {
+                Current = MessageBox.Show(text, "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
+                Current = MessageBoxResult.None;
+            }
+            );
+            t.Start();
+        }
+
     }
 
     public static class FlagsHelper

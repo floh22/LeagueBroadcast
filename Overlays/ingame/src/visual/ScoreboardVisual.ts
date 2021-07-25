@@ -4,6 +4,7 @@ import StateData from "~/data/stateData";
 import PlaceholderConversion from "~/PlaceholderConversion";
 import IngameScene from "~/scenes/IngameScene";
 import TextUtils from "~/util/TextUtils";
+import Utils from "~/util/Utils";
 import variables from "~/variables";
 import { VisualElement } from "./VisualElement";
 
@@ -323,13 +324,7 @@ export default class ScoreboardVisual extends VisualElement {
         this.GameTime.text = (Math.floor(timeInSec / 60) >= 10 ? Math.floor(timeInSec / 60) : '0' + Math.floor(timeInSec / 60)) + ':' + (timeInSec % 60 >= 10 ? timeInSec % 60 : '0' + timeInSec % 60);
 
         //Update blue team values
-        var hundred = Math.round((scoreConfig.BlueTeam.Gold % 1000) / 100);
-        var thousand = Math.floor(scoreConfig.BlueTeam.Gold / 1000);
-        if (hundred === 10) {
-            thousand++;
-            hundred = 0;
-        }
-        this.BlueGold.text = thousand + '.' + hundred + 'k';
+        this.BlueGold.text = Utils.ConvertGold(scoreConfig.BlueTeam.Gold);
         this.BlueKills.text = scoreConfig.BlueTeam.Kills + '';
         this.BlueTowers.text = scoreConfig.BlueTeam.Towers + '';
 
@@ -352,13 +347,7 @@ export default class ScoreboardVisual extends VisualElement {
         }
 
         //Update red team values
-        hundred = Math.round((scoreConfig.RedTeam.Gold % 1000) / 100);
-        thousand = Math.floor(scoreConfig.RedTeam.Gold / 1000);
-        if (hundred === 10) {
-            thousand++;
-            hundred = 0;
-        }
-        this.RedGold.text = Math.floor(scoreConfig.RedTeam.Gold / 1000) + '.' + Math.floor((scoreConfig.RedTeam.Gold % 1000) / 100) + 'k';
+        this.RedGold.text = Utils.ConvertGold(scoreConfig.RedTeam.Gold);
         this.RedKills.text = scoreConfig.RedTeam.Kills + '';
         this.RedTowers.text = scoreConfig.RedTeam.Towers + '';
 

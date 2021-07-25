@@ -48,7 +48,7 @@ namespace LeagueBroadcast.Farsight
 
         public Snapshot CreateSnapshot(double gameTime = 0)
         {
-            
+
 
             Snapshot snap = new();
             if (!Memory.IsConnected || !ShouldRun)
@@ -56,11 +56,10 @@ namespace LeagueBroadcast.Farsight
                 return snap;
             }
 
-            if (gameTime > 2)
-            {
-                ReadObjects(snap);
-                ClearMissing(snap);
-            }
+
+            ReadObjects(snap);
+            ClearMissing(snap);
+
             return snap;
         }
 

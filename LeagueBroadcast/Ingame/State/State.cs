@@ -22,6 +22,7 @@ namespace LeagueBroadcast.Ingame.State
     class State
     {
         private IngameController controller;
+        private bool ShowedChampionMemoryError = false;
 
         public StateData stateData;
         public List<RiotEvent> pastIngameEvents;
@@ -95,23 +96,18 @@ namespace LeagueBroadcast.Ingame.State
                 GameObject playerObject;
                 try
                 {
-                    //Wukong <-> MonkeyKing
-                    //Rek'Sai, Cho'Gath <-> RekSai, ChoGath
-                    //Dr. Mundo <-> DrMundo
-
-                    //Replace this with a map of some kind between memory names and API names
-                    playerObject = gameSnap.Champions.FirstOrDefault(c => c.Name.Equals(p.championID, StringComparison.OrdinalIgnoreCase));
+                    playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championID, StringComparison.OrdinalIgnoreCase));
                 } catch (Exception e)
                 {
-                    //Incorrect values now but its better than crashing? Not sure
-                    playerObject = new();
-                    
-                    Log.Warn(p.championName + " not found in memory snapshot");
-                    Log.Warn(e.Message);
-                    Log.Verbose(JsonConvert.SerializeObject(gameSnap.Champions));
-                }
-                if(playerObject == null)
-                {
+                    //Champ could not be found. Inform user that mapping is currently not working
+                    Log.Warn(p.championName + " not found in memory snapshot. Values will be incorrect!");
+                    if(!ShowedChampionMemoryError)
+                    {
+                        Log.Warn(e.Message);
+                        Log.Verbose($"Players:\n{JsonConvert.SerializeObject(GetAllPlayers())}\nSnapshot:\n{JsonConvert.SerializeObject(gameSnap.Champions)}");
+                        MessageBoxUtils.ShowErrorBox("Could not read all champion data from memory. Please submit an issue on github containing the current log and replay.");
+                        ShowedChampionMemoryError = true;
+                    }
                     return;
                 }
                 

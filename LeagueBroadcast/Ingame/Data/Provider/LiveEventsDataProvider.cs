@@ -174,6 +174,10 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                         File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill" });
                         Log.Info("LiveEvents.ini created. Added only nescesary events!");
                         return true;
+                    } catch(Exception e)
+                    {
+                        Log.Warn($"Error Parsing LiveEvents.ini:\n{e.Source} -> {e.Message}\n Stacktrace:\n{e.StackTrace}");
+                        return true;
                     }
                 }
                 else

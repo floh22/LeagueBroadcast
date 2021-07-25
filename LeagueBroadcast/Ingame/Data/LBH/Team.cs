@@ -57,7 +57,8 @@ namespace LeagueBroadcast.Ingame.Data.LBH
 
         public float GetGold(int i)
         {
-            return players.Select(p => p.goldHistory.Values.ElementAt(i)).Sum();
+            //Get Gold for player at time or 0. Its better than crashing
+            return players.Select(p => p.goldHistory.Values.ElementAtOrDefault(i)).Sum();
         }
 
         public float GetGold(double i)
