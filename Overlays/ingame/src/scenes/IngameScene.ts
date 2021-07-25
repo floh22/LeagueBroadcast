@@ -344,12 +344,12 @@ export default class IngameScene extends Phaser.Scene {
         if (!this.overlayCfg?.ObjectiveKill.SoulPointScoreboardPopUp.Enabled)
             return;
         if (state.scoreboard.BlueTeam.Dragons.length === 3 && this.state?.scoreboard.BlueTeam.Dragons.length === 2) {
-            //Blue Soul Point
+            console.log('Blue Soul Point');
             new ObjectivePopUpVisual(this, this.overlayCfg!.ObjectiveKill.SoulPointScoreboardPopUp, `${state.scoreboard.BlueTeam.Dragons[2]}Soul`);
         }
 
         if (state.scoreboard.RedTeam.Dragons.length === 3 && this.state?.scoreboard.RedTeam.Dragons.length === 2) {
-            //Red Soul Point
+            console.log('Red Soul Point');
             new ObjectivePopUpVisual(this, this.overlayCfg!.ObjectiveKill.SoulPointScoreboardPopUp, `${state.scoreboard.RedTeam.Dragons[2]}Soul`);
         }
     }
@@ -369,6 +369,7 @@ export default class IngameScene extends Phaser.Scene {
                 break;
         }
 
+        console.log(`${objectiveName} spawned`);
         new ObjectivePopUpVisual(this, cfg, `${objectiveName.toLowerCase()}Spawn`);
     }
 
@@ -389,6 +390,7 @@ export default class IngameScene extends Phaser.Scene {
                 break;
         }
 
+        console.log(`${objectiveName} killed`);
         new ObjectivePopUpVisual(this, cfg, `${objectiveName.toLowerCase()}Kill`);
     }
 

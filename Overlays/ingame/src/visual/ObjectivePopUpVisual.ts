@@ -118,7 +118,7 @@ export default class ObjectivePopUpVisual extends VisualElement {
         this.scene.load.once(`filecomplete-image-${this.Type}PopUp`, () => {
             this.BackgroundImage = this.scene.make.sprite({ x: 960, y: 0, key: `${this.Type}PopUp`, add: true });
             this.BackgroundImage.setOrigin(0.5,0);
-            this.BackgroundImage.setDepth(-1);
+            this.BackgroundImage.setDepth(3);
             this.BackgroundImage.setPosition(960, 1080 - this.BackgroundImage.displayHeight);
             this.AddVisualComponent(this.BackgroundImage);
             this.LoadMask();
@@ -133,7 +133,7 @@ export default class ObjectivePopUpVisual extends VisualElement {
             // @ts-ignore
             this.BackgroundVideo = this.scene.add.video(960, 0, `${this.Type}PopUpVideo`, false, true);
             this.BackgroundVideo.setOrigin(0.5,0);
-            this.BackgroundVideo.setDepth(-1);
+            this.BackgroundVideo.setDepth(3);
             this.AddVisualComponent(this.BackgroundVideo);
             this.LoadMask();
         });

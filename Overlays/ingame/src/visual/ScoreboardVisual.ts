@@ -381,8 +381,12 @@ export default class ScoreboardVisual extends VisualElement {
             this.ShowScores = false;
         }
         if (scoreConfig.BlueTeam.Score !== undefined || scoreConfig.RedTeam.Score !== undefined) {
-            this.ShowScores = true;
-            this.UpdateScores(state, false);
+            if(this.ShowScores === false) {
+                this.ShowScores = true;
+                this.UpdateScores(state, true);
+            } else {
+                this.UpdateScores(state, false);
+            }
         }
 
         if (!this.isActive) {
@@ -868,6 +872,7 @@ export default class ScoreboardVisual extends VisualElement {
         let conf = state.scoreboard;
         cfg = cfg === null ? ScoreboardVisual.GetConfig()! : cfg;
         if (forceUpdate || conf.RedTeam.Score !== this.RedWins || conf.BlueTeam.Score !== this.BlueWins) {
+            console.log('[LB] Updating Score display');
             let redWins = conf.RedTeam.Score;
             let blueWins = conf.BlueTeam.Score;
 

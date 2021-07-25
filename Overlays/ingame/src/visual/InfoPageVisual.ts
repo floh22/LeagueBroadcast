@@ -3,6 +3,7 @@ import InfoSidePage from "~/data/infoSidePage";
 import PlayerInfoTab from "~/data/playerInfoTab";
 import PlaceholderConversion from "~/PlaceholderConversion";
 import IngameScene from "~/scenes/IngameScene";
+import Utils from "~/util/Utils";
 import Vector2 from "~/util/Vector2";
 import variables from "~/variables";
 import { VisualElement } from "./VisualElement";
@@ -485,16 +486,6 @@ export class PlayerTabIndicator {
 
     }
 
-    static ConvertGold(gold: number): string {
-        let hundred = Math.round((gold % 1000) / 100);
-        let thousand = Math.floor(gold / 1000);
-        if (hundred === 10) {
-            thousand++;
-            hundred = 0;
-        }
-        return Math.floor(gold / 1000) + '.' + Math.floor((gold % 1000) / 100) + 'k';
-    }
-
     UpdateValues(tabInfo: PlayerInfoTab): void {
         this.CurrentInfo = tabInfo;
         let width = InfoPageVisual.GetCurrentElementVector2(InfoPageVisual.GetConfig()!.TabConfig.ProgressBar.Size, InfoPageVisual.CurrentInfoType).X;
@@ -543,7 +534,7 @@ export class PlayerTabIndicator {
                 min = '';
                 max = Math.trunc(tabInfo.Values.CurrentValue) + '';
                 let val = Math.trunc(tabInfo.Values.CurrentValue);
-                cur = PlayerTabIndicator.ConvertGold(val);
+                cur = Utils.ConvertGold(val);
                 if (cur.includes('NaN')) {
                     console.log(`${val} -> ${cur}`);
                 }
