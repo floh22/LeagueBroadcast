@@ -62,7 +62,6 @@ namespace LeagueBroadcast.Trinket
 
                         var chars = responseContent.ToCharArray();
 
-                        //Debug.WriteLine($"LiveEvent content: {responseContent}");
                         int openBrackets = 0;
                         int startOfEvent = 0;
                         for (int i = 0; i < chars.Length; i++)
@@ -91,7 +90,7 @@ namespace LeagueBroadcast.Trinket
                             }
                         }
                     }
-                    await Task.Delay(20);
+                    await Task.Delay(5);
                 }
 
                 soc.Dispose();

@@ -2,6 +2,7 @@
 using LCUSharp.Websocket;
 using LeagueBroadcast.ChampSelect.Data.LCU;
 using LeagueBroadcast.ChampSelect.StateInfo;
+using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.Farsight;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
@@ -237,8 +238,17 @@ namespace LeagueBroadcast.Common.Controllers
 
         private string GetLocalGameVersion(string rawPatch)
         {
-            string[] patchComponents = rawPatch.Split('.');
-            return $"{patchComponents[0]}.{patchComponents[1]}.1";
+            try
+            {
+                string[] patchComponents = rawPatch.Split('.');
+                return $"{patchComponents[0]}.{patchComponents[1]}.1";
+            } catch
+            {
+                Log.Warn($"Could not determine local game version. Client reported invalid patch \"{rawPatch}\"");
+                Log.Info("Reverting to DataDragon version");
+                return DataDragon.version.Champion;
+            }
+             
         }
 
         public void DoTick()

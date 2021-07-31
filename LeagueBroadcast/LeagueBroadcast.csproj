@@ -15,15 +15,20 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcast</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.4.64.0</AssemblyVersion>
-    <FileVersion>1.4.64.21204</FileVersion>
+    <AssemblyVersion>1.4.68.0</AssemblyVersion>
+    <FileVersion>1.4.68.21207</FileVersion>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Assets\TeamIcons\**" />
+    <Compile Remove="Frontend\**" />
     <EmbeddedResource Remove="Assets\TeamIcons\**" />
+    <EmbeddedResource Remove="Frontend\**" />
     <None Remove="Assets\TeamIcons\**" />
+    <None Remove="Frontend\**" />
     <Page Remove="Assets\TeamIcons\**" />
+    <Page Remove="Frontend\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,47 +42,6 @@
     <None Remove="Assets\Images\LeagueOfLegendsIcon.png" />
     <None Remove="Assets\Images\TwitterSocial.png" />
     <None Remove="Common\Controllers\IngameController.cs~RF3284b66.TMP" />
-    <None Remove="Frontend\ingame\backgrounds\BaronIcon.png" />
-    <None Remove="Frontend\ingame\backgrounds\CenterCover.png" />
-    <None Remove="Frontend\ingame\backgrounds\DragonIcon.png" />
-    <None Remove="Frontend\ingame\backgrounds\ObjectiveBG.png" />
-    <None Remove="Frontend\ingame\backgrounds\ObjectiveBGLeft.png" />
-    <None Remove="Frontend\ingame\backgrounds\ObjectiveMask.png" />
-    <None Remove="Frontend\ingame\images\cdr.png" />
-    <None Remove="Frontend\ingame\images\ChampCoverLeft.png" />
-    <None Remove="Frontend\ingame\images\ChampCoverRight.png" />
-    <None Remove="Frontend\ingame\images\goldicon.png" />
-    <None Remove="Frontend\ingame\index.html" />
-    <None Remove="Frontend\ingame\main.340e72bd.js" />
-    <None Remove="Frontend\ingame\main.340e72bd.js.map" />
-    <None Remove="Frontend\ingame\main.e54452e7.js" />
-    <None Remove="Frontend\ingame\main.e54452e7.js.map" />
-    <None Remove="Frontend\ingame\style.f84ff0f4.css" />
-    <None Remove="Frontend\ingame\style.f84ff0f4.css.map" />
-    <None Remove="Frontend\pickban\asset-manifest.json" />
-    <None Remove="Frontend\pickban\frontend-lib.js" />
-    <None Remove="Frontend\pickban\index.html" />
-    <None Remove="Frontend\pickban\precache-manifest.ec662aedb29c90e265cf14303dc77516.js" />
-    <None Remove="Frontend\pickban\robots.txt" />
-    <None Remove="Frontend\pickban\service-worker.js" />
-    <None Remove="Frontend\pickban\static\css\main.ab39b728.chunk.css" />
-    <None Remove="Frontend\pickban\static\css\main.ab39b728.chunk.css.map" />
-    <None Remove="Frontend\pickban\static\js\2.6fc5e5fa.chunk.js" />
-    <None Remove="Frontend\pickban\static\js\2.6fc5e5fa.chunk.js.map" />
-    <None Remove="Frontend\pickban\static\js\main.3e763466.chunk.js" />
-    <None Remove="Frontend\pickban\static\js\main.3e763466.chunk.js.map" />
-    <None Remove="Frontend\pickban\static\js\runtime~main.9a560e1d.js" />
-    <None Remove="Frontend\pickban\static\js\runtime~main.9a560e1d.js.map" />
-    <None Remove="Frontend\pickban\static\media\amarurgt.24971b06.ttf" />
-    <None Remove="Frontend\pickban\static\media\ban_placeholder.d0097af7.svg" />
-    <None Remove="Frontend\pickban\static\media\bot_splash_placeholder.44ae82b6.svg" />
-    <None Remove="Frontend\pickban\static\media\jung_splash_placeholder.1c3e3603.svg" />
-    <None Remove="Frontend\pickban\static\media\mid_splash_placeholder.70813643.svg" />
-    <None Remove="Frontend\pickban\static\media\Raleway-Regular.9942588a.ttf" />
-    <None Remove="Frontend\pickban\static\media\Rawline-Medium.a8658dc2.ttf" />
-    <None Remove="Frontend\pickban\static\media\scuffed.2fe400e4.png" />
-    <None Remove="Frontend\pickban\static\media\sup_splash_placeholder.4fa0eb6c.svg" />
-    <None Remove="Frontend\pickban\static\media\top_splash_placeholder.cd23577b.svg" />
     <None Include="Assets\Images\BE_icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -136,112 +100,7 @@
     <Folder Include="MVVM\DragDrop\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Frontend\ingame\backgrounds\BaronIcon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\backgrounds\CenterCover.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\backgrounds\DragonIcon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\backgrounds\ObjectiveBG.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\backgrounds\ObjectiveBGLeft.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\backgrounds\ObjectiveMask.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\images\cdr.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\images\ChampCoverLeft.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\images\ChampCoverRight.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\images\goldicon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\ingame\index.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\asset-manifest.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\frontend-lib.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\index.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\precache-manifest.ec662aedb29c90e265cf14303dc77516.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\robots.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\service-worker.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\css\main.ab39b728.chunk.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\css\main.ab39b728.chunk.css.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\js\2.6fc5e5fa.chunk.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\js\2.6fc5e5fa.chunk.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\js\main.3e763466.chunk.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\js\main.3e763466.chunk.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\js\runtime~main.9a560e1d.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\js\runtime~main.9a560e1d.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\amarurgt.24971b06.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\ban_placeholder.d0097af7.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\bot_splash_placeholder.44ae82b6.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\jung_splash_placeholder.1c3e3603.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\mid_splash_placeholder.70813643.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\Raleway-Regular.9942588a.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\Rawline-Medium.a8658dc2.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\scuffed.2fe400e4.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\sup_splash_placeholder.4fa0eb6c.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Frontend\pickban\static\media\top_splash_placeholder.cd23577b.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-
+  <Target Name="CustomActionsAfterPublish" AfterTargets="Publish">
+    <Exec Command="cd $(SolutionDir)Overlays\ingame\&#xD;&#xA;call npm run build&#xD;&#xA;if not exist $(SolutionDir)Publish\Frontend\ mkdir $(SolutionDir)Publish\Frontend\&#xD;&#xA;cd $(SolutionDir)Publish\Frontend&#xD;&#xA;md ingame&#xD;&#xA;md pickban&#xD;&#xA;xcopy &quot;$(SolutionDir)Overlays\ingame\dist&quot; &quot;$(SolutionDir)Publish\Frontend\ingame&quot; /E/H&#xD;&#xA;xcopy &quot;$(SolutionDir)Overlays\pickban&quot; &quot;$(SolutionDir)Publish\Frontend\pickban&quot; /E/H&#xD;&#xA;cd $(SolutionDir)Publish&#xD;&#xA;&quot;C:\Program Files\7-Zip\7z.exe&quot; a LeagueBroadcast-1.x.x.zip *&#xD;&#xA; if exist &quot;$(SolutionDir)Releases\LeagueBroadcast-1.x.x.zip&quot; del &quot;$(SolutionDir)Releases\LeagueBroadcast-1.x.x.zip&quot;&#xD;&#xA;move LeagueBroadcast-1.x.x.zip $(SolutionDir)Releases&#xD;&#xA;rmdir /S /Q $(SolutionDir)Publish\&#xD;&#xA;&#xD;&#xA;" />
+  </Target>
 </Project>
