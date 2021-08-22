@@ -136,7 +136,13 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info($"Connected to League Client in {stopwatch.ElapsedMilliseconds} ms");
 
             State.LeagueConntected();
-            LocalGameVersion = GetLocalGameVersion(await api.RequestHandler.GetResponseAsync<string>(HttpMethod.Get, "/lol-patch/v1/game-version"));
+
+            string res = null;
+            while(res is null)
+            {
+                res = await api.RequestHandler.GetResponseAsync<string>(HttpMethod.Get, "/lol-patch/v1/game-version");
+            }
+            LocalGameVersion = GetLocalGameVersion(res);
             LoadOffsets();
 
             return api;
