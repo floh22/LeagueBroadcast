@@ -39,7 +39,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 Log.Info("Offset Updates disabled. Cannot automatically get current values");
                 return new FarsightConfig();
             }
-            string remoteVersion = forcedVersion == "" ? DataDragon.version.Champion : forcedVersion;
+            string remoteVersion = forcedVersion == "" ? AppStateController.LocalGameVersion : forcedVersion;
             var offsetUri = $"{ConfigController.Component.App.OffsetRepository}{ConfigController.Component.App.OffsetPrefix}{remoteVersion}.json";
 
             Log.Info($"Fetching new offsets from {offsetUri}");
