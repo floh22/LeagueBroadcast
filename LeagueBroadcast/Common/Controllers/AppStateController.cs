@@ -174,7 +174,8 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 if(!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
                 {
-                    ChampSelectStart?.Invoke(this, EventArgs.Empty);
+                    return;
+                    //ChampSelectStart?.Invoke(this, EventArgs.Empty);
                 }
                 BroadcastController.Instance.PBController.ApplyNewState(e);
             }  

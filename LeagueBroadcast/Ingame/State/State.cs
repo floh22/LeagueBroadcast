@@ -295,7 +295,8 @@ namespace LeagueBroadcast.Ingame.State
             var outList = new Dictionary<double, float>();
 
             //For each point in time, add gold difference at time to graph
-            int dataPoints = blueTeam.players[0].goldHistory.Count;
+            Team teamToCount = blueTeam.players.Count > 0 ? blueTeam : redTeam;
+            int dataPoints = teamToCount.players[0].goldHistory.Count;
             if(dataPoints < 2)
             {
                 return new Dictionary<double, float>() {
@@ -308,7 +309,7 @@ namespace LeagueBroadcast.Ingame.State
                 //Sum gold values for all players in respective team and get point in time
                 float blueGold = blueTeam.GetGold(i);
                 float redGold = redTeam.GetGold(i);
-                double time = blueTeam.players[0].goldHistory.Keys.ElementAt(i);
+                double time = teamToCount.players[0].goldHistory.Keys.ElementAt(i);
                 float goldDiff = blueGold - redGold;
                 if(i == 0 || i == dataPoints - 1 || Math.Abs(outList.Last().Value - goldDiff) > 500 || time - outList.Last().Key > 15)
                 {
