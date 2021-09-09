@@ -44,6 +44,11 @@ namespace LeagueBroadcast.Common.Controllers
             {
 
                 Timer raw = await AppStateController.GetTimer();
+                if (raw is null)
+                {
+                    return;
+                }
+
                 State.data.timer = Converter.ConvertTimer(raw);
                 State.TriggerUpdate();
             }

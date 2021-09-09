@@ -30,7 +30,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
         this.MaskG.fillRect(cfg.MaskPosition.X, cfg.MaskPosition.Y, cfg.MaskSize.X, cfg.MaskSize.Y);
         this.Mask = this.MaskG.createGeometryMask();
 
-        this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, 'objectiveBg');
+        this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, type === 'baron'? 'objectiveBg' : 'objectiveBgLeft');
         this.BackgroundBox.setScale(cfg.Scale);
         this.visualComponents.push(this.BackgroundBox);
 

@@ -174,7 +174,8 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 if(!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
                 {
-                    ChampSelectStart?.Invoke(this, EventArgs.Empty);
+                    return;
+                    //ChampSelectStart?.Invoke(this, EventArgs.Empty);
                 }
                 BroadcastController.Instance.PBController.ApplyNewState(e);
             }  
@@ -209,6 +210,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public static async Task<Timer> GetTimer()
         {
+            //Crash here
             return JsonConvert.DeserializeObject<Timer>(await Instance.ClientAPI.RequestHandler.GetJsonResponseAsync(HttpMethod.Get, $"/lol-champ-select/v1/session/timer"));
         }
 
