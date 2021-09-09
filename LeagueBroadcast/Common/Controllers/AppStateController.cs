@@ -210,6 +210,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         public static async Task<Timer> GetTimer()
         {
+            //Crash here
             return JsonConvert.DeserializeObject<Timer>(await Instance.ClientAPI.RequestHandler.GetJsonResponseAsync(HttpMethod.Get, $"/lol-champ-select/v1/session/timer"));
         }
 
