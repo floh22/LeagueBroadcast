@@ -193,7 +193,6 @@ export default class InhibitorVisual extends VisualElement {
     UpdateValues(newValues: InhibitorInfo): void {
         if (newValues === undefined || newValues === null || (newValues.Inhibitors.every(i => i.timeLeft <= 0) && this.Config!.HideWhenNoneDestroyed)) {
             if (this.isActive) {
-                this.isActive = false;
                 this.Stop();
             }
             return;
