@@ -172,10 +172,13 @@ namespace LeagueBroadcast.Common.Controllers
         {
             if (ConfigController.Component.PickBan.IsActive)
             {
-                if(!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
+                if(BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) || BroadcastController.CurrentLeagueState.HasFlag(LeagueState.PostGame))
                 {
                     return;
-                    //ChampSelectStart?.Invoke(this, EventArgs.Empty);
+                }
+                if(!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
+                {
+                    ChampSelectStart?.Invoke(this, EventArgs.Empty);
                 }
                 BroadcastController.Instance.PBController.ApplyNewState(e);
             }  

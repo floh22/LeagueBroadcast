@@ -17,6 +17,9 @@ namespace LeagueBroadcast.Common.Controllers
         private static long lastTime = -1;
         private static System.Timers.Timer HeartbeatTimer;
 
+        private readonly int maxFailedAttempts = 5;
+        private int failedAttempts = 0;
+
         public PickBanController()
         {
             if (ConfigController.Component.PickBan.IsActive)
@@ -46,6 +49,13 @@ namespace LeagueBroadcast.Common.Controllers
                 Timer raw = await AppStateController.GetTimer();
                 if (raw is null)
                 {
+                    Log.Warn("Tried retrieving pick ban timer while not active. Ignoring");
+
+                    if(failedAttempts++ == maxFailedAttempts)
+                    {
+                        BroadcastController.Instance.ToTick.Remove(this);
+                        failedAttempts = 0;
+                    }
                     return;
                 }
 
