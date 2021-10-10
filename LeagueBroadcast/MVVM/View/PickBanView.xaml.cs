@@ -65,10 +65,12 @@ namespace LeagueBroadcast.MVVM.View
         private void ScoreChanged(object sender, TextChangedEventArgs e)
         {
             var textBox = sender as TextBox;
+            int value;
+            bool isInt = Int32.TryParse(textBox.Text, out value);
             TeamConfig config = (string)textBox.Tag == "Blue" ? ConfigController.PickBan.frontend.blueTeam : ConfigController.PickBan.frontend.redTeam;
-            if (textBox.Text != "" + config.score)
+            if (textBox.Text != "" + config.score && isInt)
             {
-                config.score = Int32.Parse(textBox.Text);
+                config.score = value;
                 ConfigController.PickBan.UpdateFile();
             }
         }
