@@ -87,6 +87,8 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('dragon_Cloud', 'frontend/images/dragons/cloudLarge.png');
         this.load.image('dragon_Ocean', 'frontend/images/dragons/oceanLarge.png');
         this.load.image('dragon_Elder', 'frontend/images/dragons/elderLarge.png');
+        this.load.image('dragon_Hextech', 'frontend/images/dragons/hextechLarge.png');
+        this.load.image('dragon_Chemtech', 'frontend/images/dragons/chemtechLarge.png');
 
         //Inhibitor
         this.load.svg('top', 'frontend/images/lanes/top.svg');

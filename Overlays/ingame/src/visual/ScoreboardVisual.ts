@@ -369,6 +369,7 @@ export default class ScoreboardVisual extends VisualElement {
             this.RedIconSprite = null;
         }
 
+        //Update dragons for both teams
         if (this.isActive && !this.isShowing) {
             this.UpdateDragons(scoreConfig.BlueTeam.Dragons, false);
             this.UpdateDragons(scoreConfig.RedTeam.Dragons, true);

@@ -272,8 +272,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 {
 
                     //Convert types to API friendly names
+                    //Hextech and Chemtech do not need conversion
                     string type = e.Other.Remove(0, 11).Replace("Air", "Cloud", StringComparison.OrdinalIgnoreCase).Replace("Earth", "Mountain", StringComparison.OrdinalIgnoreCase).Replace("Water", "Ocean", StringComparison.OrdinalIgnoreCase);
-
 
                     IngameController.DragonTaken.Invoke(this, new ObjectiveTakenArgs(type, GetTeam(e), Ingame.gameData.gameTime));
                     return;
