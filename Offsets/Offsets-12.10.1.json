@@ -8,10 +8,10 @@
     "MapNodeObject": "0x14"
   },
   "ObjectOffsets": {
-    "ID": "0x20",
-    "NetworkID": "0xcc",
-    "Team": "0x4c",
-    "Pos": "0xF0",
+    "ID": "0x8",
+    "NetworkID": "0xB4",
+    "Team": "0x34",
+    "Pos": "0x1DC",
     "Mana": "0x29C",
     "MaxMana": "0x2AC",
     "Health": "0xD9C",
