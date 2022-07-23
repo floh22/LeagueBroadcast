@@ -1,3 +1,6 @@
+Quick update regarding updates. I currently have COVID and am in quarantine without access to tools to update the project. I will not be able to update to 12.13 and 12.14 offsets may be delayed.
+
+
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
