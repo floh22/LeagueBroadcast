@@ -1,5 +1,3 @@
-Quick update regarding updates. I currently have COVID and am in quarantine without access to tools to update the project. I will not be able to update to 12.13 and 12.14 offsets may be delayed.
-
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -27,6 +25,12 @@ Currently includes support for champion select and ingame overlays, with post ga
 League Broadcast uses Memory Reading to get information that the Riot API does not expose. Riot's policy in the past has been to allow passive memory reading, which is exactly what this program does, but this may change at any time.
 Use League Broadcast at your own risk. Anti Cheat does not ban for programs used during spectate, but it does however run while in a live game. Having League Broadcast open
 during a live (non-spectate) game may lead to account bans incase checks to stop it from running fail for some reason.
+
+## Maintenance Status
+30.07.2022
+Due to multiple issues in my schedule and life, I currently do not have the time or energy to further develop this project.
+Offsets will continue to be updated, and breaking bugs will be fixed.
+If you wish to help maintain this project, feel free to reach out on twitter.
 
 ## Features
 
