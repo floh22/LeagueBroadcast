@@ -1,7 +1,7 @@
 {
   "GameVersion": "12.19.1",
   "GameOffsets": {
-    "Manager": "0x189E318",
+    "Manager": "0x189E25C",
     "MapCount": "0x2c",
     "MapRoot": "0x28",
     "MapNodeNetId": "0x10",
