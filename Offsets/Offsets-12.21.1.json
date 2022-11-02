@@ -1,0 +1,30 @@
+{
+  "GameVersion": "12.21.1",
+  "GameOffsets": {
+    "Manager": "0x18BBEA8",
+    "MapCount": "0x2c",
+    "MapRoot": "0x28",
+    "MapNodeNetId": "0x10",
+    "MapNodeObject": "0x14"
+  },
+  "ObjectOffsets": {
+    "ID": "0x8",
+    "NetworkID": "0xB4",
+    "Team": "0x34",
+    "Pos": "0x1DC",
+    "Mana": "0x29C",
+    "MaxMana": "0x2AC",
+    "Health": "0xE74",
+    "MaxHealth": "0xE84",
+    "CurrentGold": "0x1BA8",
+    "GoldTotal": "0x1BB8",
+    "EXP": "0x357C",
+    "Name": "0x2DA4",
+    "ItemList": "0x0",
+    "SpellBook": "0x0",
+    "ItemListItem": "0x0",
+    "ItemInfo": "0x0",
+    "ItemInfoId": "0x0"
+  },
+  "FileVersion": "1.0"
+}
