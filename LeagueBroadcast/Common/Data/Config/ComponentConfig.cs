@@ -18,7 +18,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "1.3";
+        public static new string CurrentVersion => "1.4";
 
         public DataDragonConfig DataDragon;
 
@@ -62,10 +62,11 @@ namespace LeagueBroadcast.Common.Data.Config
                 DataDragon = new DataDragonConfig()
                 {
                     MinimumGoldCost = 2000,
-                    Region = "euw",
+                    Region = "global",
                     Locale = "en_US",
                     Patch = "latest",
-                    CDN = "https://ddragon.leagueoflegends.com/cdn"
+                    CDN = "https://ddragon.leagueoflegends.com/cdn",
+                    CDragonRaw = "https://raw.communitydragon.org"
                 },
                 PickBan = new PickBanConfig()
                 {
@@ -195,7 +196,7 @@ namespace LeagueBroadcast.Common.Data.Config
                 return true;
             }
 
-            //1.2 to Current
+            //1.2 to 1.3
             if (oldVersion.Equals("1.2"))
             {
                 Task t = new(async () =>
@@ -216,6 +217,25 @@ namespace LeagueBroadcast.Common.Data.Config
                 });
                 t.Start();
                 return true;
+            }
+
+
+            if(oldVersion.Equals("1.3"))
+            {
+                Task t = new(async () =>
+                {
+                    await Task.Delay(100);
+                    //1.3 to 1.4
+
+                    FileVersion = CurrentVersion;
+
+                    DataDragon.Region = "global";
+                    DataDragon.CDragonRaw = "https://raw.communitydragon.org";
+
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                    Info($"Updated Component config from v1.3 to v{CurrentVersion}");
+                });
+                t.Start();
             }
             return true;
         }
@@ -240,6 +260,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public string Region;
         public string Locale;
         public string CDN;
+        public string CDragonRaw;
         public string Patch;
     }
 

@@ -1,6 +1,7 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.Provider;
+using LeagueBroadcast.Common.Data.RIOT;
 using LeagueBroadcast.Farsight;
 using LeagueBroadcast.Farsight.Object;
 using LeagueBroadcast.Ingame.Data.LBH;
@@ -143,7 +144,7 @@ namespace LeagueBroadcast.Ingame.State
 
                 //New item Events
                 var newItems = newP.items.ToList().Where(i => !p.items.ToList().Any(l => i.itemID == l.itemID));
-                newItems = newItems.Where(i => DataDragon.Instance.FullIDs.Contains(i.itemID));
+                newItems = newItems.Where(i => CDragonItem.Full.Select(item => item.ID).Contains(i.itemID));
 
                 newItems.ToList().ForEach(newI => controller.OnItemCompleted(new ItemCompletedEventArgs(p.id, DataDragon.Instance.GetItemById(newI.itemID))));
 

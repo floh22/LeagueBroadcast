@@ -1,9 +1,9 @@
-﻿using LeagueBroadcast.Common;
-using Newtonsoft.Json;
-using System;
-using System.Net.Http;
+﻿using System;
 using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text.Json;
+using LeagueBroadcast.Common;
 
 namespace LeagueBroadcast.Update.Http
 {
@@ -14,7 +14,19 @@ namespace LeagueBroadcast.Update.Http
 
         private HttpClient Client { get; }
 
-        public RestRequester(TimeSpan requestTimeout, HttpClientHandler? clientHandler = null)
+        private static RestRequester? _instance;
+        private static RestRequester Instance => GetInstance();
+
+        private static RestRequester GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new RestRequester(TimeSpan.FromMilliseconds(500), null);
+            }
+            return _instance;
+        }
+
+        private RestRequester(TimeSpan requestTimeout, HttpClientHandler? clientHandler = null)
         {
             Client = new HttpClient(clientHandler ?? new HttpClientHandler())
             {
@@ -27,18 +39,37 @@ namespace LeagueBroadcast.Update.Http
             };
         }
 
-        public async Task<TResultType> GetAsync<TResultType>(string url)
+        public static async Task<TResultType?> GetAsync<TResultType>(string url)
         {
             try
             {
-                var response = await Client.GetAsync(url).ConfigureAwait(false);
+                var response = await Instance.Client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
                     Log.Warn($"Request to {url} ({nameof(TResultType)} = {typeof(TResultType).Name}) returned status code {response.StatusCode}.");
-                    return default!;
+                    return default;
                 }
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<TResultType>(json);
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<TResultType>(json)!;
+            }
+            catch (TaskCanceledException)
+            {
+                Log.Warn($"Request to {url} caused a {nameof(TaskCanceledException)}. This is usually an indicator for a timeout.");
+                return default;
+            }
+        }
+
+        public static async Task<string> GetRaw(string url)
+        {
+            try
+            {
+                HttpResponseMessage? response = await Instance.Client.GetAsync(url).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Log.Warn($"Request to {url} returned status code {response.StatusCode}.");
+                    throw new HttpRequestException(response.StatusCode + "");
+                }
+                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {

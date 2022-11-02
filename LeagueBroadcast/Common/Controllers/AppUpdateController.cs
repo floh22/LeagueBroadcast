@@ -27,7 +27,7 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info("[Update] Checking for Updates");
             ctx.Status = "Checking for Updates";
 
-            var latestRelease = await GitHubRemoteEndpoint.Instance.GetLatestReleaseAsync(config.UpdateRepositoryName);
+            var latestRelease = await GitHubRemoteEndpoint.GetLatestReleaseAsync(config.UpdateRepositoryName);
 
             if (latestRelease == null)
             {
