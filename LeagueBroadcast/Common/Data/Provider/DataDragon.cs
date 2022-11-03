@@ -145,12 +145,19 @@ namespace LeagueBroadcast.Common.Data.Provider
             GetInstance()._startupContext.Status = "Retrieving latest patch info";
             Log.Info("[CDrag] Retrieving latest patch info");
 
-            string? rawCDragVersionResponse = JsonDocument.Parse(await RestRequester.GetRaw($"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json")).RootElement.GetProperty("version").GetString();
+            string? rawCDragVersionResponse = JsonDocument.Parse(await RestRequester.GetRaw($"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json")??"").RootElement.GetProperty("version").GetString();
             if (rawCDragVersionResponse is null)
             {
+                Log.Warn($"[CDrag] {$"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json"} unreachable. Is your internet connection working?");
                 Log.Warn($"[CDrag] Could not get latest CDragon version. Falling back to latest DDrag version");
-                using JsonDocument response = JsonDocument.Parse(await RestRequester.GetRaw($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json"), new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
+                using JsonDocument response = JsonDocument.Parse(await RestRequester.GetRaw($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json")??"", new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
                 rawCDragVersionResponse = response.RootElement.GetProperty("n").GetProperty("champion").ToString();
+
+                if(rawCDragVersionResponse is null)
+                {
+                    Log.Warn($"[CDrag] DDrag not reachable. Assuming internet connection issues. Cannot retrieve data");
+                    return;
+                }
             }
             StringVersion localVersion = StringVersion.Parse(rawCDragVersionResponse.Split("+")[0]);
             version.localVersion = localVersion;
