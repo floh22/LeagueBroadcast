@@ -206,6 +206,11 @@ namespace LeagueBroadcast.Common.Data.Provider
 
             bool result = await VerifyLocalCache(version.localVersion);
 
+            if(!result)
+            {
+                Log.Warn("[CDrag] Some downloads failed. Not all assets may be available");
+            }
+
             FinishLoading?.Invoke(null, EventArgs.Empty);
         }
 
@@ -247,7 +252,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             DownloadMissingSummonerSpellCache(spell, failedDownloads);
 
             s.Stop();
-            $"[CDrag] Verified local cache in {s.ElapsedMilliseconds}ms".Debug();
+            Log.Info($"[CDrag] Verified local cache in {s.ElapsedMilliseconds}ms");
 
             if (_toDownload == toCache)
             {
@@ -255,12 +260,9 @@ namespace LeagueBroadcast.Common.Data.Provider
                 return true;
             }
 
-            Log.Info($"[CDrag] Downloaded {_toDownload} assets from CommunityDragon");
+            Log.Info($"[CDrag] Downloaded {_downloaded} assets from CommunityDragon");
 
-            if (_downloaded == _toDownload)
-            {
-                _ = _downloadComplete.TrySetResult(failedDownloads.IsEmpty);
-            }
+            _ = _downloadComplete.TrySetResult(failedDownloads.IsEmpty);
 
             bool updateResult = await _downloadComplete.Task;
             Log.Info($"[CDrag] Downloaded missing assets");
