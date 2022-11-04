@@ -127,7 +127,7 @@
                             <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Text="Team Name" FontSize="20" Foreground="White" FontWeight="Light" />
+                            <TextBlock Text="Blue Team Name" FontSize="20" Foreground="White" FontWeight="Light" />
                             <TextBox Tag="Blue" TextChanged="TeamNameChanged" Text="{Binding Name}" Template="{StaticResource LostFocusTextBox}" Margin="10,5,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">
@@ -218,7 +218,7 @@
                             <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Text="Team Name" FontSize="20" Foreground="White" FontWeight="Light" />
+                            <TextBlock Text="Red Team Name" FontSize="20" Foreground="White" FontWeight="Light" />
                             <TextBox Tag="Red" TextChanged="TeamNameChanged" Text="{Binding Name}" Template="{StaticResource LostFocusTextBox}" Margin="10,5,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">

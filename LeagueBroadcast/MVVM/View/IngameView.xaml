@@ -112,7 +112,7 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Objectives" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Mục tiêu" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Border Grid.Row="1" 
                                 Margin="10" 
                                 Background="{Binding Path=BaronIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
@@ -154,7 +154,7 @@
                                         <RowDefinition Height="5"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="Objective Pop Ups" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="Thông báo mục tiêu" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
                                     <Border Margin="0,0,5,0" Grid.Row="2"
                                 Background="{Binding Path=ObjectiveSpawnPopUpIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
                                         <Border.InputBindings>
@@ -197,7 +197,7 @@
                                 <RowDefinition/>
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Players" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Người chơi" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Border Grid.Row="1" 
                                 Margin="10" 
                                 Background="{Binding Path=ItemsIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
@@ -265,7 +265,7 @@
                                 <RowDefinition Height="116"/>
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Teams" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Đội" Foreground="White" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Grid Grid.Row="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition />

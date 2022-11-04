@@ -266,17 +266,17 @@ namespace LeagueBroadcast.Common.Controllers
 
             if (CurrentSettings.EXP)
             {
-                gameState.stateData.infoPage = new InfoSidePage("EXP per player", PlayerOrder.MaxToMin, PlayerTab.GetEXPTabs());
+                gameState.stateData.infoPage = new InfoSidePage("TOTAL EXP", PlayerOrder.MaxToMin, PlayerTab.GetEXPTabs());
                 return;
             }
             if(CurrentSettings.PlayerGold)
             {
-                gameState.stateData.infoPage = new InfoSidePage("Player Gold", PlayerOrder.MaxToMin, PlayerTab.GetGoldTabs());
+                gameState.stateData.infoPage = new InfoSidePage("TOTAL GOLD", PlayerOrder.MaxToMin, PlayerTab.GetGoldTabs());
                 return;
             }
             if(CurrentSettings.CSPerMin)
             {
-                gameState.stateData.infoPage = new InfoSidePage("CS/min", PlayerOrder.MaxToMin, PlayerTab.GetCSPerMinTabs());
+                gameState.stateData.infoPage = new InfoSidePage("PLAYER CS/MIN", PlayerOrder.MaxToMin, PlayerTab.GetCSPerMinTabs());
                 return;
             }
         }

@@ -70,7 +70,7 @@
                                        HorizontalAlignment="Right" VerticalAlignment="Top" CheckHorizontalAlignment="Right" SwitchContentPlacement="Right"
                                        SwitchWidth="50" Margin="10,10,0,0"
                                        IsChecked="{Binding IsActive}"/>
-                <TextBlock Text="Pick Ban" Foreground="White" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                <TextBlock Text="Cấm &amp; Chọn" Foreground="White" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
             </Grid>
         </Border>
     </Grid>

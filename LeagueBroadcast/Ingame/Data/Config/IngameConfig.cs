@@ -864,7 +864,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                             Color = "rgb(230,190,138)",
                             Align = "left"
                         },
-                        Text = "GOLD DIFFERENCE SINCE START"
+                        Text = "CHÊNH LỆCH LƯỢNG TIỀN GIỮA 2 ĐỘI"
                     },
                     Graph = new GoldGraphDisplayConfig.GraphDisplayConfig()
                     {
