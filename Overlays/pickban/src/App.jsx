@@ -28,14 +28,14 @@ function App() {
         Window.PB.on('newState', state => {
             setGlobalState(state.state);
             setConfig(state.state.config);
-            console.log(state);
+            // console.log(state);
         });
 
         Window.PB.on('heartbeat', hb => {
             setConfig(hb.config);
         });
 
-        Window.PB.start();
+        Window.PB.start("ws://" + document.location.host + "/api");
         
     }, []);
 

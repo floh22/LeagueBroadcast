@@ -29,12 +29,12 @@
     transition: left 1s;
 
     &.Blue {
-      background: linear-gradient(to left, var(--color-timer) 0%, var(--color-blue) 100%);
+      background: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, var(--color-blue) 100%);
       left: -100%;
     }
 
     &.Red {
-      background: linear-gradient(to right, var(--color-timer) 0%, var(--color-red) 100%);
+      background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, var(--color-red) 100%);
       left: 100%;
     }
   }
@@ -52,14 +52,14 @@
   }
 
   &.Both {
-    background: linear-gradient(to right, var(--color-blue) 0%, var(--color-red) 100%);
+    background: linear-gradient(to right, var(--color-blue) 0%, var(--color-red) 100%)
   }
 
   .TimerChars {
     display: flex;
     justify-content: center;
 
-    margin-top: 240px;
+    margin-top: 280px;
 
     .TimerChar {
       width: 30px;

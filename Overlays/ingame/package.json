@@ -18,14 +18,15 @@
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^4.27.0",
 		"@typescript-eslint/parser": "^4.27.0",
-		"cssnano": "^4.1.10",
+		"cssnano": "^5.1.13",
 		"eslint": "^6.8.0",
 		"minimist": ">=1.2.2",
 		"parcel-plugin-clean-easy": "^1.0.2",
-		"parcel-plugin-static-files-copy": "^2.4.3",
+		"parcel-plugin-static-files-copy": "^1.2.4",
 		"typescript": "^4.3.4"
 	},
 	"dependencies": {
+		"parcel-bundler": "^1.12.5",
 		"phaser": "^3.55.2",
 		"phaser3-rex-plugins": "^1.1.53",
 		"phaser3-rex-plugins-types": "^0.1.3",

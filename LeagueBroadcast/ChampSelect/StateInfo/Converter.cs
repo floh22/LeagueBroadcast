@@ -1,8 +1,10 @@
 ﻿using LeagueBroadcast.ChampSelect.Data.DTO;
 using LeagueBroadcast.ChampSelect.Data.LCU;
+using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.DTO;
 using LeagueBroadcast.Common.Data.Provider;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,13 +86,17 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
             return countDownSec;
         }
 
-        public static string ConvertStateName(List<Data.LCU.Action> actions)
+        public static string ConvertStateName(List<Data.LCU.Action> actions, string phase)
         {
-            var currentActionIndex = actions.FindIndex(action => !action.completed);
+            if (phase == "FINALIZATION")
+                return "FINAL PHASE";
 
-            if (currentActionIndex == -1)
+            if (actions.Count == 0)
                 return "";
-            var currentAction = actions[currentActionIndex];
+
+            var currentActionIndex = actions.FindIndex(action => !action.completed);
+            var currentAction = currentActionIndex == -1 ? actions.Last() : actions[currentActionIndex];
+
             if (currentAction.type == "ban")
             {
                 if (currentActionIndex <= 6)
@@ -105,7 +111,7 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
         public static StateConversionOutput ConvertState(CurrentState state)
         {
             var lcuSession = state.session;
-            //Logging.Verbose(JsonConvert.SerializeObject(lcuSession));
+            //Log.Info(JsonConvert.SerializeObject(lcuSession));
             var flattenedActions = new List<Data.LCU.Action>();
             lcuSession.actions.ForEach(actionGroup => { actionGroup.ForEach(groupedAction => flattenedActions.Add(groupedAction)); });
 
@@ -113,7 +119,7 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
             var redTeam = ConvertTeam(new ConversionInput(lcuSession.theirTeam, flattenedActions));
 
             var timer = ConvertTimer(lcuSession.timer);
-            var stateName = ConvertStateName(flattenedActions);
+            var stateName = ConvertStateName(flattenedActions, lcuSession.timer.phase);
 
             return new StateConversionOutput() { blueTeam = blueTeam, redTeam = redTeam, timer = timer, state = stateName };
         }

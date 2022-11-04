@@ -85,7 +85,7 @@
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="10"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="2" Text="@LarsEble" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
+                        <TextBlock Grid.Row="2" Text="@hmcdat" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
                         <Image Grid.Row="2" Grid.Column="2" Height="30" Width="30" Source="../../Assets/Images/TwitterSocial.png"/>
                     </Grid>
                 </Grid>

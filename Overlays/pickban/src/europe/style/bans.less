@@ -10,9 +10,14 @@
     height: calc(var(--box-ban-height) - calc(2 * var(--border-width)));
     overflow: hidden;
     position: relative;
+    margin-right: 2px;
 
     &:first-child {
-      border: none;
+      // border: none;
+      margin-left:0px!important;
+    }
+    &:last-child {
+      margin-right:0px!important;
     }
 
     img {
@@ -39,7 +44,7 @@
   }
 }
 
-&.TeamBlue .BansBox {
+&.TeamRed .BansBox {
   flex-direction: row-reverse;
 }
 
@@ -53,12 +58,12 @@
 
 @keyframes pulsate-ban {
   0% {
-    opacity: 1; // 0.7
+    opacity: 0.8; // 0.7
   }
   50% {
     opacity: 0.3;
   }
   100% {
-    opacity: 1; // 0.7
+    opacity: 0.8; // 0.7
   }
 }

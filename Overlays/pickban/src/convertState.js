@@ -1,9 +1,14 @@
 import banImg from "./assets/ban_placeholder.svg";
-import topSplash from "./assets/top_splash_placeholder.svg";
-import jungSplash from "./assets/jung_splash_placeholder.svg";
-import midSplash from "./assets/mid_splash_placeholder.svg";
-import botSplash from "./assets/bot_splash_placeholder.svg";
-import supSplash from "./assets/sup_splash_placeholder.svg";
+// import topSplash from "./assets/top_splash_placeholder.svg";
+// import jungSplash from "./assets/jung_splash_placeholder.svg";
+// import midSplash from "./assets/mid_splash_placeholder.svg";
+// import botSplash from "./assets/bot_splash_placeholder.svg";
+// import supSplash from "./assets/sup_splash_placeholder.svg";
+import topSplash from "./assets/lhu_lol_splash.png"
+import jungSplash from "./assets/lhu_lol_splash.png"
+import midSplash from "./assets/lhu_lol_splash.png"
+import botSplash from "./assets/lhu_lol_splash.png"
+import supSplash from "./assets/lhu_lol_splash.png"
 
 const pickSplashes = [topSplash, jungSplash, midSplash, botSplash, supSplash];
 

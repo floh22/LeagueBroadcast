@@ -82,11 +82,11 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
     public class ObjectivesTabViewModel : ObservableObject
     {
-        public ControlButtonViewModel BaronTimer = new("Baron Timer", "Show Timer and Gold difference when Baron is taken", ConfigController.Component.Ingame.UseLiveEvents);
-        public ControlButtonViewModel ElderTimer = new("Elder Timer", "Show Timer and Gold difference when Elder Drake is taken", ConfigController.Component.Ingame.UseLiveEvents);
-        public ControlButtonViewModel InhibTimer = new("Inhibitor Timers", "Show Inhibitor Timers", true);
-        public ControlButtonViewModel ObjectiveSpawn = new("Spawn", "Show Spawn PopUp when an objective spawns", ConfigController.Component.Ingame.UseLiveEvents);
-        public ControlButtonViewModel ObjectiveKill = new("Kill", "Show Spawn PopUp when an objective is killed", ConfigController.Component.Ingame.UseLiveEvents);
+        public ControlButtonViewModel BaronTimer = new("Đếm ngược Bùa Baron", "Show Timer and Gold difference when Baron is taken", ConfigController.Component.Ingame.UseLiveEvents);
+        public ControlButtonViewModel ElderTimer = new("Đếm ngược Bùa Rồng", "Show Timer and Gold difference when Elder Drake is taken", ConfigController.Component.Ingame.UseLiveEvents);
+        public ControlButtonViewModel InhibTimer = new("Đếm ngược Nhà Lính", "Show Inhibitor Timers", true);
+        public ControlButtonViewModel ObjectiveSpawn = new("Xuất hiện", "Show Spawn PopUp when an objective spawns", ConfigController.Component.Ingame.UseLiveEvents);
+        public ControlButtonViewModel ObjectiveKill = new("Tiêu diệt", "Show Spawn PopUp when an objective is killed", ConfigController.Component.Ingame.UseLiveEvents);
 
         public bool BaronIsActive { get { return ConfigController.Component.Ingame.Objectives.DoBaronKill; } set { ConfigController.Component.Ingame.Objectives.DoBaronKill = value; OnPropertyChanged(); } }
         public bool ElderIsActive { get { return ConfigController.Component.Ingame.Objectives.DoDragonKill; } set { ConfigController.Component.Ingame.Objectives.DoDragonKill = value; OnPropertyChanged(); } }
@@ -177,11 +177,11 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
     public class PlayersTabViewModel : ObservableObject
     {
-        public ControlButtonViewModel Items = new("Item Notifications", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.DoItemCompleted);
-        public ControlButtonViewModel LevelUp = new("Level Up Notifications", "Show Lvl Up pop up @ lvls 6/11/16", ConfigController.Component.Ingame.DoLevelUp);
+        public ControlButtonViewModel Items = new("Thông báo Vật phẩm", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.DoItemCompleted);
+        public ControlButtonViewModel LevelUp = new("Thông báo Lên cấp", "Show Lvl Up pop up @ lvls 6/11/16", ConfigController.Component.Ingame.DoLevelUp);
         public ControlButtonViewModel EXP = new("EXP Tab", "EXP and Level per Player scoreboard", true);
         public ControlButtonViewModel PlayerGold = new("Gold Tab", "Gold per Player scoreboard", true);
-        public ControlButtonViewModel PlayerCSperMin = new("CS per Min.", "CS per Minute per Player scoreboard", true);
+        public ControlButtonViewModel PlayerCSperMin = new("CS per Min", "CS per Minute per Player scoreboard", true);
 
         public bool ItemsIsActive { get { return ConfigController.Component.Ingame.DoItemCompleted; } set { ConfigController.Component.Ingame.DoItemCompleted = value; OnPropertyChanged(); } }
         public bool LevelUpIsActive { get { return ConfigController.Component.Ingame.DoLevelUp; } set { ConfigController.Component.Ingame.DoLevelUp = value; OnPropertyChanged(); } }
@@ -269,11 +269,11 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
     public class TeamsTabViewModel : ObservableObject
     {
-        public ControlButtonViewModel Name = new("Team Names", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamNames);
-        public ControlButtonViewModel Score = new("Team Scores", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamScores);
-        public ControlButtonViewModel Icon = new("Team Icons", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamIcons);
-        public ControlButtonViewModel Gold = new("Gold Graph", "Scoreboard team gold difference graph since the start of the game", IngameController.CurrentSettings.GoldGraph);
-        public ControlButtonViewModel Scoreboard = new("Scoreboard", "Use custom scoreboard", ConfigController.Component.Ingame.UseCustomScoreboard);
+        public ControlButtonViewModel Name = new("Tên Đội", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamNames);
+        public ControlButtonViewModel Score = new("Điểm Số", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamScores);
+        public ControlButtonViewModel Icon = new("Logo Đội", "Show Item pop up over player icons when item is completed", ConfigController.Component.Ingame.Teams.DoTeamIcons);
+        public ControlButtonViewModel Gold = new("Biểu đồ Gold", "Scoreboard team gold difference graph since the start of the game", IngameController.CurrentSettings.GoldGraph);
+        public ControlButtonViewModel Scoreboard = new("Bảng tỉ số", "Use custom scoreboard", ConfigController.Component.Ingame.UseCustomScoreboard);
 
         public bool NamesIsActive { get { return ConfigController.Component.Ingame.Teams.DoTeamNames; } set{ ConfigController.Component.Ingame.Teams.DoTeamNames = value; OnPropertyChanged(); } }
         public bool ScoresIsActive { get { return ConfigController.Component.Ingame.Teams.DoTeamScores; } set { ConfigController.Component.Ingame.Teams.DoTeamScores = value; OnPropertyChanged(); } }

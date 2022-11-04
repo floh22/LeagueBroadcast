@@ -51,6 +51,7 @@
                 x:Name="LangSelector"
                 SelectedValuePath="Tag"
                 SelectionChanged="LangSelector_SelectionChanged">
+                <ComboBoxItem Tag="vn_VN" Content="Tiếng Việt"/>
                 <ComboBoxItem Tag="en_US" Content="English"/>
                 <ComboBoxItem Tag="de_DE" Content="Deutsch"/>
                 <ComboBoxItem Tag="pt_BR" Content="Português"/>

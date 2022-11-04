@@ -79,7 +79,7 @@
                 
             </StackPanel>
             <StackPanel x:Name="Navigation">
-                <RadioButton Content="Home"
+                <RadioButton Content="Trang chủ"
                              x:Name="HomeButton"
                              Height="50"
                              Foreground="White"
@@ -88,7 +88,7 @@
                              IsChecked="true"
                              Command="{Binding HomeViewCommand}"
                              />
-                <RadioButton Content="Pick Ban"
+                <RadioButton Content="Cấm &amp; Chọn"
                              x:Name="PBButton"
                              Height="50"
                              Foreground="White"
@@ -109,7 +109,7 @@
                              FontSize="25"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding PostGameViewCommand}"/>
-                <RadioButton Content="Settings"
+                <RadioButton Content="Cài đặt"
                              Height="50"
                              Foreground="White"
                              Grid.Row="1"
