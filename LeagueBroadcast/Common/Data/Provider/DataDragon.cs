@@ -160,6 +160,7 @@ namespace LeagueBroadcast.Common.Data.Provider
                 }
             }
             StringVersion localVersion = StringVersion.Parse(rawCDragVersionResponse.Split("+")[0]);
+            localVersion = StringVersion.Parse($"{localVersion.ToString(2)}.1");
             version.localVersion = localVersion;
             version.CDN = localVersion.ToString();
             version.Champion = localVersion.ToString();
