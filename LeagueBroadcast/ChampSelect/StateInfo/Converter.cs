@@ -23,9 +23,9 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
                 var pick = new Pick(cell.cellId);
 
                 var spell1 = DataDragon.Instance.GetSummonerById(cell.spell1Id);
-                pick.spell1 = new SummonerSpell() { id = cell.spell1Id + "", icon = spell1 != null ? spell1.icon : "" };
+                pick.spell1 = new SummonerSpell() { ID = cell.spell1Id , IconPath = spell1 != null ? spell1.Icon : "" };
                 var spell2 = DataDragon.Instance.GetSummonerById(cell.spell2Id);
-                pick.spell2 = new SummonerSpell() { id = cell.spell2Id + "", icon = spell2 != null ? spell2.icon : "" };
+                pick.spell2 = new SummonerSpell() { ID = cell.spell2Id , IconPath = spell2 != null ? spell2.Icon : "" };
 
                 var champion = DataDragon.Instance.GetChampionById(cell.championId);
                 pick.champion = champion;

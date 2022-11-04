@@ -12,9 +12,35 @@ using Newtonsoft.Json;
 using LeagueBroadcast.Common.Data.DTO;
 using LeagueBroadcast.Common.Data.RIOT;
 using System.Threading;
+using Swan.Logging;
+using LeagueBroadcast.Common.Utils;
+using LeagueBroadcast.ChampSelect.Data.DTO;
+using LeagueBroadcast.Update.Http;
+using System.Text.Json;
+using LeagueBroadcast.Common.Data.Config;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace LeagueBroadcast.Common.Data.Provider
 {
+    public class FileLoadProgressEventArgs
+    {
+        public string FileName { get; set; } = "";
+
+        public string Task { get; set; } = "";
+        public int Completed { get; set; }
+        public int Total { get; set; }
+
+
+        public FileLoadProgressEventArgs(string fileName, string task, int completed, int total)
+        {
+            FileName = fileName;
+            Task = task;
+            Completed = completed;
+            Total = total;
+        }
+    }
+
     class DataDragon : ObservableObject
     {
         public static readonly string currentDir = Directory.GetCurrentDirectory();
@@ -24,30 +50,24 @@ namespace LeagueBroadcast.Common.Data.Provider
         public static GameVersion version;
 
 
-        public List<int> FullIDs;
+
+        private static TaskCompletionSource<bool>? _downloadComplete;
+
+        private static int _toDownload, _downloaded;
+        private static int IncrementToDownload() => Interlocked.Increment(ref _toDownload);
+        private static int IncrementToDownload(int count) => Interlocked.Add(ref _toDownload, count);
+        private static int IncrementDownloaded() => Interlocked.Increment(ref _downloaded);
+        private static int IncrementDownloaded(int count) => Interlocked.Add(ref _downloaded, count);
 
         public static EventHandler FinishLoading, StartLoading;
-
-        public static EventHandler FileDownloadComplete;
-        public static int ToDownload;
-
-        public static void IncrementToDownload()
-        {
-            Interlocked.Increment(ref ToDownload);
-        }
-
-        public static void IncrementToDownload(int val)
-        {
-            Interlocked.Add(ref ToDownload, val);
-        }
+        public static EventHandler<FileLoadProgressEventArgs>? FileDownloadComplete { get; set; }
 
 
-        private StartupViewModel _startupContext = (StartupViewModel) BroadcastController.Instance.Startup.DataContext;
-        private int maxTasks = 0;
-        private int progress = 0;
+        private StartupViewModel _startupContext = (StartupViewModel)BroadcastController.Instance.Startup.DataContext;
 
         public struct GameVersion
         {
+            public StringVersion localVersion;
             public string Version;
             public string Champion;
             public string Item;
@@ -73,9 +93,9 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private DataDragon()
         {
-            
-            Log.Info("DataDragon Provider Init");
-            _startupContext.Status = "DataDragon Init";
+
+            Log.Info("[CDrag] CommunityDragon Provider Init");
+            _startupContext.Status = "CommunityDragon Init";
             version = new GameVersion
             {
                 Version = ConfigController.Component.DataDragon.Patch,
@@ -83,464 +103,353 @@ namespace LeagueBroadcast.Common.Data.Provider
 
             };
 
-            FullIDs = new List<int>();
 
             StartLoading?.Invoke(this, EventArgs.Empty);
             if (version.Version == "latest")
             {
-                Log.Info("Getting latest versions from dataDragon");
-                new Task(() => {
-                    InitLatest();
+                Log.Info("[CDrag] Getting latest versions");
+
+                new Task(async () =>
+                {
+                    await GetLatestGameVersion();
+                    await Init();
                 }).Start();
             }
             else
             {
+
                 Log.Info($"Using version from configuration: {version.Version}");
                 version.Champion = version.Version;
                 version.Item = version.Version;
                 version.Summoner = version.Version;
                 new Task(() => { Init(); }).Start();
-            }
-        }
 
-        private async void InitLatest()
-        {
-            _startupContext.Status = "Retrieving latest patch info";
-            Log.Info("Retrieving latest patch info");
-            dynamic riotVersion = JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json"));
-            version.CDN = riotVersion.cdn;
-            version.Champion = riotVersion.n.champion;
-            version.Item = riotVersion.n.item;
-            version.Summoner = riotVersion.n.summoner;
 
-            var oldPatch = ConfigController.PickBan.frontend.patch;
-            ConfigController.PickBan.frontend.patch = version.Champion;
-            if (oldPatch != version.Champion)
-            {
-                Log.Info($"New patch {version.Champion} detected");
-                ConfigController.UpdateConfigFile(ConfigController.PickBan);
-            }
+                Log.Info($"[CDrag] Using version from configuration: {version.Version}");
 
-            Init();
-        }
-
-        private async void Init()
-        {
-            Log.Info($"Champion: {version.Champion}, Item: {version.Item}, CDN: {version.CDN}");
-
-            Champion.Champions = new List<Champion>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Champion}/data/{ConfigController.Component.DataDragon.Locale}/champion.json")).data.ToObject<Dictionary<string, Champion>>().Values);
-            Log.Info($"Loaded {Champion.Champions.Count} champions");
-
-            SummonerSpell.SummonerSpells = new List<SummonerSpell>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/{ConfigController.Component.DataDragon.Locale}/summoner.json")).data.ToObject<Dictionary<string, SummonerSpell>>().Values);
-            Log.Info($"Loaded {SummonerSpell.SummonerSpells.Count} summoner spells");
-
-            List<KeyValuePair<int, ItemData>> rawItemData = new List<KeyValuePair<int, ItemData>>(JsonConvert.DeserializeObject<dynamic>(await DataDragonUtils.GetAsync($"{version.CDN}/{version.Item}/data/{ConfigController.Component.DataDragon.Locale}/item.json")).data.ToObject<Dictionary<int, ItemData>>());
-            Log.Info($"Detected {rawItemData.Count} items");
-
-            rawItemData.ForEach(kvPair => {
-                ItemData itemData = kvPair.Value;
-                itemData.itemID = kvPair.Key;
-                if (itemData.gold.total >= ConfigController.Component.DataDragon.MinimumGoldCost || itemData.specialRecipe != 0)
+                new Task(async () =>
                 {
-                    ItemData.Items.Add(itemData);
-                    FullIDs.Add(itemData.itemID);
+                    if (!StringVersion.TryParse(version.Version, out StringVersion? requestedPatch))
+                    {
+                        "[CDrag] Could not read requested game version. Falling back to latest".Warn();
+                        await GetLatestGameVersion();
+                    }
+                    await Init();
+                }).Start();
+            }
+        }
+
+
+        private static async Task GetLatestGameVersion()
+        {
+            GetInstance()._startupContext.Status = "Retrieving latest patch info";
+            Log.Info("[CDrag] Retrieving latest patch info");
+
+            string? rawCDragVersionResponse = JsonDocument.Parse(await RestRequester.GetRaw($"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json")??"").RootElement.GetProperty("version").GetString();
+            if (rawCDragVersionResponse is null)
+            {
+                Log.Warn($"[CDrag] {$"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json"} unreachable. Is your internet connection working?");
+                Log.Warn($"[CDrag] Could not get latest CDragon version. Falling back to latest DDrag version");
+                using JsonDocument response = JsonDocument.Parse(await RestRequester.GetRaw($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json")??"", new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
+                rawCDragVersionResponse = response.RootElement.GetProperty("n").GetProperty("champion").ToString();
+
+                if(rawCDragVersionResponse is null)
+                {
+                    Log.Warn($"[CDrag] DDrag not reachable. Assuming internet connection issues. Cannot retrieve data");
+                    return;
                 }
-            });
+            }
+            StringVersion localVersion = StringVersion.Parse(rawCDragVersionResponse.Split("+")[0]);
+            localVersion = StringVersion.Parse($"{localVersion.ToString(2)}.1");
+            version.localVersion = localVersion;
+            version.CDN = localVersion.ToString();
+            version.Champion = localVersion.ToString();
+            version.Item = localVersion.ToString();
+            version.Summoner = localVersion.ToString();
 
-            Log.Info($"Loaded {ItemData.Items.Count} full items");
+            Log.Info($"[CDrag] Using live patch {version.CDN} on platform {ConfigController.Component.DataDragon.Region}");
+            Log.Info($"{localVersion.ToString(2)}, {GetLatestLocalPatch().ToString(2)}");
 
-            //Download all needed champion, item, and summoner spell data
-            await CheckLocalCache();
-
-            FinishLoading.Invoke(this, EventArgs.Empty);
-
+            if (StringVersion.Parse(localVersion.ToString(2)) > StringVersion.Parse(GetLatestLocalPatch().ToString(2)))
+            {
+                Log.Info($"[CDrag] New patch {version.CDN} detected");
+            }
         }
 
-        public Champion GetChampionById(int champID)
+
+        private static StringVersion GetLatestLocalPatch()
         {
-            var champData = Champion.Champions.Find(c => c.key == champID);
-            if (champData != null)
+            string patchDir = Path.Combine(currentDir, "Cache");
+            if (Directory.Exists(patchDir))
             {
-                DataDragonUtils.ExtendChampionLocal(champData, version);
+                $"Found cache folder".Debug();
+                return Directory.GetDirectories(patchDir).Select(Path.GetFileName).Where(dir => dir!.Count(c => c == '.') == 2).Select(dir => StringVersion.Parse(dir)).Max() ?? StringVersion.Zero;
             }
 
-            return champData;
+            return new(0, 0, 0);
         }
 
-        public SummonerSpell GetSummonerById(int summonerID)
+        private static async Task Init()
         {
-            var summonerData = SummonerSpell.SummonerSpells.Find(s => s.key == summonerID);
-            if (summonerData != null)
-            {
-                DataDragonUtils.ExtendSummonerLocal(summonerData, version);
-            }
 
-            return summonerData;
+            CDragonChampion.All = (await RestRequester.GetAsync<HashSet<CDragonChampion>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-summary.json")).Where(c => c.ID > 0).ToHashSet();
+            Log.Info($"[CDrag] Loaded {CDragonChampion.All.Count} champions");
+
+            SummonerSpell.All = await RestRequester.GetAsync<HashSet<SummonerSpell>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/summoner-spells.json");
+            Log.Info($"[CDrag] Loaded {SummonerSpell.All.Count} summoner spells");
+
+            CDragonItem.All = await RestRequester.GetAsync<HashSet<CDragonItem>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/items.json");
+            Log.Info($"[CDrag] Loaded {CDragonItem.All.Count} items");
+
+            CDragonItem.Full = CDragonItem.All.Where(item => item.PriceTotal > ConfigController.Component.DataDragon.MinimumGoldCost).ToHashSet();
+            Log.Info($"[CDrag] Loaded {CDragonItem.Full.Count} full items");
+
+            bool result = await VerifyLocalCache(version.localVersion);
+
+            FinishLoading?.Invoke(null, EventArgs.Empty);
         }
 
-        public ItemData GetItemById(int itemID)
+        private static async Task<bool> VerifyLocalCache(StringVersion currentPatch)
         {
-            var itemData = ItemData.Items.Find(i => i.itemID == itemID);
-            if (itemData != null)
-            {
-                DataDragonUtils.ExtendItemLocal(itemData, version);
-            }
+            GetInstance()._startupContext.Status = "Verifying local cache";
 
-            return itemData;
-        }
+            _downloadComplete = new TaskCompletionSource<bool>();
 
-        public async Task<bool> CheckLocalCache()
-        {
-            _startupContext.Status = "Checking Cache";
-            Log.Info("Checking Local Cache");
-
-            int total = 0;
-            FileDownloadComplete += (s, e) => {
-                Interlocked.Increment(ref total);
-            };
-
-            var patch = version.Champion;
-            var dlTasks = new List<Task>();
-
-            string path = currentDir;
-            string cache = path + "/Cache";
-            string patchFolder = cache + "/" + ((string)patch);
+            currentPatch = StringVersion.Parse($"{currentPatch.ToString(2)}.1");
+            string cache = currentDir + "/Cache";
+            string patchFolder = cache + $"/{currentPatch}";
             string champ = patchFolder + "/champion";
             string item = patchFolder + "/item";
             string spell = patchFolder + "/spell";
 
-            maxTasks = Champion.Champions.Count * 4 + ItemData.Items.Count + SummonerSpell.SummonerSpells.Count;
+            _ = Directory.CreateDirectory(cache);
+            _ = Directory.CreateDirectory(patchFolder);
+            _ = Directory.CreateDirectory(champ);
+            _ = Directory.CreateDirectory(item);
+            _ = Directory.CreateDirectory(spell);
 
-            if (!Directory.Exists(cache))
+            GetInstance()._startupContext.Status = "Yeeting old caches onto Dominion";
+            Directory.EnumerateDirectories(cache).Where(d => StringVersion.TryParse(d.Split("/")[^1].Split("\\")[^1], out StringVersion? dirVersion) && dirVersion < currentPatch).ToList().ForEach(dir =>
             {
-                Directory.CreateDirectory(cache);
-            }
+                new DirectoryInfo(dir).Empty();
+                Directory.Delete(dir);
+                Log.Info($"Removed Patch Cache {dir}");
+            });
 
-            if (!Directory.Exists(patchFolder))
+            ConcurrentBag<string[]> failedDownloads = new();
+            int toCache = IncrementToDownload(CDragonChampion.All.Count * 4 + CDragonItem.All.Count + SummonerSpell.All.Count);
+
+            Stopwatch s = new();
+            s.Start();
+
+            await DownloadMissingChampionCache(champ, failedDownloads);
+            DownloadMissingItemCache(item, failedDownloads);
+            DownloadMissingSummonerSpellCache(spell, failedDownloads);
+
+            s.Stop();
+            $"[CDrag] Verified local cache in {s.ElapsedMilliseconds}ms".Debug();
+
+            if (_toDownload == toCache)
             {
-                //Delete old patch folders
-                Log.Info("Current Patch cache not detected, removing old Patch data");
-                _startupContext.Status = "Yeeting old patch onto Dominion map";
-
-                List<string> dirs = new List<string>(Directory.EnumerateDirectories(cache).Where(d => !d.Contains("TeamIcons")));
-
-                dirs.ForEach(dir => {
-                    new DirectoryInfo(dir).Empty();
-                    Directory.Delete(dir);
-                    Log.Info($"Removed Patch Cache {dir}");
-                });
-
-                Directory.CreateDirectory(patchFolder);
-            }
-            else
-            {
-                Log.Info($"Cache {patchFolder} exists already");
-                if(Directory.GetFiles(champ).Length < Champion.Champions.Count * 4)
-                {
-                    DownloadMissingChampionCache(champ);
-                }
-                if(Directory.GetFiles(item).Length < ItemData.Items.Count)
-                {
-                    DownloadMissingItemCache(item);
-                }
-                if(Directory.GetFiles(spell).Length < SummonerSpell.SummonerSpells.Count)
-                {
-                    DownloadMissingSummonerSpellCache(spell);
-                } 
+                Log.Info("Local cache up to date");
                 return true;
             }
 
-            if (!Directory.Exists(champ))
+            Log.Info($"[CDrag] Downloaded {_toDownload} assets from CommunityDragon");
+
+            if (_downloaded == _toDownload)
             {
-                Directory.CreateDirectory(champ);
+                _ = _downloadComplete.TrySetResult(failedDownloads.IsEmpty);
             }
 
-            if (!Directory.Exists(item))
+            bool updateResult = await _downloadComplete.Task;
+            Log.Info($"[CDrag] Downloaded missing assets");
+
+            return updateResult;
+        }
+
+        private static async Task DownloadMissingChampionCache(string location, ConcurrentBag<string[]> failedDownloads)
+        {
+            Log.Info("[CDrag] Verifying Champion Assets");
+
+            foreach (CDragonChampion champ in CDragonChampion.All)
             {
-                Directory.CreateDirectory(item);
-            }
+                //Check if all files for the champ exist
+                bool loadingExists = File.Exists($"{location}/{champ.Alias}_loading.png");
+                bool splashExists = File.Exists($"{location}/{champ.Alias}_splash.png");
+                bool centeredSplashExists = File.Exists($"{location}/{champ.Alias}_centered_splash.png");
+                bool squareExists = File.Exists($"{location}/{champ.Alias}_square.png");
 
-            if (!Directory.Exists(spell))
-            {
-                Directory.CreateDirectory(spell);
-            }
-
-            Log.Info("Starting download process. This could take a while");
-
-            DownloadFullItemCache(item);
-            DownloadFullChampionCache(champ);
-            DownloadFullSummonerSpellCache(spell);
-
-            _startupContext.UpdateDDragonProgress(0, dlTasks.Count);
-
-            Log.Info($"Downloading {dlTasks.Count} assets from datadragon!");
-            
-
-            _startupContext.Status = $"Downloaded 0/{ToDownload} Images";
-            
-            while (total < ToDownload)
-            {
-                _startupContext.UpdateDDragonProgress(total, dlTasks.Count);
-                _startupContext.Status = $"Downloaded {total}/{ToDownload} Images";
-            }
-
-            Log.Info("DataDragon download finished");
-            _startupContext.Status = "DataDragon cache downloaded";
-            return true;
-
-        }
-
-        private void DownloadFullChampionCache(string destUri)
-        {
-            Log.Info($"Downloading Champion Cache of {Champion.Champions.Count * 4} images");
-            Champion.Champions.ForEach(findChampion => {
-                DownloadChampionToCache(destUri, findChampion);
-            });
-        }
-
-        private void DownloadMissingChampionCache(string destUri)
-        {
-            Champion.Champions.ForEach(champ =>
-            {
-                _startupContext.Status = $"Checking {champ} cache";
-                DataDragonUtils.ExtendChampion(champ, version);
-                if (!File.Exists($"{destUri}/{champ.id}_loading.png"))
+                if (loadingExists && splashExists && centeredSplashExists && squareExists)
                 {
-                    DataDragonUtils.DownloadFile(champ.loadingImg, $"{destUri}/{champ.id}_loading.png");
-                    IncrementToDownload();
-                }
-                else
-                {
-                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
+                    ExtendChampionLocal(champ, version.localVersion);
+                    FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(champ.Alias, "Verified", IncrementDownloaded(4), _toDownload));
+                    continue;
                 }
 
-                if (!File.Exists($"{destUri}/{champ.id}_splash.png"))
-                {
-                    DataDragonUtils.DownloadFile(champ.splashImg, $"{destUri}/{champ.id}_splash.png");
-                    IncrementToDownload();
-                }
-                else
-                {
-                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
-                }
+                //Get champ data if not all files exist
+                await ExtendChampion(champ, version.localVersion.ToString(2));
 
-                if (!File.Exists($"{destUri}/{champ.id}_centered_splash.png"))
+                //Get missing files
+                if (!loadingExists)
                 {
-                    DataDragonUtils.DownloadFile(champ.splashCenteredImg, $"{destUri}/{champ.id}_centered_splash.png");
-                    IncrementToDownload();
-                }
-                else
-                {
-                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
+                    DownloadAsset(champ.LoadingImg!, $"{location}/{champ.Alias}_loading.png", $"{champ.Alias}_loading.png", failedDownloads);
                 }
 
-                if (!File.Exists($"{destUri}/{champ.id}_square.png"))
+                if (!splashExists)
                 {
-                    DataDragonUtils.DownloadFile(champ.squareImg, $"{destUri}/{champ.id}_square.png");
-                    IncrementToDownload();
-                }
-                else
-                {
-                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
-                }
-            });
-        }
-
-        private void DownloadChampionToCache(string destUri, Champion champ)
-        {
-            DataDragonUtils.ExtendChampion(champ, version);
-            DataDragonUtils.DownloadFile(champ.loadingImg, $"{destUri}/{champ.id}_loading.png");
-            DataDragonUtils.DownloadFile(champ.splashImg, $"{destUri}/{champ.id}_splash.png");
-            DataDragonUtils.DownloadFile(champ.splashCenteredImg, $"{destUri}/{champ.id}_centered_splash.png");
-            DataDragonUtils.DownloadFile(champ.squareImg, $"{destUri}/{champ.id}_square.png");
-            IncrementToDownload(4);
-        }
-
-        private void DownloadFullItemCache(string destUri)
-        {
-            Log.Info($"Downloading Item Cache of {ItemData.Items.Count} images");
-            ItemData.Items.ForEach(findItem =>
-            {
-                DownloadItemToCache(destUri, findItem);
-            });
-        }
-
-        private void DownloadMissingItemCache(string destUri)
-        {
-            ItemData.Items.ForEach(item => {
-                _startupContext.Status = $"Checking {item} cache";
-                if (!File.Exists($"{destUri}/{item.itemID}.png"))
-                {
-                    DownloadItemToCache(destUri, item);
-                }
-                else
-                {
-                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
-                }
-            });
-        }
-
-        private void DownloadItemToCache(string destUri, ItemData item)
-        {
-            DataDragonUtils.ExtendItem(item, version);
-            DataDragonUtils.DownloadFile(item.sprite, $"{destUri}/{item.itemID}.png");
-            IncrementToDownload();
-        }
-        
-        private void DownloadFullSummonerSpellCache(string destUri)
-        {
-            Log.Info($"Downloading Summoner Spell Cache of {SummonerSpell.SummonerSpells.Count} images");
-            SummonerSpell.SummonerSpells.ForEach(findSummoner => {
-                DownloadSummonerSpellToCache(destUri, findSummoner);
-            });
-        }
-
-        private void DownloadMissingSummonerSpellCache(string destUri)
-        {
-            SummonerSpell.SummonerSpells.ForEach(spell =>
-            {
-                _startupContext.Status = $"Checking {spell} cache";
-                if (!File.Exists($"{destUri}/{spell.id}.png"))
-                {
-                    DownloadSummonerSpellToCache(destUri, spell);
-                }
-                else
-                {
-                    _startupContext.UpdateDDragonProgress(progress++, maxTasks);
-                }
-            });
-        }
-
-        private void DownloadSummonerSpellToCache(string destUri, SummonerSpell spell)
-        {
-            DataDragonUtils.ExtendSummoner(spell, version);
-            DataDragonUtils.DownloadFile(spell.icon, $"{destUri}/{spell.id}.png");
-            IncrementToDownload();
-        }
-    }
-
-    static class DataDragonUtils
-    {
-        public static void Empty(this DirectoryInfo directory)
-        {
-            foreach (FileInfo file in directory.EnumerateFiles())
-            {
-                file.Delete();
-            }
-
-            foreach (DirectoryInfo subDirectory in directory.EnumerateDirectories())
-            {
-                subDirectory.Delete(true);
-            }
-        }
-
-        public static string CombinePaths(params string[] paths)
-        {
-            if (paths == null)
-            {
-                throw new ArgumentNullException("paths");
-            }
-            string final = "";
-            paths.ToList().ForEach(part => final += $"/{part}");
-            return final;
-        }
-
-        public static void DownloadFile(string uri, string path)
-        {
-            using var client = new WebClient();
-            client.Headers.Add("accept", "*/*");
-
-            client.DownloadDataCompleted += (sender, eventArgs) =>
-            {
-                try
-                {
-                    byte[] fileData = eventArgs.Result;
-                    using FileStream fileStream = new FileStream(path, FileMode.Create);
-                    fileStream.Write(fileData, 0, fileData.Length);
-                    client.Dispose();
-                    Log.Verbose($"{uri} downloaded");
-                    FileDownloadComplete.Invoke(null, EventArgs.Empty);
-                } catch(Exception e)
-                {
-                    Log.Warn($"Could not download {uri}\n{eventArgs.Error.Message}");
-                    FileDownloadComplete.Invoke(null, EventArgs.Empty);
+                    DownloadAsset(champ.SplashImg!, $"{location}/{champ.Alias}_splash.png", $"{champ.Alias}_splash.png", failedDownloads);
                 }
 
+                if (!centeredSplashExists)
+                {
+                    DownloadAsset(champ.SplashCenteredImg!, $"{location}/{champ.Alias}_centered_splash.png", $"{champ.Alias}_centered_splash.png", failedDownloads);
+                }
 
+                if (!squareExists)
+                {
+                    DownloadAsset(champ.SquareImg!, $"{location}/{champ.Alias}_square.png", $"{champ.Alias}_square.png", failedDownloads);
+                }
+
+                ExtendChampionLocal(champ, version.localVersion);
+
+                FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(champ.Alias, "Verified", IncrementDownloaded(4), _toDownload));
             };
-            try
-            {
-                Log.Verbose($"Downloading {uri}");
-                client.DownloadDataAsync(new Uri(uri));
-            } catch(Exception e)
-            {
-                Log.Warn($"Download error: {e.Message}");
-            }
+
+            Log.Info($"[CDrag] Verified all champion assets");
         }
 
-        public static async Task<string> GetAsync(string uri)
+
+        private static void DownloadMissingItemCache(string location, ConcurrentBag<string[]> failedDownloads)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Method = "GET";
-            request.Timeout = 2000;
-            try
+            Log.Info("[CDrag] Verifying Item Assets");
+
+            string stringVersion = version.localVersion.ToString(2);
+            foreach (CDragonItem item in CDragonItem.All)
             {
-                Log.Verbose($"Downloading {uri}");
-                using HttpWebResponse response = (HttpWebResponse) await request.GetResponseAsync();
-                
-                if (response.StatusCode == HttpStatusCode.NotFound)
+                if (!File.Exists($"{location}/{item.ID}.png"))
                 {
-                    Log.Warn($"Could not download {uri}: {response.StatusCode}");
-                    return "";
+                    DownloadAsset($"{ConfigController.Component.DataDragon.CDragonRaw}/{stringVersion}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/assets/items/icons2d/{item.IconPath.Split("/")[^1].ToLower()}", $"{location}/{item.ID}.png", $"{item.ID}.png", failedDownloads);
                 }
-                using Stream stream = response.GetResponseStream();
-                using StreamReader reader = new StreamReader(stream);
-                Log.Verbose($"{uri} downloaded");
-                return await reader.ReadToEndAsync();
-            } catch(Exception e)
+                ExtendItemLocal(item, version.localVersion);
+                FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(item.Name, "Verified", IncrementDownloaded(), _toDownload));
+            };
+        }
+
+        private static void DownloadMissingSummonerSpellCache(string location, ConcurrentBag<string[]> failedDownloads)
+        {
+            Log.Info("[CDrag] Verifying Summoner Spell Assets");
+            string stringVersion = version.localVersion.ToString(2);
+            foreach (SummonerSpell spell in SummonerSpell.All)
             {
-                Log.Warn($"Could not download {uri}: {e.Message}");
-                return "";
-            }
-            
+                if (!File.Exists($"{location}/{spell.ID}.png"))
+                {
+                    DownloadAsset($"{ConfigController.Component.DataDragon.CDragonRaw}/{stringVersion}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/data/spells/icons2d/{spell.IconPath.Split("/")[^1].ToLower()}", $"{location}/{spell.ID}.png", $"{spell.ID}.png", failedDownloads);
+                }
+                ExtendSummonerLocal(spell, version.localVersion);
+                FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(spell.Name, "Verified", IncrementDownloaded(), _toDownload));
+            };
         }
 
-        public static void ExtendChampion(Champion champion, GameVersion version)
+        private static void DownloadAsset(string remote, string local, string fileName, ConcurrentBag<string[]> failedDownloads)
         {
-            champion.splashImg = $"{version.CDN}/img/champion/splash/{champion.id}_0.jpg";
-            champion.splashCenteredImg = $"https://cdn.communitydragon.org/{version.Version}/champion/{champion.id}/splash-art/centered";
-            champion.squareImg = $"{version.GetVersionCDN()}/img/champion/{ champion.id}.png";
-            champion.loadingImg = $"{version.CDN}/img/champion/loading/{champion.id}_0.jpg";
+            _ = IncrementToDownload();
+            $"Downloading {fileName} from {remote}".Debug();
+            Task t = Task.Run(async () =>
+            {
+                System.Net.HttpStatusCode res = await FileDownloader.DownloadAsync(remote, local);
+                if (res == System.Net.HttpStatusCode.OK)
+                {
+                    $"{fileName} downloaded".Debug();
+                }
+                else
+                {
+                    failedDownloads.Add(new string[] { remote, fileName });
+                    $"Download {fileName} from {remote} to {local} failed: {res}".Debug();
+                }
+
+                FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(fileName, "Downloaded", IncrementDownloaded(), _toDownload));
+
+                if (_downloaded >= _toDownload)
+                {
+                    _ = _downloadComplete!.TrySetResult(true);
+                }
+            });
         }
 
-        public static void ExtendChampionLocal(Champion champion, GameVersion version)
+        #region ObjectExtension
+        public static async Task ExtendChampion(CDragonChampion champion, string version)
         {
-            string championPath = CombinePaths("cache", version.Champion, "champion");
-            champion.splashImg = $"{championPath}/{ champion.id}_splash.jpg";
-            champion.splashCenteredImg = $"{championPath}/{champion.id}_centered_splash.png";
-            champion.squareImg = $"{championPath}/{ champion.id}_square.png";
-            champion.loadingImg = $"{championPath}/{ champion.id}_loading.png";
+            using JsonDocument response = JsonDocument.Parse(await RestRequester.GetRaw($"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champions/{champion.ID}.json"), new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
+            JsonElement root = response.RootElement;
+            JsonElement defaultSkin = root.GetProperty("skins").EnumerateArray().Single(skin => $"{skin.GetProperty("id").GetInt32()}" == $"{champion.ID}000");
+
+            champion.SplashImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-splashes/uncentered/{champion.ID}/{(defaultSkin.GetProperty("uncenteredSplashPath").GetString() ?? "").Split("/")[^1]}";
+            champion.SplashCenteredImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-splashes/{champion.ID}/{(defaultSkin.GetProperty("splashPath").GetString() ?? "").Split("/")[^1]}";
+            champion.SquareImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-icons/{(root.GetProperty("squarePortraitPath").GetString() ?? "").Split("/")[^1]}";
+            champion.LoadingImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/assets/characters/{champion.Alias.ToLower()}/skins/base/{(defaultSkin.GetProperty("loadScreenPath").GetString() ?? "").Split("/")[^1].ToLower()}";
         }
 
-        public static void ExtendSummoner(SummonerSpell summoner, GameVersion version)
+        public static void ExtendChampionLocal(CDragonChampion champion, StringVersion version)
         {
-            summoner.icon = $"{version.GetVersionCDN()}/img/spell/{summoner.id}.png";
+            string championPath = $"cache/{version.ToString(2)}.1/champion";
+            champion.SplashImg = $"{championPath}/{champion.Alias}_splash.jpg";
+            champion.SplashCenteredImg = $"{championPath}/{champion.Alias}_centered_splash.png";
+            champion.SquareImg = $"{championPath}/{champion.Alias}_square.png";
+            champion.LoadingImg = $"{championPath}/{champion.Alias}_loading.png";
         }
 
-        public static void ExtendSummonerLocal(SummonerSpell summoner, GameVersion version)
+        public static void ExtendSummonerLocal(SummonerSpell summoner, StringVersion version)
         {
-            summoner.icon = CombinePaths("cache", version.Item, "spell", $"{summoner.id}.png");
+            summoner.IconPath = Path.Combine("cache", $"{version.ToString(2)}.1", "spell", $"{summoner.Name}.png");
         }
 
-        public static void ExtendItem(ItemData item, GameVersion version)
+        public static void ExtendItemLocal(CDragonItem item, StringVersion version)
         {
-            item.sprite = $"{version.GetVersionCDN()}/img/item/{item.itemID}.png";
+            item.IconPath = Path.Combine("cache", $"{version.ToString(2)}.1", "item", item.ID + ".png");
         }
 
-        public static void ExtendItemLocal(ItemData item, GameVersion version)
+        #endregion
+
+
+        public Champion GetChampionById(int champID)
         {
-            item.sprite = CombinePaths("cache", version.Item, "item", item.itemID + ".png");
+            var champData =  CDragonChampion.All.SingleOrDefault(c => c.ID == champID);
+            if (champData is null)
+                return new Champion();
+            return new Champion()
+            {
+                id = champData.Alias,
+                key = champData.ID,
+                name = champData.Name,
+                loadingImg = champData.LoadingImg,
+                splashCenteredImg = champData.SplashCenteredImg,
+                splashImg = champData.SplashImg,
+                squareImg = champData.SquareImg
+            };
+        }
+
+        public SummonerSpell GetSummonerById(int summonerID)
+        {
+            return SummonerSpell.All.SingleOrDefault(s => s.ID == summonerID);
+        }
+
+        public ItemData GetItemById(int itemID)
+        {
+            var itemData = CDragonItem.All.SingleOrDefault(i => i.ID == itemID);
+
+            return new ItemData(itemData.ID)
+            {
+                itemID = itemData.ID,
+                name = itemData.Name,
+                specialRecipe = itemData.SpecialRecipe,
+                sprite = itemData.IconPath,
+                gold = new ItemCost()
+                {
+                    sell = 0,
+                    total = itemData.PriceTotal
+                }
+            };
         }
     }
 }

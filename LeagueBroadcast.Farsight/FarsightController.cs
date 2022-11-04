@@ -35,7 +35,7 @@ namespace LeagueBroadcast.Farsight
         {
             if (!ShouldRun)
                 return;
-            Champions = Champion.Champions.Select(c => c.id).ToList();
+            Champions = CDragonChampion.All.Select(c => c.Alias).ToList();
             Log.Info($"Farsight loaded. Found {Champions.Count} Champ names");
         }
 

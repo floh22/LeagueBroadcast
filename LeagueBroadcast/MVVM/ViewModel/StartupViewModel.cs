@@ -1,10 +1,9 @@
 ﻿using LeagueBroadcast.Common.Controllers;
+using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.MVVM.Core;
-using LeagueBroadcast.MVVM.View;
 using LeagueBroadcast.OperatingSystem;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Windows;
 
 namespace LeagueBroadcast.MVVM.ViewModel
 {
@@ -48,7 +47,7 @@ namespace LeagueBroadcast.MVVM.ViewModel
 
         public StartupViewModel()
         {
-            
+            DataDragon.FileDownloadComplete += (s, e) => UpdateCacheDownloadProgress(e);
         }
 
         public void UpdateLoadProgress(LoadStatus loadStatus, int progress = 100)
@@ -59,12 +58,26 @@ namespace LeagueBroadcast.MVVM.ViewModel
             LoadingBarWidth = (int)(LoadProgress / 100 * 380);
         }
 
-        public void UpdateDDragonProgress(double completed, double total)
+        public void UpdateCacheDownloadProgress(FileLoadProgressEventArgs e)
         {
-            LoadProgress = (int)LoadStatus.DDragonStart + (completed / total) * 0.75;
-            LoadingBarWidth = (int)((LoadProgress / 100) * 380);
+            LoadProgress = (double)LoadStatus.DDragonStart + ((double)e.Completed / (double)e.Total * ((double)LoadStatus.DDragonStart.Next() - (double)LoadStatus.DDragonStart));
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (Application.Current.MainWindow is null)
+                        return;
+                    LoadingBarWidth = (int)(LoadProgress / 100 * Application.Current.MainWindow.ActualWidth);
+                });
+            }
+            catch
+            {
+                //Cant update. Ignored
+            }
+            Status = $"{e.Task} {e.Completed}/{e.Total} Assets: {e.FileName}";
         }
-    }
+    
+}
 
     public enum LoadStatus
     {

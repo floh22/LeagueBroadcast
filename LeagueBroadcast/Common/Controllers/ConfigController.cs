@@ -1,4 +1,5 @@
 ﻿using LeagueBroadcast.Common.Data.Config;
+using LeagueBroadcast.Farsight;
 using LeagueBroadcast.Ingame.Data.Config;
 using LeagueBroadcast.Ingame.Data.Frontend;
 using System;
@@ -38,9 +39,9 @@ namespace LeagueBroadcast.Common.Controllers
 
             var controller = JSONConfigProvider.Instance;
 
+            controller.ReadConfig(Component);
             controller.ReadConfig(PickBan);
             controller.ReadConfig(Ingame);
-            controller.ReadConfig(Component);
 
             if(PickBan.FileVersion == null || Component.FileVersion == null || Ingame.FileVersion == null)
             {
@@ -75,13 +76,16 @@ namespace LeagueBroadcast.Common.Controllers
         public static void LoadOffsetConfig()
         {
             JSONConfigProvider.Instance.ReadConfig(Farsight);
-            if(Farsight.FileVersion == null)
+            if(Farsight.FileVersion == null || !FarsightController.ShouldRun )
             {
                 Log.Warn("Could not load Offsets");
-                var result = MessageBox.Show("Failed to load offsets. Manually download or write Config/Farsight.json. Check github for current file version.", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = MessageBox.Show("Failed to load offsets. Manually download or write Config/Farsight.json. Check github for current file version. Ingame will not work properly!", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                /*
                 Application.Current.Dispatcher.Invoke((Action)delegate {
                     Application.Current.Shutdown();
                 });
+                */
             }
 
             FarsightWatcher = new("Farsight.json", Farsight);
