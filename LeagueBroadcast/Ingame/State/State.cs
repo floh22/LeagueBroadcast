@@ -11,12 +11,12 @@ using LeagueBroadcast.Ingame.Events;
 using LeagueBroadcast.MVVM.View;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.Json;
 
 namespace LeagueBroadcast.Ingame.State
 {
@@ -105,7 +105,7 @@ namespace LeagueBroadcast.Ingame.State
                     if(!ShowedChampionMemoryError)
                     {
                         Log.Warn(e.Message);
-                        Log.Verbose($"Players:\n{JsonConvert.SerializeObject(GetAllPlayers())}\nSnapshot:\n{JsonConvert.SerializeObject(gameSnap.Champions)}");
+                        Log.Verbose($"Players:\n{JsonSerializer.Serialize(GetAllPlayers())}\nSnapshot:\n{JsonSerializer.Serialize(gameSnap.Champions)}");
                         MessageBoxUtils.ShowErrorBox("Could not read all champion data from memory. Please submit an issue on github containing the current log and replay.");
                         ShowedChampionMemoryError = true;
                     }
@@ -193,7 +193,7 @@ namespace LeagueBroadcast.Ingame.State
                 {
                     newEvents.Add(e);
                     if (Log.Instance.Level == Log.LogLevel.Verbose)
-                        Log.Verbose($"New Event: {JsonConvert.SerializeObject(e)}");
+                        Log.Verbose($"New Event: {JsonSerializer.Serialize(e)}");
                 }
             });
 

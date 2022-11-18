@@ -5,7 +5,7 @@
         public int cellId;
         public int championId;
         public int summonerId;
-        public int spell1Id;
-        public int spell2Id;
+        public string spell1Id;
+        public string spell2Id;
     }
 }

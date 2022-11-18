@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using static LeagueBroadcast.Common.Data.Provider.DataDragon;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.MVVM.Core;
 using LeagueBroadcast.MVVM.ViewModel;
-using Newtonsoft.Json;
 using LeagueBroadcast.Common.Data.DTO;
 using LeagueBroadcast.Common.Data.RIOT;
 using System.Threading;
 using Swan.Logging;
 using LeagueBroadcast.Common.Utils;
-using LeagueBroadcast.ChampSelect.Data.DTO;
 using LeagueBroadcast.Update.Http;
 using System.Text.Json;
-using LeagueBroadcast.Common.Data.Config;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
@@ -403,12 +398,12 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public static void ExtendSummonerLocal(SummonerSpell summoner, StringVersion version)
         {
-            summoner.IconPath = Path.Combine("cache", $"{version.ToString(2)}.1", "spell", $"{summoner.Name}.png");
+            summoner.IconPath = $"cache/{version.ToString(2)}.1/spell/{summoner.ID}.png";
         }
 
         public static void ExtendItemLocal(CDragonItem item, StringVersion version)
         {
-            item.IconPath = Path.Combine("cache", $"{version.ToString(2)}.1", "item", item.ID + ".png");
+            item.IconPath = $"cache/{version.ToString(2)}.1/item/{item.ID}.png";
         }
 
         #endregion
@@ -431,7 +426,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             };
         }
 
-        public SummonerSpell GetSummonerById(int summonerID)
+        public SummonerSpell GetSummonerById(string summonerID)
         {
             return SummonerSpell.All.SingleOrDefault(s => s.ID == summonerID);
         }

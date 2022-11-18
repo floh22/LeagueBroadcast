@@ -3,14 +3,18 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using LeagueBroadcast.Common;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace LeagueBroadcast.Update.Http
 {
     //https://github.com/Johannes-Schneider/GoldDiff/blob/master/GoldDiff.Shared/Http/RestRequester.cs
     public class RestRequester : IDisposable
     {
-        public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromMilliseconds(500);
+        public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromMilliseconds(2000);
 
         private HttpClient Client { get; }
 
@@ -21,25 +25,24 @@ namespace LeagueBroadcast.Update.Http
         {
             if (_instance == null)
             {
-                _instance = new RestRequester(TimeSpan.FromMilliseconds(500), null);
+                _instance = new RestRequester(TimeSpan.FromMilliseconds(2000), null);
             }
             return _instance;
         }
 
         private RestRequester(TimeSpan requestTimeout, HttpClientHandler? clientHandler = null)
         {
+
             Client = new HttpClient(clientHandler ?? new HttpClientHandler())
             {
                 Timeout = requestTimeout,
-                DefaultRequestHeaders =
-                         {
-                             Accept = {MediaTypeWithQualityHeaderValue.Parse("application/json")},
-                             UserAgent = {ProductInfoHeaderValue.Parse("request")},
-                         },
             };
+
+            Client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
+            Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("LeagueBroadcast", "2.0"));
         }
 
-        public static async Task<TResultType?> GetAsync<TResultType>(string url)
+        public static async Task<TResultType?> GetAsync<TResultType>(string url, ICollection<JsonConverter> converters = null)
         {
             try
             {
@@ -50,7 +53,20 @@ namespace LeagueBroadcast.Update.Http
                     return default;
                 }
                 var json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<TResultType>(json)!;
+
+
+                var serializationOptions = new JsonSerializerOptions
+                {
+                };
+
+                if (converters != null)
+                {
+                    foreach(var converter in converters)
+                    {
+                        serializationOptions.Converters.Add(converter);
+                    }
+                }
+                return JsonSerializer.Deserialize<TResultType>(json, serializationOptions)!;
             }
             catch (TaskCanceledException)
             {
