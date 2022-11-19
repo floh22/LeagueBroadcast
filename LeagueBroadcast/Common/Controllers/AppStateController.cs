@@ -153,10 +153,13 @@ namespace LeagueBroadcast.Common.Controllers
             string eventType = e.Data.ToString();
             Log.Info($"League State: {eventType}");
 
+            /* Detect game end via process close instead of the client if the LCU is going to be buggy -.-
             if (!eventType.Equals("InProgress") && BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress))
             {
                 GameStop?.Invoke(this, EventArgs.Empty);
             }
+
+            */
             if (!eventType.Equals("ChampSelect") && BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
             {
                 ChampSelectStop?.Invoke(this, EventArgs.Empty);
