@@ -4,28 +4,28 @@ using System.Text.Json.Serialization;
 
 namespace LeagueBroadcast.Trinket
 {
-    public class LiveEvent : EventArgs
+    public class LiveEventArgs : EventArgs
     {
         [JsonPropertyName("eventname")]
-        public string EventName { get; set; }
+        public string EventName { get; set; } = "";
 
         [JsonPropertyName("other")]
-        public string Other { get; set; }
+        public string Other { get; set; } = "";
 
         [JsonPropertyName("otherID")]
-        public string OtherID { get; set; }
+        public string OtherID { get; set; } = "";
 
         [JsonPropertyName("otherTeam")]
-        public string OtherTeam { get; set; }
+        public string OtherTeam { get; set; } = "";
 
         [JsonPropertyName("source")]
-        public string Source { get; set; }
+        public string Source { get; set; } = "";
 
         [JsonPropertyName("sourceID")]
-        public string SourceID { get; set; }
+        public string SourceID { get; set; } = "";
 
         [JsonPropertyName("sourceTeam")]
-        public string SourceTeam { get; set; }
+        public string SourceTeam { get; set; } = "";
 
         public override string ToString()
         {

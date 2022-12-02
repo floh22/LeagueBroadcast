@@ -1,0 +1,42 @@
+{
+  "GameVersion": "12.22.1",
+  "Offsets": {
+    "Global": {
+      "Manager": "0x187BEC0",
+      "HUDInstance": "0x187BF80",
+	  "ObjectLists": {
+		  "Hero": "0x18A6F70",
+		  "Minion": "0x24F45E0" ,
+		  "Turret": "0x313BA44",
+		  "Inhibitor": "0x3143EFC",
+	  },
+      "MapCount": "0x2c",
+      "MapRoot": "0x28",
+      "MapNodeNetId": "0x10",
+      "MapNodeObject": "0x14",
+      "GameTime": "0x3111E68"
+    },
+    "GameObject": {
+      "ID": "0x8",
+      "NetworkID": "0xB4",
+      "Team": "0x34",
+      "Pos": "0x1DC",
+      "Mana": "0x29C",
+      "ManaMax": "0x2AC",
+      "Health": "0xE74",
+      "HealthMax": "0xE84",
+      "GoldCurrent": "0x1B88",
+      "GoldTotal": "0x1B98",
+      "Experience": "0x33A4",
+      "ChampionName": "0x2BD4",
+      "ItemList": "0x3400",
+      "ItemListItem": "0xC",
+      "ItemInfo": "0x20",
+      "ItemInfoId": "0x68",
+      "PlayerNameLocation": "0x54",
+      "PlayerNameLength": "0x64",
+      "PlayerNameMaxLength": "0x68"
+    }
+  },
+  "FileVersion": "1.0"
+}

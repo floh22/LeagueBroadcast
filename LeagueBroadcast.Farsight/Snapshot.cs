@@ -1,13 +1,13 @@
-﻿using LeagueBroadcast.Farsight.Object;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LeagueBroadcast.Farsight
 {
     public class Snapshot
     {
-        public List<GameObject> Champions = new();
+        public float GameTimeInSeconds = 0;
+        public HashSet<GameObject> Champions = new();
+        public HashSet<GameObject> Turrets = new();
+        public HashSet<GameObject> Inhibitors = new();
         public GameObject Dragon = new();
         public GameObject Baron = new();
         public GameObject Herald = new();

@@ -1,0 +1,118 @@
+﻿<Window x:Class="LeagueBroadcast.Client.MVVM.View.Startup.StartupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:LeagueBroadcast.Client.MVVM.ViewModel.Startup"
+        xmlns:local="clr-namespace:LeagueBroadcast.Client.MVVM.View.Startup"
+        mc:Ignorable="d"
+        Title="StartupWindow" Height="450" Width="380"
+        AllowsTransparency="True" Background="Transparent"
+        WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <viewModel:StartupViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="15"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="{StaticResource PrimaryHighlightColor}" Offset="0"/>
+                        <GradientStop Color="{StaticResource SecondaryHighlightColor}" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="UpdateText" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" Text="{Binding UpdateText}" Foreground="White" FontSize="17" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}"/>
+                        <Button x:Name="UpdateNow" Grid.Row="3" Grid.Column="1" Style="{StaticResource StartupButtonTheme}" Content="Update Now" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}" Click="UpdateNow_Click"/>
+                        <Button x:Name="UpdateSkip" Grid.Row="3" Grid.Column="3" Style="{StaticResource StartupButtonTheme}" Content="Skip Update" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}" Click="UpdateSkip_Click"/>
+                        <Grid Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" Grid.Row="5" Width="180">
+                            <Button x:Name="UpdateContinue" Grid.Row="3" Grid.Column="3" Style="{StaticResource StartupButtonTheme}" Content="Remind Me Later" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}" Click="UpdateContinue_Click"/>
+                        </Grid>
+                        <TextBlock Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding StatusMessage}" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom" Foreground="White" Margin="0,0,110,5"/>
+                    </Grid>
+                </Grid>
+            </Border>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="LEAGUE BROADCAST" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White" Margin="0,0,0,50"/>
+                    <TextBlock Text="{Binding AppVersion}" FontSize="15" Foreground="White" VerticalAlignment="Top" Margin="90,65,0,0"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="5"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="2" Text="@LarsEble" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
+                        <Image Grid.Row="2" Grid.Column="2" Height="30" Width="30" Source="pack://application:,,,/Assets/Images/TwitterSocial.png"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding LoadingBarWidth}"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="LoadingBar" Grid.Column="0">
+                    <Border.Background>
+                        <SolidColorBrush Color="#5cc59e"/>
+                    </Border.Background>
+                </Border>
+                <Border Grid.Column="1">
+                    <Border.Background>
+                        <SolidColorBrush Color="#16161a"/>
+                    </Border.Background>
+
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

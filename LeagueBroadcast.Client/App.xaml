@@ -1,0 +1,22 @@
+﻿<Application x:Class="LeagueBroadcast.Client.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeagueBroadcast.Client">
+    <Application.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="MVVM/Theme/ColorStyles.xaml" />
+                <ResourceDictionary Source="MVVM/Theme/TextBox/TextBoxTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/Button/BaseButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/Button/StartupButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/Button/RoundToggleButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/Button/ConnectionStatusButtonTheme.xaml"/>
+                <ResourceDictionary Source="MVVM/Theme/FlatComboBoxTheme.xaml" />
+                <ResourceDictionary Source="MVVM/Theme/MenuItemSimpleStyle.xaml" />
+                <ResourceDictionary Source="MVVM/Theme/GenericToggle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Application.Resources>
+</Application>

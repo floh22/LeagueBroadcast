@@ -2,22 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <AssemblyVersion>1.4.34.0</AssemblyVersion>
-    <FileVersion>1.4.34.21326</FileVersion>
-    <OutputType>Library</OutputType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Nullable>enable</Nullable>
     <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
+    <AssemblyVersion>1.0.18.0</AssemblyVersion>
+    <FileVersion>1.0.18.21328</FileVersion>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Unosquare.Swan" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LeagueBroadcast.Common\LeagueBroadcast.Common.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Utils\LeagueBroadcast.Utils.csproj" />
   </ItemGroup>
 
 </Project>

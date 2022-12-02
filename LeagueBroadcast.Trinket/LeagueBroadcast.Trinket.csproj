@@ -1,18 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyVersion>1.4.16.0</AssemblyVersion>
-    <FileVersion>1.4.16.21326</FileVersion>
-    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <DebugType>embedded</DebugType>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.21328</FileVersion>
+    <Platforms>AnyCPU;x86;x64</Platforms>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Unosquare.Swan" Version="3.0.0" />
+  </ItemGroup>
 
 </Project>

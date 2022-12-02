@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyVersion>1.0.24.0</AssemblyVersion>
+    <FileVersion>1.0.24.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EmbedIO" Version="3.5.2" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LCUSharp\LCUSharp.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Common\LeagueBroadcast.Common.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Farsight\LeagueBroadcast.Farsight.csproj" />
+    <ProjectReference Include="..\LeagueBroadcast.Utils\LeagueBroadcast.Utils.csproj" />
+  </ItemGroup>
+
+</Project>
