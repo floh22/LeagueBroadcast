@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Farsight
 {
@@ -44,6 +45,7 @@ namespace LeagueBroadcast.Farsight
             if (!ShouldRun)
                 return;
             Memory.Initialize(p);
+
         }
 
         public Snapshot CreateSnapshot(double gameTime = 0)
@@ -69,9 +71,9 @@ namespace LeagueBroadcast.Farsight
             int maxObjects = 500;
             int[] pointers = new int[maxObjects];
 
-            int objectManager = BitConverter.ToInt32(Memory.ReadMemory(Memory.m_baseAddress + GameOffsets.Manager, 4), 0);
-
             byte[] buff = new byte[500];
+
+            int objectManager = Memory.ReadMemory<int>(Memory.m_baseAddress + GameOffsets.Manager);
 
             Array.Copy(Memory.ReadMemory(objectManager, 100), 0, buff, 0, 100);
 
@@ -125,33 +127,48 @@ namespace LeagueBroadcast.Farsight
                 if(!snap.ObjectMap.ContainsKey(netID))
                 {
                     obj = new();
-                    obj.LoadFromMemory(pointers[i], true, ObjectOffsets.EXP + 0x4);
+                    obj.LoadFromMemory(pointers[i], ObjectOffsets.EXP + 0x4);
                     snap.ObjectMap.Add(netID, obj);
                 } else
                 {
                     obj = snap.ObjectMap[netID];
-                    obj.LoadFromMemory(pointers[i], true, ObjectOffsets.EXP + 0x4);
+                    obj.LoadFromMemory(pointers[i], ObjectOffsets.EXP + 0x4);
 
                     if (netID != obj.NetworkID)
                         snap.ObjectMap[obj.NetworkID] = obj;
                 }
 
-                if (obj.NetworkID != 0)
+                if (obj.NetworkID == 0)
                 {
-                    snap.IndexToNetID[obj.ID] = obj.NetworkID;
-                    snap.UpdatedThisFrame.Add(obj.NetworkID);
-                    if (obj.Name.Length < 2 || BlacklistedObjectNames.Any(s => s.Equals(obj.Name, StringComparison.OrdinalIgnoreCase)))
-                        BlacklistedObjects.Add(obj.NetworkID);
+                    continue;
                 }
+
+                if(obj.DisplayName.StartsWith("Dragon_Indicator_"))
+                {
+                    //I hate myself for the naming convention but lets keep it consistent at least
+                    snap.NextDragonType = obj.DisplayName.Replace(".troy", "").Remove(0, 17).Replace("Air", "Cloud", StringComparison.OrdinalIgnoreCase).Replace("Earth", "Mountain", StringComparison.OrdinalIgnoreCase).Replace("Water", "Ocean", StringComparison.OrdinalIgnoreCase);
+                    continue;
+                }
+
+                snap.IndexToNetID[obj.ID] = obj.NetworkID;
+                snap.UpdatedThisFrame.Add(obj.NetworkID);
+                if (obj.Name.Length < 2 || BlacklistedObjectNames.Any(s => s.Equals(obj.Name, StringComparison.OrdinalIgnoreCase)))
+                    BlacklistedObjects.Add(obj.NetworkID);
 
                 if (obj.IsChampion())
                 {
                     snap.Champions.Add(obj);
                     continue;
                 }
-                    
 
-                if(obj.Name.Contains("Dragon"))
+                if (obj.Name.Contains("Turret", StringComparison.OrdinalIgnoreCase))
+                {
+                    snap.Turrets.Add(obj);
+                    continue;
+                }
+
+
+                if (obj.Name.Contains("Dragon"))
                 {
                     snap.Dragon = obj;
                     continue;

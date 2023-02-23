@@ -3,7 +3,10 @@ import variables from "./variables";
 export default class PlaceholderConversion {
 
     public static MakeUrlAbsolute(url: string): string {
-        if(!url || !url.startsWith('/cache')) {
+        if(url.startsWith('cache')) {
+            url = url.replace('cache', '/cache');
+        }
+        if(!url || !url.startsWith('/cache') ) {
             return url;
         }
 

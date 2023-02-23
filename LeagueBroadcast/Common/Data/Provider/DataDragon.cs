@@ -15,6 +15,7 @@ using LeagueBroadcast.Update.Http;
 using System.Text.Json;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Security.AccessControl;
 
 namespace LeagueBroadcast.Common.Data.Provider
 {
@@ -163,8 +164,6 @@ namespace LeagueBroadcast.Common.Data.Provider
             version.Summoner = localVersion.ToString();
 
             Log.Info($"[CDrag] Using live patch {version.CDN} on platform {ConfigController.Component.DataDragon.Region}");
-            Log.Info($"{localVersion.ToString(2)}, {GetLatestLocalPatch().ToString(2)}");
-
             if (StringVersion.Parse(localVersion.ToString(2)) > StringVersion.Parse(GetLatestLocalPatch().ToString(2)))
             {
                 Log.Info($"[CDrag] New patch {version.CDN} detected");
@@ -186,14 +185,18 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private static async Task Init()
         {
-
-            CDragonChampion.All = (await RestRequester.GetAsync<HashSet<CDragonChampion>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-summary.json")).Where(c => c.ID > 0).ToHashSet();
+            string locale = ConfigController.Component.DataDragon.Locale;
+            if(locale.Equals("en_US", StringComparison.OrdinalIgnoreCase))
+            {
+                locale = "en_gb";
+            }
+            CDragonChampion.All = (await RestRequester.GetAsync<HashSet<CDragonChampion>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/global/{locale}/v1/champion-summary.json")).Where(c => c.ID > 0).ToHashSet();
             Log.Info($"[CDrag] Loaded {CDragonChampion.All.Count} champions");
 
-            SummonerSpell.All = await RestRequester.GetAsync<HashSet<SummonerSpell>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/summoner-spells.json");
+            SummonerSpell.All = await RestRequester.GetAsync<HashSet<SummonerSpell>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/global/{locale}/v1/summoner-spells.json");
             Log.Info($"[CDrag] Loaded {SummonerSpell.All.Count} summoner spells");
 
-            CDragonItem.All = await RestRequester.GetAsync<HashSet<CDragonItem>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/items.json");
+            CDragonItem.All = await RestRequester.GetAsync<HashSet<CDragonItem>>($"{ConfigController.Component.DataDragon.CDragonRaw}/{version.localVersion.ToString(2)}/plugins/rcp-be-lol-game-data/global/{locale}/v1/items.json");
             Log.Info($"[CDrag] Loaded {CDragonItem.All.Count} items");
 
             CDragonItem.Full = CDragonItem.All.Where(item => item.PriceTotal > ConfigController.Component.DataDragon.MinimumGoldCost).ToHashSet();
@@ -326,7 +329,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             {
                 if (!File.Exists($"{location}/{item.ID}.png"))
                 {
-                    DownloadAsset($"{ConfigController.Component.DataDragon.CDragonRaw}/{stringVersion}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/assets/items/icons2d/{item.IconPath.Split("/")[^1].ToLower()}", $"{location}/{item.ID}.png", $"{item.ID}.png", failedDownloads);
+                    DownloadAsset($"{ConfigController.Component.DataDragon.CDragonRaw}/{stringVersion}/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/{item.IconPath.Split("/")[^1].ToLower()}", $"{location}/{item.ID}.png", $"{item.ID}.png", failedDownloads);
                 }
                 ExtendItemLocal(item, version.localVersion);
                 FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(item.Name, "Verified", IncrementDownloaded(), _toDownload));
@@ -341,7 +344,7 @@ namespace LeagueBroadcast.Common.Data.Provider
             {
                 if (!File.Exists($"{location}/{spell.ID}.png"))
                 {
-                    DownloadAsset($"{ConfigController.Component.DataDragon.CDragonRaw}/{stringVersion}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/data/spells/icons2d/{spell.IconPath.Split("/")[^1].ToLower()}", $"{location}/{spell.ID}.png", $"{spell.ID}.png", failedDownloads);
+                    DownloadAsset($"{ConfigController.Component.DataDragon.CDragonRaw}/{stringVersion}/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/{spell.IconPath.Split("/")[^1].ToLower()}", $"{location}/{spell.ID}.png", $"{spell.ID}.png", failedDownloads);
                 }
                 ExtendSummonerLocal(spell, version.localVersion);
                 FileDownloadComplete?.Invoke(null, new FileLoadProgressEventArgs(spell.Name, "Verified", IncrementDownloaded(), _toDownload));
@@ -381,10 +384,10 @@ namespace LeagueBroadcast.Common.Data.Provider
             JsonElement root = response.RootElement;
             JsonElement defaultSkin = root.GetProperty("skins").EnumerateArray().Single(skin => $"{skin.GetProperty("id").GetInt32()}" == $"{champion.ID}000");
 
-            champion.SplashImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-splashes/uncentered/{champion.ID}/{(defaultSkin.GetProperty("uncenteredSplashPath").GetString() ?? "").Split("/")[^1]}";
-            champion.SplashCenteredImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-splashes/{champion.ID}/{(defaultSkin.GetProperty("splashPath").GetString() ?? "").Split("/")[^1]}";
-            champion.SquareImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/v1/champion-icons/{(root.GetProperty("squarePortraitPath").GetString() ?? "").Split("/")[^1]}";
-            champion.LoadingImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/{ConfigController.Component.DataDragon.Region}/default/assets/characters/{champion.Alias.ToLower()}/skins/base/{(defaultSkin.GetProperty("loadScreenPath").GetString() ?? "").Split("/")[^1].ToLower()}";
+            champion.SplashImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/global/default/v1/champion-splashes/uncentered/{champion.ID}/{(defaultSkin.GetProperty("uncenteredSplashPath").GetString() ?? "").Split("/")[^1]}";
+            champion.SplashCenteredImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/global/default/v1/champion-splashes/{champion.ID}/{(defaultSkin.GetProperty("splashPath").GetString() ?? "").Split("/")[^1]}";
+            champion.SquareImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{(root.GetProperty("squarePortraitPath").GetString() ?? "").Split("/")[^1]}";
+            champion.LoadingImg = $"{ConfigController.Component.DataDragon.CDragonRaw}/{version}/plugins/rcp-be-lol-game-data/global/default/assets/characters/{champion.Alias.ToLower()}/skins/base/{(defaultSkin.GetProperty("loadScreenPath").GetString() ?? "").Split("/")[^1].ToLower()}";
         }
 
         public static void ExtendChampionLocal(CDragonChampion champion, StringVersion version)

@@ -65,6 +65,8 @@ export default class ItemVisual extends VisualElement {
             this.AnimationComplete.dispatch();
         });
 
+        console.log(`Loading Player ${this.playerID} item complete (${this.name})`);
+
         this.scene.load.image(this.id, PlaceholderConversion.ConvertItem(this.itemData).sprite);
         this.scene.load.start();
     }

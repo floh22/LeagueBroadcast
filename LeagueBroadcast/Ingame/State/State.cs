@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Text.Json;
 
 namespace LeagueBroadcast.Ingame.State
@@ -38,6 +37,10 @@ namespace LeagueBroadcast.Ingame.State
 
         public Team blueTeam;
         public Team redTeam;
+
+
+        //only need outer Turrets atm
+        public Dictionary<string, Turret> turrets;
 
         public State(IngameController controller)
         {
@@ -81,6 +84,9 @@ namespace LeagueBroadcast.Ingame.State
 
                 IngameTeamsView.InitPlayers(blueTeam);
                 IngameTeamsView.InitPlayers(redTeam);
+
+                //hack this into here. Not like this project has much structure anyway
+                stateData.dragon.SpawnTimer = Math.Max(0, 300 - controller.gameData.gameTime);
 
                 return;
             }
@@ -186,6 +192,8 @@ namespace LeagueBroadcast.Ingame.State
                 return;
             }
 
+            Log.Verbose("next Dragon Type:" + gameSnap.NextDragonType);
+
             //Get new events
             List<RiotEvent> newEvents = new List<RiotEvent>();
             allEvents.ForEach(e => {
@@ -249,10 +257,13 @@ namespace LeagueBroadcast.Ingame.State
             lastHerald = gameSnap.Herald;
         }
 
-        public void UpdateScoreboard()
+        public void UpdateScoreboard(Snapshot s)
         {
             stateData.scoreboard.GameTime = stateData.gameTime;
             stateData.scoreboard.SeriesGameCount = ConfigController.Component.Ingame.SeriesGameCount;
+
+            stateData.nextDragon.SpawnTimer = stateData.dragon.SpawnTimer;
+            stateData.nextDragon.Element = s.NextDragonType;
 
             var currentTeam = stateData.scoreboard.BlueTeam;
             currentTeam.Name = TeamConfigViewModel.BlueTeam.NameTag;
@@ -261,6 +272,7 @@ namespace LeagueBroadcast.Ingame.State
             currentTeam.Towers = blueTeam.towers;
             currentTeam.Gold = blueTeam.GetGold(stateData.gameTime);
             currentTeam.Score = TeamConfigViewModel.BlueTeam.Score;
+            currentTeam.PlatesDestroyed = blueTeam.platesDestroyed;
 
             currentTeam = stateData.scoreboard.RedTeam;
             currentTeam.Name = TeamConfigViewModel.RedTeam.NameTag;
@@ -269,6 +281,7 @@ namespace LeagueBroadcast.Ingame.State
             currentTeam.Towers = redTeam.towers;
             currentTeam.Gold = redTeam.GetGold(stateData.gameTime);
             currentTeam.Score = TeamConfigViewModel.RedTeam.Score;
+            currentTeam.PlatesDestroyed = redTeam.platesDestroyed;
 
         }
 
@@ -318,6 +331,19 @@ namespace LeagueBroadcast.Ingame.State
                 }
             }
 
+            //limit outlist size to 1000 to prevent crashing due to too many data points
+
+            if(outList.Count > 1000)
+            {
+                var newOutList = new Dictionary<double, float>();
+                int step = outList.Count / 1000;
+                for (int i = 0; i < outList.Count; i += step)
+                {
+                    newOutList.Add(outList.Keys.ElementAt(i), outList.Values.ElementAt(i));
+                }
+                outList = newOutList;
+            }
+
             return outList;
         }
 
@@ -363,7 +389,25 @@ namespace LeagueBroadcast.Ingame.State
             this.stateData = new StateData();
             this.stateData.inhibitors = new InhibitorInfo();
             this.pastIngameEvents = new List<RiotEvent>();
+
+            this.turrets = new Dictionary<string, Turret>();
             Log.Info("Game State reset");
+        }
+
+        internal void UpdateTurrets(Snapshot snapshot)
+        {
+            foreach(GameObject gameObject in snapshot.Turrets) {
+                
+                if(!turrets.ContainsKey(gameObject.DisplayName))
+                {
+                    var toAdd = new Turret(gameObject.DisplayName, gameObject.Position, gameObject.Health);
+                    turrets[gameObject.DisplayName] = toAdd;
+                    continue;
+                }
+
+                var turret = turrets[gameObject.DisplayName];
+                turret.Health = gameObject.Health;
+            }
         }
         #endregion
     }

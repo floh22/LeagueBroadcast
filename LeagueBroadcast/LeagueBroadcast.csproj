@@ -15,9 +15,10 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcast</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.5.37.0</AssemblyVersion>
-    <FileVersion>1.5.37.0</FileVersion>
+    <AssemblyVersion>1.6.49.0</AssemblyVersion>
+    <FileVersion>1.6.49.0</FileVersion>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -50,6 +51,10 @@
     <None Remove="Assets\Images\LeagueOfLegendsIcon.png" />
     <None Remove="Assets\Images\TwitterSocial.png" />
     <None Remove="Common\Controllers\IngameController.cs~RF3284b66.TMP" />
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="Assets\Images\BE_icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

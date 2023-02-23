@@ -4,7 +4,7 @@ export default class FrontEndObjective {
     Objective: Objective;
     DurationRemaining: string;
     GoldDifference: number;
-    SpawnTimer: number
+    SpawnTimer: number;
 
     constructor(o: Objective, duration: string, goldDiff: number, spawnTimer: number) {
         this.Objective = o;

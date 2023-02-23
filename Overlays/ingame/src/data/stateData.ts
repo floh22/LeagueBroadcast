@@ -4,10 +4,13 @@ import InfoSidePage from "./infoSidePage";
 import Inhibitor, { InhibitorInfo } from "./inhibitor";
 import Objective from "./objective";
 import ScoreboardConfig from "./scoreboardConfig";
+import UpcomingObjective from "./upcomingObjective";
 
 export default class StateData {
     dragon: FrontEndObjective;
     baron: FrontEndObjective;
+
+    nextDragon: UpcomingObjective;
 
     gameTime: number;
     gamePaused: boolean;
@@ -27,6 +30,7 @@ export default class StateData {
     constructor(message: any){
         this.dragon = message.dragon;
         this.baron = message.baron;
+        this.nextDragon = message.nextDragon;
         this.gameTime = message.gameTime;
         this.gamePaused = message.gamePaused;
         this.blueGold = message.blueGold;

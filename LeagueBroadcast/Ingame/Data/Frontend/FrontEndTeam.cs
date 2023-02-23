@@ -20,6 +20,7 @@ namespace LeagueBroadcast.Ingame.Data.Frontend
         public int Kills;
         public int Towers;
         public float Gold;
+        public int PlatesDestroyed;
         public List<string> Dragons { get { return mapSide ? BroadcastController.Instance.IGController.gameState.redTeam.dragonsTaken : BroadcastController.Instance.IGController.gameState.blueTeam.dragonsTaken; } }
         #endregion
 
@@ -34,6 +35,7 @@ namespace LeagueBroadcast.Ingame.Data.Frontend
             this.Kills = 0;
             this.Towers = 0;
             this.Gold = 2500;
+            this.PlatesDestroyed = 0;
         }
 
         #region SerializeConditions
@@ -65,6 +67,11 @@ namespace LeagueBroadcast.Ingame.Data.Frontend
         public bool ShouldSerializeGold()
         {
             return ConfigController.Component.Ingame.UseCustomScoreboard;
+        }
+
+        public bool ShouldSerializePlatesDestroyed()
+        {
+            return IngameController.CurrentSettings.TeamPlates;
         }
         #endregion
     }

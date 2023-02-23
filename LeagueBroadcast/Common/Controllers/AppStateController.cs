@@ -3,6 +3,7 @@ using LCUSharp.Websocket;
 using LeagueBroadcast.ChampSelect.Data.LCU;
 using LeagueBroadcast.ChampSelect.StateInfo;
 using LeagueBroadcast.Common.Data.Provider;
+using LeagueBroadcast.Common.Utils;
 using LeagueBroadcast.Farsight;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
@@ -21,7 +22,7 @@ namespace LeagueBroadcast.Common.Controllers
         public static EventHandler GameLoad, GameStop, ChampSelectStart, ChampSelectStop;
         public static EventHandler<Process> GameStart;
         public static List<Summoner> summoners = new();
-        public static string LocalGameVersion;
+        public static StringVersion LocalGameVersion;
 
         private static AppStateController _instance;
 
@@ -253,20 +254,20 @@ namespace LeagueBroadcast.Common.Controllers
             ConfigController.LoadOffsetConfig();
             FarsightController.GameOffsets = ConfigController.Farsight.GameOffsets;
             FarsightController.ObjectOffsets = ConfigController.Farsight.ObjectOffsets;
-            Log.Info($"Using offsets {ConfigController.Farsight.GameVersion}");
+            Log.Info($"Using offsets {ConfigController.Farsight.OffsetVersion}");
         }
 
-        private string GetLocalGameVersion(string rawPatch)
+        private StringVersion GetLocalGameVersion(string rawPatch)
         {
             try
             {
                 string[] patchComponents = rawPatch.Split('.');
-                return $"{patchComponents[0]}.{patchComponents[1]}.1";
+                return StringVersion.Parse($"{patchComponents[0]}.{patchComponents[1]}.1");
             } catch
             {
                 Log.Warn($"Could not determine local game version. Client reported invalid patch \"{rawPatch}\"");
                 Log.Info("Reverting to DataDragon version");
-                return DataDragon.version.Champion;
+                return StringVersion.Parse(DataDragon.version.Champion);
             }
              
         }

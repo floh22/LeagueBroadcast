@@ -16,7 +16,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "2.2";
+        public static new string CurrentVersion => "3.0";
 
         public InhibitorDisplayConfig Inhib;
         public ScoreDisplayConfig Score;
@@ -26,8 +26,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public LevelUpDisplayConfig LevelUp;
         public InfoPageDisplayConfig InfoPage;
         public GoldGraphDisplayConfig GoldGraph;
-        public ObjectiveTimerDisplayConfig BaronTimer;
-        public ObjectiveTimerDisplayConfig ElderTimer;
+        public PowerPlayDisplayConfig BaronPowerPlay;
+        public PowerPlayDisplayConfig ElderPowerPlay;
+        public ObjectiveTimerDisplayConfig DragonTimer;
         public List<string> GoogleFonts;
 
         public override string GETCurrentVersion()
@@ -50,8 +51,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
             LevelUp = Cfg.LevelUp;
             ObjectiveKill = Cfg.ObjectiveKill;
             ObjectiveSpawn = Cfg.ObjectiveSpawn;
-            BaronTimer = Cfg.BaronTimer;
-            ElderTimer = Cfg.ElderTimer;
+            BaronPowerPlay = Cfg.BaronPowerPlay;
+            ElderPowerPlay = Cfg.ElderPowerPlay;
+            DragonTimer = Cfg.DragonTimer;
             GoldGraph = Cfg.GoldGraph;
             GoogleFonts = Cfg.GoogleFonts;
             FileVersion = Cfg.FileVersion;
@@ -72,8 +74,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.LevelUp = def.LevelUp;
             this.ObjectiveKill = def.ObjectiveKill;
             this.ObjectiveSpawn = def.ObjectiveSpawn;
-            this.BaronTimer = def.BaronTimer;
-            this.ElderTimer = def.ElderTimer;
+            this.BaronPowerPlay = def.BaronPowerPlay;
+            this.ElderPowerPlay = def.ElderPowerPlay;
+            this.DragonTimer = def.DragonTimer;
             this.GoldGraph = def.GoldGraph;
             this.GoogleFonts = def.GoogleFonts;
             this.FileVersion = CurrentVersion;
@@ -775,7 +778,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         DisplayDuration = 2000
                     }
                 },
-                BaronTimer = new ObjectiveTimerDisplayConfig()
+                BaronPowerPlay = new PowerPlayDisplayConfig()
                 {
                     Position = new Vector2(1800, 55),
                     MaskPosition = new Vector2(1750, 20),
@@ -808,7 +811,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimeIconPosition = new Vector2(-10, 0),
                     IconPosition = new Vector2(0, 0)
                 },
-                ElderTimer = new ObjectiveTimerDisplayConfig()
+                ElderPowerPlay = new PowerPlayDisplayConfig()
                 {
                     Position = new Vector2(120, 55),
                     MaskPosition = new Vector2(50, 20),
@@ -840,6 +843,27 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimePosition = new Vector2(18, 0),
                     TimeIconPosition = new Vector2(20, -2),
                     IconPosition = new Vector2(40, 0)
+                },
+                DragonTimer = new ObjectiveTimerDisplayConfig()
+                {
+                    KeepDisplayedWhenAlive = false,
+                    HideTimeIfAlive = true,
+                    IconAlivePosition = new Vector2(25, 0),
+                    IconAliveScale = 1.2f,
+                    IconAliveLerpDurationSetToZeroToDisable = 1000,
+                    Position = new Vector2(120, 55),
+                    Scale = 0.8f,
+                    Align = "left",
+                    TimeFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        Size = "32px",
+                        Style = "Bold",
+                        Color = "rgb(230,190,138)",
+                        Align = "left"
+                    },
+                    TimePosition = new Vector2(80, -18),
+                    IconPosition = new Vector2(-20, 0)
                 },
                 GoldGraph = new GoldGraphDisplayConfig()
                 {
@@ -984,7 +1008,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             return true;
         }
 
-        public class ObjectiveTimerDisplayConfig
+        public class PowerPlayDisplayConfig
         {
             public Vector2 Position;
             public Vector2 MaskPosition;
@@ -1004,6 +1028,22 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
             public Vector2 TimePosition;
             public Vector2 TimeIconPosition;
+            public FontConfig TimeFont;
+        }
+
+        public class ObjectiveTimerDisplayConfig
+        {
+            public bool KeepDisplayedWhenAlive;
+            public bool HideTimeIfAlive;
+            public Vector2 IconAlivePosition;
+            public float IconAliveScale;
+            public float IconAliveLerpDurationSetToZeroToDisable;
+            public Vector2 Position;
+            public float Scale;
+            public string Align;
+            public Vector2 IconPosition;
+            
+            public Vector2 TimePosition;
             public FontConfig TimeFont;
         }
 

@@ -1,4 +1,5 @@
-﻿using static LeagueBroadcast.Ingame.Data.LBH.Objectives.Objective;
+﻿using LeagueBroadcast.Common.Controllers;
+using static LeagueBroadcast.Ingame.Data.LBH.Objectives.Objective;
 
 namespace LeagueBroadcast.Ingame.Data.LBH.Objectives
 {

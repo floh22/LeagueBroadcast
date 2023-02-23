@@ -21,6 +21,7 @@ namespace LeagueBroadcast.Farsight.Object
         public short Team;
         public Vector3 Position;
         public string Name;
+        public string DisplayName;
         public float Mana;
         public float MaxMana;
         public float Health;
@@ -30,7 +31,7 @@ namespace LeagueBroadcast.Farsight.Object
         public float EXP;
         public int Level;
 
-        public void LoadFromMemory(int baseAdr, bool deepLoad = true, int buffSize = 0x3600)
+        public void LoadFromMemory(int baseAdr, int buffSize = 0x3600)
         {
             //TODO Make VirtualQueryEx functional, currently always returns 0. If buff size every becomes a problem again, actually fix this
             if (buffSize == 0x0)
@@ -50,20 +51,25 @@ namespace LeagueBroadcast.Farsight.Object
             Mana = mem.ToFloat(FarsightController.ObjectOffsets.Mana);
             MaxMana = mem.ToFloat(FarsightController.ObjectOffsets.MaxMana);
             NetworkID = mem.ToInt(FarsightController.ObjectOffsets.NetworkID);
+            Name = Memory.ReadMemory(Memory.ReadMemory(baseAdr + FarsightController.ObjectOffsets.Name, 4).ToInt(), 50).DecodeAscii();
 
-            if (deepLoad)
+            int displayNameLength = mem.ToInt(FarsightController.ObjectOffsets.DisplayNameLength);
+            if (displayNameLength < 16)
             {
-                byte[] nameBuff = Memory.ReadMemory(Memory.ReadMemory(baseAdr + FarsightController.ObjectOffsets.Name, 4).ToInt(), 50);
-                Name = nameBuff.DecodeAscii();
+                DisplayName = Encoding.UTF8.GetString(mem.SubArray(FarsightController.ObjectOffsets.DisplayName, displayNameLength));
+            }
+            else
+            {
+                DisplayName = Encoding.UTF8.GetString(Memory.ReadMemory(mem.ToInt(FarsightController.ObjectOffsets.DisplayName), displayNameLength));
+            }
 
-                if (IsChampion())
-                {
-                    LoadChampFromMemory(mem, baseAdr, deepLoad);
-                }
+            if (IsChampion())
+            {
+                LoadChampFromMemory(mem);
             }
         }
 
-        public void LoadChampFromMemory(byte[] source, int baseAdr, bool deepLoad = true)
+        public void LoadChampFromMemory(byte[] source)
         {
             CurrentGold = source.ToFloat(FarsightController.ObjectOffsets.CurrentGold);
             GoldTotal = source.ToFloat(FarsightController.ObjectOffsets.GoldTotal);
@@ -108,6 +114,12 @@ namespace LeagueBroadcast.Farsight.Object
             public int Team;
 
             [JsonConverter(typeof(HexStringJsonConverter))]
+            public int DisplayName;
+
+            [JsonConverter(typeof(HexStringJsonConverter))]
+            public int DisplayNameLength;
+
+            [JsonConverter(typeof(HexStringJsonConverter))]
             public int Pos;
 
             [JsonConverter(typeof(HexStringJsonConverter))]
@@ -133,22 +145,6 @@ namespace LeagueBroadcast.Farsight.Object
 
             [JsonConverter(typeof(HexStringJsonConverter))]
             public int Name;
-
-            [JsonConverter(typeof(HexStringJsonConverter))]
-            public int ItemList;
-
-            [JsonConverter(typeof(HexStringJsonConverter))]
-            public int SpellBook;
-
-
-            [JsonConverter(typeof(HexStringJsonConverter))]
-            public int ItemListItem;
-
-            [JsonConverter(typeof(HexStringJsonConverter))]
-            public int ItemInfo;
-
-            [JsonConverter(typeof(HexStringJsonConverter))]
-            public int ItemInfoId;
         }
     }
 

@@ -11,11 +11,12 @@ import RegionMask from '~/data/RegionMask';
 import ItemVisual from '~/visual/ItemVisual';
 import LevelUpVisual from '~/visual/LevelUpVisual';
 import InhibitorVisual from '~/visual/InhibitorVisual';
-import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
+import PowerPlayVisual from '~/visual/PowerPlayVisual';
 import ScoreboardVisual from '~/visual/ScoreboardVisual';
 import InfoPageVisual from '~/visual/InfoPageVisual';
 import GraphVisual from '~/visual/GraphVisual';
 import ObjectivePopUpVisual from '~/visual/ObjectivePopUpVisual';
+import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
 
 export default class IngameScene extends Phaser.Scene {
     [x: string]: any;
@@ -23,8 +24,11 @@ export default class IngameScene extends Phaser.Scene {
     displayRegions: RegionMask[];
     loadedFonts: string[];
 
-    baronTimer!: ObjectiveTimerVisual;
-    elderTimer!: ObjectiveTimerVisual;
+    baronPowerPlay!: PowerPlayVisual;
+    elderPowerPlay!: PowerPlayVisual;
+
+    dragonTimer!: ObjectiveTimerVisual;
+
     inhib!: InhibitorVisual;
     score!: ScoreboardVisual;
     info!: InfoPageVisual;
@@ -70,6 +74,8 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('objectiveGold', 'frontend/images/ObjectiveGold.png');
         this.load.image('objectiveCdr', 'frontend/images/ObjectiveCdr.png');
 
+        this.load.image('objectiveTimerBg', 'frontend/backgrounds/ObjectiveTimer.png');
+
         //Scoreboard
         this.load.image('scoreGold', 'frontend/images/ScoreboardGold.png');
         this.load.image('scoreTower', 'frontend/images/tower.png');
@@ -82,13 +88,22 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('infoPageSeparator', 'frontend/images/InfoTabSeparator.png');
 
         //Dragons
-        this.load.image('dragon_Fire', 'frontend/images/dragons/fireLarge.png');
-        this.load.image('dragon_Mountain', 'frontend/images/dragons/mountainLarge.png');
-        this.load.image('dragon_Cloud', 'frontend/images/dragons/cloudLarge.png');
-        this.load.image('dragon_Ocean', 'frontend/images/dragons/oceanLarge.png');
-        this.load.image('dragon_Elder', 'frontend/images/dragons/elderLarge.png');
-        this.load.image('dragon_Hextech', 'frontend/images/dragons/hextechLarge.png');
-        this.load.image('dragon_Chemtech', 'frontend/images/dragons/chemtechLarge.png');
+        this.load.image('dragon_Fire', 'frontend/images/dragons/scoreboard/fireLarge.png');
+        this.load.image('dragon_Mountain', 'frontend/images/dragons/scoreboard/mountainLarge.png');
+        this.load.image('dragon_Cloud', 'frontend/images/dragons/scoreboard/cloudLarge.png');
+        this.load.image('dragon_Ocean', 'frontend/images/dragons/scoreboard/oceanLarge.png');
+        this.load.image('dragon_Elder', 'frontend/images/dragons/scoreboard/elderLarge.png');
+        this.load.image('dragon_Hextech', 'frontend/images/dragons/scoreboard/hextechLarge.png');
+        this.load.image('dragon_Chemtech', 'frontend/images/dragons/scoreboard/chemtechLarge.png');
+
+
+        this.load.image('dragon_timer_Fire', 'frontend/images/dragons/timers/fireTimer.png');
+        this.load.image('dragon_timer_Mountain', 'frontend/images/dragons/timers/mountainTimer.png');
+        this.load.image('dragon_timer_Cloud', 'frontend/images/dragons/timers/cloudTimer.png');
+        this.load.image('dragon_timer_Ocean', 'frontend/images/dragons/timers/oceanTimer.png');
+        this.load.image('dragon_timer_Elder', 'frontend/images/dragons/timers/elderTimer.png');
+        this.load.image('dragon_timer_Hextech', 'frontend/images/dragons/timers/hextechTimer.png');
+        this.load.image('dragon_timer_Chemtech', 'frontend/images/dragons/timers/chemtechTimer.png');
 
         //Inhibitor
         this.load.svg('top', 'frontend/images/lanes/top.svg');
@@ -167,8 +182,9 @@ export default class IngameScene extends Phaser.Scene {
                 setTimeout(connect, 500);
                 this.score?.Stop();
                 this.inhib?.Stop();
-                this.baronTimer?.Stop();
-                this.elderTimer?.Stop();
+                this.baronPowerPlay?.Stop();
+                this.elderPowerPlay?.Stop();
+                this.dragonTimer?.Stop();
                 this.info?.Stop();
                 this.centerGraph?.Stop();
                 this.centerGraph?.Stop();
@@ -212,8 +228,9 @@ export default class IngameScene extends Phaser.Scene {
                         case 'GameEnd':
                             console.log('Game Ended');
                             this.state = null;
-                            this.baronTimer?.Stop();
-                            this.elderTimer?.Stop();
+                            this.baronPowerPlay?.Stop();
+                            this.elderPowerPlay?.Stop();
+                            this.dragonTimer?.Stop();
                             this.centerGraph?.Stop();
                             this.inhib?.Stop();
                             this.score?.Stop();
@@ -259,8 +276,9 @@ export default class IngameScene extends Phaser.Scene {
 
             this.inhib.UpdateValues(newState.inhibitors);
             this.score.UpdateValues(newState);
-            this.baronTimer.UpdateValues(newState.baron);
-            this.elderTimer.UpdateValues(newState.dragon);
+            this.baronPowerPlay.UpdateValues(newState.baron);
+            this.elderPowerPlay.UpdateValues(newState.dragon);
+            this.dragonTimer.UpdateValues(newState.nextDragon);
             this.info.UpdateValues(newState.infoPage);
             this.centerGraph.UpdateValues(newState.goldGraph);
             this.CheckSoulPoint(newState);
@@ -296,16 +314,18 @@ export default class IngameScene extends Phaser.Scene {
             //Init Message, create Visual Elements
             this.overlayCfg = message.config;
             this.inhib = new InhibitorVisual(this);
-            this.baronTimer = new ObjectiveTimerVisual(this, 'baron', message.config.BaronTimer);
-            this.elderTimer = new ObjectiveTimerVisual(this, 'elder', message.config.ElderTimer);
+            this.baronPowerPlay = new PowerPlayVisual(this, 'baron', message.config.BaronPowerPlay);
+            this.elderPowerPlay = new PowerPlayVisual(this, 'elder', message.config.ElderPowerPlay);
+            this.dragonTimer = new ObjectiveTimerVisual(this, 'Ocean', message.config.DragonTimer);
             this.score = new ScoreboardVisual(this, message.config.Score);
             this.info = new InfoPageVisual(this, message.config.InfoPage);
             this.centerGraph = new GraphVisual(this, message.config.GoldGraph, [new GoldEntry(0, 100), new GoldEntry(40, -100)]);
         } else {
             //Update Message, update elements if needed
             this.inhib.UpdateConfig(message.config.Inhib);
-            this.baronTimer.UpdateConfig(message.config.BaronTimer);
-            this.elderTimer.UpdateConfig(message.config.ElderTimer);
+            this.baronPowerPlay.UpdateConfig(message.config.BaronPowerPlay);
+            this.elderPowerPlay.UpdateConfig(message.config.ElderPowerPlay);
+            this.dragonTimer.UpdateConfig(message.config.DragonTimer);
             this.score.UpdateConfig(message.config.Score);
             this.info.UpdateConfig(message.config.InfoPage);
             this.centerGraph.UpdateConfig(message.config.GoldGraph);

@@ -7,6 +7,7 @@ using LeagueBroadcast.Ingame.Events;
 using LeagueBroadcast.Ingame.State;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -245,9 +246,10 @@ namespace LeagueBroadcast.Common.Controllers
             try
             {
                 var snapshot = BroadcastController.Instance.MemoryController.CreateSnapshot(gameState.stateData.gameTime);
+                gameState.UpdateTurrets(snapshot);
                 gameState.UpdateEvents(LoLDataProvider.GetEventData().Result, snapshot);
                 gameState.UpdateTeams(LoLDataProvider.GetPlayerData().Result, snapshot);
-                gameState.UpdateScoreboard();
+                gameState.UpdateScoreboard(snapshot);
                 UpdateInfoPage();
             }
             catch (Exception canceled)
@@ -462,6 +464,7 @@ namespace LeagueBroadcast.Common.Controllers
             if (!CurrentSettings.LevelUp)
                 return;
             Log.Info("Player " + e.playerId + " finished Item " + e.itemData.itemID);
+            Log.Info(JsonConvert.SerializeObject(new ItemCompleted(e.playerId, e.itemData), Formatting.Indented));
             EmbedIOServer.SocketServer.SendEventToAllAsync(new ItemCompleted(e.playerId, e.itemData));
         }
 
@@ -530,6 +533,7 @@ namespace LeagueBroadcast.Common.Controllers
         public bool EXP = false;
         public bool GoldGraph = false;
         public bool PlayerGold = false;
+        public bool TeamPlates = false;
 
         public bool SideGraph => CS || CSPerMin || EXP || PlayerGold;
     }

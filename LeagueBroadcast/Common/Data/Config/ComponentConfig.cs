@@ -18,7 +18,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "1.4";
+        public static new string CurrentVersion => "1.5";
 
         public DataDragonConfig DataDragon;
 
@@ -90,7 +90,9 @@ namespace LeagueBroadcast.Common.Data.Config
                         DoDragonKill = true,
                         DoInhibitors = false,
                         DoObjectiveSpawnPopUp = false,
-                        DoObjectiveKillPopUp = false
+                        DoObjectiveKillPopUp = false,
+                        UseCustomBaronTimer = false,
+                        UseCustomDragonTimer = true,
                     },
                     Teams = new IngameComponentConfig.TeamInfoConfig()
                     {
@@ -123,7 +125,7 @@ namespace LeagueBroadcast.Common.Data.Config
                         "C:\\Program Files",
                         "C:\\Program Files (x86)"
                     },
-                    OffsetRepository = "https://raw.githubusercontent.com/floh22/LeagueBroadcast/v2/Offsets/",
+                    OffsetRepository = "https://api.github.com/repos/floh22/LeagueBroadcast/contents/Offsets?ref=v2",
                     OffsetPrefix = "Offsets-",
                     CheckForOffsets = true
                 }
@@ -225,15 +227,34 @@ namespace LeagueBroadcast.Common.Data.Config
                 Task t = new(async () =>
                 {
                     await Task.Delay(100);
-                    //1.3 to 1.4
+                    //1.3 to 1.5
 
                     FileVersion = CurrentVersion;
 
                     DataDragon.Region = "global";
                     DataDragon.CDragonRaw = "https://raw.communitydragon.org";
+                    Ingame.Objectives.UseCustomDragonTimer = true;
 
                     JSONConfigProvider.Instance.WriteConfig(this);
                     Info($"Updated Component config from v1.3 to v{CurrentVersion}");
+                });
+                t.Start();
+            }
+
+            if (oldVersion.Equals("1.4"))
+            {
+                Task t = new(async () =>
+                {
+                    await Task.Delay(200);
+                    //1.4 to 1.5
+
+                    FileVersion = CurrentVersion;
+
+                    Ingame.Objectives.UseCustomDragonTimer = true;
+                    App.OffsetRepository = "https://api.github.com/repos/floh22/LeagueBroadcast/contents/Offsets?ref=v2";
+
+                    JSONConfigProvider.Instance.WriteConfig(this);
+                    Info($"Updated Component config from v1.4 to v{CurrentVersion}");
                 });
                 t.Start();
             }
@@ -291,6 +312,9 @@ namespace LeagueBroadcast.Common.Data.Config
             public bool DoInhibitors;
             public bool DoObjectiveSpawnPopUp;
             public bool DoObjectiveKillPopUp;
+            public bool UseCustomDragonTimer;
+            //non functional for now
+            public bool UseCustomBaronTimer;
         }
 
         public class TeamInfoConfig

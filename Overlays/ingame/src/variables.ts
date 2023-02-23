@@ -4,7 +4,7 @@ export default class variables {
 
     static backendUrl: string = "localhost";
     static backendPort: string = '9001';
-    static backendWsLoc: string = 'ingame'
+    static backendWsLoc: string = 'api'
     static backendFileLoc: string = 'cache';
     static useSSL: boolean = false;
 

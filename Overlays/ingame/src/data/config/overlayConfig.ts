@@ -21,13 +21,28 @@ export interface OverlayConfig {
     ItemComplete: ItemCompletedDisplayConfig;
     LevelUp: LevelUpDisplayConfig;
     InfoPage: InfoPageDisplayConfig;
-    BaronTimer: ObjectiveTimerDisplayConfig;
-    ElderTimer: ObjectiveTimerDisplayConfig;
+    BaronPowerPlay: PowerPlayDisplayConfig;
+    ElderPowerPlay: PowerPlayDisplayConfig;
+    DragonTimer: ObjectiveTimerDisplayConfig;
     GoldGraph: GoldGraphDisplayConfig;
     GoogleFonts: string[];
 }
 
 export interface ObjectiveTimerDisplayConfig {
+    KeepDisplayedWhenAlive: boolean;
+    HideTimeIfAlive: boolean;
+    IconAlivePosition: Vector2;
+    IconAliveScale: number;
+    IconAliveLerpDurationSetToZeroToDisable: number;
+    Position: Vector2;
+    Scale: number;
+    Align: string;
+    IconPosition: Vector2;
+    TimePosition: Vector2;
+    TimeFont: FontConfig;
+}
+
+export interface PowerPlayDisplayConfig {
     Position: Vector2;
     MaskPosition: Vector2;
     MaskSize: Vector2;

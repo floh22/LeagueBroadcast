@@ -17,6 +17,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
         public List<Player> players;
         public int towers;
         public int kills;
+        public int platesDestroyed;
 
         public bool hasBaron;
         public bool hasElder;
@@ -36,6 +37,7 @@ namespace LeagueBroadcast.Ingame.Data.LBH
             this.players = players;
             this.color = (id == 0) ? TeamConfigViewModel.BlueTeam.Color.ToSerializedString() : TeamConfigViewModel.RedTeam.Color.ToSerializedString();
             towers = 0;
+            platesDestroyed = 0;
             hasBaron = false;
             hasElder = false;
             dragonsTaken = new List<string>();

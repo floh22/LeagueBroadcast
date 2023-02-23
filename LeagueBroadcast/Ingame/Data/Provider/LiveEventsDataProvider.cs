@@ -9,7 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
+using System.Text.RegularExpressions;
 using System.Windows;
+using static LeagueBroadcast.OperatingSystem.InputUtils;
 
 namespace LeagueBroadcast.Ingame.Data.Provider
 {
@@ -73,7 +76,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 List<string> folders = Directory.GetDirectories(configLocation).Select(f => f = f.Replace(configLocation, "").Remove(0, 1)).ToList();
 
                 //Determine which to use depending on location of game.cfg
-                string LeagueFolder = folders.Contains("Config") && configLocation.EndsWith("League of Legends")
+                string LeagueFolder = folders.Contains("Config")
                     ? Path.Combine(configLocation, "Config")
                     : files.Contains("game.cfg")
                         ? configLocation
@@ -106,8 +109,11 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                         Log.Info("LiveEvents API found in Game config");
                     }
 
+                    //unify line endings
+                    Regex.Replace(cfgContent, @"\r\n|\r|\n", Environment.NewLine);
+
                     //Check for Replay API. This shouldnt be here but i'll shoehorn it in since it works
-                    List<string> lines = cfgContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+                    List<string> lines = cfgContent.Split(new string[] { Environment.NewLine}, StringSplitOptions.None).ToList();
                     int generalLoc = lines.FindIndex(0, l => l == "[General]");
 
                     //found general config
@@ -154,24 +160,37 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                         Log.Info("Verifying LiveEvents list");
                         var liveEventsCfg = Path.Join(LeagueFolder, "LiveEvents.ini");
                         var events = File.ReadAllLines(liveEventsCfg);
+                        var sw = File.AppendText(liveEventsCfg);
 
                         if (!events.Contains("OnMinionKill"))
                         {
-                            File.AppendText(liveEventsCfg).Write("\nOnMinionKill");
+                            sw.Write("\nOnMinionKill");
                             Log.Info("Adding OnMinionKill to LiveEvents.ini");
                         }
                         if (!events.Contains("OnNeutralMinionKill"))
                         {
-                            File.AppendText(liveEventsCfg).Write("\nOnNeutralMinionKill");
+                            sw.Write("\nOnNeutralMinionKill");
                             Log.Info("Adding OnNeutralMinionKill to LiveEvents.ini");
                         }
+
+                        if (!events.Contains("OnTurretPlateDestroyed"))
+                        {
+                            sw.Write("\nOnTurretPlateDestroyed");
+                            Log.Info("Adding OnTurretPlateDestroyed to LiveEvents.ini");
+                        }
+                        if (!events.Contains("OnDamageGiven"))
+                        {
+                            sw.Write("\nOnDamageGiven");
+                            Log.Info("Adding OnDamageGiven to LiveEvents.ini");
+                        }
+                        sw.Flush();
                         return true;
                     }
                     catch (FileNotFoundException)
                     {
 
                         Log.Info("LiveEvents.ini not found. Generating now");
-                        File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill" });
+                        File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill", "OnTurretPlateDestroyed", "OnDamageGiven" });
                         Log.Info("LiveEvents.ini created. Added only nescesary events!");
                         return true;
                     } catch(Exception e)
@@ -207,6 +226,12 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     case ("OnNeutralMinionKill"):
                         OnJglMinionKill(e);
                         break;
+                    case ("OnTurretPlateDestroyed"):
+                        OnPlateDestroy(e);
+                        break;
+                    case ("OnDamageGiven"):
+                        OnDamageDealt(e);
+                        break;
                     default:
                         break;
                 }
@@ -231,6 +256,58 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 AddCS(p, 1);
             }
                 
+        }
+
+        private void OnDamageDealt(LiveEvent e)
+        {
+            Player? p = GetPlayer(e.Source);
+            if(p is not null && e.Other is not null && e.Other.StartsWith("Turret", StringComparison.OrdinalIgnoreCase))
+            {
+                //player damage turret
+                var turret = Ingame.gameState.turrets[e.Other];
+                if(turret is null)
+                {
+                    Log.Verbose("Tried adding damage info to unknown turret: " + e.Other);
+                    return;
+                }
+                turret.LastDamagedByDictionary[p] = Ingame.gameData.gameTime;
+            }
+
+
+            //Later for teamfight damage calculation
+            //Player? o = GetPlayer(e.Other);
+
+        }
+
+        private void OnPlateDestroy(LiveEvent e)
+        {
+            var found = Ingame.gameState.turrets.TryGetValue(e.Other, out var turret);
+            
+            if(!found)
+            {
+                return;
+            }
+
+
+            //TODO known issue: ignores herald for now
+            var team = e.OtherTeam.Equals("Order", StringComparison.OrdinalIgnoreCase) ? Ingame.gameState.blueTeam : Ingame.gameState.redTeam;
+
+            bool anyPlayerGotPlate = false;
+
+            team.players.ForEach(p =>
+            {
+                float distance = Vector3.Distance(p.farsightObject.Position, turret.Position);
+                if (distance <= 1200 || (turret.LastDamagedByDictionary.TryGetValue(p, out double lastAttackedTime) && Ingame.gameData.gameTime - lastAttackedTime <= 6 && distance <= 2400))
+                {
+                    p.scores.platesDestroyed++;
+                    anyPlayerGotPlate = true;
+                }
+            });
+
+            if(anyPlayerGotPlate)
+            {
+                team.platesDestroyed++;
+            }
         }
         private void OnJglMinionKill(LiveEvent e)
         {
@@ -314,6 +391,11 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             if (t == null)
                 return null;
             return t.players.SingleOrDefault(p => p.summonerName.Equals(e.Source, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private Player? GetPlayer(string playerName)
+        {
+            return Ingame.gameState.GetAllPlayers().SingleOrDefault(p => p.summonerName == playerName);
         }
 
         private Team GetTeam(LiveEvent e)

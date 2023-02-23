@@ -7,6 +7,7 @@
         public int deaths;
         public int kills;
         public float wardScore;
+        public int platesDestroyed;
 
         public void Update(Score s, bool updateCS)
         {

@@ -72,6 +72,13 @@ namespace LeagueBroadcast.Common.Utils
                 throw new ArgumentException($"{nameof(components)} must not contain any negative elements!");
             }
 
+
+            if(components.Length < 3)
+            {
+                
+                components = components.Concat(Enumerable.Repeat(0, 3 - components.Length)).ToArray();
+            }
+
             Components = components;
         }
 

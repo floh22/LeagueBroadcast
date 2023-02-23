@@ -27,6 +27,8 @@ namespace LeagueBroadcast.Ingame.State
 
         public FrontEndObjective baron;
 
+        public UpcomingObjective nextDragon;
+
         public double gameTime;
         public bool gamePaused;
 
@@ -47,6 +49,7 @@ namespace LeagueBroadcast.Ingame.State
             this.gameState = BroadcastController.Instance.IGController.gameState;
             this.dragon = new (Objective.ObjectiveType.Dragon, 300);
             this.baron = new (Objective.ObjectiveType.Baron, 1200);
+            this.nextDragon = new UpcomingObjective();
             this.backBaron = new(0);
             this.backDragon = new(0);
             this.scoreboard = new ScoreboardConfig();
@@ -77,5 +80,11 @@ namespace LeagueBroadcast.Ingame.State
         {
             return IngameController.CurrentSettings.SideGraph;
         }
+
+        public bool ShouldSerializenextDragon()
+        {
+            return ConfigController.Component.Ingame.Objectives.UseCustomDragonTimer;
+        }
+
     }
 }
