@@ -1,16 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Update
 {
     public sealed class GitHubReleaseInfo
     {
-        [JsonPropertyName("tag_name")]
-        public string Version { get; set; } = "";
+        [JsonProperty("tag_name")]
+        public string Version { get; set; }
 
-        [JsonPropertyName("html_url")]
-        public string Url { get; set; } = "";
+        [JsonProperty("html_url")]
+        public string Url { get; set; }
 
-        [JsonPropertyName("assets")]
-        public GitHubReleaseAsset[] Assets { get; set; } = new GitHubReleaseAsset[0];
+        [JsonProperty("assets")]
+        public GitHubReleaseAsset[] Assets { get; set; }
     }
 }
