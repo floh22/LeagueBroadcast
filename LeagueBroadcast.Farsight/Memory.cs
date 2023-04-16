@@ -15,7 +15,7 @@ namespace LeagueBroadcast.Farsight
         public static int m_iNumberOfBytesRead = 0;
         public static int m_iNumberOfBytesWritten = 0;
 
-        public static int m_baseAddress = 0;
+        public static IntPtr m_baseAddress = IntPtr.Zero;
 
         public static bool IsConnected => m_pProcessHandle != (IntPtr)0;
 
@@ -26,7 +26,7 @@ namespace LeagueBroadcast.Farsight
             m_pProcessHandle = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, m_Process.Id); // Sets Our ProcessHandle
             m_Process.Exited += (s, e) => { m_Process = null; m_pProcessHandle = (IntPtr)0; m_iNumberOfBytesRead = 0; m_iNumberOfBytesWritten = 0; };
 
-            m_baseAddress = m_Process.MainModule.BaseAddress.ToInt32();
+            m_baseAddress = m_Process.MainModule.BaseAddress;
             Log.Verbose("Attached to League Process");
 
             return true;
@@ -50,45 +50,45 @@ namespace LeagueBroadcast.Farsight
             return new IntPtr(-1);
         }
 
-        public static T ReadMemory<T>(int Address) where T : struct
+        public static T ReadMemory<T>(IntPtr Address) where T : struct
         {
             int ByteSize = Marshal.SizeOf(typeof(T)); // Get ByteSize Of DataType
             byte[] buffer = new byte[ByteSize]; // Create A Buffer With Size Of ByteSize
-            ReadProcessMemory((int)m_pProcessHandle, Address, buffer, buffer.Length, ref m_iNumberOfBytesRead); // Read Value From Memory
+            ReadProcessMemory(m_pProcessHandle, Address, buffer, buffer.Length, ref m_iNumberOfBytesRead); // Read Value From Memory
 
             return ByteArrayToStructure<T>(buffer); // Transform the ByteArray to The Desired DataType
         }
 
-        public static byte[] ReadMemory(int Address, int size)
+        public static byte[] ReadMemory(IntPtr Address, int size)
         {
             var buffer = new byte[size];
 
-            ReadProcessMemory((int)m_pProcessHandle, Address, buffer, size, ref m_iNumberOfBytesRead);
+            ReadProcessMemory(m_pProcessHandle, Address, buffer, size, ref m_iNumberOfBytesRead);
 
             return buffer;
         }
 
-        public static float[] ReadMatrix<T>(int Address, int MatrixSize) where T : struct
+        public static float[] ReadMatrix<T>(IntPtr Address, int MatrixSize) where T : struct
         {
             int ByteSize = Marshal.SizeOf(typeof(T));
             byte[] buffer = new byte[ByteSize * MatrixSize]; // Create A Buffer With Size Of ByteSize * MatrixSize
-            ReadProcessMemory((int)m_pProcessHandle, Address, buffer, buffer.Length, ref m_iNumberOfBytesRead);
+            ReadProcessMemory(m_pProcessHandle, Address, buffer, buffer.Length, ref m_iNumberOfBytesRead);
 
             return ConvertToFloatArray(buffer); // Transform the ByteArray to A Float Array (PseudoMatrix ;P)
         }
 
-        public static void WriteMemory<T>(int Address, object Value)
+        public static void WriteMemory<T>(IntPtr Address, object Value)
         {
             byte[] buffer = StructureToByteArray(Value); // Transform Data To ByteArray 
 
-            WriteProcessMemory((int)m_pProcessHandle, Address, buffer, buffer.Length, out m_iNumberOfBytesWritten);
+            WriteProcessMemory(m_pProcessHandle, Address, buffer, buffer.Length, out m_iNumberOfBytesWritten);
         }
 
-        public static void WriteMemory<T>(int Address, char[] Value)
+        public static void WriteMemory<T>(IntPtr Address, char[] Value)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(Value);
 
-            WriteProcessMemory((int)m_pProcessHandle, Address, buffer, buffer.Length, out m_iNumberOfBytesWritten);
+            WriteProcessMemory(m_pProcessHandle, Address, buffer, buffer.Length, out m_iNumberOfBytesWritten);
         }
 
         #region Transformation
@@ -133,12 +133,12 @@ namespace LeagueBroadcast.Farsight
             return arr;
         }
 
-        public static int GetChampionObjectSize(int Address)
+        public static int GetChampionObjectSize(IntPtr Address)
         {
             var res = new MEMORY_BASIC_INFORMATION();
-            VirtualQueryEx((int)m_pProcessHandle, Address, out res, Convert.ToUInt32(Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION))));
+            VirtualQueryEx(m_pProcessHandle, Address, out res, Convert.ToUInt32(Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION))));
             Log.Verbose("Champ region size:" + res.RegionSize);
-            return res.RegionSize > 0? res.RegionSize : 0x3A00;
+            return res.RegionSize > 0 ? res.RegionSize : 0x3A00;
         }
         #endregion
 
@@ -148,13 +148,13 @@ namespace LeagueBroadcast.Farsight
         private static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
         [DllImport("kernel32.dll")]
-        private static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, ref int lpNumberOfBytesRead);
+        private static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] buffer, int size, ref int lpNumberOfBytesRead);
 
         [DllImport("kernel32.dll")]
-        private static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, out int lpNumberOfBytesWritten);
+        private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] buffer, int size, out int lpNumberOfBytesWritten);
 
         [DllImport("kernel32.dll")]
-        static extern int VirtualQueryEx(int hProcess, int lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
+        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
         #endregion
 
         #region Constants
