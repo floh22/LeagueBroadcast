@@ -2,12 +2,8 @@
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using LeagueBroadcast.Common;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace LeagueBroadcast.Update.Http
 {
@@ -42,7 +38,7 @@ namespace LeagueBroadcast.Update.Http
             Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("LeagueBroadcast", "2.0"));
         }
 
-        public static async Task<TResultType?> GetAsync<TResultType>(string url, ICollection<JsonConverter> converters = null)
+        public static async Task<TResultType?> GetAsync<TResultType>(string url)
         {
             try
             {
@@ -53,20 +49,7 @@ namespace LeagueBroadcast.Update.Http
                     return default;
                 }
                 var json = await response.Content.ReadAsStringAsync();
-
-
-                var serializationOptions = new JsonSerializerOptions
-                {
-                };
-
-                if (converters != null)
-                {
-                    foreach(var converter in converters)
-                    {
-                        serializationOptions.Converters.Add(converter);
-                    }
-                }
-                return JsonSerializer.Deserialize<TResultType>(json, serializationOptions)!;
+                return JsonConvert.DeserializeObject< TResultType>(json)!;
             }
             catch (TaskCanceledException)
             {

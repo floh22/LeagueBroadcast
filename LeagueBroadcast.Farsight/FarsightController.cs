@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Farsight
 {
@@ -69,37 +67,35 @@ namespace LeagueBroadcast.Farsight
         private void ReadObjects(Snapshot snap)
         {
             int maxObjects = 500;
-            int[] pointers = new int[maxObjects];
+            IntPtr[] pointers = new IntPtr[maxObjects];
 
             byte[] buff = new byte[500];
 
-            int objectManager = Memory.ReadMemory<int>(Memory.m_baseAddress + GameOffsets.Manager);
+            IntPtr objectManager = Memory.ReadMemory(Memory.m_baseAddress + GameOffsets.Manager, 8).ToIntPtr();
 
             Array.Copy(Memory.ReadMemory(objectManager, 100), 0, buff, 0, 100);
 
-            Queue<int> toVisit = new();
-            HashSet<int> visited = new();
-            toVisit.Enqueue(buff.ToInt(GameOffsets.MapRoot));
+            Queue<IntPtr> toVisit = new();
+            HashSet<IntPtr> visited = new();
+            toVisit.Enqueue(buff.ToIntPtr(GameOffsets.MapRoot));
 
             int objNr = 0;
             int read = 0;
-            int child1, child2, child3, node;
+            IntPtr child1, child2, child3, node;
 
             while(read < maxObjects && toVisit.Count > 0)
             {
                 node = toVisit.Dequeue();
                 if(visited.Contains(node))
-                {
                     continue;
-                }
 
                 read++;
                 visited.Add(node);
 
-                buff.Write(Memory.ReadMemory(node, 0x30));
-                child1 = buff.ToInt(0);
-                child2 = buff.ToInt(4);
-                child3 = buff.ToInt(8);
+                buff.Write(Memory.ReadMemory(node, 0x50));
+                child1 = buff.ToIntPtr(0);
+                child2 = buff.ToIntPtr(8);
+                child3 = buff.ToIntPtr(16);
 
                 toVisit.Enqueue(child1);
                 toVisit.Enqueue(child2);
@@ -110,8 +106,8 @@ namespace LeagueBroadcast.Farsight
                 if (netID - 0x40000000 > 0x100000)
                     continue;
 
-                int addr = buff.ToInt(GameOffsets.MapNodeObject);
-                if (addr == 0)
+                IntPtr addr = buff.ToIntPtr(GameOffsets.MapNodeObject);
+                if (addr == IntPtr.Zero)
                     continue;
 
                 pointers[objNr++] = addr;
@@ -127,12 +123,12 @@ namespace LeagueBroadcast.Farsight
                 if(!snap.ObjectMap.ContainsKey(netID))
                 {
                     obj = new();
-                    obj.LoadFromMemory(pointers[i], ObjectOffsets.EXP + 0x4);
+                    obj.LoadFromMemory(pointers[i], ObjectOffsets.Level + 0x4);
                     snap.ObjectMap.Add(netID, obj);
                 } else
                 {
                     obj = snap.ObjectMap[netID];
-                    obj.LoadFromMemory(pointers[i], ObjectOffsets.EXP + 0x4);
+                    obj.LoadFromMemory(pointers[i], ObjectOffsets.Level + 0x4);
 
                     if (netID != obj.NetworkID)
                         snap.ObjectMap[obj.NetworkID] = obj;

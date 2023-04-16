@@ -13,7 +13,12 @@ namespace LeagueBroadcast.Common.Utils
 			return res;
 		}
 
-		public static int ToInt(this byte[] source, int offset = 0)
+        public static IntPtr ToIntPtr(this byte[] source, int offset = 0)
+        {
+            return new IntPtr(BitConverter.ToInt64(source, offset));
+        }
+
+        public static int ToInt(this byte[] source, int offset = 0)
         {
 			return BitConverter.ToInt32(source, offset);
 		}

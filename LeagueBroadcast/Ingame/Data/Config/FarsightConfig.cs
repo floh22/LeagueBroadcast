@@ -23,7 +23,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "2.0";
+        public static new string CurrentVersion => "3.0";
 
 
         [JsonIgnore]
@@ -198,7 +198,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override void RevertToDefault()
         {
             var def = CreateDefault().Result;
-            this.FileVersion = "2.0";
+            this.FileVersion = CurrentVersion;
             this.OffsetVersion = def.OffsetVersion;
             this.GameOffsets = def.GameOffsets;
             this.ObjectOffsets = def.ObjectOffsets;
@@ -207,7 +207,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         private void UpdateGameVersion(FarsightConfig oldVersion)
         {
             var def = CreateDefault(oldVersion).Result;
-            this.FileVersion = "2.0";
+            this.FileVersion = CurrentVersion;
             this.OffsetVersion = def.OffsetVersion;
             this.GameOffsets = def.GameOffsets;
             this.ObjectOffsets = def.ObjectOffsets;
