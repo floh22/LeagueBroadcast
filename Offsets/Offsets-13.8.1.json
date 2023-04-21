@@ -1,0 +1,29 @@
+{
+  "OffsetVersion": "13.8.1",
+  "GameOffsets": {
+    "Manager": "0x20d0e78",
+    "MapCount": "0x48",
+    "MapRoot": "0x40",
+    "MapNodeNetId": "0x20",
+    "MapNodeObject": "0x28"
+  },
+  "ObjectOffsets": {
+    "ID": "0x10",
+    "NetworkID": "0xc8",
+    "Team": "0x3c",
+    "DisplayName": "0x60",
+    "DisplayNameLength": "0x70",
+    "Pos": "0x220",
+    "Mana": "0x340",
+    "MaxMana": "0x358",
+    "Health": "0x1058",
+    "MaxHealth": "0x1070",
+    "CurrentGold": "0x2118",
+    "GoldTotal": "0x2130",
+    "EXP": "0x3fe0",
+    "Level": "0x3ff8",
+    "Name": "0x3898",
+    "NameLength": "0x38a8"
+  },
+  "FileVersion": "3.0"
+}
