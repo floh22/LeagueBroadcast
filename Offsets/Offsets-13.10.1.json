@@ -20,10 +20,10 @@
     "MaxHealth": "0x1080",
     "CurrentGold": "0x2148",
     "GoldTotal": "0x2160",
-    "EXP": "0x4050",
+    "EXP": "0x4020",
     "Level": "0x4038",
     "Name": "0x38D0",
     "NameLength": "0x38E0"
   },
-  "FileVersion": "1.0"
+  "FileVersion": "2.0"
 }
