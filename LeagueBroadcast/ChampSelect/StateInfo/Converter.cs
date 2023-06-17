@@ -84,13 +84,17 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
             return countDownSec;
         }
 
-        public static string ConvertStateName(List<Data.LCU.Action> actions)
+        public static string ConvertStateName(List<Data.LCU.Action> actions, string phase)
         {
-            var currentActionIndex = actions.FindIndex(action => !action.completed);
+            if (phase == "FINALIZATION")
+                return "FINAL PHASE";
 
-            if (currentActionIndex == -1)
+            if (actions.Count == 0)
                 return "";
-            var currentAction = actions[currentActionIndex];
+
+            var currentActionIndex = actions.FindIndex(action => !action.completed);
+            var currentAction = currentActionIndex == -1 ? actions.Last() : actions[currentActionIndex];
+
             if (currentAction.type == "ban")
             {
                 if (currentActionIndex <= 6)
@@ -113,7 +117,7 @@ namespace LeagueBroadcast.ChampSelect.StateInfo
             var redTeam = ConvertTeam(new ConversionInput(lcuSession.theirTeam, flattenedActions));
 
             var timer = ConvertTimer(lcuSession.timer);
-            var stateName = ConvertStateName(flattenedActions);
+            var stateName = ConvertStateName(flattenedActions, lcuSession.timer.phase);
 
             return new StateConversionOutput() { blueTeam = blueTeam, redTeam = redTeam, timer = timer, state = stateName };
         }
