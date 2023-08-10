@@ -137,6 +137,7 @@ export default class InhibitorVisual extends VisualElement {
             this.bgImage.setMask(this.mask);
             this.AddVisualComponent(this.bgImage);
             if (!this.isActive && !this.isShowing) {
+                this.bgImage.setPosition(this.Config.Position.X, this.Config.Position.Y + this.Config.Size.Y);
                 this.bgImage.alpha = 0;
             }
         });
@@ -155,6 +156,7 @@ export default class InhibitorVisual extends VisualElement {
             this.bgVideo.play();
             this.AddVisualComponent(this.bgVideo);
             if (!this.isActive && !this.isShowing) {
+                this.bgVideo.setPosition(this.Config.Position.X, this.Config.Position.Y + this.Config.Size.Y);
                 this.bgVideo.alpha = 0;
             }
         });
@@ -373,6 +375,19 @@ export default class InhibitorVisual extends VisualElement {
             console.log('loading assets');
             this.scene.load.start();
         }
+
+
+        //Offset Visual Components downwards if we are not active
+        if(this.isActive || this.isShowing) {
+            return;
+        }
+
+        this.GetActiveVisualComponents().forEach(c => {
+            if(c === this.bgImage || c === this.bgVideo) {
+                return;
+            }
+            c.y += newConfig.Size.Y;
+        });
     }
 
     Start(): void {

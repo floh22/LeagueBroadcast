@@ -282,8 +282,8 @@ export default class IngameScene extends Phaser.Scene {
             this.score.UpdateValues(newState);
             this.baronPowerPlay.UpdateValues(newState.baron);
             this.elderPowerPlay.UpdateValues(newState.dragon);
-            this.dragonTimer.UpdateValues(newState.nextDragon);
-            this.baronTimer.UpdateValues(newState.nextBaron);
+            this.dragonTimer.UpdateValues(newState.nextDragon, newState.dragon);
+            this.baronTimer.UpdateValues(newState.nextBaron, newState.baron);
             this.info.UpdateValues(newState.infoPage);
             this.centerGraph.UpdateValues(newState.goldGraph);
             this.CheckSoulPoint(newState);
