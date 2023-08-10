@@ -1,15 +1,6 @@
 ﻿using LeagueBroadcast.MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace LeagueBroadcast.MVVM.View
 {
@@ -25,20 +16,33 @@ namespace LeagueBroadcast.MVVM.View
 
         public StartupViewModel GETDataContext()
         {
-            return (StartupViewModel) DataContext;
+            return (StartupViewModel)DataContext;
         }
 
         private void UpdateNow_Click(object sender, RoutedEventArgs e)
         {
-            var ctx = (StartupViewModel) this.DataContext;
+            StartupViewModel ctx = (StartupViewModel)this.DataContext;
             ctx.Update?.Invoke(null, EventArgs.Empty);
 
         }
 
         private void UpdateSkip_Click(object sender, RoutedEventArgs e)
         {
-            var ctx = (StartupViewModel)this.DataContext;
+            StartupViewModel ctx = (StartupViewModel)this.DataContext;
             ctx.SkipUpdate?.Invoke(null, EventArgs.Empty);
+        }
+
+        private void Button_Open_Discord_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO update when https is available
+            string destinationUrl = "http://discord.lolfar.site";
+
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = destinationUrl,
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
         }
     }
 }

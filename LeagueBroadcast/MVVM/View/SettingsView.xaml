@@ -68,6 +68,19 @@
                 <ComboBoxItem Tag="zh-TW" Content="繁体字"/>
                 <ComboBoxItem Tag="ko_KR" Content="한국말"/>
             </ComboBox>
+
+            <TextBlock Text="Contact" Foreground="White" FontSize="22" Margin="0,20,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <Image Height="30" Width="30" Source="../../Assets/Images/discord-mark-white.png" HorizontalAlignment="left" Margin="30,0,0,0"/>
+                <Button Content="discord.lolfar.site" Click="Button_Open_Discord_Click" Foreground="White" FontSize="17" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <ContentPresenter />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+
         </StackPanel>
     </Grid>
 </UserControl>

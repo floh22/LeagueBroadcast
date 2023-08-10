@@ -3,16 +3,8 @@ using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Utils;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LeagueBroadcast.MVVM.View
 {
@@ -69,6 +61,19 @@ namespace LeagueBroadcast.MVVM.View
                 ConfigController.Component.DataDragon.Locale = lang;
                 ConfigController.UpdateConfigFile(ConfigController.Component);
             }
+        }
+
+        private void Button_Open_Discord_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO update when https is available
+            string destinationUrl = "http://discord.lolfar.site";
+
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = destinationUrl,
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
         }
     }
 }

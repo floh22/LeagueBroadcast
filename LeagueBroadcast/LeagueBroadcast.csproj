@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/floh22/LeagueBroadcast</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageIcon>BE_icon.png</PackageIcon>
-    <AssemblyVersion>1.7.8.0</AssemblyVersion>
-    <FileVersion>1.7.8.0</FileVersion>
+    <AssemblyVersion>1.7.13.0</AssemblyVersion>
+    <FileVersion>1.7.13.0</FileVersion>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
@@ -48,6 +48,7 @@
     <None Remove="Assets\Icons\MidIcon.ico" />
     <None Remove="Assets\Images\ArrowsDown.png" />
     <None Remove="Assets\Images\ArrowsDownWhite.png" />
+    <None Remove="Assets\Images\discord-mark-white.png" />
     <None Remove="Assets\Images\LeagueOfLegendsIcon.png" />
     <None Remove="Assets\Images\TwitterSocial.png" />
     <None Remove="Common\Controllers\IngameController.cs~RF3284b66.TMP" />
@@ -81,6 +82,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\BE_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\discord-mark-white.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\LeagueOfLegendsIcon.png">

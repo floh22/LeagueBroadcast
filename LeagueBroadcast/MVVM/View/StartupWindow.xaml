@@ -53,7 +53,7 @@
                     <Button x:Name="UpdateSkip" Grid.Row="3" Grid.Column="3" Style="{StaticResource StartupButtonTheme}" Content="Remind Me Later" Visibility="{Binding Path=ShowUpdateDialog, Converter={StaticResource BoolToVisConverter}}" Click="UpdateSkip_Click"/>
                     <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Status}" VerticalAlignment="Bottom" Foreground="White" Margin="0,0,0,5"/>
                 </Grid>
-                
+
             </Border>
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
@@ -68,8 +68,9 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Row="1" Grid.Column="1">
-                    <TextBlock Text="LEAGUE BROADCAST" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
-                    <TextBlock Text="{Binding AppVersion}" FontSize="15" Foreground="White" VerticalAlignment="Top" Height="55" Margin="90,90,0,0"/>
+                    <TextBlock Text="Farsight" FontSize="35" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="OpenSans" Foreground="White" Margin="77,46,0,0"/>
+                    <TextBlock Text="LEAGUE BROADCAST" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="OpenSans" Foreground="White" Margin="0,88,0,0"/>
+                    <TextBlock Text="{Binding AppVersion}" FontSize="15" Foreground="White" VerticalAlignment="Top" TextAlignment="right" Height="55" Margin="-77,112,77,0"/>
                 </Grid>
                 <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
                     <Grid>
@@ -85,8 +86,14 @@
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="10"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="2" Text="@LarsEble" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="OpenSans" Foreground="White"/>
-                        <Image Grid.Row="2" Grid.Column="2" Height="30" Width="30" Source="../../Assets/Images/TwitterSocial.png"/>
+                        <Button Grid.Row="2" Content="discord.lolfar.site" Click="Button_Open_Discord_Click" Foreground="White" FontSize="15" FontFamily="OpenSans" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Image Grid.Row="2" Grid.Column="2" Height="30" Width="30" Source="../../Assets/Images/discord-mark-white.png"/>
                     </Grid>
                 </Grid>
             </Grid>
