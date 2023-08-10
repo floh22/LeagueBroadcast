@@ -17,6 +17,7 @@ import InfoPageVisual from '~/visual/InfoPageVisual';
 import GraphVisual from '~/visual/GraphVisual';
 import ObjectivePopUpVisual from '~/visual/ObjectivePopUpVisual';
 import ObjectiveTimerVisual from '~/visual/ObjectiveTimerVisual';
+import Utils from '~/util/Utils';
 
 export default class IngameScene extends Phaser.Scene {
     [x: string]: any;
@@ -28,6 +29,7 @@ export default class IngameScene extends Phaser.Scene {
     elderPowerPlay!: PowerPlayVisual;
 
     dragonTimer!: ObjectiveTimerVisual;
+    baronTimer!: ObjectiveTimerVisual;
 
     inhib!: InhibitorVisual;
     score!: ScoreboardVisual;
@@ -74,7 +76,8 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('objectiveGold', 'frontend/images/ObjectiveGold.png');
         this.load.image('objectiveCdr', 'frontend/images/ObjectiveCdr.png');
 
-        this.load.image('objectiveTimerBg', 'frontend/backgrounds/ObjectiveTimer.png');
+        this.load.image('dragonTimerBg', 'frontend/backgrounds/DragonTimer.png');
+        this.load.image('baronTimerBg', 'frontend/backgrounds/BaronTimer.png');
 
         //Scoreboard
         this.load.image('scoreGold', 'frontend/images/ScoreboardGold.png');
@@ -96,14 +99,14 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('dragon_Hextech', 'frontend/images/dragons/scoreboard/hextechLarge.png');
         this.load.image('dragon_Chemtech', 'frontend/images/dragons/scoreboard/chemtechLarge.png');
 
-
-        this.load.image('dragon_timer_Fire', 'frontend/images/dragons/timers/fireTimer.png');
-        this.load.image('dragon_timer_Mountain', 'frontend/images/dragons/timers/mountainTimer.png');
-        this.load.image('dragon_timer_Cloud', 'frontend/images/dragons/timers/cloudTimer.png');
-        this.load.image('dragon_timer_Ocean', 'frontend/images/dragons/timers/oceanTimer.png');
-        this.load.image('dragon_timer_Elder', 'frontend/images/dragons/timers/elderTimer.png');
-        this.load.image('dragon_timer_Hextech', 'frontend/images/dragons/timers/hextechTimer.png');
-        this.load.image('dragon_timer_Chemtech', 'frontend/images/dragons/timers/chemtechTimer.png');
+        this.load.image('timer_Fire', 'frontend/images/dragons/timers/fireTimer.png');
+        this.load.image('timer_Mountain', 'frontend/images/dragons/timers/mountainTimer.png');
+        this.load.image('timer_Cloud', 'frontend/images/dragons/timers/cloudTimer.png');
+        this.load.image('timer_Ocean', 'frontend/images/dragons/timers/oceanTimer.png');
+        this.load.image('timer_Elder', 'frontend/images/dragons/timers/elderTimer.png');
+        this.load.image('timer_Hextech', 'frontend/images/dragons/timers/hextechTimer.png');
+        this.load.image('timer_Chemtech', 'frontend/images/dragons/timers/chemtechTimer.png');
+        this.load.image('timer_Baron', 'frontend/images/baronTimer.png');
 
         //Inhibitor
         this.load.svg('top', 'frontend/images/lanes/top.svg');
@@ -185,6 +188,7 @@ export default class IngameScene extends Phaser.Scene {
                 this.baronPowerPlay?.Stop();
                 this.elderPowerPlay?.Stop();
                 this.dragonTimer?.Stop();
+                this.baronTimer?.Stop();
                 this.info?.Stop();
                 this.centerGraph?.Stop();
                 this.centerGraph?.Stop();
@@ -279,6 +283,7 @@ export default class IngameScene extends Phaser.Scene {
             this.baronPowerPlay.UpdateValues(newState.baron);
             this.elderPowerPlay.UpdateValues(newState.dragon);
             this.dragonTimer.UpdateValues(newState.nextDragon);
+            this.baronTimer.UpdateValues(newState.nextBaron);
             this.info.UpdateValues(newState.infoPage);
             this.centerGraph.UpdateValues(newState.goldGraph);
             this.CheckSoulPoint(newState);
@@ -316,7 +321,8 @@ export default class IngameScene extends Phaser.Scene {
             this.inhib = new InhibitorVisual(this);
             this.baronPowerPlay = new PowerPlayVisual(this, 'baron', message.config.BaronPowerPlay);
             this.elderPowerPlay = new PowerPlayVisual(this, 'elder', message.config.ElderPowerPlay);
-            this.dragonTimer = new ObjectiveTimerVisual(this, 'Ocean', message.config.DragonTimer);
+            this.dragonTimer = new ObjectiveTimerVisual(this, 'Ocean', message.config.DragonTimer, `dragonTimer`);
+            this.baronTimer = new ObjectiveTimerVisual(this, 'Baron', message.config.BaronTimer, `baronTimer`);
             this.score = new ScoreboardVisual(this, message.config.Score);
             this.info = new InfoPageVisual(this, message.config.InfoPage);
             this.centerGraph = new GraphVisual(this, message.config.GoldGraph, [new GoldEntry(0, 100), new GoldEntry(40, -100)]);
@@ -338,27 +344,99 @@ export default class IngameScene extends Phaser.Scene {
     }
 
     UpdateConfigWhenReady(message: OverlayConfigEvent): void {
-        //Load new fonts
-        let newFonts = message.config.GoogleFonts.filter(f => !this.loadedFonts.includes(f));
-        if (newFonts.length > 0) {
-            this.load.rexWebFont({
-                google: {
-                    families: newFonts
-                }
-            });
+        let remotePromises: Promise<boolean>[] = [];
 
-            console.log(`[LB] Loading ${newFonts.length} new fonts`);
-            this.loadedFonts.push(...newFonts);
-            this.load.start();
-            
-            //Wait for loader to finish loading fonts
-            this.load.once('complete', () => {
-                console.log('[LB] Fonts loaded');
+        //local fonts all in ip:port/Cache/Fonts
+        let remoteSite = `${variables.useSSL ? 'https' : 'http'}://${variables.backendUrl}:${variables.backendPort}/cache/fonts`;
+
+        console.log('[LB] Checking remote fonts at ' + remoteSite);
+
+        //query remoteSite
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', remoteSite, true);
+        xhr.send();
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                //Load new fonts
+                let newGoogleFonts = message.config.GoogleFonts.filter(f => !this.loadedFonts.includes(f));
+                if (newGoogleFonts.length > 0) {
+                    this.load.rexWebFont({
+                        google: {
+                            families: newGoogleFonts
+                        }
+                    });
+
+                    console.log(`[LB] Loading ${newGoogleFonts.length} new google fonts`);
+                    this.loadedFonts.push(...newGoogleFonts);
+                    this.load.start();
+
+                    //Wait for loader to finish loading fonts
+                    this.load.once('complete', () => {
+                        console.log('[LB] Google Fonts loaded');
+                        if (remotePromises.length !== 0) {
+                            // Wait for remote fonts to load before updating config
+                            return;
+                        }
+                        this.UpdateConfig(message);
+                    });
+                };
+
+
+                if (xhr.status === 200) {
+                    let responseText = xhr.responseText;
+
+                    //Create html element to parse responseText
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(responseText, 'text/html');
+
+                    //Get all font files
+
+                    let remoteFonts = Array.from(doc.getElementsByTagName('a')).map(a => {
+                        let href = a.getAttribute('href');
+                        if (href !== null) {
+                            return `${remoteSite}/${href}`;
+                        } else {
+                            return '';
+                        }
+                    }).filter(a => a.endsWith('.ttf') || a.endsWith('.otf'));
+                    let newRemoteFonts = remoteFonts.filter(f => !this.loadedFonts.includes(f));
+                    if (newRemoteFonts.length > 0) {
+                        console.log(`[LB] Loading ${newRemoteFonts.length} new local fonts`);
+                        for (let font of newRemoteFonts) {
+                            let fontName = font.split('/').pop()!.split('.')[0].replace(/%20/g, ' ');
+
+                            //Add font to loaded fonts
+                            this.loadedFonts.push(font);
+
+                            //Add font to load queue
+                            remotePromises.push(Utils.LoadFont(fontName, font));
+                        }
+
+
+                    }
+
+                    //Wait for all fonts to load
+                    Promise.all(remotePromises).then(() => {
+                        console.log('[LB] All local fonts loaded');
+
+                        remotePromises = [];
+
+                        //Update config
+                        this.UpdateConfig(message);
+                    });
+                }
+
+                if (newGoogleFonts.length !== 0 || remotePromises.length !== 0) {
+                    return;
+                }
+
+                //No new fonts, update config
+                console.log('[LB] No new fonts, updating config');
                 this.UpdateConfig(message);
-            });
-            return;
-        }
-        this.UpdateConfig(message);
+            };
+
+        };
     }
 
 

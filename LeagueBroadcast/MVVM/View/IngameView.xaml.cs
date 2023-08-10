@@ -1,17 +1,5 @@
-﻿using LeagueBroadcast.Common;
-using LeagueBroadcast.MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using LeagueBroadcast.MVVM.ViewModel;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LeagueBroadcast.MVVM.View
 {
@@ -29,15 +17,18 @@ namespace LeagueBroadcast.MVVM.View
             OpenContent.Opacity = 0;
 
 
-            DataContextChanged += (s, e) => {
+            DataContextChanged += (s, e) =>
+            {
                 ctx = (IngameViewModel)e.NewValue;
                 //Objectives
                 ObjectivePanel.DataContext = ctx.Objectives;
-                BaronButton.DataContext = ctx.Objectives.BaronTimer;
-                DragonButton.DataContext = ctx.Objectives.ElderTimer;
+                BaronButton.DataContext = ctx.Objectives.BaronPowerPlay;
+                DragonButton.DataContext = ctx.Objectives.ElderPowerPlay;
                 InhibButton.DataContext = ctx.Objectives.InhibTimer;
                 ObjectiveSpawnButton.DataContext = ctx.Objectives.ObjectiveSpawn;
                 ObjectiveKillButton.DataContext = ctx.Objectives.ObjectiveKill;
+                DragonTimerButton.DataContext = ctx.Objectives.DragonTimer;
+                BaronTimerButton.DataContext = ctx.Objectives.BaronTimer;
 
                 //Teams
                 TeamPanel.DataContext = ctx.Teams;

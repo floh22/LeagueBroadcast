@@ -1,7 +1,4 @@
-﻿using LeagueBroadcast.OperatingSystem;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -15,11 +12,13 @@ namespace LeagueBroadcast.Common.Data.Config
 
         private string _configPath;
 
+        public string ConfigPath => _configPath;
+
         public ObservableCollection<string> TeamConfigs;
         private JSONConfigProvider()
         {
             _configPath = Path.Combine(Directory.GetCurrentDirectory(), "Config");
-            
+
             Log.Info("Config Provider started");
             Log.Info($"Looking for config files at /Config");
 
@@ -29,7 +28,7 @@ namespace LeagueBroadcast.Common.Data.Config
                 Directory.CreateDirectory(_configPath);
             }
 
-            if(!Directory.Exists(Path.Join(_configPath, "Teams")))
+            if (!Directory.Exists(Path.Join(_configPath, "Teams")))
             {
                 Log.Info("Init Teams Folder");
                 Directory.CreateDirectory(Path.Join(_configPath, "Teams"));
@@ -42,7 +41,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public void ReadConfig(JSONConfig config)
         {
             string fileLocation = Path.Combine(_configPath, $"{config.Name}.json");
-            if(!File.Exists(fileLocation))
+            if (!File.Exists(fileLocation))
             {
                 Log.Info($"Config {config.Name} not found. Restoring default config");
                 config.RevertToDefault();
@@ -50,7 +49,7 @@ namespace LeagueBroadcast.Common.Data.Config
                 return;
             }
 
-            var configString = File.ReadAllText(fileLocation);
+            string configString = File.ReadAllText(fileLocation);
             dynamic readConfig = JsonConvert.DeserializeObject<dynamic>(configString);
             bool updateValues = true;
             if (readConfig.FileVersion != config.GETCurrentVersion())
@@ -58,25 +57,28 @@ namespace LeagueBroadcast.Common.Data.Config
                 Log.Info($"Config {config.Name} outdated. Updating file version");
                 updateValues = config.UpdateConfigVersion(readConfig.FileVersion.ToString(), configString);
             }
-            if(updateValues)
+            if (updateValues)
             {
                 Log.Info($"Found {config.Name}.json. Reading values");
                 config.UpdateValues(configString);
             }
-            if(Log.Instance.Level == Log.LogLevel.Verbose)
+            if (Log.Instance.Level == Log.LogLevel.Verbose)
+            {
                 Log.Verbose(config.GETJson());
+            }
+
             Log.Info($"Config {config.Name} loaded");
         }
 
         public void WriteConfig(JSONConfig config)
         {
-            if(config.FileVersion == null)
+            if (config.FileVersion == null)
             {
                 return;
             }
             Log.Info($"Writing {config.Name} config to file");
-            using var stream = File.CreateText(Path.Combine(_configPath, $"{config.Name}.json"));
-            var json = config.GETJson();
+            using StreamWriter stream = File.CreateText(Path.Combine(_configPath, $"{config.Name}.json"));
+            string json = config.GETJson();
             stream.Write(json);
             stream.Close();
             Log.Info($"Updated {config.Name} config file");
@@ -92,7 +94,7 @@ namespace LeagueBroadcast.Common.Data.Config
                 return false;
             }
 
-            var configString = File.ReadAllText(fileLocation);
+            string configString = File.ReadAllText(fileLocation);
             dynamic readConfig = JsonConvert.DeserializeObject<dynamic>(configString);
             if (readConfig.FileVersion != config.GETCurrentVersion())
             {
@@ -111,8 +113,8 @@ namespace LeagueBroadcast.Common.Data.Config
                 return;
             }
             Directory.CreateDirectory(Path.Combine(_configPath, "Teams"));
-            using var stream = File.CreateText(Path.Combine(Path.Combine(_configPath, "Teams"), $"{config.Name}.json"));
-            var json = config.GETJson();
+            using StreamWriter stream = File.CreateText(Path.Combine(Path.Combine(_configPath, "Teams"), $"{config.Name}.json"));
+            string json = config.GETJson();
             stream.Write(json);
             stream.Close();
             Log.Info($"Updated {config.Name} team file");
@@ -121,7 +123,7 @@ namespace LeagueBroadcast.Common.Data.Config
 
         private static JSONConfigProvider GETInstance()
         {
-            if(_instance == null)
+            if (_instance == null)
             {
                 _instance = new();
             }

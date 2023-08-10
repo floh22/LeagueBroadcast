@@ -17,17 +17,17 @@ export default class ObjectiveTimerVisual extends VisualElement {
 
     Config: ObjectiveTimerDisplayConfig;
 
-    constructor(scene: IngameScene, type: string, cfg: ObjectiveTimerDisplayConfig) {
-        super(scene, cfg.Position, `DragonTimer`);
+    constructor(scene: IngameScene, type: string, cfg: ObjectiveTimerDisplayConfig, name: string) {
+        super(scene, cfg.Position, name);
         this.Type = type;
 
         this.Config = cfg;
 
-        this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, 'objectiveTimerBg');
+        this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, `${name}Bg`);
         this.BackgroundBox.setScale(cfg.Scale);
         this.visualComponents.push(this.BackgroundBox);
 
-        this.Icon = scene.add.image(this.position.X + cfg.IconPosition.X, this.position.Y + cfg.IconPosition.Y, 'dragon_timer_' + type);
+        this.Icon = scene.add.image(this.position.X + cfg.IconPosition.X, this.position.Y + cfg.IconPosition.Y, 'timer_' + type);
         this.Icon.setScale(cfg.Scale);
         this.Icon.setDepth(2);
         this.Icon.setAlpha(0);
@@ -69,7 +69,6 @@ export default class ObjectiveTimerVisual extends VisualElement {
 
         //Transition to alive
         if(this.Config.KeepDisplayedWhenAlive && newValues.SpawnTimer !== 0 && this.currentTime <= 0 && !this.isTransitioning) {
-            console.log("Transition to alive");
             this.isTransitioning = true;
 
             let ctx = this;
@@ -158,8 +157,7 @@ export default class ObjectiveTimerVisual extends VisualElement {
         if (this.Icon) {
             if (this.Type !== newValues.Element && newValues.Element !== "" && newValues.Element !== undefined && newValues.Element !== null) {
                 this.Type = newValues.Element;
-                console.log(' loading dragon icon dragon_' + this.Type);
-                this.Icon.setTexture('dragon_' + this.Type);
+                this.Icon.setTexture('timer_' + this.Type);
             }
         }
 
@@ -167,6 +165,9 @@ export default class ObjectiveTimerVisual extends VisualElement {
         if (this.Time) {
             var timeInSec = Math.round(newValues.SpawnTimer);
             this.Time.text = (Math.floor(timeInSec / 60) >= 10 ? Math.floor(timeInSec / 60) : '0' + Math.floor(timeInSec / 60)) + ':' + (timeInSec % 60 >= 10 ? timeInSec % 60 : '0' + timeInSec % 60);
+            if(this.currentTime === 0 && this.Config.HideTimeIfAlive){
+                this.Time.setAlpha(0);
+            }
         }
 
     }

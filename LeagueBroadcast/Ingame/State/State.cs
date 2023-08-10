@@ -1,7 +1,6 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.Provider;
-using LeagueBroadcast.Common.Data.RIOT;
 using LeagueBroadcast.Farsight;
 using LeagueBroadcast.Farsight.Object;
 using LeagueBroadcast.Ingame.Data.LBH;
@@ -57,8 +56,8 @@ namespace LeagueBroadcast.Ingame.State
 
         public void UpdateTeams(List<Player> PlayerData, Snapshot gameSnap)
         {
-            var bluePlayers = PlayerData.Where(p => p.team == "ORDER").ToList();
-            var redPlayers = PlayerData.Where(p => p.team != "ORDER").ToList();
+            List<Player> bluePlayers = PlayerData.Where(p => p.team == "ORDER").ToList();
+            List<Player> redPlayers = PlayerData.Where(p => p.team != "ORDER").ToList();
 
             //Init data on first run
             bool firstRun = false;
@@ -97,18 +96,21 @@ namespace LeagueBroadcast.Ingame.State
                 //Get new player data
                 Player newP = PlayerData.Where(p2 => p2.summonerName.Equals(p.summonerName, StringComparison.Ordinal)).FirstOrDefault();
                 if (newP == null)
+                {
                     return;
+                }
 
                 //Get player memory data. Remove special characters since memory names do not contain them
                 GameObject playerObject;
                 try
                 {
                     playerObject = gameSnap.Champions.First(c => c.Name.Equals(p.championID, StringComparison.OrdinalIgnoreCase));
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     //Champ could not be found. Inform user that mapping is currently not working
                     Log.Warn(p.championName + " not found in memory snapshot. Values will be incorrect!");
-                    if(!ShowedChampionMemoryError)
+                    if (!ShowedChampionMemoryError)
                     {
                         Log.Warn(e.Message);
                         Log.Verbose($"Players:\n{JsonSerializer.Serialize(GetAllPlayers())}\nSnapshot:\n{JsonSerializer.Serialize(gameSnap.Champions)}");
@@ -117,7 +119,7 @@ namespace LeagueBroadcast.Ingame.State
                     }
                     return;
                 }
-                
+
                 Team playerTeam = (newP.team == "ORDER") ? blueTeam : redTeam;
 
                 //We have all the info we need now, so update the player and check if anything has happened
@@ -130,26 +132,32 @@ namespace LeagueBroadcast.Ingame.State
                     Log.Verbose($"{p.championName} died with baron buff");
                     p.diedDuringBaron = true;
                 }
-                if(playerTeam.hasElder && newP.isDead && !p.diedDuringElder)
+                if (playerTeam.hasElder && newP.isDead && !p.diedDuringElder)
                 {
                     Log.Verbose($"{p.championName} died with elder buff");
                     p.diedDuringElder = true;
                 }
 
                 //If Viego is alive and outside of base, his item buys are most likely from possession
-                if(!(p.championID == "Viego" && !p.isDead && (newP.team == "ORDER"? Vector3.Distance(Vector3.Zero, playerObject.Position) > 1200 : Vector3.Distance(new Vector3(15000,170, 15000), playerObject.Position) > 1200)))
+                if (!(p.championID == "Viego" && !p.isDead && (newP.team == "ORDER" ? Vector3.Distance(Vector3.Zero, playerObject.Position) > 1200 : Vector3.Distance(new Vector3(15000, 170, 15000), playerObject.Position) > 1200)))
                 {
                     //Level up Events
                     if (p.level < 6 && newP.level >= 6)
+                    {
                         controller.OnLevelUp(new LevelUpEventArgs(p.id, 6));
+                    }
                     else if (p.level < 11 && newP.level >= 11)
+                    {
                         controller.OnLevelUp(new LevelUpEventArgs(p.id, 11));
+                    }
                     else if (p.level < 16 && newP.level >= 16)
+                    {
                         controller.OnLevelUp(new LevelUpEventArgs(p.id, 16));
+                    }
                 }
 
                 //New item Events
-                var newItems = newP.items.ToList().Where(i => !p.items.ToList().Any(l => i.itemID == l.itemID));
+                IEnumerable<Item> newItems = newP.items.ToList().Where(i => !p.items.ToList().Any(l => i.itemID == l.itemID));
                 newItems = newItems.Where(i => CDragonItem.Full.Select(item => item.ID).Contains(i.itemID));
 
                 newItems.ToList().ForEach(newI => controller.OnItemCompleted(new ItemCompletedEventArgs(p.id, DataDragon.Instance.GetItemById(newI.itemID))));
@@ -162,7 +170,8 @@ namespace LeagueBroadcast.Ingame.State
             });
 
             //Update Teams
-            GetBothTeams().ForEach(t => {
+            GetBothTeams().ForEach(t =>
+            {
                 //Determine if the team still has baron
                 if (t.hasBaron && t.players.All((p) => p.diedDuringBaron))
                 {
@@ -196,19 +205,23 @@ namespace LeagueBroadcast.Ingame.State
 
             //Get new events
             List<RiotEvent> newEvents = new List<RiotEvent>();
-            allEvents.ForEach(e => {
+            allEvents.ForEach(e =>
+            {
                 if (pastIngameEvents.Where(o => o.EventID == e.EventID).ToList().Count == 0)
                 {
                     newEvents.Add(e);
                     if (Log.Instance.Level == Log.LogLevel.Verbose)
+                    {
                         Log.Verbose($"New Event: {JsonSerializer.Serialize(e)}");
+                    }
                 }
             });
 
             //Save event data;
             pastIngameEvents = allEvents;
 
-            newEvents.ForEach(e => {
+            newEvents.ForEach(e =>
+            {
                 switch (e.EventName)
                 {
                     case "TurretKilled":
@@ -235,7 +248,7 @@ namespace LeagueBroadcast.Ingame.State
 
 
             //Check for Drake spawn
-            if(gameSnap.Dragon.ID != 0 && lastDragon?.ID == 0)
+            if (gameSnap.Dragon.ID != 0 && lastDragon?.ID == 0)
             {
                 //Get the last part of the drake name and then map the memory names to API names. I god damn hope these aren't language specific again
                 string drakeName = gameSnap.Dragon.Name.Split("_")[^1].Replace("Air", "Cloud", StringComparison.OrdinalIgnoreCase).Replace("Earth", "Mountain", StringComparison.OrdinalIgnoreCase).Replace("Water", "Ocean", StringComparison.OrdinalIgnoreCase);
@@ -245,7 +258,7 @@ namespace LeagueBroadcast.Ingame.State
             }
 
             //Check for Herald spawn
-            if(gameSnap.Herald.ID != 0 && lastHerald?.ID == 0)
+            if (gameSnap.Herald.ID != 0 && lastHerald?.ID == 0)
             {
                 //Same as drake spawn
                 controller.OnObjectiveSpawn("Herald");
@@ -265,7 +278,12 @@ namespace LeagueBroadcast.Ingame.State
             stateData.nextDragon.SpawnTimer = stateData.dragon.SpawnTimer;
             stateData.nextDragon.Element = s.NextDragonType;
 
-            var currentTeam = stateData.scoreboard.BlueTeam;
+
+            //Do not support Herald for now
+            stateData.nextBaron.SpawnTimer = stateData.baron.SpawnTimer;
+            stateData.nextBaron.Element = "Baron";
+
+            Data.Frontend.FrontEndTeam currentTeam = stateData.scoreboard.BlueTeam;
             currentTeam.Name = TeamConfigViewModel.BlueTeam.NameTag;
             currentTeam.Icon = TeamConfigViewModel.BlueTeam.IconName;
             currentTeam.Kills = blueTeam.kills;
@@ -289,7 +307,10 @@ namespace LeagueBroadcast.Ingame.State
         {
             //Nothing to update if not ingame
             if (blueTeam == null || redTeam == null)
+            {
                 return;
+            }
+
             blueTeam.color = TeamConfigViewModel.BlueTeam.Color.ToSerializedString();
             redTeam.color = TeamConfigViewModel.RedTeam.Color.ToSerializedString();
         }
@@ -298,20 +319,26 @@ namespace LeagueBroadcast.Ingame.State
         public Team GetTeam(string TeamName)
         {
             if (TeamName.Equals("Order", StringComparison.OrdinalIgnoreCase))
+            {
                 return blueTeam;
+            }
+
             if (TeamName.Equals("Chaos", StringComparison.OrdinalIgnoreCase))
+            {
                 return redTeam;
+            }
+
             return null;
         }
 
         public Dictionary<double, float> GetGoldGraph()
         {
-            var outList = new Dictionary<double, float>();
+            Dictionary<double, float> outList = new Dictionary<double, float>();
 
             //For each point in time, add gold difference at time to graph
             Team teamToCount = blueTeam.players.Count > 0 ? blueTeam : redTeam;
             int dataPoints = teamToCount.players[0].goldHistory.Count;
-            if(dataPoints < 2)
+            if (dataPoints < 2)
             {
                 return new Dictionary<double, float>() {
                     {0, 0},
@@ -325,7 +352,7 @@ namespace LeagueBroadcast.Ingame.State
                 float redGold = redTeam.GetGold(i);
                 double time = teamToCount.players[0].goldHistory.Keys.ElementAt(i);
                 float goldDiff = blueGold - redGold;
-                if(i == 0 || i == dataPoints - 1 || Math.Abs(outList.Last().Value - goldDiff) > 500 || time - outList.Last().Key > 15)
+                if (i == 0 || i == dataPoints - 1 || Math.Abs(outList.Last().Value - goldDiff) > 500 || time - outList.Last().Key > 15)
                 {
                     outList.TryAdd(time, blueGold - redGold);
                 }
@@ -333,9 +360,9 @@ namespace LeagueBroadcast.Ingame.State
 
             //limit outlist size to 1000 to prevent crashing due to too many data points
 
-            if(outList.Count > 1000)
+            if (outList.Count > 1000)
             {
-                var newOutList = new Dictionary<double, float>();
+                Dictionary<double, float> newOutList = new Dictionary<double, float>();
                 int step = outList.Count / 1000;
                 for (int i = 0; i < outList.Count; i += step)
                 {
@@ -372,11 +399,11 @@ namespace LeagueBroadcast.Ingame.State
             front.DurationRemaining = t.ToString(@"mm\:ss");
 
             //Gold differences since objective was taken
-            var originalDiff = back.BlueStartGold - back.RedStartGold;
-            var currentDiff = stateData.blueGold - stateData.redGold;
+            float originalDiff = back.BlueStartGold - back.RedStartGold;
+            float currentDiff = stateData.blueGold - stateData.redGold;
 
             //Check if blue has the objective to determine in which direction the gold difference should go
-            var blueHasObjective = (front.Type == Objective.ObjectiveType.Baron) ? blueTeam.hasBaron : blueTeam.hasElder;
+            bool blueHasObjective = (front.Type == Objective.ObjectiveType.Baron) ? blueTeam.hasBaron : blueTeam.hasElder;
 
             //Difference between the gold gained inverted based on if Blue or Red team has the objective
             front.GoldDifference = (currentDiff - originalDiff) * (blueHasObjective ? 1 : -1);
@@ -396,16 +423,17 @@ namespace LeagueBroadcast.Ingame.State
 
         internal void UpdateTurrets(Snapshot snapshot)
         {
-            foreach(GameObject gameObject in snapshot.Turrets) {
-                
-                if(!turrets.ContainsKey(gameObject.DisplayName))
+            foreach (GameObject gameObject in snapshot.Turrets)
+            {
+
+                if (!turrets.ContainsKey(gameObject.DisplayName))
                 {
-                    var toAdd = new Turret(gameObject.DisplayName, gameObject.Position, gameObject.Health);
+                    Turret toAdd = new Turret(gameObject.DisplayName, gameObject.Position, gameObject.Health);
                     turrets[gameObject.DisplayName] = toAdd;
                     continue;
                 }
 
-                var turret = turrets[gameObject.DisplayName];
+                Turret turret = turrets[gameObject.DisplayName];
                 turret.Health = gameObject.Health;
             }
         }

@@ -24,6 +24,7 @@ export interface OverlayConfig {
     BaronPowerPlay: PowerPlayDisplayConfig;
     ElderPowerPlay: PowerPlayDisplayConfig;
     DragonTimer: ObjectiveTimerDisplayConfig;
+    BaronTimer: ObjectiveTimerDisplayConfig;
     GoldGraph: GoldGraphDisplayConfig;
     GoogleFonts: string[];
 }

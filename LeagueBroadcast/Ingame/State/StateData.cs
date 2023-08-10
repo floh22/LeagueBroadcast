@@ -1,12 +1,9 @@
-﻿using LeagueBroadcast.Common;
-using LeagueBroadcast.Common.Controllers;
+﻿using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Ingame.Data.Frontend;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.LBH.Objectives;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LeagueBroadcast.Ingame.State
 {
@@ -29,6 +26,8 @@ namespace LeagueBroadcast.Ingame.State
 
         public UpcomingObjective nextDragon;
 
+        public UpcomingObjective nextBaron;
+
         public double gameTime;
         public bool gamePaused;
 
@@ -47,9 +46,10 @@ namespace LeagueBroadcast.Ingame.State
         public StateData()
         {
             this.gameState = BroadcastController.Instance.IGController.gameState;
-            this.dragon = new (Objective.ObjectiveType.Dragon, 300);
-            this.baron = new (Objective.ObjectiveType.Baron, 1200);
+            this.dragon = new(Objective.ObjectiveType.Dragon, 300);
+            this.baron = new(Objective.ObjectiveType.Baron, 1200);
             this.nextDragon = new UpcomingObjective();
+            this.nextBaron = new UpcomingObjective();
             this.backBaron = new(0);
             this.backDragon = new(0);
             this.scoreboard = new ScoreboardConfig();
@@ -84,6 +84,11 @@ namespace LeagueBroadcast.Ingame.State
         public bool ShouldSerializenextDragon()
         {
             return ConfigController.Component.Ingame.Objectives.UseCustomDragonTimer;
+        }
+
+        public bool ShouldSerializenextBaron()
+        {
+            return ConfigController.Component.Ingame.Objectives.UseCustomBaronTimer;
         }
 
     }

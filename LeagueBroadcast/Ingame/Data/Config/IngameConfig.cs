@@ -1,10 +1,9 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Data.Config;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Ingame.Data.Config
@@ -16,7 +15,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "3.0";
+        public static new string CurrentVersion => "3.1";
 
         public InhibitorDisplayConfig Inhib;
         public ScoreDisplayConfig Score;
@@ -29,6 +28,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public PowerPlayDisplayConfig BaronPowerPlay;
         public PowerPlayDisplayConfig ElderPowerPlay;
         public ObjectiveTimerDisplayConfig DragonTimer;
+        public ObjectiveTimerDisplayConfig BaronTimer;
         public List<string> GoogleFonts;
 
         public override string GETCurrentVersion()
@@ -43,7 +43,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public override void UpdateValues(string readValues)
         {
-            var Cfg = JsonConvert.DeserializeObject<IngameConfig>(readValues);
+            IngameConfig Cfg = JsonConvert.DeserializeObject<IngameConfig>(readValues);
             Inhib = Cfg.Inhib;
             Score = Cfg.Score;
             InfoPage = Cfg.InfoPage;
@@ -54,6 +54,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             BaronPowerPlay = Cfg.BaronPowerPlay;
             ElderPowerPlay = Cfg.ElderPowerPlay;
             DragonTimer = Cfg.DragonTimer;
+            BaronTimer = Cfg.BaronTimer;
             GoldGraph = Cfg.GoldGraph;
             GoogleFonts = Cfg.GoogleFonts;
             FileVersion = Cfg.FileVersion;
@@ -66,7 +67,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public override void RevertToDefault()
         {
-            var def = CreateDefault();
+            IngameConfig def = CreateDefault();
             this.Inhib = def.Inhib;
             this.Score = def.Score;
             this.InfoPage = def.InfoPage;
@@ -77,6 +78,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             this.BaronPowerPlay = def.BaronPowerPlay;
             this.ElderPowerPlay = def.ElderPowerPlay;
             this.DragonTimer = def.DragonTimer;
+            this.BaronTimer = def.BaronTimer;
             this.GoldGraph = def.GoldGraph;
             this.GoogleFonts = def.GoogleFonts;
             this.FileVersion = CurrentVersion;
@@ -89,7 +91,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
             {
                 FileVersion = CurrentVersion,
                 GoogleFonts = new List<string>() { "News Cycle", "News Cycle:bold", "Droid Sans" },
-                Inhib = new InhibitorDisplayConfig() {
+                Inhib = new InhibitorDisplayConfig()
+                {
                     Position = new Vector2(0, 845),
                     Size = new Vector2(306, 118),
                     Font = new FontConfig()
@@ -106,7 +109,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     Color = "rgba(19,24,63,255)",
                     HideWhenNoneDestroyed = true,
                     UseTeamColors = true,
-                    BlueTeam = new InhibitorDisplayConfig.InhibTeamConfig() {
+                    BlueTeam = new InhibitorDisplayConfig.InhibTeamConfig()
+                    {
                         UseTeamColor = true,
                         Color = "rgb(0,0,0)",
                         IconOffset = new Vector2(10, -24),
@@ -510,7 +514,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         }
                     }
                 },
-                ItemComplete = new ItemCompletedDisplayConfig() {
+                ItemComplete = new ItemCompletedDisplayConfig()
+                {
                     UseCustomVideo = false,
                     ShowItemName = true,
                     ShowOnChampionIndicator = true,
@@ -622,7 +627,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         }
                     }
                 },
-                LevelUp = new LevelUpDisplayConfig() {
+                LevelUp = new LevelUpDisplayConfig()
+                {
                     UseCustomVideo = false,
                     ShowOnChampionIndicator = true,
                     ShowOnScoreboard = false,
@@ -695,7 +701,8 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 ObjectiveKill = new ObjectiveKillConfig()
                 {
                     ShowTeamIcon = false,
-                    BaronKillScoreboardPopUp = new ScoreboardPopUpConfig() {
+                    BaronKillScoreboardPopUp = new ScoreboardPopUpConfig()
+                    {
                         Enabled = false,
                         UseImage = true,
                         UseVideo = false,
@@ -865,6 +872,27 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     TimePosition = new Vector2(80, -18),
                     IconPosition = new Vector2(-20, 0)
                 },
+                BaronTimer = new ObjectiveTimerDisplayConfig()
+                {
+                    KeepDisplayedWhenAlive = false,
+                    HideTimeIfAlive = true,
+                    IconAlivePosition = new Vector2(-20, 0),
+                    IconAliveScale = 1.2f,
+                    IconAliveLerpDurationSetToZeroToDisable = 1000,
+                    Position = new Vector2(1800, 55),
+                    Scale = 0.8f,
+                    Align = "right",
+                    TimeFont = new FontConfig()
+                    {
+                        Name = "News Cycle",
+                        Size = "32px",
+                        Style = "Bold",
+                        Color = "rgb(230,190,138)",
+                        Align = "left"
+                    },
+                    TimePosition = new Vector2(-85, -18),
+                    IconPosition = new Vector2(15, 0)
+                },
                 GoldGraph = new GoldGraphDisplayConfig()
                 {
                     Position = new Vector2(965, 845),
@@ -892,7 +920,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     },
                     Graph = new GoldGraphDisplayConfig.GraphDisplayConfig()
                     {
-                        Position = new Vector2(5,40),
+                        Position = new Vector2(5, 40),
                         Size = new Vector2(710, 190),
                         InfoFont = new FontConfig()
                         {
@@ -923,88 +951,24 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
             //Update from pre 2.1 to Current Version
-            if ((oldVersion == "1.0" || oldVersion == "2.0") && CurrentVersion == "2.1")
+            Task t = new Task(async () =>
             {
-                Task t = new Task(async () =>
-                {
-                    await Task.Delay(500);
-                    //Simpler and more usefull to just revert to default
-                    Log.Info("Update changes too large to migrate. Reverting to default");
-                    RevertToDefault();
-                    JSONConfigProvider.Instance.WriteConfig(this);
-                });
-                t.Start();
+                await Task.Delay(500);
 
-                return false;
-            }
+                //Create backup config file
+                string fileLocation = Path.Combine(JSONConfigProvider.Instance.ConfigPath, $"{Name}.json");
+                string fileContent = File.ReadAllText(fileLocation);
+                string backupFileLocation = Path.Combine(JSONConfigProvider.Instance.ConfigPath, $"{Name}_backup.json");
+                File.WriteAllText(backupFileLocation, fileContent);
 
-            //Update from 2.1 to Current Version
-            if(oldVersion == "2.1")
-            {
-                Task t = new Task(async () =>
-                {
-                    await Task.Delay(500);
-                    FileVersion = CurrentVersion;
-                    //2.1 to 2.2
-                    ObjectiveKill.ShowTeamIcon = false;
-                    ObjectiveKill.HeraldKillScoreboardPopUp = new ScoreboardPopUpConfig()
-                    {
-                        Enabled = true,
-                        UseImage = true,
-                        UseVideo = false,
-                        UseAlpha = true,
-                        ForceDisplayDurationForVideo = true,
-                        DisplayDuration = 2000,
-                        AnimationDuration = 1000
-                    };
-                    ObjectiveKill.DragonKillScoreboardPopUp = new ScoreboardPopUpConfig()
-                    {
-                        Enabled = true,
-                        UseImage = true,
-                        UseVideo = false,
-                        UseAlpha = true,
-                        ForceDisplayDurationForVideo = true,
-                        DisplayDuration = 2000,
-                        AnimationDuration = 1000
-                    };
-                    ObjectiveSpawn = new ObjectiveSpawnConfig()
-                    {
-                        BaronSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
-                        {
-                            Enabled = true,
-                            UseImage = true,
-                            UseVideo = false,
-                            UseAlpha = true,
-                            ForceDisplayDurationForVideo = false,
-                            AnimationDuration = 1000,
-                            DisplayDuration = 2000
-                        },
-                        DrakeSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
-                        {
-                            Enabled = true,
-                            UseImage = true,
-                            UseVideo = false,
-                            UseAlpha = true,
-                            ForceDisplayDurationForVideo = false,
-                            AnimationDuration = 1000,
-                            DisplayDuration = 2000
-                        },
-                        HeraldSpawnScoreboardPopUp = new ScoreboardPopUpConfig()
-                        {
-                            Enabled = true,
-                            UseImage = true,
-                            UseVideo = false,
-                            UseAlpha = true,
-                            ForceDisplayDurationForVideo = false,
-                            AnimationDuration = 1000,
-                            DisplayDuration = 2000
-                        }
-                    };
+                Log.Info("Created backup ingame config file");
 
-                    JSONConfigProvider.Instance.WriteConfig(this);
-                });
-                t.Start();
-            }
+                //Simpler and more usefull to just revert to default
+                Log.Info("Update changes too large to migrate. Reverting to default");
+                RevertToDefault();
+                JSONConfigProvider.Instance.WriteConfig(this);
+            });
+            t.Start();
             return true;
         }
 
@@ -1042,7 +1006,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             public float Scale;
             public string Align;
             public Vector2 IconPosition;
-            
+
             public Vector2 TimePosition;
             public FontConfig TimeFont;
         }
@@ -1061,7 +1025,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             public InhibTeamConfig BlueTeam;
             public InhibTeamConfig RedTeam;
             public List<string> LaneOrder;
-            
+
             public class InhibTeamConfig
             {
                 public Vector2 Position;
@@ -1329,7 +1293,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 public FontConfig InfoFont;
                 public int TimeStepSize;
                 public bool ShowTimeStepIndicators;
-                
+
             }
 
             public class TitleConfig

@@ -175,9 +175,37 @@
                                     </Border>
                                 </Grid>
                             </Border>
-                            <Border Grid.Row="5" 
-                                Margin="10" 
-                                Background="#1a2b42">
+                            <Border  Grid.Row="5" Margin="10">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="5"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="Timers" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                    <Border Margin="0,0,5,0" Grid.Row="2"
+                                Background="{Binding Path=DragonTimerIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="{Binding DragonTimerClickCommand.MouseGesture}" Command="{Binding DragonTimerClickCommand}"/>
+                                        </Border.InputBindings>
+                                        <Grid x:Name="DragonTimerButton">
+                                            <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Margin="5,0,0,0" Grid.Column="1" Grid.Row="2"
+                                Background="{Binding Path=BaronTimerIsActive, Converter={StaticResource BoolToColor}, ConverterParameter=#5cc59e;#1a2b42;1}">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="{Binding BaronTimerClickCommand.MouseGesture}" Command="{Binding BaronTimerClickCommand}"/>
+                                        </Border.InputBindings>
+                                        <Grid x:Name="BaronTimerButton">
+                                            <TextBlock Text="{Binding Title}" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
                             </Border>
                         </Grid>
                     </Border>

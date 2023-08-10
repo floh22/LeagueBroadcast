@@ -21,6 +21,7 @@
 		"cssnano": "^4.1.10",
 		"eslint": "^6.8.0",
 		"minimist": ">=1.2.2",
+		"parcel-bundler": "^1.12.5",
 		"parcel-plugin-clean-easy": "^1.0.2",
 		"parcel-plugin-static-files-copy": "^2.4.3",
 		"typescript": "^4.3.4"

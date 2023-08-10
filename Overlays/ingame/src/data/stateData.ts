@@ -11,6 +11,7 @@ export default class StateData {
     baron: FrontEndObjective;
 
     nextDragon: UpcomingObjective;
+    nextBaron: UpcomingObjective;
 
     gameTime: number;
     gamePaused: boolean;
@@ -31,6 +32,7 @@ export default class StateData {
         this.dragon = message.dragon;
         this.baron = message.baron;
         this.nextDragon = message.nextDragon;
+        this.nextBaron = message.nextBaron;
         this.gameTime = message.gameTime;
         this.gamePaused = message.gamePaused;
         this.blueGold = message.blueGold;

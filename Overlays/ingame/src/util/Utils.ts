@@ -8,4 +8,18 @@ export default class Utils {
         }
         return thousand + '.' + hundred + 'k';
     }
+
+    //Load Font by name and url
+    static LoadFont(name: string, url: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let font = new FontFace(name, `url(${url})`);
+            font.load().then(() => {
+                document.fonts.add(font);
+                resolve(true);
+            }).catch((err) => {
+                console.log(err);
+                reject(false);
+            });
+        });
+    }
 }
