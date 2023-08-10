@@ -32,12 +32,13 @@ export default class PowerPlayVisual extends VisualElement {
 
         this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, type === 'baron'? 'objectiveBg' : 'objectiveBgLeft');
         this.BackgroundBox.setScale(cfg.Scale);
+        this.BackgroundBox.setDepth(3);
         this.visualComponents.push(this.BackgroundBox);
 
         if (cfg.ObjectiveIcon) {
             this.Icon = scene.add.image(this.position.X + cfg.IconPosition.X, this.position.Y + cfg.IconPosition.Y, type + 'Icon');
             this.Icon.setScale(cfg.Scale);
-            this.Icon.setDepth(2);
+            this.Icon.setDepth(4);
             this.Icon.setAlpha(0);
             this.visualComponents.push(this.Icon);
         }
@@ -54,6 +55,9 @@ export default class PowerPlayVisual extends VisualElement {
             this.Gold.setAlign(cfg.Align);
             this.GoldIcon.setOrigin(0,0);
 
+            this.Gold.setDepth(4);
+            this.GoldIcon.setDepth(4);
+
             this.visualComponents.push(this.Gold, this.GoldIcon);
         }
 
@@ -67,6 +71,9 @@ export default class PowerPlayVisual extends VisualElement {
             });
             this.Time.setAlign(cfg.Align);
             this.TimeIcon.setOrigin(0,0);
+
+            this.Time.setDepth(4);
+            this.TimeIcon.setDepth(4);
 
             this.visualComponents.push(this.Time, this.TimeIcon);
         }
@@ -121,6 +128,7 @@ export default class PowerPlayVisual extends VisualElement {
             } else {
                 this.Icon = this.scene.add.image(this.position.X + newConfig.IconPosition.X, this.position.Y + newConfig.IconPosition.Y, this.Type + 'Icon');
                 this.Icon.setScale(newConfig.Scale);
+                this.Icon.setDepth(4);
                 this.visualComponents.push(this.Icon);
             }
                 
@@ -147,6 +155,9 @@ export default class PowerPlayVisual extends VisualElement {
                 this.Gold.setAlign(newConfig.Align);
                 this.GoldIcon.setOrigin(0, 0);
 
+                this.Gold.setDepth(4);
+                this.GoldIcon.setDepth(4);
+
                 this.visualComponents.push(this.Gold, this.GoldIcon);
             }
         } else if (this.Config?.ShowGoldDiff) {
@@ -172,6 +183,9 @@ export default class PowerPlayVisual extends VisualElement {
                 });
                 this.Time.setAlign(newConfig.Align);
                 this.TimeIcon.setOrigin(0, 0);
+
+                this.Time.setDepth(4);
+                this.TimeIcon.setDepth(4);
 
                 this.visualComponents.push(this.Time, this.TimeIcon);
             }

@@ -40,7 +40,7 @@ export abstract class VisualElement {
         return;
     }
 
-    abstract UpdateValues(newValues: any): void;
+    abstract UpdateValues(newValues: any, other?: any ): void;
     
     abstract UpdateConfig(newConfig: any): void;
 
