@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Path = System.IO.Path;
 
 namespace LeagueBroadcast.MVVM.View
@@ -33,7 +31,7 @@ namespace LeagueBroadcast.MVVM.View
             OpenContent.Width = 360;
             OpenContent.Opacity = 0;
 
-            if (JSONConfigProvider.Instance.TeamConfigs.Contains( TeamConfigViewModel.BlueTeam.Name))
+            if (JSONConfigProvider.Instance.TeamConfigs.Contains(TeamConfigViewModel.BlueTeam.Name))
             {
                 OrderSelector.SelectedItem = TeamConfigViewModel.BlueTeam.Name;
             }
@@ -45,7 +43,8 @@ namespace LeagueBroadcast.MVVM.View
 
             Directory.CreateDirectory(teamIconFolder);
 
-            if(!File.Exists(Path.Join(teamIconFolder, "Default.png"))){
+            if (!File.Exists(Path.Join(teamIconFolder, "Default.png")))
+            {
                 File.Copy(Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Images", "LeagueOfLegendsIcon.png"), Path.Join(teamIconFolder, "Default.png"));
             }
 
@@ -64,7 +63,7 @@ namespace LeagueBroadcast.MVVM.View
 
         private void ScoreChanged(object sender, TextChangedEventArgs e)
         {
-            var textBox = sender as TextBox;
+            TextBox textBox = sender as TextBox;
             int value;
             bool isInt = Int32.TryParse(textBox.Text, out value);
             TeamConfig config = (string)textBox.Tag == "Blue" ? ConfigController.PickBan.frontend.blueTeam : ConfigController.PickBan.frontend.redTeam;
@@ -109,7 +108,9 @@ namespace LeagueBroadcast.MVVM.View
         private void BlueColorSelect_Click(object sender, RoutedEventArgs e)
         {
             if (_openColorPicker != null)
+            {
                 _openColorPicker.Close();
+            }
 
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -123,7 +124,10 @@ namespace LeagueBroadcast.MVVM.View
         private void RedColorSelect_Click(object sender, RoutedEventArgs e)
         {
             if (_openColorPicker != null)
+            {
                 _openColorPicker.Close();
+            }
+
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 _openColorPicker = new ColorPickerWindow(TeamConfigViewModel.RedTeam, "red");
@@ -136,7 +140,10 @@ namespace LeagueBroadcast.MVVM.View
         private void BlueDefaultColor_Click(object sender, RoutedEventArgs e)
         {
             if (_openColorPicker != null)
+            {
                 _openColorPicker.Close();
+            }
+
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 _openColorPicker = new ColorPickerWindow((PickBanConfigViewModel)((Button)sender).DataContext, "blue");
@@ -149,7 +156,10 @@ namespace LeagueBroadcast.MVVM.View
         private void RedDefaultColor_Click(object sender, RoutedEventArgs e)
         {
             if (_openColorPicker != null)
+            {
                 _openColorPicker.Close();
+            }
+
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 _openColorPicker = new ColorPickerWindow((PickBanConfigViewModel)((Button)sender).DataContext, "red");
@@ -161,10 +171,10 @@ namespace LeagueBroadcast.MVVM.View
 
         private void BlueAddTeam_Click(object sender, RoutedEventArgs e)
         {
-            var currentConfig = TeamConfigViewModel.BlueTeam;
-            var cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
+            TeamConfigViewModel currentConfig = TeamConfigViewModel.BlueTeam;
+            string cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
 
-            var toAdd = new ExtendedTeamConfig(currentConfig.Name)
+            ExtendedTeamConfig toAdd = new ExtendedTeamConfig(currentConfig.Name)
             {
                 Config = currentConfig.ConfigReference,
                 IconLocation = currentConfig.IconName
@@ -187,8 +197,8 @@ namespace LeagueBroadcast.MVVM.View
 
         private void BlueRemoveTeam_Click(object sender, RoutedEventArgs e)
         {
-            var currentConfig = TeamConfigViewModel.BlueTeam;
-            var cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
+            TeamConfigViewModel currentConfig = TeamConfigViewModel.BlueTeam;
+            string cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
             if (cfg != "" && cfg != null)
             {
                 JSONConfigProvider.Instance.TeamConfigs.Remove(currentConfig.Name);
@@ -214,7 +224,8 @@ namespace LeagueBroadcast.MVVM.View
                     try
                     {
                         File.Delete(newFileName);
-                    } catch (IOException)
+                    }
+                    catch (IOException)
                     {
                         Log.Warn("Could not overwrite old icon");
                         return;
@@ -229,10 +240,10 @@ namespace LeagueBroadcast.MVVM.View
 
         private void RedAddTeam_Click(object sender, RoutedEventArgs e)
         {
-            var currentConfig = TeamConfigViewModel.RedTeam;
-            var cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
+            TeamConfigViewModel currentConfig = TeamConfigViewModel.RedTeam;
+            string cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
 
-            var toAdd = new ExtendedTeamConfig(currentConfig.Name)
+            ExtendedTeamConfig toAdd = new ExtendedTeamConfig(currentConfig.Name)
             {
                 Config = currentConfig.ConfigReference,
                 IconLocation = currentConfig.IconName
@@ -243,7 +254,8 @@ namespace LeagueBroadcast.MVVM.View
                 //Overwrite old team config
                 Log.Warn("Overwriting existing team config");
                 JSONConfigProvider.Instance.WriteTeam(toAdd);
-            } else
+            }
+            else
             {
                 JSONConfigProvider.Instance.WriteTeam(toAdd);
                 JSONConfigProvider.Instance.TeamConfigs.Add(currentConfig.Name);
@@ -254,8 +266,8 @@ namespace LeagueBroadcast.MVVM.View
 
         private void RedRemoveTeam_Click(object sender, RoutedEventArgs e)
         {
-            var currentConfig = TeamConfigViewModel.BlueTeam;
-            var cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
+            TeamConfigViewModel currentConfig = TeamConfigViewModel.BlueTeam;
+            string cfg = JSONConfigProvider.Instance.TeamConfigs.SingleOrDefault(path => path.Equals(currentConfig.Name));
             if (cfg != "" && cfg != null)
             {
                 JSONConfigProvider.Instance.TeamConfigs.Remove(currentConfig.Name);
@@ -309,9 +321,15 @@ namespace LeagueBroadcast.MVVM.View
             if (e.DataObject.GetDataPresent(typeof(String)))
             {
                 String text = (String)e.DataObject.GetData(typeof(String));
-                if (!IsTextAccepted((TextBox)sender, text)) e.CancelCommand();
+                if (!IsTextAccepted((TextBox)sender, text))
+                {
+                    e.CancelCommand();
+                }
             }
-            else e.CancelCommand();
+            else
+            {
+                e.CancelCommand();
+            }
         }
 
         private void OrderSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -319,7 +337,7 @@ namespace LeagueBroadcast.MVVM.View
             SelectionChanged(TeamConfigViewModel.BlueTeam, (string)OrderSelector.SelectedItem);
         }
 
-       
+
 
         private void ChaosSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -330,8 +348,8 @@ namespace LeagueBroadcast.MVVM.View
         {
             if (selectedTeam != currentConfig.Name)
             {
-                var toLoad = new ExtendedTeamConfig(selectedTeam);
-                var res = JSONConfigProvider.Instance.ReadTeam(toLoad);
+                ExtendedTeamConfig toLoad = new ExtendedTeamConfig(selectedTeam);
+                bool res = JSONConfigProvider.Instance.ReadTeam(toLoad);
                 if (!res)
                 {
                     Log.Warn("Could not load team info from disk");
@@ -342,6 +360,7 @@ namespace LeagueBroadcast.MVVM.View
                 currentConfig.Score = 0;
                 currentConfig.Coach = toLoad.Config.coach;
                 currentConfig.IconName = toLoad.IconLocation;
+                currentConfig.Color = toLoad.Config.color.ToColor();
 
                 BroadcastController.Instance.IGController.gameState.UpdateTeamColors();
             }
