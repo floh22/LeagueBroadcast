@@ -38,7 +38,7 @@ export default class PowerPlayVisual extends VisualElement {
         if (cfg.ObjectiveIcon) {
             this.Icon = scene.add.image(this.position.X + cfg.IconPosition.X, this.position.Y + cfg.IconPosition.Y, type + 'Icon');
             this.Icon.setScale(cfg.Scale);
-            this.Icon.setDepth(4);
+            this.Icon.setDepth(5);
             this.Icon.setAlpha(0);
             this.visualComponents.push(this.Icon);
         }
@@ -128,7 +128,7 @@ export default class PowerPlayVisual extends VisualElement {
             } else {
                 this.Icon = this.scene.add.image(this.position.X + newConfig.IconPosition.X, this.position.Y + newConfig.IconPosition.Y, this.Type + 'Icon');
                 this.Icon.setScale(newConfig.Scale);
-                this.Icon.setDepth(4);
+                this.Icon.setDepth(5);
                 this.visualComponents.push(this.Icon);
             }
                 
@@ -338,14 +338,15 @@ export default class PowerPlayVisual extends VisualElement {
         if(!cfg.Animate) {
             return;
         }
-        this.BackgroundBox.x += 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
+
+        this.BackgroundBox.x = this.position.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
         if (cfg.ShowGoldDiff) {
-            this.GoldIcon!.x += 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-            this.Gold!.x += 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
+            this.GoldIcon!.x = this.position.X + cfg.GoldIconPosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
+            this.Gold!.x = this.position.X + cfg.GoldPosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
         }
         if (cfg.ShowTimer) {
-            this.TimeIcon!.x += 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-            this.Time!.x += 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
+            this.TimeIcon!.x = this.position.X + cfg.TimeIconPosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
+            this.Time!.x = this.position.X + cfg.TimePosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
         }
     }
 

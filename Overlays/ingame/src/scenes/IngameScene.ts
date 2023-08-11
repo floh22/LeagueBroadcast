@@ -235,6 +235,7 @@ export default class IngameScene extends Phaser.Scene {
                             this.baronPowerPlay?.Stop();
                             this.elderPowerPlay?.Stop();
                             this.dragonTimer?.Stop();
+                            this.baronTimer?.Stop();
                             this.centerGraph?.Stop();
                             this.inhib?.Stop();
                             this.score?.Stop();
@@ -339,8 +340,6 @@ export default class IngameScene extends Phaser.Scene {
 
         console.log('[LB] Saving new display config');
         this.overlayCfg = message.config;
-        //console.log(message.config);
-
     }
 
     UpdateConfigWhenReady(message: OverlayConfigEvent): void {

@@ -60,7 +60,6 @@ export default class ObjectiveTimerVisual extends VisualElement {
         this.Init();
     }
     UpdateValues(newValues: UpcomingObjective, powerPlay: FrontEndObjective): void {
-        console.log(powerPlay);
         let durationRemaining = powerPlay !== undefined ? +powerPlay.DurationRemaining : 0;
         if (newValues === undefined || newValues === null || (newValues.SpawnTimer === 0 && !this.Config.KeepDisplayedWhenAlive) || durationRemaining !== 0) {
             if (this.isActive) {
