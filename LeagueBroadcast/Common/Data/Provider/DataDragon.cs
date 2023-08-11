@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using LeagueBroadcast.Common.Controllers;
-using LeagueBroadcast.MVVM.Core;
-using LeagueBroadcast.MVVM.ViewModel;
+﻿using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.DTO;
 using LeagueBroadcast.Common.Data.RIOT;
-using System.Threading;
-using Swan.Logging;
 using LeagueBroadcast.Common.Utils;
+using LeagueBroadcast.MVVM.Core;
+using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.Update.Http;
-using System.Text.Json;
+using Swan.Logging;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.AccessControl;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LeagueBroadcast.Common.Data.Provider
 {
@@ -50,10 +49,25 @@ namespace LeagueBroadcast.Common.Data.Provider
         private static TaskCompletionSource<bool>? _downloadComplete;
 
         private static int _toDownload, _downloaded;
-        private static int IncrementToDownload() => Interlocked.Increment(ref _toDownload);
-        private static int IncrementToDownload(int count) => Interlocked.Add(ref _toDownload, count);
-        private static int IncrementDownloaded() => Interlocked.Increment(ref _downloaded);
-        private static int IncrementDownloaded(int count) => Interlocked.Add(ref _downloaded, count);
+        private static int IncrementToDownload()
+        {
+            return Interlocked.Increment(ref _toDownload);
+        }
+
+        private static int IncrementToDownload(int count)
+        {
+            return Interlocked.Add(ref _toDownload, count);
+        }
+
+        private static int IncrementDownloaded()
+        {
+            return Interlocked.Increment(ref _downloaded);
+        }
+
+        private static int IncrementDownloaded(int count)
+        {
+            return Interlocked.Add(ref _downloaded, count);
+        }
 
         public static EventHandler FinishLoading, StartLoading;
         public static EventHandler<FileLoadProgressEventArgs>? FileDownloadComplete { get; set; }
@@ -141,15 +155,15 @@ namespace LeagueBroadcast.Common.Data.Provider
             GetInstance()._startupContext.Status = "Retrieving latest patch info";
             Log.Info("[CDrag] Retrieving latest patch info");
 
-            string? rawCDragVersionResponse = JsonDocument.Parse(await RestRequester.GetRaw($"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json")??"").RootElement.GetProperty("version").GetString();
+            string? rawCDragVersionResponse = JsonDocument.Parse(await RestRequester.GetRaw($"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json") ?? "").RootElement.GetProperty("version").GetString();
             if (rawCDragVersionResponse is null)
             {
                 Log.Warn($"[CDrag] {$"{ConfigController.Component.DataDragon.CDragonRaw}/latest/content-metadata.json"} unreachable. Is your internet connection working?");
                 Log.Warn($"[CDrag] Could not get latest CDragon version. Falling back to latest DDrag version");
-                using JsonDocument response = JsonDocument.Parse(await RestRequester.GetRaw($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json")??"", new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
+                using JsonDocument response = JsonDocument.Parse(await RestRequester.GetRaw($"https://ddragon.leagueoflegends.com/realms/{ConfigController.Component.DataDragon.Region}.json") ?? "", new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
                 rawCDragVersionResponse = response.RootElement.GetProperty("n").GetProperty("champion").ToString();
 
-                if(rawCDragVersionResponse is null)
+                if (rawCDragVersionResponse is null)
                 {
                     Log.Warn($"[CDrag] DDrag not reachable. Assuming internet connection issues. Cannot retrieve data");
                     return;
@@ -186,7 +200,7 @@ namespace LeagueBroadcast.Common.Data.Provider
         private static async Task Init()
         {
             string locale = ConfigController.Component.DataDragon.Locale;
-            if(locale.Equals("en_US", StringComparison.OrdinalIgnoreCase))
+            if (locale.Equals("en_US", StringComparison.OrdinalIgnoreCase))
             {
                 locale = "en_gb";
             }
@@ -204,7 +218,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
             bool result = await VerifyLocalCache(version.localVersion);
 
-            if(!result)
+            if (!result)
             {
                 Log.Warn("[CDrag] Some downloads failed. Not all assets may be available");
             }
@@ -225,11 +239,17 @@ namespace LeagueBroadcast.Common.Data.Provider
             string item = patchFolder + "/item";
             string spell = patchFolder + "/spell";
 
+            //TODO Hack font folder into here since its simplest
+            string font = cache + "/Fonts";
+
             _ = Directory.CreateDirectory(cache);
             _ = Directory.CreateDirectory(patchFolder);
+            _ = Directory.CreateDirectory(font);
             _ = Directory.CreateDirectory(champ);
             _ = Directory.CreateDirectory(item);
             _ = Directory.CreateDirectory(spell);
+
+
 
             GetInstance()._startupContext.Status = "Yeeting old caches onto Dominion";
             Directory.EnumerateDirectories(cache).Where(d => StringVersion.TryParse(d.Split("/")[^1].Split("\\")[^1], out StringVersion? dirVersion) && dirVersion < currentPatch).ToList().ForEach(dir =>
@@ -414,9 +434,12 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public Champion GetChampionById(int champID)
         {
-            var champData =  CDragonChampion.All.SingleOrDefault(c => c.ID == champID);
+            CDragonChampion champData = CDragonChampion.All.SingleOrDefault(c => c.ID == champID);
             if (champData is null)
+            {
                 return new Champion();
+            }
+
             return new Champion()
             {
                 id = champData.Alias,
@@ -436,7 +459,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         public ItemData GetItemById(int itemID)
         {
-            var itemData = CDragonItem.All.SingleOrDefault(i => i.ID == itemID);
+            CDragonItem itemData = CDragonItem.All.SingleOrDefault(i => i.ID == itemID);
 
             return new ItemData(itemData.ID)
             {

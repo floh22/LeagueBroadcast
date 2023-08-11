@@ -5,7 +5,6 @@ using LeagueBroadcast.Ingame.Data.Frontend;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -37,17 +36,18 @@ namespace LeagueBroadcast.Common.Controllers
         {
             Log.Info("Starting Config Controller");
 
-            var controller = JSONConfigProvider.Instance;
+            JSONConfigProvider controller = JSONConfigProvider.Instance;
 
             controller.ReadConfig(Component);
             controller.ReadConfig(PickBan);
             controller.ReadConfig(Ingame);
 
-            if(PickBan.FileVersion == null || Component.FileVersion == null || Ingame.FileVersion == null)
+            if (PickBan.FileVersion == null || Component.FileVersion == null || Ingame.FileVersion == null)
             {
                 Log.Warn("Config load failed");
-                var result = MessageBox.Show("Failed to load configuration. Corrupted Install detected. Try removing Config folder and restarting", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Dispatcher.Invoke((Action)delegate {
+                MessageBoxResult result = MessageBox.Show("Failed to load configuration. Corrupted Install detected. Try removing Config folder and restarting", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
                     Application.Current.Shutdown();
                 });
             }
@@ -56,30 +56,16 @@ namespace LeagueBroadcast.Common.Controllers
             PickBanWatcher = new("PickBan.json", PickBan);
             ComponentWatcher = new("Component.json", Component);
             IngameWatcher = new("Ingame.json", Ingame);
-
-            //TODO Somehow loading these fonts into a stylesheet
-            /*
-            Log.Info("Loading local fonts");
-            Directory.CreateDirectory(FontLocation);
-
-            new ObservableCollection<LocalFont>(Directory
-                .EnumerateFiles(FontLocation, "*", SearchOption.AllDirectories)
-                .Select(f => {
-                    var fontLocation = $"/cache/Fonts/{Path.GetFileName(f)}";
-                    var fontName = Path.GetFileNameWithoutExtension(f);
-                    return new LocalFont();
-                }));
-            */
             App.Instance.Exit += OnClose;
         }
 
         public static void LoadOffsetConfig()
         {
             JSONConfigProvider.Instance.ReadConfig(Farsight);
-            if(Farsight.FileVersion == null || !FarsightController.ShouldRun )
+            if (Farsight.FileVersion == null || !FarsightController.ShouldRun)
             {
                 Log.Warn("Could not load Offsets");
-                var result = MessageBox.Show("Failed to load offsets. Manually download or write Config/Farsight.json. Check github for current file version. Ingame will not work properly!", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show("Failed to load offsets. Manually download or write Config/Farsight.json. Check github for current file version. Ingame will not work properly!", "LeagueBroadcast", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 /*
                 Application.Current.Dispatcher.Invoke((Action)delegate {
@@ -94,7 +80,10 @@ namespace LeagueBroadcast.Common.Controllers
         private static ConfigController GetInstance()
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
+
             return _instance;
         }
 
@@ -106,7 +95,7 @@ namespace LeagueBroadcast.Common.Controllers
         private void OnClose(object sender, EventArgs e)
         {
             Log.Info("Saving all configs to file");
-            var controller = JSONConfigProvider.Instance;
+            JSONConfigProvider controller = JSONConfigProvider.Instance;
 
             try
             {
@@ -120,7 +109,8 @@ namespace LeagueBroadcast.Common.Controllers
                 controller.WriteConfig(Ingame);
 
                 Log.Info("Configs saved");
-            } catch
+            }
+            catch
             {
                 Log.Warn("Could not save all configs");
             }
@@ -160,7 +150,10 @@ namespace LeagueBroadcast.Common.Controllers
         public async void OnChanged(object sender, FileSystemEventArgs e)
         {
             if (waitingForRead)
+            {
                 return;
+            }
+
             waitingForRead = true;
 
             Log.Info($"{watcher.Filter} change detected");
@@ -184,7 +177,9 @@ namespace LeagueBroadcast.Common.Controllers
 
         }
 
-        protected void OnError(object sender, ErrorEventArgs e) =>
+        protected void OnError(object sender, ErrorEventArgs e)
+        {
             Log.Warn("File Watch error:" + e.GetException());
+        }
     }
 }
