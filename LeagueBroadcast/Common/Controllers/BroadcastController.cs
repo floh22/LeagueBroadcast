@@ -1,4 +1,5 @@
 ﻿using LeagueBroadcast.Common.Data.Provider;
+using LeagueBroadcast.Farsight;
 using LeagueBroadcast.Http;
 using LeagueBroadcast.MVVM.View;
 using LeagueBroadcast.MVVM.ViewModel;
@@ -9,9 +10,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using LeagueBroadcast.Farsight;
 using static LeagueBroadcast.Common.Log;
-using LeagueBroadcast.Ingame.Data.Provider;
 
 namespace LeagueBroadcast.Common.Controllers
 {
@@ -57,7 +56,10 @@ namespace LeagueBroadcast.Common.Controllers
         private static BroadcastController GetInstance()
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
+
             return _instance;
         }
 
@@ -78,17 +80,19 @@ namespace LeagueBroadcast.Common.Controllers
             _startupContext.Status = "Early Init";
 
             ToTick = new();
-            
+
             _ = new Log(LogLevel.Verbose, FileVersionInfo.GetVersionInfo("LeagueBroadcast.exe").FileVersion);
-            
-            
+
+
             CfgController = ConfigController.Instance;
             Log.SetLogLevel(ConfigController.Component.App.LogLevel);
             Log.Info($"League Broadcast Version {ConfigController.Component.App.Version}");
-            if (await AppUpdateController.Update(_startupContext)) {
+            if (await AppUpdateController.Update(_startupContext))
+            {
                 Startup.Close();
                 App.Instance.Shutdown();
-            } else
+            }
+            else
             {
                 Log.Info("Using current Version");
             }
@@ -125,7 +129,8 @@ namespace LeagueBroadcast.Common.Controllers
             MemoryController = new();
 
             StatusUpdate("Loading Frontend Webserver (HTTP/WS)");
-            var WebServer = new EmbedIOServer("*", 9001);
+
+            EmbedIOServer WebServer = new EmbedIOServer("*", ConfigController.Component.App.FrontendPort);
             _startupContext.UpdateLoadProgress(LoadStatus.Init, 85);
 
             StatusUpdate("Whats that ticking noise?");
@@ -136,14 +141,15 @@ namespace LeagueBroadcast.Common.Controllers
             Log.Info($"Init Complete in {(DateTime.Now - initFinish).ToString(@"s\.fff")}s");
             initFinish = DateTime.Now;
             InitComplete?.Invoke(null, EventArgs.Empty);
-            
+
 
         }
 
         private void PostInit()
         {
             Log.Info("Opening main window");
-            Application.Current.Dispatcher.Invoke((Action)delegate {
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
                 Main = new();
                 Main.Show();
 
@@ -156,17 +162,21 @@ namespace LeagueBroadcast.Common.Controllers
 
             AppStController.Init();
 
-            AppStateController.GameStart += (s, p) => {
+            AppStateController.GameStart += (s, p) =>
+            {
                 MemoryController.Connect(p);
-                
-                Application.Current.Dispatcher.Invoke((Action)delegate {
+
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
                     _mainContext.ConnectionStatus = ConnectionStatusViewModel.CONNECTED;
                 });
-                
+
             };
 
-            AppStateController.GameStop += (s, e) => {
-                Application.Current.Dispatcher.Invoke((Action)delegate {
+            AppStateController.GameStop += (s, e) =>
+            {
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
                     _mainContext.ConnectionStatus = ConnectionStatusViewModel.LCU;
                 });
             };
@@ -179,7 +189,8 @@ namespace LeagueBroadcast.Common.Controllers
             ToTick.Add(AppStController);
             _startupContext.UpdateLoadProgress(LoadStatus.PostInit, 66);
 
-            Application.Current.Dispatcher.Invoke((Action)delegate {
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
                 Startup.Close();
             });
 

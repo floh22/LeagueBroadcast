@@ -1,10 +1,7 @@
-﻿using LeagueBroadcast.Common.Controllers;
-using LeagueBroadcast.Common.Utils;
+﻿using LeagueBroadcast.Common.Utils;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using static LeagueBroadcast.Common.Log;
 
@@ -18,7 +15,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public override string FileVersion { get => _fileVersion; set => _fileVersion = value; }
 
         [JsonIgnore]
-        public static new string CurrentVersion => "1.5";
+        public static new string CurrentVersion => "1.6";
 
         public DataDragonConfig DataDragon;
 
@@ -45,7 +42,7 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public override void RevertToDefault()
         {
-            var def = CreateDefault();
+            ComponentConfig def = CreateDefault();
             this.DataDragon = def.DataDragon;
             this.PickBan = def.PickBan;
             this.Ingame = def.Ingame;
@@ -127,7 +124,8 @@ namespace LeagueBroadcast.Common.Data.Config
                     },
                     OffsetRepository = "https://api.github.com/repos/floh22/LeagueBroadcast/contents/Offsets?ref=v2",
                     OffsetPrefix = "Offsets-",
-                    CheckForOffsets = true
+                    CheckForOffsets = true,
+                    FrontendPort = 9001,
                 }
             };
         }
@@ -139,131 +137,32 @@ namespace LeagueBroadcast.Common.Data.Config
 
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)
         {
-            //1.0 to Current
-            if (oldVersion.Equals("1.0"))
-            {
-                Task t = new(async () =>
-                {
-                    await Task.Delay(100);
-                    //1.0 to 1.1
-                    FileVersion = CurrentVersion;
-
-                    PickBan.DefaultBlueColor = ConfigController.PickBan.frontend.blueTeam.color;
-                    PickBan.DefaultRedColor = ConfigController.PickBan.frontend.redTeam.color;
-
-                    Ingame.SeriesGameCount = 3;
-
-                    //1.1 to 1.2
-                    App.LogLevel = LogLevel.Info;
-                    SetLogLevel(LogLevel.Info);
-
-                    //1.2 to 1.3
-                    Ingame.Objectives.DoObjectiveSpawnPopUp = false;
-                    Ingame.Objectives.DoObjectiveKillPopUp = false;
-                    DataDragon.Region = "euw";
-                    DataDragon.Locale = "en_US";
-                    DataDragon.Patch = "latest";
-                    DataDragon.CDN = "https://ddragon.leagueoflegends.com/cdn";
-
-                    JSONConfigProvider.Instance.WriteConfig(this);
-                    Info($"Updated Component config from v1.0 to v{CurrentVersion}");
-                });
-                t.Start();
-                return true;
-            }
-
-            //1.1 to Current
-            if (oldVersion.Equals("1.1"))
-            {
-                Task t = new Task(async () =>
-                {
-                    await Task.Delay(100);
-                    //1.1 to 1.2
-                    App.LogLevel = LogLevel.Info;
-                    FileVersion = CurrentVersion;
-
-                    //1.2 to 1.3
-                    Ingame.Objectives.DoObjectiveSpawnPopUp = false;
-                    Ingame.Objectives.DoObjectiveKillPopUp = false;
-                    DataDragon.Region = "euw";
-                    DataDragon.Locale = "en_US";
-                    DataDragon.Patch = "latest";
-                    DataDragon.CDN = "https://ddragon.leagueoflegends.com/cdn";
-                    FileVersion = CurrentVersion;
-
-                    JSONConfigProvider.Instance.WriteConfig(this);
-                    Info($"Updated Component config from v1.1 to v{CurrentVersion}");
-                });
-                t.Start();
-                return true;
-            }
-
-            //1.2 to 1.3
-            if (oldVersion.Equals("1.2"))
-            {
-                Task t = new(async () =>
-                {
-                    await Task.Delay(100);
-                    //1.2 to 1.3
-                    FileVersion = CurrentVersion;
-
-                    Ingame.Objectives.DoObjectiveSpawnPopUp = false;
-                    Ingame.Objectives.DoObjectiveKillPopUp = false;
-                    DataDragon.Region = "euw";
-                    DataDragon.Locale = "en_US";
-                    DataDragon.Patch = "latest";
-                    DataDragon.CDN = "https://ddragon.leagueoflegends.com/cdn";
-
-                    JSONConfigProvider.Instance.WriteConfig(this);
-                    Info($"Updated Component config from v1.2 to v{CurrentVersion}");
-                });
-                t.Start();
-                return true;
-            }
-
-
-            if(oldVersion.Equals("1.3"))
-            {
-                Task t = new(async () =>
-                {
-                    await Task.Delay(100);
-                    //1.3 to 1.5
-
-                    FileVersion = CurrentVersion;
-
-                    DataDragon.Region = "global";
-                    DataDragon.CDragonRaw = "https://raw.communitydragon.org";
-                    Ingame.Objectives.UseCustomDragonTimer = true;
-
-                    JSONConfigProvider.Instance.WriteConfig(this);
-                    Info($"Updated Component config from v1.3 to v{CurrentVersion}");
-                });
-                t.Start();
-            }
-
-            if (oldVersion.Equals("1.4"))
+            if (oldVersion.Equals("1.5"))
             {
                 Task t = new(async () =>
                 {
                     await Task.Delay(200);
-                    //1.4 to 1.5
+                    //1.5 to 1.6
 
                     FileVersion = CurrentVersion;
 
-                    Ingame.Objectives.UseCustomDragonTimer = true;
-                    App.OffsetRepository = "https://api.github.com/repos/floh22/LeagueBroadcast/contents/Offsets?ref=v2";
+                    App.FrontendPort = 9001;
 
                     JSONConfigProvider.Instance.WriteConfig(this);
-                    Info($"Updated Component config from v1.4 to v{CurrentVersion}");
+                    Info($"Updated Component config from v1.5 to v{CurrentVersion}");
                 });
                 t.Start();
+            }
+            else
+            {
+                Log.Warn("Config too old to update");
             }
             return true;
         }
 
         public override void UpdateValues(string readValues)
         {
-            var Cfg = JsonConvert.DeserializeObject<ComponentConfig>(readValues);
+            ComponentConfig Cfg = JsonConvert.DeserializeObject<ComponentConfig>(readValues);
             this.DataDragon = Cfg.DataDragon;
             this.PickBan = Cfg.PickBan;
             this.Ingame = Cfg.Ingame;
@@ -346,6 +245,7 @@ namespace LeagueBroadcast.Common.Data.Config
         public bool CheckForOffsets;
         public string OffsetRepository;
         public string OffsetPrefix;
+        public int FrontendPort;
 
         [JsonIgnore]
         public StringVersion Version => GetSimpleLocalVersion();
