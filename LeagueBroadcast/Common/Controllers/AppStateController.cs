@@ -176,6 +176,7 @@ namespace LeagueBroadcast.Common.Controllers
         {
             if (ConfigController.Component.PickBan.IsActive)
             {
+                Console.WriteLine(e);
                 if(BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) || BroadcastController.CurrentLeagueState.HasFlag(LeagueState.PostGame))
                 {
                     return;
@@ -277,7 +278,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         }
 
-        public static Summoner GetSummonerById(int id)
+        public static Summoner GetSummonerById(long id)
         {
             return summoners.SingleOrDefault(summoner => summoner.summonerId == id);
         }
