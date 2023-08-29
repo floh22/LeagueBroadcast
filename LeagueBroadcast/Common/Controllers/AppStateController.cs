@@ -8,6 +8,7 @@ using LeagueBroadcast.Farsight;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,8 +29,8 @@ namespace LeagueBroadcast.Common.Controllers
 
         public static AppStateController Instance
         {
-            get { return GetInstance(); }
-            set { _instance = value; }
+            get => GetInstance();
+            set => _instance = value;
         }
 
         public LeagueClientApi ClientAPI;
@@ -39,14 +40,19 @@ namespace LeagueBroadcast.Common.Controllers
         private static AppStateController GetInstance()
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
+
             return _instance;
         }
 
         private AppStateController()
         {
             if (_instance != null)
+            {
                 return;
+            }
 
             mainCtx = (MainViewModel)BroadcastController.Instance.Main.DataContext;
         }
@@ -124,22 +130,25 @@ namespace LeagueBroadcast.Common.Controllers
         private async Task<LeagueClientApi> ConnectToClient()
         {
             Log.Info("Connecting to League Client");
-            var stopwatch = Stopwatch.StartNew();
-            var api = await LeagueClientApi.ConnectAsync();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            LeagueClientApi api = await LeagueClientApi.ConnectAsync();
             api.EventHandler.Subscribe("/lol-gameflow/v1/gameflow-phase", ClientStateChanged);
             api.EventHandler.Subscribe("/lol-champ-select/v1/session", ChampSelectChanged);
             api.EventHandler.Subscribe("/lol-champ-select/vi/sfx-notifications", ChampSelectSFXChanged);
             stopwatch.Stop();
 
-            if(mainCtx.ConnectionStatus != ConnectionStatusViewModel.CONNECTED)
+            if (mainCtx.ConnectionStatus != ConnectionStatusViewModel.CONNECTED)
+            {
                 mainCtx.ConnectionStatus = ConnectionStatusViewModel.LCU;
+            }
+
             FlagsHelper.Set(ref BroadcastController.CurrentLeagueState, LeagueState.Connected);
             Log.Info($"Connected to League Client in {stopwatch.ElapsedMilliseconds} ms");
 
             State.LeagueConntected();
 
             string res = null;
-            while(res is null)
+            while (res is null)
             {
                 res = await api.RequestHandler.GetResponseAsync<string>(HttpMethod.Get, "/lol-patch/v1/game-version");
             }
@@ -154,20 +163,15 @@ namespace LeagueBroadcast.Common.Controllers
             string eventType = e.Data.ToString();
             Log.Info($"League State: {eventType}");
 
-            /* Detect game end via process close instead of the client if the LCU is going to be buggy -.-
-            if (!eventType.Equals("InProgress") && BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress))
-            {
-                GameStop?.Invoke(this, EventArgs.Empty);
-            }
-
-            */
             if (!eventType.Equals("ChampSelect") && BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
             {
                 ChampSelectStop?.Invoke(this, EventArgs.Empty);
+                return;
             }
             //Backup state change
             if (eventType.Equals("ChampSelect") && !BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
             {
+                Log.Info("Starting champ select from client state change");
                 ChampSelectStart?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -176,22 +180,31 @@ namespace LeagueBroadcast.Common.Controllers
         {
             if (ConfigController.Component.PickBan.IsActive)
             {
-                if(BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) || BroadcastController.CurrentLeagueState.HasFlag(LeagueState.PostGame))
+                if (BroadcastController.CurrentLeagueState.HasFlag(LeagueState.InProgress) || BroadcastController.CurrentLeagueState.HasFlag(LeagueState.PostGame))
                 {
                     return;
                 }
-                if(!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
+                if (!BroadcastController.CurrentLeagueState.HasFlag(LeagueState.ChampSelect))
                 {
+                    JArray myTeam = e.Data["myTeam"] as JArray;
+                    JArray theirTeam = e.Data["theirTeam"] as JArray;
+                    if (myTeam.Count == 0 && theirTeam.Count == 0)
+                    {
+                        return;
+                    }
+
                     ChampSelectStart?.Invoke(this, EventArgs.Empty);
                 }
                 BroadcastController.Instance.PBController.ApplyNewState(e);
-            }  
+            }
         }
 
         private void ChampSelectSFXChanged(object sender, LeagueEvent e)
         {
             if (ConfigController.Component.PickBan.IsActive)
+            {
                 Log.Info($"SFX Change: {e.Data}");
+            }
         }
 
         public static async Task CacheSummoners(Session session)
@@ -204,7 +217,7 @@ namespace LeagueBroadcast.Common.Controllers
 
             Dictionary<Cell, Task<string>> jobs = FetchPlayersFromTeam(blueTeam);
             jobs = jobs.Concat(FetchPlayersFromTeam(redTeam)).ToDictionary(x => x.Key, x => x.Value);
-            var completedJobs = jobs.Values.ToList();
+            List<Task<string>> completedJobs = jobs.Values.ToList();
             while (completedJobs.Any())
             {
                 Task<string> finished = await Task.WhenAny(completedJobs);
@@ -229,10 +242,14 @@ namespace LeagueBroadcast.Common.Controllers
 
         private static Dictionary<Cell, Task<string>> FetchPlayersFromTeam(List<Cell> team)
         {
-            var toFinish = new Dictionary<Cell, Task<string>>();
-            team.ForEach(cell => {
+            Dictionary<Cell, Task<string>> toFinish = new Dictionary<Cell, Task<string>>();
+            team.ForEach(cell =>
+            {
                 if (cell.summonerId == 0)
+                {
                     return;
+                }
+
                 try
                 {
                     toFinish.Add(cell, Instance.ClientAPI.RequestHandler.GetJsonResponseAsync(HttpMethod.Get, $"lol-summoner/v1/summoners/{cell.summonerId}"));
@@ -263,13 +280,14 @@ namespace LeagueBroadcast.Common.Controllers
             {
                 string[] patchComponents = rawPatch.Split('.');
                 return StringVersion.Parse($"{patchComponents[0]}.{patchComponents[1]}.1");
-            } catch
+            }
+            catch
             {
                 Log.Warn($"Could not determine local game version. Client reported invalid patch \"{rawPatch}\"");
                 Log.Info("Reverting to DataDragon version");
                 return StringVersion.Parse(DataDragon.version.Champion);
             }
-             
+
         }
 
         public void DoTick()

@@ -33,7 +33,10 @@ namespace LeagueBroadcast.Farsight
         public FarsightController()
         {
             if (!ShouldRun)
+            {
                 return;
+            }
+
             Champions = CDragonChampion.All.Select(c => c.Alias).ToList();
             Log.Info($"Farsight loaded. Found {Champions.Count} Champ names");
         }
@@ -41,7 +44,10 @@ namespace LeagueBroadcast.Farsight
         public void Connect(Process p)
         {
             if (!ShouldRun)
+            {
                 return;
+            }
+
             Memory.Initialize(p);
 
         }
@@ -83,11 +89,13 @@ namespace LeagueBroadcast.Farsight
             int read = 0;
             IntPtr child1, child2, child3, node;
 
-            while(read < maxObjects && toVisit.Count > 0)
+            while (read < maxObjects && toVisit.Count > 0)
             {
                 node = toVisit.Dequeue();
-                if(visited.Contains(node))
+                if (visited.Contains(node))
+                {
                     continue;
+                }
 
                 read++;
                 visited.Add(node);
@@ -104,42 +112,52 @@ namespace LeagueBroadcast.Farsight
                 uint netID = buff.ToUInt(GameOffsets.MapNodeNetId);
 
                 if (netID - 0x40000000 > 0x100000)
+                {
                     continue;
+                }
 
                 IntPtr addr = buff.ToIntPtr(GameOffsets.MapNodeObject);
                 if (addr == IntPtr.Zero)
+                {
                     continue;
+                }
 
                 pointers[objNr++] = addr;
             }
 
-            for(int i = 0; i < objNr; i++)
+            for (int i = 0; i < objNr; i++)
             {
                 int netID = Memory.ReadMemory(pointers[i] + ObjectOffsets.NetworkID, 4).ToInt();
                 if (BlacklistedObjects.Contains(netID))
+                {
                     continue;
+                }
 
                 GameObject obj;
-                if(!snap.ObjectMap.ContainsKey(netID))
+                if (!snap.ObjectMap.ContainsKey(netID))
                 {
                     obj = new();
                     obj.LoadFromMemory(pointers[i], ObjectOffsets.Level + 0x4);
                     snap.ObjectMap.Add(netID, obj);
-                } else
+                }
+                else
                 {
                     obj = snap.ObjectMap[netID];
                     obj.LoadFromMemory(pointers[i], ObjectOffsets.Level + 0x4);
 
                     if (netID != obj.NetworkID)
+                    {
                         snap.ObjectMap[obj.NetworkID] = obj;
+                    }
                 }
 
                 if (obj.NetworkID == 0)
                 {
+                    Log.Verbose($"Object {obj.Name} has netID 0");
                     continue;
                 }
 
-                if(obj.DisplayName.StartsWith("Dragon_Indicator_"))
+                if (obj.DisplayName.StartsWith("Dragon_Indicator_"))
                 {
                     //I hate myself for the naming convention but lets keep it consistent at least
                     snap.NextDragonType = obj.DisplayName.Replace(".troy", "").Remove(0, 17).Replace("Air", "Cloud", StringComparison.OrdinalIgnoreCase).Replace("Earth", "Mountain", StringComparison.OrdinalIgnoreCase).Replace("Water", "Ocean", StringComparison.OrdinalIgnoreCase);
@@ -149,7 +167,9 @@ namespace LeagueBroadcast.Farsight
                 snap.IndexToNetID[obj.ID] = obj.NetworkID;
                 snap.UpdatedThisFrame.Add(obj.NetworkID);
                 if (obj.Name.Length < 2 || BlacklistedObjectNames.Any(s => s.Equals(obj.Name, StringComparison.OrdinalIgnoreCase)))
+                {
                     BlacklistedObjects.Add(obj.NetworkID);
+                }
 
                 if (obj.IsChampion())
                 {
@@ -169,12 +189,12 @@ namespace LeagueBroadcast.Farsight
                     snap.Dragon = obj;
                     continue;
                 }
-                if(obj.Name.Equals("SRU_Baron"))
+                if (obj.Name.Equals("SRU_Baron"))
                 {
                     snap.Baron = obj;
                     continue;
                 }
-                if(obj.Name.Equals("SRU_RiftHerald"))
+                if (obj.Name.Equals("SRU_RiftHerald"))
                 {
                     snap.Herald = obj;
                     continue;
@@ -184,7 +204,7 @@ namespace LeagueBroadcast.Farsight
 
         private void ClearMissing(Snapshot snap)
         {
-            foreach (var s in snap.ObjectMap.Keys.Where(key => !snap.UpdatedThisFrame.Contains(key)).ToList() )
+            foreach (int s in snap.ObjectMap.Keys.Where(key => !snap.UpdatedThisFrame.Contains(key)).ToList())
             {
                 snap.ObjectMap.Remove(s);
             }

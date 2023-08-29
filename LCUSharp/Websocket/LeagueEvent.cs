@@ -25,5 +25,12 @@ namespace LCUSharp.Websocket
         /// </summary>
         [JsonProperty("uri")]
         public string Uri { get; set; }
+
+
+        //ToString use json serialization
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

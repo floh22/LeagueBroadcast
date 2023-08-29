@@ -17,7 +17,7 @@ export default class GraphVisual extends VisualElement {
     MaskGeo!: Phaser.GameObjects.Graphics;
 
     Title: Phaser.GameObjects.Text | null = null;
-    Graph: Chart;
+    Graph: Chart | undefined;
 
     CurrentData: GoldEntry[] = [];
 
@@ -90,6 +90,10 @@ export default class GraphVisual extends VisualElement {
             //this.Start();
             this.scene.displayRegions[10].AddToAnimationQueue(this);
         }
+        
+        if(this.Graph === undefined) {
+            return;
+        }
 
         this.CurrentData = newValues;
         let goldValues = this.CurrentData.map(a => a.y);
@@ -121,7 +125,7 @@ export default class GraphVisual extends VisualElement {
     UpdateConfig(cfg: GoldGraphDisplayConfig): void {
 
         //Delete the Graph and make a new one
-        if(this.Graph !== null && this.Graph !== undefined)
+        if(this.Graph)
             this.Graph.destroy();
         this.RemoveVisualComponent(this.Graph);
 
@@ -141,23 +145,19 @@ export default class GraphVisual extends VisualElement {
 
         //Background Image
         if (cfg.Background.UseImage) {
-            if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
+            if (this.BackgroundVideo) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
             }
-            if (this.BackgroundRect !== undefined && this.BackgroundRect !== null) {
+            if (this.BackgroundRect) {
                 this.RemoveVisualComponent(this.BackgroundRect);
                 this.BackgroundRect.destroy();
                 this.BackgroundRect = null;
             }
             //Reset old Texture
-            if (this.scene.textures.exists('graphBg')) {
-                this.RemoveVisualComponent(this.BackgroundImage);
-                this.BackgroundImage?.destroy();
-                this.BackgroundImage = null;
-                this.scene.textures.remove('graphBg');
+            if (!this.BackgroundImage) {
+                this.scene.load.image('graphBg', 'frontend/backgrounds/GoldGraph.png');
             }
-            this.scene.load.image('graphBg', 'frontend/backgrounds/GoldGraph.png');
         }
         //Background Video
         else if (cfg.Background.UseVideo) {
@@ -172,26 +172,23 @@ export default class GraphVisual extends VisualElement {
                 this.BackgroundImage = null;
             }
             //Reset old Video
-            if(!this.scene.cache.video.has('graphBgVideo')) {
-                this.RemoveVisualComponent(this.BackgroundVideo);
-                this.BackgroundVideo?.destroy(),
-                this.BackgroundVideo = null;
-                this.scene.cache.video.remove('graphBgVideo');
+            if(!this.BackgroundVideo) {
+                this.scene.load.video('graphBgVideo', 'frontend/backgrounds/GoldGraph.mp4');
             }
-            this.scene.load.video('graphBgVideo', 'frontend/backgrounds/GoldGraph.mp4');
+            
         }
         //Background Color
         else {
-            if (this.BackgroundImage !== undefined && this.BackgroundImage !== null) {
+            if (this.BackgroundImage) {
                 this.RemoveVisualComponent(this.BackgroundImage);
                 this.BackgroundImage.destroy();
             }
-            if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
+            if (this.BackgroundVideo) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
                 this.BackgroundVideo = null;
             }
-            if (this.BackgroundRect === null || this.BackgroundRect === undefined) {
+            if (!this.BackgroundRect) {
                 this.BackgroundRect = this.scene.add.rectangle(cfg.Position.X, cfg.Position.Y, cfg.Size.X, cfg.Size.Y, Phaser.Display.Color.RGBStringToColor(cfg.Background.FallbackColor).color32);
                 this.BackgroundRect.setOrigin(0, 0);
                 this.BackgroundRect.depth = -1;
@@ -334,8 +331,8 @@ export default class GraphVisual extends VisualElement {
                 }
             }
         });
-        this.Graph.setOrigin(0.5,0);
-        this.Graph.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
+        this.Graph!.setOrigin(0.5,0);
+        this.Graph!.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
         this.AddVisualComponent(this.Graph);
 
         
@@ -429,8 +426,13 @@ export default class GraphVisual extends VisualElement {
         //Background Image support
         this.scene.load.on(`filecomplete-image-graphBg`, () => {
             this.BackgroundImage = this.scene.make.sprite({ x: GraphVisual.GetConfig().Position.X, y: GraphVisual.GetConfig().Position.Y, key: 'graphBg', add: true });
+            setTimeout(() => {
+                this.BackgroundImage?.setAlpha(1);
+                this.BackgroundImage?.setDisplaySize(GraphVisual.GetConfig().Size.X, GraphVisual.GetConfig().Size.Y);
+            }, 100);
+
             this.BackgroundImage.setOrigin(0.5,0);
-            this.BackgroundImage.setDisplaySize(GraphVisual.GetConfig().Size.X, GraphVisual.GetConfig().Size.Y);
+            this.BackgroundImage.setAlpha(0);
             this.BackgroundImage.setDepth(-1);
             this.BackgroundImage.setMask(GraphVisual.GetConfig()?.Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.AddVisualComponent(this.BackgroundImage);
@@ -438,13 +440,20 @@ export default class GraphVisual extends VisualElement {
 
         //Background Video support
         this.scene.load.on(`filecomplete-video-graphBgVideo`, () => {
-            if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
+
+            console.log('video loaded');
+            if (this.BackgroundVideo) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo.destroy();
             }
             // @ts-ignore
             this.BackgroundVideo = this.scene.add.video(GraphVisual.GetConfig().Position.X, GraphVisual.GetConfig()!.Position.Y, 'graphBgVideo', false, true);
-            this.BackgroundVideo.setDisplaySize(GraphVisual.GetConfig().Size.X, GraphVisual.GetConfig().Size.Y);
+            setTimeout(() => {
+                this.BackgroundVideo?.setAlpha(1);
+                this.BackgroundVideo?.setDisplaySize(GraphVisual.GetConfig().Size.X, GraphVisual.GetConfig().Size.Y);
+            }, 100);
+            
+            this.BackgroundVideo.setAlpha(0);
             this.BackgroundVideo.setOrigin(0.5,0);
             this.BackgroundVideo.setMask(GraphVisual.GetConfig().Background.UseAlpha ? this.ImgMask : this.GeoMask);
             this.BackgroundVideo.setLoop(true);

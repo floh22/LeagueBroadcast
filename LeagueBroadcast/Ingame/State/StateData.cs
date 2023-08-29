@@ -31,8 +31,8 @@ namespace LeagueBroadcast.Ingame.State
         public double gameTime;
         public bool gamePaused;
 
-        public float blueGold => gameState.blueTeam.GetGold(gameTime);
-        public float redGold => gameState.redTeam.GetGold(gameTime);
+        public float blueGold => gameState.blueTeam?.GetGold(gameTime) ?? 0;
+        public float redGold => gameState.redTeam?.GetGold(gameTime) ?? 0;
 
         public Dictionary<double, float> goldGraph => gameState.GetGoldGraph();
         public InhibitorInfo inhibitors;

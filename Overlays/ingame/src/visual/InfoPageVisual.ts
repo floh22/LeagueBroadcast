@@ -131,56 +131,56 @@ export default class InfoPageVisual extends VisualElement {
 
         //Background Image
         if (newConfig.Background.UseImage) {
-            if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
+            if (this.BackgroundVideo) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo?.destroy();
                 this.BackgroundVideo = null;
                 this.scene.cache.video.remove('infoBgVideo');
 
             }
-            if (this.BackgroundRect !== undefined && this.BackgroundRect !== null) {
+            if (this.BackgroundRect) {
                 this.RemoveVisualComponent(this.BackgroundRect);
                 this.BackgroundRect.destroy();
                 this.BackgroundRect = null;
             }
             //Load Texture only if it does not already exist
-            if (this.BackgroundImage === null || this.BackgroundImage === undefined) {
+            if (!this.BackgroundImage) {
                 this.scene.load.image('infoBg', 'frontend/backgrounds/InfoPage.png');
             }
         }
         //Background Video
         else if (newConfig.Background.UseVideo) {
-            if (this.BackgroundRect !== undefined && this.BackgroundRect !== null) {
+            if (this.BackgroundRect) {
                 this.RemoveVisualComponent(this.BackgroundRect);
                 this.BackgroundRect.destroy();
                 this.BackgroundRect = null;
             }
-            if (this.BackgroundImage !== undefined && this.BackgroundImage !== null) {
+            if (this.BackgroundImage) {
                 this.RemoveVisualComponent(this.BackgroundImage);
                 this.BackgroundImage?.destroy();
                 this.BackgroundImage = null;
                 this.scene.textures.remove('infoBg');
             }
             //Load Video only if it does not already exist
-            if (this.BackgroundVideo === null || this.BackgroundVideo === undefined) {
+            if (!this.BackgroundVideo) {
                 this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
             }
         }
         //Background Color
         else {
-            if (this.BackgroundImage !== undefined && this.BackgroundImage !== null) {
+            if (this.BackgroundImage) {
                 this.RemoveVisualComponent(this.BackgroundImage);
                 this.BackgroundImage?.destroy();
                 this.BackgroundImage = null;
                 this.scene.textures.remove('infoBg');
             }
-            if (this.BackgroundVideo !== undefined && this.BackgroundVideo !== null) {
+            if (this.BackgroundVideo) {
                 this.RemoveVisualComponent(this.BackgroundVideo);
                 this.BackgroundVideo?.destroy();
                 this.BackgroundVideo = null;
                 this.scene.cache.video.remove('infoBgVideo');
             }
-            if (this.BackgroundRect === null || this.BackgroundRect === undefined) {
+            if (!this.BackgroundRect) {
                 this.BackgroundRect = this.scene.add.rectangle(newConfig.Position.X, newConfig.Position.Y, newConfig.Background.Size.X, newConfig.Background.Size.Y, Phaser.Display.Color.RGBStringToColor(newConfig.Background.FallbackColor).color32);
                 this.BackgroundRect.setOrigin(0, 0);
                 this.BackgroundRect.setDepth(1);

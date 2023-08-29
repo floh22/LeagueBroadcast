@@ -1,6 +1,5 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
-using LeagueBroadcast.Common.Utils;
 using LeagueBroadcast.Ingame.Data.LBH;
 using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.Trinket;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Windows;
-using static LeagueBroadcast.OperatingSystem.InputUtils;
 
 namespace LeagueBroadcast.Ingame.Data.Provider
 {
@@ -65,8 +63,11 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private bool CheckGameConfigLocation(string configLocation)
         {
             //Make sure the folder exists
-            if(!Directory.Exists(configLocation))
+            if (!Directory.Exists(configLocation))
+            {
                 return false;
+            }
+
             try
             {
                 //Check for config file in given folder
@@ -99,7 +100,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     if (!(cfgContent.Contains("[LiveEvents]") && cfgContent.Contains("Enable=1")))
                     {
                         Log.Info("Could not find LiveEvents in game config. Appending to end");
-                        var writer = File.AppendText(Path.Join(LeagueFolder, "game.cfg"));
+                        StreamWriter writer = File.AppendText(Path.Join(LeagueFolder, "game.cfg"));
                         writer.Write($"\n\n{EnableAPIString}");
                         writer.Close();
                         Log.Info("Updated Game Config");
@@ -113,7 +114,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     Regex.Replace(cfgContent, @"\r\n|\r|\n", Environment.NewLine);
 
                     //Check for Replay API. This shouldnt be here but i'll shoehorn it in since it works
-                    List<string> lines = cfgContent.Split(new string[] { Environment.NewLine}, StringSplitOptions.None).ToList();
+                    List<string> lines = cfgContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
                     int generalLoc = lines.FindIndex(0, l => l == "[General]");
 
                     //found general config
@@ -158,9 +159,9 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     try
                     {
                         Log.Info("Verifying LiveEvents list");
-                        var liveEventsCfg = Path.Join(LeagueFolder, "LiveEvents.ini");
-                        var events = File.ReadAllLines(liveEventsCfg);
-                        var sw = File.AppendText(liveEventsCfg);
+                        string liveEventsCfg = Path.Join(LeagueFolder, "LiveEvents.ini");
+                        string[] events = File.ReadAllLines(liveEventsCfg);
+                        StreamWriter sw = File.AppendText(liveEventsCfg);
 
                         if (!events.Contains("OnMinionKill"))
                         {
@@ -193,7 +194,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                         File.WriteAllLines(Path.Join(LeagueFolder, "LiveEvents.ini"), new string[] { "OnMinionKill", "OnNeutralMinionKill", "OnTurretPlateDestroyed", "OnDamageGiven" });
                         Log.Info("LiveEvents.ini created. Added only nescesary events!");
                         return true;
-                    } catch(Exception e)
+                    }
+                    catch (Exception e)
                     {
                         Log.Warn($"Error Parsing LiveEvents.ini:\n{e.Source} -> {e.Message}\n Stacktrace:\n{e.StackTrace}");
                         return true;
@@ -203,7 +205,8 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 {
                     return false;
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Log.Warn($"Could not read config in folder {configLocation}: {e}");
                 return false;
@@ -246,26 +249,27 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private void OnMinionKill(LiveEvent e)
         {
             Player p = GetPlayer(e);
-            
+
             if (p != null)
             {
-                if(e.Other.StartsWith("Yorick"))
+                if (e.Other.StartsWith("Yorick"))
                 {
                     return;
                 }
                 AddCS(p, 1);
             }
-                
+
         }
 
         private void OnDamageDealt(LiveEvent e)
         {
             Player? p = GetPlayer(e.Source);
-            if(p is not null && e.Other is not null && e.Other.StartsWith("Turret", StringComparison.OrdinalIgnoreCase))
+
+            if (p is not null && e.Other is not null && e.Other.StartsWith("Turret", StringComparison.OrdinalIgnoreCase))
             {
                 //player damage turret
-                var turret = Ingame.gameState.turrets[e.Other];
-                if(turret is null)
+                Turret turret = Ingame.gameState.turrets[e.Other];
+                if (turret is null)
                 {
                     Log.Verbose("Tried adding damage info to unknown turret: " + e.Other);
                     return;
@@ -281,16 +285,16 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
         private void OnPlateDestroy(LiveEvent e)
         {
-            var found = Ingame.gameState.turrets.TryGetValue(e.Other, out var turret);
-            
-            if(!found)
+            bool found = Ingame.gameState.turrets.TryGetValue(e.Other, out Turret turret);
+
+            if (!found)
             {
                 return;
             }
 
 
             //TODO known issue: ignores herald for now
-            var team = e.OtherTeam.Equals("Order", StringComparison.OrdinalIgnoreCase) ? Ingame.gameState.blueTeam : Ingame.gameState.redTeam;
+            Team team = e.OtherTeam.Equals("Order", StringComparison.OrdinalIgnoreCase) ? Ingame.gameState.blueTeam : Ingame.gameState.redTeam;
 
             bool anyPlayerGotPlate = false;
 
@@ -304,7 +308,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                 }
             });
 
-            if(anyPlayerGotPlate)
+            if (anyPlayerGotPlate)
             {
                 team.platesDestroyed++;
             }
@@ -312,7 +316,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private void OnJglMinionKill(LiveEvent e)
         {
             Player p = GetPlayer(e);
-            
+
             if (p != null)
             {
                 if (e.Other.StartsWith("SRU_MurkwolfMini"))
@@ -323,7 +327,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
                 //Just count the entire camp instead of trying to somehow predict which mini give cs and which dont
                 //Maybe using statistics also would somehow work, but it can't be much more accurate than this and is far more effort
-                if((e.Other.StartsWith("SRU_Razorbeak") || e.Other.StartsWith("SRU_Krug")) && !e.Other.Contains("Mini"))
+                if ((e.Other.StartsWith("SRU_Razorbeak") || e.Other.StartsWith("SRU_Krug")) && !e.Other.Contains("Mini"))
                 {
                     AddCS(p, 4);
                     return;
@@ -364,7 +368,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                     return;
                 }
 
-                if(e.Other.StartsWith("SRU_RiftHerald"))
+                if (e.Other.StartsWith("SRU_RiftHerald"))
                 {
                     Team t = GetTeam(e);
                     IngameController.HeraldTaken.Invoke(this, new ObjectiveTakenArgs("Herald", GetTeam(e), Ingame.gameData.gameTime));
@@ -382,14 +386,20 @@ namespace LeagueBroadcast.Ingame.Data.Provider
         private Player GetPlayer(LiveEvent e)
         {
             if (Ingame.gameState.blueTeam == null || Ingame.gameState.redTeam == null)
+            {
                 return null;
+            }
+
             return Ingame.gameState.GetTeam(e.SourceTeam).players.SingleOrDefault(p => p.summonerName.Equals(e.Source, StringComparison.OrdinalIgnoreCase));
         }
 
         private Player GetPlayer(LiveEvent e, Team t)
         {
             if (t == null)
+            {
                 return null;
+            }
+
             return t.players.SingleOrDefault(p => p.summonerName.Equals(e.Source, StringComparison.OrdinalIgnoreCase));
         }
 
