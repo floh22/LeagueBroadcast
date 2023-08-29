@@ -295,7 +295,7 @@ namespace LeagueBroadcast.Common.Controllers
 
         }
 
-        public static Summoner GetSummonerById(int id)
+        public static Summoner GetSummonerById(long id)
         {
             return summoners.SingleOrDefault(summoner => summoner.summonerId == id);
         }

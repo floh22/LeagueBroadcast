@@ -3,6 +3,6 @@
     public class Summoner
     {
         public string displayName = "";
-        public int summonerId = 0;
+        public long summonerId = 0;
     }
 }

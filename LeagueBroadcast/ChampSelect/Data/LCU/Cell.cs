@@ -4,7 +4,7 @@
     {
         public int cellId;
         public int championId;
-        public int summonerId;
+        public long summonerId;
         public string spell1Id;
         public string spell2Id;
     }
