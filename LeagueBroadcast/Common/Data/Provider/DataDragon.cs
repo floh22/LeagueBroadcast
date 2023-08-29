@@ -199,7 +199,7 @@ namespace LeagueBroadcast.Common.Data.Provider
 
         private static async Task Init()
         {
-            string locale = ConfigController.Component.DataDragon.Locale;
+            string locale = ConfigController.Component.DataDragon.Locale.ToLowerInvariant();
             if (locale.Equals("en_US", StringComparison.OrdinalIgnoreCase))
             {
                 locale = "en_gb";
