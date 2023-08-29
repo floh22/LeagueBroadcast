@@ -26,11 +26,12 @@ League Broadcast uses Memory Reading to get information that the Riot API does n
 Use League Broadcast at your own risk. Anti Cheat does not ban for programs used during spectate, but it does however run while in a live game. Having League Broadcast open
 during a live (non-spectate) game may lead to account bans incase checks to stop it from running fail for some reason.
 
-## Maintenance Status
-30.07.2022
-Due to multiple issues in my schedule and life, I currently do not have the time or energy to further develop this project.
-Offsets will continue to be updated, and breaking bugs will be fixed.
-If you wish to help maintain this project, feel free to reach out on twitter.
+## Community and Contact
+Join our [Discord](http://discord.lolfar.site)
+
+This is the quickest way to reach us and to troubleshoot your issues. 
+
+Otherwise use the [Github Issues](https://github.com/floh22/LeagueBroadcastHub/issues) page to report breaking issues. These are not help forums! Use the issue and feature request templates, issues without proper information will be removed.
 
 ## Features
 
@@ -44,6 +45,7 @@ Ingame Features currently include:
 7. Custom Scoreboard
 8. Inhibitor Timers
 9. Auto init UI on Game Start
+10. Custom Objective Timers
 
 Includes a C# port of RCVolus ChampSelect tool!
 
@@ -110,14 +112,11 @@ Change the images and videos in `Frontend/ingame` to swap out resources.
 <!-- ROADMAP -->
 ## Roadmap
 
-Planned Features:
-1. Hotkey Support
-2. Support for languages other than english. Your language may or may not work depending on if it changes champion names
-3. Http/Websocket support for controlling League Broadcast externally
+Breaking Issues will be fixed.
 
-See the [open issues](https://github.com/floh22/LeagueBroadcastHub/issues) for a list of proposed features (and known issues).
+Current overhaul in progress. __Earliest release - mid/late 2024__.
 
-
+If the current version of this tool is missing any vital features, please tell us on discord.
 
 <!-- LICENSE -->
 ## License
@@ -125,7 +124,6 @@ See the [open issues](https://github.com/floh22/LeagueBroadcastHub/issues) for a
 Distributed under the MIT License. See `LICENSE` for more information.
 
 __This is a standalone project from Lars Eble. Riot Games does not endorse or sponsor this project.__  
-_The project was certified as ToS-compliant in a previous state. The current version using memory reading has not yet been certified._ 
 
 _Riot Games has expressed tolerance of passive memory reading in past statements, this however may change at any moment. Use this tool at your own discretion._
 
@@ -134,6 +132,8 @@ This project's port of [lol-pick-ban-ui](https://github.com/RCVolus/lol-pick-ban
 
 <!-- CONTACT -->
 ## Contact
+
+Discord - [discord.lolfar.site](http://discord.lolfar.site)
 
 Twitter - [@larseble](https://twitter.com/@larseble)
 
