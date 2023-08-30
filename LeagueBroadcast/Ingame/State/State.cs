@@ -381,7 +381,21 @@ namespace LeagueBroadcast.Ingame.State
 
         public List<Player> GetAllPlayers()
         {
-            return blueTeam.players.Concat(redTeam.players).ToList();
+            List<Player> bluePlayers = blueTeam?.players;
+            List<Player> redPlayers = redTeam?.players;
+            if (bluePlayers == null && redPlayers == null)
+            {
+                return new List<Player>();
+            }
+            if (bluePlayers == null)
+            {
+                return redPlayers;
+            }
+            if (redPlayers == null)
+            {
+                return bluePlayers;
+            }
+            return bluePlayers.Concat(redPlayers).ToList();
         }
 
         public List<Team> GetBothTeams()
