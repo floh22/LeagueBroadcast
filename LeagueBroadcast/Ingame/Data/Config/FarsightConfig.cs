@@ -1,14 +1,11 @@
 ﻿using LeagueBroadcast.Common;
 using LeagueBroadcast.Common.Controllers;
 using LeagueBroadcast.Common.Data.Config;
-using LeagueBroadcast.Common.Data.Provider;
 using LeagueBroadcast.Common.Utils;
 using LeagueBroadcast.Farsight;
 using LeagueBroadcast.Update.Http;
 using Newtonsoft.Json;
-using Swan.Logging;
 using System;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -46,7 +43,10 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public Farsight.FarsightController.Offsets GameOffsets;
         public Farsight.Object.GameObject.Offsets ObjectOffsets;
 
-        public override string GETCurrentVersion() => CurrentVersion;
+        public override string GETCurrentVersion()
+        {
+            return CurrentVersion;
+        }
 
         public override string GETDefaultString()
         {
@@ -70,11 +70,11 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public async Task<FarsightConfig> CreateDefault(FarsightConfig cfg = null, StringVersion? forcedVersion = null)
         {
             //Download from given repo
-            if(cfg == null)
+            if (cfg == null)
             {
                 cfg = new FarsightConfig();
             }
-            if(!ConfigController.Component.App.CheckForOffsets)
+            if (!ConfigController.Component.App.CheckForOffsets)
             {
                 Log.Info("Offset Updates disabled. Cannot automatically get current values");
                 return cfg;
@@ -87,7 +87,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
             if (offsetInfo.HasValue && offsetInfo.Value.Version > cfg.OffsetStringVersion)
             {
-                var data = offsetInfo.Value;
+                LatestOffsetData data = offsetInfo.Value;
                 Log.Info($"fetching updated offsets v{data.Version} from {data.Url}");
 
 
@@ -128,7 +128,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
             try
             {
                 Log.Info($"Attempting to retrieve updated offset file locations from {ConfigController.Component.App.OffsetRepository}");
-                var res = await RestRequester.GetRaw(ConfigController.Component.App.OffsetRepository).ConfigureAwait(false);
+                string res = await RestRequester.GetRaw(ConfigController.Component.App.OffsetRepository).ConfigureAwait(false);
                 if (res is null)
                 {
                     Log.Warn($"Could not retrieve offsets. Offset repository not found");
@@ -138,12 +138,12 @@ namespace LeagueBroadcast.Ingame.Data.Config
                 JsonDocument jsonRes = JsonDocument.Parse(res);
                 JsonElement root = jsonRes.RootElement;
 
-                var offsetFiles = root.EnumerateArray();
+                JsonElement.ArrayEnumerator offsetFiles = root.EnumerateArray();
 
                 StringVersion latest = StringVersion.Zero;
                 JsonElement latestElement = root;
 
-                foreach (var file in offsetFiles)
+                foreach (JsonElement file in offsetFiles)
                 {
                     string fileName = file.GetProperty("name").GetString() ?? "";
                     StringVersion? fileVersion = StringVersion.Zero;
@@ -153,7 +153,9 @@ namespace LeagueBroadcast.Ingame.Data.Config
                         //Only check for current patch. This means uploads must all contain the full patch version in some way!
                         //Optimally data name will be of the form "[Anything]Major.Minor.Patch.json"
                         if (!fileName.Contains($"{current.ToString(2)}"))
+                        {
                             continue;
+                        }
 
                         if (fileVersion > latest)
                         {
@@ -163,7 +165,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
                     }
                 }
 
-                if (latest == StringVersion.Zero || latest < current || !latestElement.TryGetProperty("download_url", out var downloadUrlProperty))
+                if (latest == StringVersion.Zero || latest < current || !latestElement.TryGetProperty("download_url", out JsonElement downloadUrlProperty))
                 {
                     return new LatestOffsetData();
                 }
@@ -197,7 +199,7 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         public override void RevertToDefault()
         {
-            var def = CreateDefault().Result;
+            FarsightConfig def = CreateDefault().Result;
             this.FileVersion = CurrentVersion;
             this.OffsetVersion = def.OffsetVersion;
             this.GameOffsets = def.GameOffsets;
@@ -206,11 +208,20 @@ namespace LeagueBroadcast.Ingame.Data.Config
 
         private void UpdateGameVersion(FarsightConfig oldVersion)
         {
-            var def = CreateDefault(oldVersion).Result;
-            this.FileVersion = CurrentVersion;
-            this.OffsetVersion = def.OffsetVersion;
-            this.GameOffsets = def.GameOffsets;
-            this.ObjectOffsets = def.ObjectOffsets;
+            try
+            {
+                FarsightConfig def = CreateDefault(oldVersion).Result;
+                this.FileVersion = CurrentVersion;
+                this.OffsetVersion = def.OffsetVersion;
+                this.GameOffsets = def.GameOffsets;
+                this.ObjectOffsets = def.ObjectOffsets;
+            }
+            catch
+            {
+                Log.Warn($"Issue creating default Farsight config");
+                FarsightController.ShouldRun = false;
+            }
+
         }
 
         public override bool UpdateConfigVersion(string oldVersion, string oldValues)
@@ -221,14 +232,14 @@ namespace LeagueBroadcast.Ingame.Data.Config
         public override void UpdateValues(string readValues)
         {
 
-            var Cfg = JsonConvert.DeserializeObject<FarsightConfig>(readValues);
+            FarsightConfig Cfg = JsonConvert.DeserializeObject<FarsightConfig>(readValues);
 
 
-            if(!FarsightController.ShouldRun)
-                {
-                    Log.Warn("Farsight disabled");
-                    return;
-                }
+            if (!FarsightController.ShouldRun)
+            {
+                Log.Warn("Farsight disabled");
+                return;
+            }
 
             UpdateGameVersion(Cfg);
             ConfigController.UpdateConfigFile(this);
