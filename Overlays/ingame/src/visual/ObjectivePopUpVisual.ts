@@ -163,7 +163,7 @@ export default class ObjectivePopUpVisual extends VisualElement {
             this.MaskImage.setPosition(960, 1080);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
-            this.MaskGeo = this.scene.make.graphics({ add: false });
+            this.MaskGeo = this.scene.make.graphics();
             this.MaskGeo.fillStyle(0xffffff);
             this.MaskGeo.fillRect(0, 0, 1920, this.Height);
             this.MaskGeo.setPosition(0, 1080 - this.Height);

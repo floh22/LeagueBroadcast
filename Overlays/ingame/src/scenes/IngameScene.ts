@@ -412,10 +412,13 @@ export default class IngameScene extends Phaser.Scene {
                             remotePromises.push(Utils.LoadFont(fontName, font));
                         }
 
-
                     }
 
                     //Wait for all fonts to load
+
+                    if(remotePromises.length === 0) {
+                        return;
+                    }
                     Promise.all(remotePromises).then(() => {
                         console.log('[LB] All local fonts loaded');
 
@@ -468,6 +471,10 @@ export default class IngameScene extends Phaser.Scene {
                 break;
         }
 
+        if(cfg.Enabled === false) {
+            return;
+        }
+
         console.log(`${objectiveName} spawned`);
         new ObjectivePopUpVisual(this, cfg, `${objectiveName.toLowerCase()}Spawn`);
     }
@@ -487,6 +494,10 @@ export default class IngameScene extends Phaser.Scene {
             default:
                 cfg = this.overlayCfg!.ObjectiveKill.DragonKillScoreboardPopUp;
                 break;
+        }
+
+        if(cfg.Enabled === false) {
+            return;
         }
 
         console.log(`${objectiveName} killed`);

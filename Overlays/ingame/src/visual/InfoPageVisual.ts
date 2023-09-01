@@ -35,27 +35,12 @@ export default class InfoPageVisual extends VisualElement {
             this.MaskImage.setDisplaySize(cfg.Background.Size.X, cfg.Background.Size.Y);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
-            this.MaskGeo = scene.make.graphics({add: false});
+            this.MaskGeo = scene.make.graphics();
             this.MaskGeo.fillStyle(0xffffff);
             this.MaskGeo.fillRect(cfg.Position.X, cfg.Position.Y, cfg.Background.Size.X, cfg.Background.Size.Y);
             this.GeoMask = this.MaskGeo.createGeometryMask();
             this.MaskGeo.setPosition(cfg.Position.X - cfg.Background.Size.X, 0);
         }
-
-        /*
-        //Background
-        if (cfg.Background.UseVideo) {
-            this.scene.load.video('infoBgVideo', 'frontend/backgrounds/InfoPage.mp4');
-        } else if (cfg.Background.UseImage) {
-            this.scene.load.image('infoBg', 'frontend/backgrounds/InfoPage.png');
-        } else {
-            this.BackgroundRect = this.scene.add.rectangle(cfg.Position.X, cfg.Position.Y, cfg.Background.Size.X, cfg.Background.Size.Y, Phaser.Display.Color.RGBStringToColor(cfg.Background.FallbackColor).color);
-            this.BackgroundRect.setOrigin(0, 0);
-            this.BackgroundRect.depth = -1;
-            this.BackgroundRect.setMask(cfg.Background.UseAlpha ? this.ImgMask : this.GeoMask);
-            this.AddVisualComponent(this.BackgroundRect);
-        }
-        */
 
 
         //Title
