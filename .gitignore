@@ -370,3 +370,4 @@ FodyWeavers.xsd
 #Ignore png files in Overlays/ingame/art folder
 Overlays/ingame/art/*.png
 
+/Overlays/packban_update
