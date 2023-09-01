@@ -69,12 +69,10 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('popUpMask', 'frontend/Masks/PopUpMask.png')
 
         //Objective Timers
-        this.load.image('baronIcon', 'frontend/backgrounds/BaronIcon.png');
-        this.load.image('objectiveBg', 'frontend/backgrounds/ObjectiveBG.png');
-        this.load.image('elderIcon', 'frontend/backgrounds/DragonIcon.png');
-        this.load.image('objectiveBgLeft', 'frontend/backgrounds/ObjectiveBGLeft.png');
-        this.load.image('objectiveGold', 'frontend/images/ObjectiveGold.png');
-        this.load.image('objectiveCdr', 'frontend/images/ObjectiveCdr.png');
+        // this.load.image('objectiveGold', 'frontend/images/ObjectiveGold.png');
+        // this.load.image('objectiveCdr', 'frontend/images/ObjectiveCdr.png');
+        this.load.image('powerPlayLeft', 'frontend/backgrounds/PowerPlayLeft.png');
+        this.load.image('powerPlayRight', 'frontend/backgrounds/PowerPlayRight.png');
 
         this.load.image('dragonTimerBg', 'frontend/backgrounds/DragonTimer.png');
         this.load.image('baronTimerBg', 'frontend/backgrounds/BaronTimer.png');

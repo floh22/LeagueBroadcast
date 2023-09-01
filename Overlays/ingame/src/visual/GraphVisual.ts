@@ -33,7 +33,7 @@ export default class GraphVisual extends VisualElement {
             this.MaskImage.setDisplaySize(cfg.Size.X, cfg.Size.Y);
             this.ImgMask = this.MaskImage.createBitmapMask();
         } else {
-            this.MaskGeo = scene.make.graphics({add: false});
+            this.MaskGeo = scene.make.graphics();
             this.MaskGeo.fillStyle(0xffffff);
             this.MaskGeo.fillRect(0, 0, cfg.Size.X, cfg.Size.Y);
             this.GeoMask = this.MaskGeo.createGeometryMask();

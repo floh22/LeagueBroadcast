@@ -29,6 +29,9 @@ export default class InhibitorVisual extends VisualElement {
 
     Config = this.scene.overlayCfg!.Inhib;
 
+    BlueColor: Phaser.Display.Color;
+    RedColor: Phaser.Display.Color;
+
     constructor(scene: IngameScene) {
         super(scene, scene.overlayCfg!.Inhib.Position, 'inhibitorIndicator');
 
@@ -45,6 +48,8 @@ export default class InhibitorVisual extends VisualElement {
                 color = Phaser.Display.Color.RGBStringToColor(this.Config!.BlueTeam.Color);
             }
         }
+
+        this.BlueColor = Phaser.Display.Color.RGBStringToColor(this.Config!.BlueTeam.Color);
 
         const TopIndex = this.Config!.LaneOrder.findIndex(l => l === "Top" || l === "top");
         const MidIndex = this.Config!.LaneOrder.findIndex(l => l === "Mid" || l === "mid");
@@ -99,6 +104,8 @@ export default class InhibitorVisual extends VisualElement {
             }
         }
 
+        this.RedColor = Phaser.Display.Color.RGBStringToColor(this.Config!.BlueTeam.Color);
+
         this.redTopIndicator = scene.make.sprite({ x: this.position.X + TopIndex * this.Config!.RedTeam.LaneOffset.X + this.Config!.RedTeam.Position.X + this.Config!.RedTeam.IconOffset.X, y: this.position.Y + TopIndex * this.Config!.RedTeam.LaneOffset.Y + this.Config!.RedTeam.Position.Y + this.Config!.RedTeam.IconOffset.Y, key: 'top', add: true });
         this.redTopIndicator.setSize(this.Config!.IconSize, this.Config!.IconSize);
         this.redTopIndicator.setOrigin(0.5, 0.5);
@@ -132,6 +139,7 @@ export default class InhibitorVisual extends VisualElement {
 
         //Background Image support
         this.scene.load.on(`filecomplete-image-inhibitorBg`, () => {
+            console.log("[LB] Inhib background image loaded");
             this.bgImage = this.scene.make.sprite({ x: this.Config!.Position.X, y: this.Config!.Position.Y, key: 'inhibitorBg', add: true });
             this.bgImage.setOrigin(0,0);
             this.bgImage.setMask(this.mask);
@@ -200,6 +208,8 @@ export default class InhibitorVisual extends VisualElement {
             return;
         }
 
+
+
         this.blueBotTime.text = this.ToTimeString(newValues.Inhibitors[0].timeLeft);
         this.blueMidTime.text = this.ToTimeString(newValues.Inhibitors[1].timeLeft);
         this.blueTopTime.text = this.ToTimeString(newValues.Inhibitors[2].timeLeft);
@@ -208,8 +218,38 @@ export default class InhibitorVisual extends VisualElement {
         this.redTopTime.text = this.ToTimeString(newValues.Inhibitors[3].timeLeft);
 
         if (!this.isActive) {
+            this.UpdateColors(this.Config!);
             this.Start();
         }
+    }
+
+    UpdateColors(config: InhibitorDisplayConfig): void {
+        //Update Icon Colors
+        var color = Phaser.Display.Color.IntegerToColor(variables.fallbackBlue);
+        if (this.scene.state?.blueColor !== undefined && this.scene.state.blueColor !== '') {
+            if (config.UseTeamColors) {
+                color = Phaser.Display.Color.RGBStringToColor(this.scene.state.blueColor);
+            } else {
+                color = Phaser.Display.Color.RGBStringToColor(config.BlueTeam.Color);
+            }
+        }
+
+        this.blueTopIndicator.tint = color.color;
+        this.blueMidIndicator.tint = color.color;
+        this.blueBotIndicator.tint = color.color;
+
+        color = Phaser.Display.Color.IntegerToColor(variables.fallbackRed);
+        if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
+            if (config.UseTeamColors) {
+                color = Phaser.Display.Color.RGBStringToColor(this.scene.state.redColor);
+            } else {
+                color = Phaser.Display.Color.RGBStringToColor(config.RedTeam.Color);
+            }
+        }
+
+        this.redTopIndicator.tint = color.color;
+        this.redMidIndicator.tint = color.color;
+        this.redBotIndicator.tint = color.color;
     }
 
     UpdateConfig(newConfig: InhibitorDisplayConfig): void {
@@ -271,36 +311,12 @@ export default class InhibitorVisual extends VisualElement {
         this.redMidIndicator.setSize(newConfig.IconSize, newConfig.IconSize);
         this.redBotIndicator.setSize(newConfig.IconSize, newConfig.IconSize);
 
-        //Update Icon Colors
-        var color = Phaser.Display.Color.IntegerToColor(variables.fallbackBlue);
-        if (this.scene.state?.blueColor !== undefined && this.scene.state.blueColor !== '') {
-            if (newConfig.UseTeamColors) {
-                color = Phaser.Display.Color.RGBStringToColor(this.scene.state.blueColor);
-            } else {
-                color = Phaser.Display.Color.RGBStringToColor(newConfig.BlueTeam.Color);
-            }
-        }
+        
+        //Update Colors
+        this.UpdateColors(newConfig);
 
-        this.blueTopIndicator.tint = color.color;
-        this.blueMidIndicator.tint = color.color;
-        this.blueBotIndicator.tint = color.color;
-
-        color = Phaser.Display.Color.IntegerToColor(variables.fallbackRed);
-        if (this.scene.state?.redColor !== undefined && this.scene.state.redColor !== '') {
-            if (newConfig.UseTeamColors) {
-                color = Phaser.Display.Color.RGBStringToColor(this.scene.state.redColor);
-            } else {
-                color = Phaser.Display.Color.RGBStringToColor(newConfig.RedTeam.Color);
-            }
-        }
-
-        this.redTopIndicator.tint = color.color;
-        this.redMidIndicator.tint = color.color;
-        this.redBotIndicator.tint = color.color;
 
         //Update Background
-
-
         //Background Image
         if (newConfig.UseBackgroundImage) {
             if (this.bgVideo !== undefined && this.bgVideo !== null) {

@@ -9,13 +9,8 @@ export default class PowerPlayVisual extends VisualElement {
 
     Type: string = '';
     BackgroundBox: Phaser.GameObjects.Image;
-    Icon: Phaser.GameObjects.Image | null = null;
     Time: Phaser.GameObjects.Text | null = null;
-    TimeIcon: Phaser.GameObjects.Image | null = null;
     Gold: Phaser.GameObjects.Text | null = null;
-    GoldIcon: Phaser.GameObjects.Image | null = null;
-    Mask: Phaser.Display.Masks.GeometryMask;
-    MaskG: Phaser.GameObjects.Graphics;
 
     Config: PowerPlayTimerDisplayConfig;
 
@@ -25,26 +20,12 @@ export default class PowerPlayVisual extends VisualElement {
 
         this.Config = cfg;
 
-        this.MaskG = scene.make.graphics({}, false);
-        this.MaskG.fillStyle(0xffffff);
-        this.MaskG.fillRect(cfg.MaskPosition.X, cfg.MaskPosition.Y, cfg.MaskSize.X, cfg.MaskSize.Y);
-        this.Mask = this.MaskG.createGeometryMask();
-
-        this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, type === 'baron'? 'objectiveBg' : 'objectiveBgLeft');
+        this.BackgroundBox = this.scene.add.image(this.position.X, this.position.Y, type === 'baron' ? 'powerPlayRight' : 'powerPlayLeft');
         this.BackgroundBox.setScale(cfg.Scale);
         this.BackgroundBox.setDepth(3);
         this.visualComponents.push(this.BackgroundBox);
 
-        if (cfg.ObjectiveIcon) {
-            this.Icon = scene.add.image(this.position.X + cfg.IconPosition.X, this.position.Y + cfg.IconPosition.Y, type + 'Icon');
-            this.Icon.setScale(cfg.Scale);
-            this.Icon.setDepth(5);
-            this.Icon.setAlpha(0);
-            this.visualComponents.push(this.Icon);
-        }
-
         if (cfg.ShowGoldDiff) {
-            this.GoldIcon = scene.add.image(this.position.X + cfg.GoldIconPosition.X, this.position.Y + cfg.GoldIconPosition.Y, 'objectiveGold');
             this.Gold = scene.add.text(this.position.X + cfg.GoldPosition.X, this.position.Y + cfg.GoldPosition.Y, '+-0', {
                 fontFamily: cfg.GoldFont.Name,
                 fontSize: cfg.GoldFont.Size,
@@ -53,16 +34,13 @@ export default class PowerPlayVisual extends VisualElement {
             });
 
             this.Gold.setAlign(cfg.Align);
-            this.GoldIcon.setOrigin(0,0);
 
             this.Gold.setDepth(4);
-            this.GoldIcon.setDepth(4);
 
-            this.visualComponents.push(this.Gold, this.GoldIcon);
+            this.visualComponents.push(this.Gold);
         }
 
         if (cfg.ShowTimer) {
-            this.TimeIcon = scene.add.image(this.position.X + cfg.TimeIconPosition.X, this.position.Y + cfg.TimeIconPosition.Y, 'objectiveCdr');
             this.Time = scene.add.text(this.position.X + cfg.TimePosition.X, this.position.Y + cfg.TimePosition.Y, '00:00', {
                 fontFamily: cfg.TimeFont.Name,
                 fontSize: cfg.TimeFont.Size,
@@ -70,31 +48,39 @@ export default class PowerPlayVisual extends VisualElement {
                 color: cfg.TimeFont.Color
             });
             this.Time.setAlign(cfg.Align);
-            this.TimeIcon.setOrigin(0,0);
 
             this.Time.setDepth(4);
-            this.TimeIcon.setDepth(4);
 
-            this.visualComponents.push(this.Time, this.TimeIcon);
+            this.visualComponents.push(this.Time);
         }
-
-        this.ComponentsToMove().forEach(c => {
-            c.setMask(this.Mask);
-            c.setAlpha(0);
-        });
 
         if (cfg.Align === "Left" || cfg.Align === "left") {
-            this.Gold?.setOrigin(1,0);
-            this.Time?.setOrigin(1,0);
+            this.Gold?.setOrigin(1, 0);
+            this.Time?.setOrigin(1, 0);
 
         } else if (cfg.Align === "Right" || cfg.Align === "right") {
-            this.Gold?.setOrigin(0,0);
-            this.Time?.setOrigin(0,0);
+            this.Gold?.setOrigin(0, 0);
+            this.Time?.setOrigin(0, 0);
         }
 
-        this.Init();
+
+        this.visualComponents.forEach(element => {
+            element.setAlpha(0);
+        });
     }
     UpdateValues(newValues: FrontEndObjective): void {
+        /*
+        if(!this.isActive) {
+            this.Start();
+        }
+
+        if(this.Gold !== null)
+            this.Gold.text = 1000 + "";
+
+        if(this.Time !== null)
+        this.Time.text = "01:25";
+    */
+
         if (newValues === undefined || newValues === null) {
             if (this.isActive) {
                 this.Stop();
@@ -102,6 +88,7 @@ export default class PowerPlayVisual extends VisualElement {
             return;
         }
         if (!this.isActive) {
+            console.log("activating");
             this.Start();
         }
 
@@ -109,6 +96,7 @@ export default class PowerPlayVisual extends VisualElement {
             this.Gold.text = Math.trunc(newValues.GoldDifference) + '';
         if (this.Time !== null)
             this.Time.text = newValues.DurationRemaining;
+
     }
 
     UpdateConfig(newConfig: PowerPlayTimerDisplayConfig): void {
@@ -116,35 +104,14 @@ export default class PowerPlayVisual extends VisualElement {
         //Update Background
         this.BackgroundBox.setPosition(this.position.X, this.position.Y);
 
-        this.MaskG.clear();
-        this.MaskG.fillStyle(0xffffff);
-        this.MaskG.fillRect(newConfig.MaskPosition.X, newConfig.MaskPosition.Y, newConfig.MaskSize.X, newConfig.MaskSize.Y);
-
-
-        //Update Icon
-        if(newConfig.ObjectiveIcon) {
-            if(this.Config?.ObjectiveIcon) {
-                this.Icon?.setPosition(this.position.X + newConfig.IconPosition.X, this.position.Y + newConfig.IconPosition.Y);
-            } else {
-                this.Icon = this.scene.add.image(this.position.X + newConfig.IconPosition.X, this.position.Y + newConfig.IconPosition.Y, this.Type + 'Icon');
-                this.Icon.setScale(newConfig.Scale);
-                this.Icon.setDepth(5);
-                this.visualComponents.push(this.Icon);
-            }
-                
-        } else if(this.Config?.ObjectiveIcon) {
-            this.RemoveVisualComponent(this.Icon);
-            this.Icon?.destroy();
-        }
 
         //Update Gold
         if (newConfig.ShowGoldDiff) {
             if (this.Config?.ShowGoldDiff) {
                 this.Gold?.setPosition(this.position.X + newConfig.GoldPosition.X, this.position.Y + newConfig.GoldPosition.Y);
                 this.UpdateTextStyle(this.Gold!, newConfig.GoldFont);
-                this.GoldIcon?.setPosition(this.position.X + newConfig.GoldIconPosition.X, this.position.Y + newConfig.GoldIconPosition.Y);
+            
             } else {
-                this.GoldIcon = this.scene.add.image(this.position.X + newConfig.GoldIconPosition.X, this.position.Y + newConfig.GoldIconPosition.Y, 'objectiveGold');
                 this.Gold = this.scene.add.text(this.position.X + newConfig.GoldPosition.X, this.position.Y + newConfig.GoldPosition.Y, '+-0', {
                     fontFamily: newConfig.GoldFont.Name,
                     fontSize: newConfig.GoldFont.Size,
@@ -153,17 +120,13 @@ export default class PowerPlayVisual extends VisualElement {
                 });
 
                 this.Gold.setAlign(newConfig.Align);
-                this.GoldIcon.setOrigin(0, 0);
 
                 this.Gold.setDepth(4);
-                this.GoldIcon.setDepth(4);
 
-                this.visualComponents.push(this.Gold, this.GoldIcon);
+                this.visualComponents.push(this.Gold);
             }
         } else if (this.Config?.ShowGoldDiff) {
             this.RemoveVisualComponent(this.Gold);
-            this.RemoveVisualComponent(this.GoldIcon);
-            this.GoldIcon?.destroy();
             this.Gold?.destroy();
         }
 
@@ -172,9 +135,7 @@ export default class PowerPlayVisual extends VisualElement {
             if (this.Config?.ShowTimer) {
                 this.Time?.setPosition(this.position.X + newConfig.TimePosition.X, this.position.Y + newConfig.TimePosition.Y);
                 this.UpdateTextStyle(this.Time!, newConfig.TimeFont);
-                this.TimeIcon?.setPosition(this.position.X + newConfig.TimeIconPosition.X, this.position.Y + newConfig.TimeIconPosition.Y);
             } else {
-                this.TimeIcon = this.scene.add.image(this.position.X + newConfig.TimeIconPosition.X, this.position.Y + newConfig.TimeIconPosition.Y, 'objectiveCdr');
                 this.Time = this.scene.add.text(this.position.X + newConfig.TimePosition.X, this.position.Y + newConfig.TimePosition.Y, '00:00', {
                     fontFamily: newConfig.TimeFont.Name,
                     fontSize: newConfig.TimeFont.Size,
@@ -182,25 +143,25 @@ export default class PowerPlayVisual extends VisualElement {
                     color: newConfig.TimeFont.Color
                 });
                 this.Time.setAlign(newConfig.Align);
-                this.TimeIcon.setOrigin(0, 0);
 
                 this.Time.setDepth(4);
-                this.TimeIcon.setDepth(4);
 
-                this.visualComponents.push(this.Time, this.TimeIcon);
+                this.visualComponents.push(this.Time);
             }
-        } else if(this.Config?.ShowTimer) {
+        } else if (this.Config?.ShowTimer) {
             this.RemoveVisualComponent(this.Time);
-            this.RemoveVisualComponent(this.TimeIcon);
             this.Time?.destroy();
-            this.TimeIcon?.destroy();
         }
 
         this.Config = newConfig;
+
+        if(!this.isActive) {
+            this.visualComponents.forEach(element => {
+                element.setAlpha(0);
+            });
+        }
     }
     Load(): void {
-        this.InitPositions(this.Config!);
-        //this.Start();
     }
 
     Start(): void {
@@ -208,59 +169,22 @@ export default class PowerPlayVisual extends VisualElement {
             return;
         }
 
-        if(this.Type === 'elder') {
+        if (this.Type === 'elder') {
             this.scene.dragonTimer.Stop();
         }
 
         this.isShowing = true;
         var ctx = this;
 
-        if(!this.Config.Animate) {
-            ctx.scene.tweens.add({
-                targets: ctx.GetActiveVisualComponents(),
-                props: {
-                    alpha: { value: 1, duration: 500, ease: 'Cubic.easeInOut' }
-                },
-                paused: false,
-                yoyo: false,
-                onComplete: function() { ctx.isShowing = false; ctx.isActive = true;}
-            });
-            return;
-        }
-        
-        this.ComponentsToMove().forEach(c => c.alpha = 1);
-
-        if(this.Config?.ObjectiveIcon) {
-            this.scene.tweens.add({
-                targets: ctx.Icon,
-                alpha: 1,
-                paused: false,
-                yoyo: false,
-                duration: 250,
-                onComplete: function () {
-                    ctx.scene.tweens.add({
-                        targets: ctx.ComponentsToMove(),
-                        props: {
-                            x: { value: '-=' + 200 * (ctx.Config?.Align === "Right" || ctx.Config?.Align === "right" ? -1 : 1), duration: 1000, ease: 'Cubic.easeOut' }
-                        },
-                        paused: false,
-                        yoyo: false
-                    });
-                    ctx.isShowing = false;
-                    ctx.isActive = true;
-                }
-            });
-        } else {
-            ctx.scene.tweens.add({
-                targets: ctx.ComponentsToMove(),
-                props: {
-                    x: { value: '-=' + 200 * (ctx.Config?.Align === "Right" || ctx.Config?.Align === "right" ? -1 : 1), duration: 1000, ease: 'Cubic.easeOut' }
-                },
-                paused: false,
-                yoyo: false,
-                onComplete: function() { ctx.isShowing = false; ctx.isActive = true;}
-            });
-        }
+        ctx.scene.tweens.add({
+            targets: ctx.GetActiveVisualComponents(),
+            props: {
+                alpha: { value: 1, duration: 500, ease: 'Cubic.easeInOut' }
+            },
+            paused: false,
+            yoyo: false,
+            onComplete: function () { ctx.isShowing = false; ctx.isActive = true; }
+        });
     }
 
 
@@ -274,80 +198,20 @@ export default class PowerPlayVisual extends VisualElement {
 
         var ctx = this;
 
-        if(!this.Config.Animate) {
-            ctx.scene.tweens.add({
-                targets: ctx.GetActiveVisualComponents(),
-                props: {
-                    alpha: { value: 0, duration: 250, ease: 'Cubic.easeInOut' }
-                },
-                paused: false,
-                yoyo: false,
-                onComplete: function() {
-                    ctx.isHiding = false;
-                    if(ctx.Type === 'elder' && !ctx.scene.dragonTimer.Config.HideTimeIfAlive) {
-                        ctx.scene.dragonTimer.Start();
-                    }
-                }
-            });
-            return;
-        }
-
-        if(this.Config?.ObjectiveIcon) {
-            this.scene.tweens.add({
-                targets: ctx.Icon,
-                alpha: 0,
-                paused: false,
-                yoyo: false,
-                duration: 200,
-                delay: 300,
-                onComplete: function () { }
-            });
-        }
-
-        this.scene.tweens.add({
-            targets: ctx.ComponentsToMove(),
+        ctx.scene.tweens.add({
+            targets: ctx.GetActiveVisualComponents(),
             props: {
-                x: { value: '+=' + 200 * (ctx.Config?.Align === "Right" || ctx.Config?.Align === "right" ? -1 : 1), duration: 300, ease: 'Cubic.easeOut' }
+                alpha: { value: 0, duration: 250, ease: 'Cubic.easeInOut' }
             },
             paused: false,
             yoyo: false,
-            onComplete: function () { ctx.isHiding = false; }
+            onComplete: function () {
+                ctx.isHiding = false;
+                if (ctx.Type === 'elder' && !ctx.scene.dragonTimer.Config.HideTimeIfAlive) {
+                    ctx.scene.dragonTimer.Start();
+                }
+            }
         });
-    }
-
-
-    ComponentsToMove(): any[] {
-        var components: any[] = [];
-
-        if (this.Config?.ObjectiveIcon)
-            components.push(this.BackgroundBox);
-
-        if (this.Config?.ShowTimer) {
-            components.push(this.Time!, this.TimeIcon!);
-        }
-
-        if (this.Config?.ShowGoldDiff) {
-            components.push(this.GoldIcon!, this.Gold!);
-        }
-
-        return components;
-    }
-
-    InitPositions(cfg : PowerPlayTimerDisplayConfig): void {
-
-        if(!cfg.Animate) {
-            return;
-        }
-
-        this.BackgroundBox.x = this.position.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-        if (cfg.ShowGoldDiff) {
-            this.GoldIcon!.x = this.position.X + cfg.GoldIconPosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-            this.Gold!.x = this.position.X + cfg.GoldPosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-        }
-        if (cfg.ShowTimer) {
-            this.TimeIcon!.x = this.position.X + cfg.TimeIconPosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-            this.Time!.x = this.position.X + cfg.TimePosition.X + 200 * (cfg.Align === "Right" || cfg.Align === "right" ? -1 : 1);
-        }
     }
 
 }

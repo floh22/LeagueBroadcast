@@ -350,7 +350,7 @@ namespace LeagueBroadcast.Ingame.State
                 //Sum gold values for all players in respective team and get point in time
                 float blueGold = blueTeam.GetGold(i);
                 float redGold = redTeam.GetGold(i);
-                double time = teamToCount.players[0].goldHistory.Keys.ElementAt(i);
+                double time = teamToCount.players[0].goldHistory.Keys.ToList().ElementAt(i);
                 float goldDiff = blueGold - redGold;
                 if (i == 0 || i == dataPoints - 1 || Math.Abs(outList.Last().Value - goldDiff) > 500 || time - outList.Last().Key > 15)
                 {
@@ -381,7 +381,16 @@ namespace LeagueBroadcast.Ingame.State
 
         public List<Player> GetAllPlayers()
         {
-            return blueTeam.players.Concat(redTeam.players).ToList();
+            List<Player> players = new List<Player>();
+            if (blueTeam is not null)
+            {
+                players.AddRange(blueTeam.players);
+            }
+            if (redTeam is not null)
+            {
+                players.AddRange(redTeam.players);
+            }
+            return players;
         }
 
         public List<Team> GetBothTeams()

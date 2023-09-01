@@ -22,6 +22,8 @@ export default class ScoreboardVisual extends VisualElement {
     GameTime: Phaser.GameObjects.Text;
     CenterIcon: Phaser.GameObjects.Sprite | null = null;
 
+    SeriesGameLength: number = 0;
+
     BlueTag: Phaser.GameObjects.Text;
     BlueTagBackground: Phaser.GameObjects.Rectangle | null = null;
     BlueScoreTemplates: Phaser.Geom.Rectangle[] = [];
@@ -57,6 +59,7 @@ export default class ScoreboardVisual extends VisualElement {
     DrakeIconSize: number = 30;
     DrakeIconOffset: number = 0;
     ShowScores: boolean = false;
+
 
     TotalGameToWinsNeeded: Record<number, number> = {
         5: 3,
@@ -324,7 +327,7 @@ export default class ScoreboardVisual extends VisualElement {
             c.y -= cfg.Size.Y;
         });
 
-        this.Init();
+        //this.Init();
     }
 
     UpdateValues(state: StateData): void {
@@ -398,6 +401,7 @@ export default class ScoreboardVisual extends VisualElement {
             this.ScoreG.clear();
             this.ShowScores = false;
         }
+
         if (scoreConfig.BlueTeam.Score !== undefined || scoreConfig.RedTeam.Score !== undefined) {
             if (this.ShowScores === false) {
                 this.ShowScores = true;
@@ -408,6 +412,12 @@ export default class ScoreboardVisual extends VisualElement {
         }
 
         if (!this.isActive) {
+
+            //update team tag positions depending on series length
+            if(scoreConfig.SeriesGameCount === 1) {
+                this.BlueTag.y += 5;
+                this.RedTag.y += 5;
+            } 
             this.Start();
         }
     }
@@ -875,13 +885,39 @@ export default class ScoreboardVisual extends VisualElement {
     UpdateScores(state: StateData, forceUpdate: boolean, cfg: ScoreDisplayConfig | null = null): void {
         let conf = state.scoreboard;
         cfg = cfg === null ? ScoreboardVisual.GetConfig()! : cfg;
-        if (forceUpdate || conf.RedTeam.Score !== this.RedWins || conf.BlueTeam.Score !== this.BlueWins) {
+        if (forceUpdate || conf.RedTeam.Score !== this.RedWins || conf.BlueTeam.Score !== this.BlueWins || conf.SeriesGameCount !== this.SeriesGameLength) {
             console.log('[LB] Updating Score display');
             let redWins = conf.RedTeam.Score;
             let blueWins = conf.BlueTeam.Score;
 
+            this.SeriesGameLength = conf.SeriesGameCount;
+
             this.ScoreG.clear();
             this.ScoreG.setDepth(1);
+
+
+            if (conf.SeriesGameCount === undefined || conf.SeriesGameCount === null || conf.SeriesGameCount === 1) {
+                this.BlueTagBackground?.setDisplaySize(160, 68);
+                this.RedTagBackground?.setDisplaySize(160, 68);
+
+                if(this.isActive) {
+                    this.BlueTag.setPosition(this.position.X + cfg.BlueTeam.Name.Position.X, this.position.Y + cfg.BlueTeam.Name.Position.Y + 5);
+                    this.RedTag.setPosition(this.position.X + cfg.RedTeam.Name.Position.X, this.position.Y + cfg.RedTeam.Name.Position.Y + 5);
+                }
+
+                //update data
+                this.BlueWins = conf.BlueTeam.Score;
+                this.RedWins = conf.RedTeam.Score;
+                return;
+            } else {
+                this.BlueTagBackground?.setDisplaySize(160, 53);
+                this.RedTagBackground?.setDisplaySize(160, 53);
+
+                if(this.isActive) {
+                    this.BlueTag.setPosition(this.position.X + cfg.BlueTeam.Name.Position.X, this.position.Y + cfg.BlueTeam.Name.Position.Y);
+                    this.RedTag.setPosition(this.position.X + cfg.RedTeam.Name.Position.X, this.position.Y + cfg.RedTeam.Name.Position.Y);
+                }
+            }
 
             let scoreWidth = 160;
             let scoreBorderSize = 2;

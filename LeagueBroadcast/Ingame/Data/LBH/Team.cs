@@ -1,6 +1,4 @@
-﻿using LeagueBroadcast.Common;
-using LeagueBroadcast.Common.Controllers;
-using LeagueBroadcast.Ingame.Data.RIOT;
+﻿using LeagueBroadcast.Ingame.Data.RIOT;
 using LeagueBroadcast.MVVM.ViewModel;
 using LeagueBroadcast.OperatingSystem;
 using System.Collections.Generic;
@@ -52,22 +50,42 @@ namespace LeagueBroadcast.Ingame.Data.LBH
         {
             for (int i = 0; i < players.Count; i++)
             {
-                var teamComponent = id == 0 ? 0 : 5;
+                int teamComponent = id == 0 ? 0 : 5;
                 players.ElementAt(i).id = teamComponent + i;
             }
         }
 
         public float GetGold(int i)
         {
-            //Get Gold for player at time or 0. Its better than crashing
-            return players.Select(p => p.goldHistory.Values.ElementAtOrDefault(i)).Sum();
+            //Crashing due to CollectionChanged violations
+            //return players.Select(p => p.goldHistory.Values.ToList().ElementAtOrDefault(i)).Sum();
+
+            float gold = 0;
+
+            foreach (Player player in players)
+            {
+                try
+                {
+                    gold += player.goldHistory.ElementAt(i).Value;
+                }
+                catch
+                {
+                    //Ignore for now. One wrong data point rather than crashing
+                }
+
+            }
+
+            return gold;
         }
 
         public float GetGold(double i)
         {
             if (i == lastGoldCalculated)
+            {
                 return lastGoldValue;
-            lastGoldValue = players.Select(p => p.goldHistory.Values.Last()).Sum();
+            }
+
+            lastGoldValue = players.Select(p => p.goldHistory.Last().Value).Sum();
             lastGoldCalculated = i;
             return lastGoldValue;
         }

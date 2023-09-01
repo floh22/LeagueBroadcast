@@ -300,7 +300,7 @@ namespace LeagueBroadcast.Ingame.Data.Provider
 
             team.players.ForEach(p =>
             {
-                float distance = Vector3.Distance(p.farsightObject.Position, turret.Position);
+                float distance = Vector3.Distance(p.farsightObject?.Position ?? Vector3.Zero, turret.Position);
                 if (distance <= 1200 || (turret.LastDamagedByDictionary.TryGetValue(p, out double lastAttackedTime) && Ingame.gameData.gameTime - lastAttackedTime <= 6 && distance <= 2400))
                 {
                     p.scores.platesDestroyed++;
