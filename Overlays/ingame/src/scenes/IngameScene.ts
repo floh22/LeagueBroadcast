@@ -80,9 +80,11 @@ export default class IngameScene extends Phaser.Scene {
         this.load.image('baronTimerBg', 'frontend/backgrounds/BaronTimer.png');
 
         //Scoreboard
-        this.load.image('scoreGold', 'frontend/images/ScoreboardGold.png');
-        this.load.image('scoreTower', 'frontend/images/tower.png');
-        this.load.image('scoreCenter', 'frontend/images/ScoreboardCenterIcon.png');
+        this.load.image('scoreGoldLeft', 'frontend/images/ScoreboardGoldLeft.png');
+        this.load.image('scoreGoldRight', 'frontend/images/ScoreboardGoldRight.png');
+        this.load.image('scoreTowerLeft', 'frontend/images/ScoreboardTowerLeft.png');
+        this.load.image('scoreTowerRight', 'frontend/images/ScoreboardTowerRight.png');
+        this.load.image('scoreCenter', 'frontend/images/ScoreboardCenter.png');
         this.load.image('scoreBlueIcon', 'frontend/backgrounds/ScoreTeamIconBGLeft.png');
         this.load.image('scoreRedIcon', 'frontend/backgrounds/ScoreTeamIconBGRight.png');
 

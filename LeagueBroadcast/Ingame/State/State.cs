@@ -358,12 +358,12 @@ namespace LeagueBroadcast.Ingame.State
                 }
             }
 
-            //limit outlist size to 1000 to prevent crashing due to too many data points
+            //limit outlist size to 200 to prevent crashing due to too many data points
 
-            if (outList.Count > 1000)
+            if (outList.Count > 200)
             {
                 Dictionary<double, float> newOutList = new Dictionary<double, float>();
-                int step = outList.Count / 1000;
+                int step = outList.Count / 200;
                 for (int i = 0; i < outList.Count; i += step)
                 {
                     newOutList.Add(outList.Keys.ElementAt(i), outList.Values.ElementAt(i));

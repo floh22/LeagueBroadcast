@@ -23,7 +23,8 @@ export default class ScoreboardVisual extends VisualElement {
     CenterIcon: Phaser.GameObjects.Sprite | null = null;
 
     BlueTag: Phaser.GameObjects.Text;
-    BlueScoreTemplates: Phaser.Geom.Circle[] = [];
+    BlueTagBackground: Phaser.GameObjects.Rectangle | null = null;
+    BlueScoreTemplates: Phaser.Geom.Rectangle[] = [];
     BlueScoreText: Phaser.GameObjects.Text | null = null;
     BlueWins: number = -1;
     BlueKills: Phaser.GameObjects.Text;
@@ -38,7 +39,8 @@ export default class ScoreboardVisual extends VisualElement {
 
 
     RedTag: Phaser.GameObjects.Text;
-    RedScoreTemplates: Phaser.Geom.Circle[] = [];
+    RedTagBackground: Phaser.GameObjects.Rectangle | null = null;
+    RedScoreTemplates: Phaser.Geom.Rectangle[] = [];
     RedScoreText: Phaser.GameObjects.Text | null = null;
     RedWins: number = -1;
     RedKills: Phaser.GameObjects.Text;
@@ -104,14 +106,14 @@ export default class ScoreboardVisual extends VisualElement {
             fontStyle: cfg.TimeFont.Style,
             align: cfg.TimeFont.Align
         });
-        this.GameTime.setOrigin(0.5,0.5);
+        this.GameTime.setOrigin(0.5, 0.5);
         this.GameTime.setAlign(cfg.TimeFont.Align);
         this.AddVisualComponent(this.GameTime);
 
         //Center Icon
         if (cfg.Misc.ShowCenterIcon) {
             this.CenterIcon = scene.make.sprite({ x: this.position.X + cfg.Misc.CenterIconPosition.X, y: this.position.Y + cfg.Misc.CenterIconPosition.Y, key: 'scoreCenter', add: true });
-            this.CenterIcon.setOrigin(0.5,0.5);
+            this.CenterIcon.setOrigin(0.5, 0.5);
             this.CenterIcon.setDisplaySize(cfg.Misc.CenterIconSize.X, cfg.Misc.CenterIconSize.Y);
             this.AddVisualComponent(this.CenterIcon);
         }
@@ -148,9 +150,9 @@ export default class ScoreboardVisual extends VisualElement {
         if (cfg.BlueTeam.Towers.Font.Align === "left" || cfg.BlueTeam.Towers.Font.Align === "Left")
             this.BlueTowers.setOrigin(0, 0);
 
-        this.BlueTowerImage = scene.make.sprite({ x: this.position.X + cfg.BlueTeam.Towers.Position.X + cfg.BlueTeam.Towers.Icon.Offset.X, y: this.position.Y + cfg.BlueTeam.Towers.Position.Y + cfg.BlueTeam.Towers.Icon.Offset.Y, key: 'scoreTower', add: true });
+        this.BlueTowerImage = scene.make.sprite({ x: this.position.X + cfg.BlueTeam.Towers.Position.X + cfg.BlueTeam.Towers.Icon.Offset.X, y: this.position.Y + cfg.BlueTeam.Towers.Position.Y + cfg.BlueTeam.Towers.Icon.Offset.Y, key: 'scoreTowerLeft', add: true });
         this.BlueTowerImage.setDisplaySize(cfg.BlueTeam.Towers.Icon.Size.X, cfg.BlueTeam.Towers.Icon.Size.Y);
-        this.BlueTowerImage.setOrigin(0.5,0.5);
+        this.BlueTowerImage.setOrigin(0.5, 0.5);
         this.AddVisualComponent(this.BlueTowerImage);
 
         //Gold
@@ -167,17 +169,14 @@ export default class ScoreboardVisual extends VisualElement {
         if (cfg.BlueTeam.Gold.Font.Align === "left" || cfg.BlueTeam.Gold.Font.Align === "Left")
             this.BlueGold.setOrigin(0, 0);
 
-        this.BlueGoldImage = scene.make.sprite({ x: this.position.X + cfg.BlueTeam.Gold.Position.X + cfg.BlueTeam.Gold.Icon.Offset.X, y: this.position.Y + cfg.BlueTeam.Gold.Position.Y + cfg.BlueTeam.Gold.Icon.Offset.Y, key: 'scoreGold', add: true });
+        this.BlueGoldImage = scene.make.sprite({ x: this.position.X + cfg.BlueTeam.Gold.Position.X + cfg.BlueTeam.Gold.Icon.Offset.X, y: this.position.Y + cfg.BlueTeam.Gold.Position.Y + cfg.BlueTeam.Gold.Icon.Offset.Y, key: 'scoreGoldLeft', add: true });
         this.BlueGoldImage.setDisplaySize(cfg.BlueTeam.Gold.Icon.Size.X, cfg.BlueTeam.Gold.Icon.Size.Y);
-        this.BlueGoldImage.setOrigin(0.5,0.5);
+        this.BlueGoldImage.setOrigin(0.5, 0.5);
         this.AddVisualComponent(this.BlueGoldImage);
 
         this.BlueDragons = [];
 
         this.BlueScoreTemplates = [];
-        for (var i = 0; i < 5; i++) {
-            this.BlueScoreTemplates.push(new Phaser.Geom.Circle(this.position.X + cfg.BlueTeam.Score.Position.X + i * cfg.BlueTeam.Score.CircleOffset.X, this.position.Y + cfg.BlueTeam.Score.Position.Y + i * cfg.BlueTeam.Score.CircleOffset.Y, cfg.BlueTeam.Score.CircleRadius));
-        }
 
         //Tag
         this.BlueTag = scene.add.text(this.position.X + cfg.BlueTeam.Name.Position.X, this.position.Y + cfg.BlueTeam.Name.Position.Y, 'Blue', {
@@ -187,7 +186,19 @@ export default class ScoreboardVisual extends VisualElement {
             align: cfg.BlueTeam.Name.Font.Align,
             color: cfg.BlueTeam.Name.Font.Color,
         });
+        this.BlueTag.setDepth(1);
         this.AddVisualComponent(this.BlueTag);
+
+        //convert cfg.BlueTeam.Score.FillColor which is a rgb() string to an integer
+        //Get the three colors channels in cfg.BlueTeam.Score.FillColor and convert to integer
+        let colorChannels = cfg.BlueTeam.Score.FillColor.replace(/[^\d,]/g, '').split(',').map(Number);
+        let color = Phaser.Display.Color.GetColor(colorChannels[0], colorChannels[1], colorChannels[2]);
+
+        this.BlueTagBackground = scene.add.rectangle(this.position.X - 400, this.position.Y + 20, 160, 53, color);
+        this.BlueTagBackground.setDepth(0);
+        this.BlueTagBackground.setOrigin(0, 0);
+        this.BlueTagBackground.setPosition(this.position.X - cfg.Size.X / 2, 0);
+        this.AddVisualComponent(this.BlueTagBackground);
 
         if (cfg.BlueTeam.Name.Font.Align === "right" || cfg.BlueTeam.Name.Font.Align === "Right")
             this.BlueTag.setOrigin(1, 0);
@@ -237,9 +248,9 @@ export default class ScoreboardVisual extends VisualElement {
         if (cfg.RedTeam.Towers.Font.Align === "left" || cfg.RedTeam.Towers.Font.Align === "Left")
             this.RedTowers.setOrigin(0, 0);
 
-        this.RedTowerImage = scene.make.sprite({ x: this.position.X + cfg.RedTeam.Towers.Position.X + cfg.RedTeam.Towers.Icon.Offset.X, y: this.position.Y + cfg.RedTeam.Towers.Position.Y + cfg.RedTeam.Towers.Icon.Offset.Y, key: 'scoreTower', add: true });
+        this.RedTowerImage = scene.make.sprite({ x: this.position.X + cfg.RedTeam.Towers.Position.X + cfg.RedTeam.Towers.Icon.Offset.X, y: this.position.Y + cfg.RedTeam.Towers.Position.Y + cfg.RedTeam.Towers.Icon.Offset.Y, key: 'scoreTowerRight', add: true });
         this.RedTowerImage.setDisplaySize(cfg.RedTeam.Towers.Icon.Size.X, cfg.RedTeam.Towers.Icon.Size.Y);
-        this.RedTowerImage.setOrigin(0.5,0.5);
+        this.RedTowerImage.setOrigin(0.5, 0.5);
         this.AddVisualComponent(this.RedTowerImage);
 
         //Gold
@@ -257,18 +268,14 @@ export default class ScoreboardVisual extends VisualElement {
         if (cfg.RedTeam.Gold.Font.Align === "left" || cfg.RedTeam.Gold.Font.Align === "Left")
             this.RedGold.setOrigin(0, 0);
 
-        this.RedGoldImage = scene.make.sprite({ x: this.position.X + cfg.RedTeam.Gold.Position.X + cfg.RedTeam.Gold.Icon.Offset.X, y: this.position.Y + cfg.RedTeam.Gold.Position.Y + cfg.RedTeam.Gold.Icon.Offset.Y, key: 'scoreGold', add: true });
+        this.RedGoldImage = scene.make.sprite({ x: this.position.X + cfg.RedTeam.Gold.Position.X + cfg.RedTeam.Gold.Icon.Offset.X, y: this.position.Y + cfg.RedTeam.Gold.Position.Y + cfg.RedTeam.Gold.Icon.Offset.Y, key: 'scoreGoldRight', add: true });
         this.RedGoldImage.setDisplaySize(cfg.RedTeam.Gold.Icon.Size.X, cfg.RedTeam.Gold.Icon.Size.Y);
-        this.RedGoldImage.setOrigin(0.5,0.5);
+        this.RedGoldImage.setOrigin(0.5, 0.5);
         this.AddVisualComponent(this.RedGoldImage);
 
         this.RedDragons = [];
 
         this.RedScoreTemplates = [];
-
-        for (var i = 0; i <= 5; i++) {
-            this.RedScoreTemplates.push(new Phaser.Geom.Circle(this.position.X + cfg.RedTeam.Score.Position.X + i * cfg.RedTeam.Score.CircleOffset.X, this.position.Y + cfg.RedTeam.Score.Position.Y + i * cfg.RedTeam.Score.CircleOffset.Y, cfg.RedTeam.Score.CircleRadius));
-        }
 
         //Tag
         this.RedTag = scene.add.text(this.position.X + cfg.RedTeam.Name.Position.X, this.position.Y + cfg.RedTeam.Name.Position.Y, 'Red', {
@@ -278,8 +285,18 @@ export default class ScoreboardVisual extends VisualElement {
             align: cfg.RedTeam.Name.Font.Align,
             color: cfg.RedTeam.Name.Font.Color,
         });
+        this.RedTag.setDepth(1);
         this.AddVisualComponent(this.RedTag);
-        
+
+        colorChannels = cfg.RedTeam.Score.FillColor.replace(/[^\d,]/g, '').split(',').map(Number);
+        color = Phaser.Display.Color.GetColor(colorChannels[0], colorChannels[1], colorChannels[2]);
+
+        this.RedTagBackground = scene.add.rectangle(this.position.X + 400, this.position.Y + 20, 160, 53, color);
+        this.RedTagBackground.setDepth(0);
+        this.RedTagBackground.setOrigin(1, 0);
+        this.RedTagBackground.setPosition(this.position.X + cfg.Size.X / 2, 0);
+        this.AddVisualComponent(this.RedTagBackground);
+
         if (cfg.RedTeam.Name.Font.Align === "right" || cfg.RedTeam.Name.Font.Align === "Right")
             this.RedTag.setOrigin(1, 0);
         if (cfg.RedTeam.Name.Font.Align === "left" || cfg.RedTeam.Name.Font.Align === "Left")
@@ -328,9 +345,9 @@ export default class ScoreboardVisual extends VisualElement {
         this.BlueKills.text = scoreConfig.BlueTeam.Kills + '';
         this.BlueTowers.text = scoreConfig.BlueTeam.Towers + '';
 
-        if (scoreConfig.BlueTeam.Name !== undefined){
+        if (scoreConfig.BlueTeam.Name !== undefined) {
             this.BlueTag.text = scoreConfig.BlueTeam.Name;
-            if(ScoreboardVisual.GetConfig()?.RedTeam.Name.AdaptiveFontSize)
+            if (ScoreboardVisual.GetConfig()?.RedTeam.Name.AdaptiveFontSize)
                 TextUtils.AutoSizeFont(this.RedTag!, ScoreboardVisual.GetConfig()!.RedTeam.Name.MaxSize.X, ScoreboardVisual.GetConfig()!.RedTeam.Name.MaxSize.Y, +ScoreboardVisual.GetConfig()!.RedTeam.Name.Font.Size.replace(/[^\d.-]/g, ''));
         }
         else
@@ -353,7 +370,7 @@ export default class ScoreboardVisual extends VisualElement {
 
         if (scoreConfig.RedTeam.Name !== undefined) {
             this.RedTag!.text = scoreConfig.RedTeam.Name;
-            if(ScoreboardVisual.GetConfig()?.RedTeam.Name.AdaptiveFontSize)
+            if (ScoreboardVisual.GetConfig()?.RedTeam.Name.AdaptiveFontSize)
                 TextUtils.AutoSizeFont(this.RedTag!, ScoreboardVisual.GetConfig()!.RedTeam.Name.MaxSize.X, ScoreboardVisual.GetConfig()!.RedTeam.Name.MaxSize.Y, +ScoreboardVisual.GetConfig()!.RedTeam.Name.Font.Size.replace(/[^\d.-]/g, ''));
         }
         else
@@ -382,7 +399,7 @@ export default class ScoreboardVisual extends VisualElement {
             this.ShowScores = false;
         }
         if (scoreConfig.BlueTeam.Score !== undefined || scoreConfig.RedTeam.Score !== undefined) {
-            if(this.ShowScores === false) {
+            if (this.ShowScores === false) {
                 this.ShowScores = true;
                 this.UpdateScores(state, true);
             } else {
@@ -438,7 +455,7 @@ export default class ScoreboardVisual extends VisualElement {
                 this.scene.textures.remove('scoreBg');
             }
             //Load Video only if it does not already exist
-            if(this.BackgroundVideo === null || this.BackgroundVideo === undefined) {
+            if (this.BackgroundVideo === null || this.BackgroundVideo === undefined) {
                 this.scene.load.video('scoreBgVideo', 'frontend/backgrounds/Score.mp4');
             }
         }
@@ -546,10 +563,10 @@ export default class ScoreboardVisual extends VisualElement {
         this.RedIconSprite?.setDisplaySize(newConfig.RedTeam.Icon.Size.X, newConfig.RedTeam.Icon.Size.Y);
 
         //Blue Icon Background
-        if(newConfig.BlueTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().BlueTeam.Icon.UseBackground) {
+        if (newConfig.BlueTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().BlueTeam.Icon.UseBackground) {
             this.BlueIconBackground?.setPosition(newConfig.Position.X + newConfig.BlueTeam.Icon.Position.X + newConfig.BlueTeam.Icon.BackgroundOffset.X, newConfig.Position.Y + newConfig.BlueTeam.Icon.Position.Y + newConfig.BlueTeam.Icon.BackgroundOffset.Y)
         }
-        else if(newConfig.BlueTeam.Icon.UseBackground && !ScoreboardVisual.GetConfig().BlueTeam.Icon.UseBackground) {
+        else if (newConfig.BlueTeam.Icon.UseBackground && !ScoreboardVisual.GetConfig().BlueTeam.Icon.UseBackground) {
             this.BlueIconBackground = this.scene.make.sprite({
                 x: newConfig.Position.X + newConfig.BlueTeam.Icon.Position.X + newConfig.BlueTeam.Icon.BackgroundOffset.X,
                 y: newConfig.Position.Y + newConfig.BlueTeam.Icon.Position.Y + newConfig.BlueTeam.Icon.BackgroundOffset.Y,
@@ -558,15 +575,15 @@ export default class ScoreboardVisual extends VisualElement {
             });
             this.AddVisualComponent(this.BlueIconBackground);
         }
-        else if(!newConfig.BlueTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().BlueTeam.Icon.UseBackground) {
+        else if (!newConfig.BlueTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().BlueTeam.Icon.UseBackground) {
             this.RemoveVisualComponent(this.BlueIconBackground)
         }
 
         //Red Icon Background
-        if(newConfig.RedTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().RedTeam.Icon.UseBackground) {
+        if (newConfig.RedTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().RedTeam.Icon.UseBackground) {
             this.RedIconBackground?.setPosition(newConfig.Position.X + newConfig.RedTeam.Icon.Position.X + newConfig.RedTeam.Icon.BackgroundOffset.X, newConfig.Position.Y + newConfig.RedTeam.Icon.Position.Y + newConfig.RedTeam.Icon.BackgroundOffset.Y)
         }
-        else if(newConfig.RedTeam.Icon.UseBackground && !ScoreboardVisual.GetConfig().RedTeam.Icon.UseBackground) {
+        else if (newConfig.RedTeam.Icon.UseBackground && !ScoreboardVisual.GetConfig().RedTeam.Icon.UseBackground) {
             this.RedIconBackground = this.scene.make.sprite({
                 x: newConfig.Position.X + newConfig.RedTeam.Icon.Position.X + newConfig.RedTeam.Icon.BackgroundOffset.X,
                 y: newConfig.Position.Y + newConfig.RedTeam.Icon.Position.Y + newConfig.RedTeam.Icon.BackgroundOffset.Y,
@@ -575,25 +592,11 @@ export default class ScoreboardVisual extends VisualElement {
             });
             this.AddVisualComponent(this.RedIconBackground);
         }
-        else if(!newConfig.RedTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().RedTeam.Icon.UseBackground) {
+        else if (!newConfig.RedTeam.Icon.UseBackground && ScoreboardVisual.GetConfig().RedTeam.Icon.UseBackground) {
             this.RemoveVisualComponent(this.RedIconBackground)
         }
 
         if (this.scene.state !== null && this.scene.state !== undefined) {
-
-
-            //Reset Score Templates
-            this.BlueScoreTemplates = [];
-            this.RedScoreTemplates = [];
-
-            for (var i = 0; i < 5; i++) {
-                this.BlueScoreTemplates.push(new Phaser.Geom.Circle(this.position.X + newConfig.BlueTeam.Score.Position.X + i * newConfig.BlueTeam.Score.CircleOffset.X, this.position.Y + newConfig.BlueTeam.Score.Position.Y + i * newConfig.BlueTeam.Score.CircleOffset.Y, newConfig.BlueTeam.Score.CircleRadius));
-            }
-
-            for (var i = 0; i <= 5; i++) {
-                this.RedScoreTemplates.push(new Phaser.Geom.Circle(this.position.X + newConfig.RedTeam.Score.Position.X + i * newConfig.RedTeam.Score.CircleOffset.X, this.position.Y + newConfig.RedTeam.Score.Position.Y + i * newConfig.RedTeam.Score.CircleOffset.Y, newConfig.RedTeam.Score.CircleRadius));
-            }
-
             //Redraw Scores
             this.UpdateScores(this.scene.state, true, newConfig);
 
@@ -607,11 +610,11 @@ export default class ScoreboardVisual extends VisualElement {
             this.scene.load.start();
         }
 
-        if(!this.isActive) {
+        if (!this.isActive) {
             this.GetActiveVisualComponents().forEach(c => {
                 //Hide now visible elements
                 c.alpha = 0;
-                if(c.y > 0)
+                if (c.y > 0)
                     c.y -= newConfig.Size.Y;
             });
         }
@@ -634,7 +637,7 @@ export default class ScoreboardVisual extends VisualElement {
             case 'none':
             case 'None':
                 this.GetActiveVisualComponents().forEach(c => {
-                    if(c.y < 0) {
+                    if (c.y < 0) {
                         c.y += ScoreboardVisual.GetConfig()!.Size.Y;
                     }
                     c.alpha = 1;
@@ -644,22 +647,22 @@ export default class ScoreboardVisual extends VisualElement {
                 break;
             case 'simple':
             case 'Simple':
-                
-                [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground].forEach(c => {
-                    if(c === null || c === undefined)
+
+                [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.BlueTagBackground, this.RedTag, this.RedTagBackground, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground].forEach(c => {
+                    if (c === null || c === undefined)
                         return;
                     c.alpha = 1;
                 });
-                
+
                 this.currentAnimation[0] = this.scene.tweens.add({
-                    targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
+                    targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.BlueTagBackground, this.RedTag, this.RedTagBackground, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
                     props: {
                         y: { value: '+=' + ScoreboardVisual.GetConfig().Size.Y, duration: 550, ease: 'Circ.easeOut' }
                     },
                     paused: false,
                     yoyo: false,
                     duration: 550,
-                    onComplete: function() {
+                    onComplete: function () {
                         ctx.isShowing = false;
                         ctx.isActive = true;
                         ctx.currentAnimation = [];
@@ -687,7 +690,7 @@ export default class ScoreboardVisual extends VisualElement {
         }
     }
     Stop(): void {
-        if(!this.isActive || this.isHiding) {
+        if (!this.isActive || this.isHiding) {
             return;
         }
         this.isHiding = true;
@@ -706,7 +709,7 @@ export default class ScoreboardVisual extends VisualElement {
             case 'simple':
             case 'Simple':
                 this.currentAnimation[0] = this.scene.tweens.add({
-                    targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.RedTag, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
+                    targets: [this.BackgroundImage, this.BackgroundRect, this.BackgroundVideo, this.GameTime, this.CenterIcon, this.BlueKills, this.RedKills, this.BlueGoldImage, this.RedGoldImage, this.BlueGold, this.RedGold, this.BlueTowerImage, this.RedTowerImage, this.BlueTowers, this.RedTowers, this.BlueTag, this.BlueTagBackground, this.RedTag, this.RedTagBackground, this.ScoreG, this.BlueScoreText, this.RedScoreText, this.BlueIconBackground, this.RedIconBackground],
                     props: {
                         y: { value: '-=' + ScoreboardVisual.GetConfig().Size.Y, duration: 550, ease: 'Circ.easeIn' }
                     },
@@ -783,7 +786,7 @@ export default class ScoreboardVisual extends VisualElement {
             this.BlueIconSprite.displayHeight = ScoreboardVisual.GetConfig()!.BlueTeam.Icon.Size.Y;
             this.BlueIconSprite.alpha = 0;
 
-            if(this.isShowing && !this.isActive) {
+            if (this.isShowing && !this.isActive) {
 
                 let delay = 550 - this.currentAnimation[0].totalElapsed;
 
@@ -798,10 +801,10 @@ export default class ScoreboardVisual extends VisualElement {
                 });
             }
 
-            if(this.isActive) {
+            if (this.isActive) {
                 this.BlueIconSprite.alpha = 1;
             }
-               
+
         });
 
         this.scene.load.on(`filecomplete-image-red_icon`, () => {
@@ -810,7 +813,7 @@ export default class ScoreboardVisual extends VisualElement {
             this.RedIconSprite.displayHeight = ScoreboardVisual.GetConfig()!.RedTeam.Icon.Size.Y;
             this.RedIconSprite.alpha = 0;
 
-            if(this.isShowing && !this.isActive) {
+            if (this.isShowing && !this.isActive) {
 
                 let delay = 550 - this.currentAnimation[0].totalElapsed;
 
@@ -825,7 +828,7 @@ export default class ScoreboardVisual extends VisualElement {
                 });
             }
 
-            if(this.isActive) {
+            if (this.isActive) {
                 this.RedIconSprite.alpha = 1;
             }
         });
@@ -850,11 +853,11 @@ export default class ScoreboardVisual extends VisualElement {
             dragonIcons = [];
             var i = 0;
             dragons.forEach(drakeName => {
-                var toAdd = this.scene.make.sprite({ 
+                var toAdd = this.scene.make.sprite({
                     x: this.position.X + (side ? conf.RedTeam.Drakes.Position.X + i++ * conf.RedTeam.Drakes.Offset.X : conf.BlueTeam.Drakes.Position.X + i++ * conf.BlueTeam.Drakes.Offset.X),
                     y: this.position.Y + (side ? conf.RedTeam.Drakes.Position.Y + i++ * conf.RedTeam.Drakes.Offset.Y : conf.BlueTeam.Drakes.Position.Y + i++ * conf.BlueTeam.Drakes.Offset.Y),
                     key: 'dragon_' + drakeName,
-                    add: true 
+                    add: true
                 });
                 toAdd.displayHeight = conf.Misc.DrakeIconSize.X;
                 toAdd.displayWidth = conf.Misc.DrakeIconSize.Y;
@@ -880,28 +883,30 @@ export default class ScoreboardVisual extends VisualElement {
             this.ScoreG.clear();
             this.ScoreG.setDepth(1);
 
+            let scoreWidth = 160;
+            let scoreBorderSize = 2;
+            let leftScore = this.position.X - cfg.Size.X / 2;
+            let rightScore = this.position.X + cfg.Size.X / 2 - scoreWidth;
+            let numIcons = this.TotalGameToWinsNeeded[conf.SeriesGameCount];
+            let scoreWidthPerWin = (scoreWidth - (numIcons - 1) * scoreBorderSize) / numIcons;
+            let scoreHeight = 13;
+
 
             if (cfg.BlueTeam.Score.UseCircleIcons) {
-                //Draw blue score icons
-                let color = Phaser.Display.Color.IntegerToColor(variables.fallbackBlue);
-                if (cfg.BlueTeam.Score.UseTeamColor) {
-                    if (state.blueColor !== undefined && state.blueColor !== '') {
-                        color = Phaser.Display.Color.RGBStringToColor(state.blueColor);
-                        this.ScoreG.fillStyle(color.color, 1);
-                        this.ScoreG.lineStyle(3, color.color, 1);
-                    }
-                } else {
-                    this.ScoreG.fillStyle(Phaser.Display.Color.RGBStringToColor(cfg.BlueTeam.Score.FillColor).color, 1);
-                    this.ScoreG.lineStyle(3, Phaser.Display.Color.RGBStringToColor(cfg.BlueTeam.Score.StrokeColor).color, 1);
-                }
+                this.BlueScoreTemplates = [];
 
-                let numIcons = this.TotalGameToWinsNeeded[conf.SeriesGameCount];
+                for (var i = 0; i < numIcons; i++) {
+                    this.BlueScoreTemplates.push(new Phaser.Geom.Rectangle(leftScore + i * (scoreWidthPerWin + scoreBorderSize), this.position.Y + cfg.BlueTeam.Score.Position.Y, scoreWidthPerWin, scoreHeight));
+                }
+                //Draw blue score icons
                 this.BlueScoreTemplates.forEach(template => {
                     if (numIcons-- > 0) {
                         if (blueWins-- > 0) {
-                            this.ScoreG.fillCircleShape(template);
+                            this.ScoreG.fillStyle(Phaser.Display.Color.RGBStringToColor(state.blueColor).color, 1);
+                            this.ScoreG.fillRectShape(template);
                         } else {
-                            this.ScoreG.strokeCircleShape(template);
+                            this.ScoreG.fillStyle(Phaser.Display.Color.RGBStringToColor(cfg!.BlueTeam.Score.StrokeColor).color, 1);
+                            this.ScoreG.fillRectShape(template);
                         }
                     }
                 });
@@ -909,27 +914,22 @@ export default class ScoreboardVisual extends VisualElement {
                 this.BlueScoreText!.text = conf.BlueTeam.Score + '';
             }
 
+            numIcons = this.TotalGameToWinsNeeded[conf.SeriesGameCount];
             if (cfg.RedTeam.Score.UseCircleIcons) {
                 //Draw red score icons
-                let color = Phaser.Display.Color.IntegerToColor(variables.fallbackRed);
-                if (cfg.RedTeam.Score.UseTeamColor) {
-                    if (state.redColor !== undefined && state.redColor !== '') {
-                        color = Phaser.Display.Color.RGBStringToColor(state.redColor);
-                        this.ScoreG.fillStyle(color.color, 1);
-                        this.ScoreG.lineStyle(3, color.color, 1);
-                    }
-                } else {
-                    this.ScoreG.fillStyle(Phaser.Display.Color.RGBStringToColor(cfg.RedTeam.Score.FillColor).color, 1);
-                    this.ScoreG.lineStyle(3, Phaser.Display.Color.RGBStringToColor(cfg.RedTeam.Score.StrokeColor).color, 1);
-                }
+                this.RedScoreTemplates = [];
 
-                let numIcons = this.TotalGameToWinsNeeded[conf.SeriesGameCount];
+                for (var i = 0; i < numIcons; i++) {
+                    this.RedScoreTemplates.unshift(new Phaser.Geom.Rectangle(rightScore + i * (scoreWidthPerWin + scoreBorderSize), this.position.Y + cfg.RedTeam.Score.Position.Y, scoreWidthPerWin, scoreHeight));
+                }
                 this.RedScoreTemplates.forEach(template => {
                     if (numIcons-- > 0) {
                         if (redWins-- > 0) {
-                            this.ScoreG.fillCircleShape(template);
+                            this.ScoreG.fillStyle(Phaser.Display.Color.RGBStringToColor(state.redColor).color, 1);
+                            this.ScoreG.fillRectShape(template);
                         } else {
-                            this.ScoreG.strokeCircleShape(template);
+                            this.ScoreG.fillStyle(Phaser.Display.Color.RGBStringToColor(cfg!.RedTeam.Score.StrokeColor).color, 1);
+                            this.ScoreG.fillRectShape(template);
                         }
                     }
                 });

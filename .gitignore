@@ -365,3 +365,8 @@ FodyWeavers.xsd
 
 # Photoshop - psd files used for dev
 *.psd
+
+
+#Ignore png files in Overlays/ingame/art folder
+Overlays/ingame/art/*.png
+
