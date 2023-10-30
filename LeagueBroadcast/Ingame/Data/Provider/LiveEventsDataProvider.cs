@@ -233,7 +233,9 @@ namespace LeagueBroadcast.Ingame.Data.Provider
                         OnPlateDestroy(e);
                         break;
                     case ("OnDamageGiven"):
-                        OnDamageDealt(e);
+                        // commented out due to crashes when handling damage events related to turrets
+                        // see issue #301
+                        //OnDamageDealt(e);
                         break;
                     default:
                         break;
