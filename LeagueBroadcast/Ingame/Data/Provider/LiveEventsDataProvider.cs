@@ -268,12 +268,13 @@ namespace LeagueBroadcast.Ingame.Data.Provider
             if (p is not null && e.Other is not null && e.Other.StartsWith("Turret", StringComparison.OrdinalIgnoreCase))
             {
                 //player damage turret
-                Turret turret = Ingame.gameState.turrets[e.Other];
-                if (turret is null)
+                bool found = Ingame.gameState.turrets.TryGetValue(e.Other, out Turret turret);
+                if (!found)
                 {
                     Log.Verbose("Tried adding damage info to unknown turret: " + e.Other);
                     return;
                 }
+                Turret turret = Ingame.gameState.turrets[e.Other];
                 turret.LastDamagedByDictionary[p] = Ingame.gameData.gameTime;
             }
 
