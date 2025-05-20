@@ -6,19 +6,22 @@
 *** See the bottom of this document for the declaration of the reference variables
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-
+-->
 
 # !!DEPRECATED!!
-Due to the introduction of Vanguard, League Broadcast ingame will no longer function.
-There are plans for the future, however, for now, only champ select is function
-Join our [Discord](http://discord.lolfar.site) or visit our [Website](https://bluebottle.gg?utm_source=github&utm_medium=link) to stay informed about future updates.
+# Head over to the sucessor on our [Discord](https://discord.gg/KnnBWhntmu) or visit our [Website](https://bluebottle.gg?utm_source=github&utm_medium=link)!
+# This repo no longer functions due to the introduction of Vanguard.
 
+
+#
+# 
+#
 <!-- ABOUT THE PROJECT -->
 ## League Broadcast
 
@@ -29,13 +32,13 @@ Currently includes support for champion select and ingame overlays, with post ga
 League Broadcast uses Memory Reading to get information that the Riot API does not expose. This is not possible any more due to Vanguard Anti Cheat. 
 
 ## Community and Contact
-Join our [Discord](http://discord.lolfar.site)
+Join our [Discord](https://discord.gg/KnnBWhntmu)
 
 Visit our [Website](https://bluebottle.gg?utm_source=github&utm_medium=link)
 
 This is the quickest way to reach us and to troubleshoot your issues. 
 
-Otherwise use the [Github Issues](https://github.com/floh22/LeagueBroadcastHub/issues) page to report breaking issues. These are not help forums! Use the issue and feature request templates, issues without proper information will be removed.
+[Github Issues](https://github.com/floh22/LeagueBroadcastHub/issues) are no longer maintained!
 
 ## Features
 
@@ -67,9 +70,8 @@ To get a local copy up and running follow these steps.
 * Active Internet connection
 
 ### Installation
-
-1. Download [latest release](https://github.com/floh22/LeagueBroadcastHub/releases/latest)
-2. Unzip release to desired install folder
+Releases have been removed to avoid confusion. A working version of LeagueBroadcast can be found on our [Website](https://bluebottle.gg?utm_source=github&utm_medium=link).
+1. Build project
 3. Add http://localhost:9001/frontend?backend=localhost as a browser source in OBS in your ingame scene
 4. Add http://localhost:9001/?backend=ws://localhost:9001/api as a browser source in OBS in your PickBan scene
 
@@ -113,12 +115,6 @@ Add any Fonts you wish to use to the comma separated list `"GoogleFonts"`
 
 Change the images and videos in `Frontend/ingame` to swap out resources.
 
-<!-- ROADMAP -->
-## Roadmap
-
-
-Current overhaul in progress. __Earliest release - mid/late 2024__.
-
 <!-- LICENSE -->
 ## License
 
@@ -127,14 +123,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 __This is a standalone project from Lars Eble. Riot Games does not endorse or sponsor this project.__  
 
 This project's port of [lol-pick-ban-ui](https://github.com/RCVolus/lol-pick-ban-ui) and its author are in no way affiliated or partnered with Riot Community Volunteers.
-
-
-<!-- CONTACT -->
-## Contact
-
-Discord - [discord.lolfar.site](http://discord.lolfar.site)
-
-Website - [Website](https://bluebottle.gg?utm_source=github&utm_medium=link)
 
 
 
