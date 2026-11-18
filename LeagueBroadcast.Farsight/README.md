@@ -5,10 +5,11 @@ This is an open source project which relies on voluntary contribution.
 
 ## Setup 
 Since League Anti-Cheat works by detecting Program names and Icons, you must edit tools used while League is open. This can be achieved through either building the tools yourself,
-or by using [Resource Hacker](http://www.angusj.com/resourcehacker/) to change both window name and icon.
+or by using [Resource Hacker](http://www.angusj.com/resourcehacker/) or [Resource Cracker](https://www.pelock.com/products/resource-cracker) to change both window name and icon.
 
 ### Prerequisites
 0. (Optional) [Resource Hacker](http://www.angusj.com/resourcehacker/)
+1. [Resource Cracker](https://www.pelock.com/products/resource-cracker)
 1. A modified version of [Cheat Engine](https://www.cheatengine.org/) or [ReClass](https://github.com/ReClassNET/ReClass.NET)
 2. [LeagueDumper](https://github.com/tarekwiz/LeagueDumper)
 3. [LoL Offset Dumper](https://www.unknowncheats.me/forum/league-of-legends/386218-lol-offset-dump.html) and a list of patterns. Those supplied here are current as of 26.08.2021, but these change from time to time
